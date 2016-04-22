@@ -1,0 +1,36 @@
+.TH XNEUR 1 
+.SH NAME
+XNeur - in-place conversion of text typed in with a wrong keyboard layout
+.SH SYNOPSIS
+.B "xneur"
+[options]
+.SH DESCRIPTION
+.PP
+When users work in a multilingual environment (e.g., Russian+English), they sometimes type in a text with a wrong keyboard layout. In auto mode, \fIXNeur\fP can detect the language of the word the user tried to type, automatically switch keyboard layouts and convert that word into correct keyboard layout. In manual mode it allows the user to convert last typed word or some selected text into another keyboard layout with hotkeys. The main idea of this utility is similar to that of Punto Switcher for MS Windows. Currently \fIXNeur\fP supports Armenian, Belarusian, Bulgarian, Czech, Georgian, German, Greek, English, Estonian, French, Kazakh, Lithuanian, Latvian, Polish, Romanian, Russian, Spanish, Ukrainian and Uzbek languages. Stay tuned for more... 
+.SH OPTIONS
+.TP 8
+.B \-v, \--version 
+Print program version and exit.
+.TP 8
+.B \-h, \--help 
+List available options.
+.TP 8
+.B \-a, \--about
+About \fIXNeur\fP.
+.TP 8
+.B \-f, \--force 
+Force run, skip checking for other running instances of \fIXNeur\fP.
+.TP 8
+.B \-g, \--generate 
+Generate proto and proto3 files from layout and sample text files. This option is for developers only!
+.SH FILES
+.I /etc/xneur/xneurrc
+.RS
+The system wide configuration file.
+.I ~/.xneur/xneurrc
+.RS
+The per-user configuration file.
+.SH AUTHOR
+Andrew "Crew" Kuznetsov, Nikolay Yankin
+.SH "SEE ALSO"
+gxneur(1), kxneur(1), xneurrc(5)

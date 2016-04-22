@@ -1,0 +1,51 @@
+AC_INIT(configure.in)
+AC_PREREQ(2.59)
+AM_CONFIG_HEADER(config.h)
+
+AM_INIT_AUTOMAKE(gxneur, 0.9.0)
+
+AM_PROG_CC_C_O
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
+AC_HEADER_STDC
+
+PKG_PROG_PKG_CONFIG([0.20])
+
+PKG_CHECK_MODULES(GTK, [gtk+-2.0 gdk-2.0])
+PKG_CHECK_MODULES(XNEUR, [xnconfig = 0.9.0])
+
+PKG_CHECK_MODULES(GLADE, [libglade-2.0 >= 2.6.0    ])
+AC_SUBST(GLADE_CFLAGS)
+AC_SUBST(GLADE_LIBS)
+
+
+AM_GNU_GETTEXT_VERSION([0.16.1])
+AM_GNU_GETTEXT([external])
+
+if test "$prefix" = "NONE"; then
+	prefix="${ac_default_prefix}"
+fi
+
+if test -z "$datadir"; then
+	datadir="${prefix}/share"
+fi
+
+localedir="$datadir/locale"
+
+CFLAGS="-Wall -Wextra -Werror -g0 -fPIC -std=gnu99"
+AC_SUBST(CFLAGS)
+
+AC_OUTPUT([Makefile src/Makefile pixmaps/Makefile glade/Makefile po/Makefile.in])
+
+cat << EOF
+
+$PACKAGE $VERSION configured successfully:
+
+	Installing into:        $prefix
+
+	Compiler flags:         $CFLAGS
+
+	XNeur flags:		$XNEUR_CFLAGS
+	XNeur libs:		$XNEUR_LIBS
+
+EOF

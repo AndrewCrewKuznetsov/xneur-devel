@@ -1,0 +1,3 @@
+# dh_shibdeps generate not needed ldconfig call.
+xneur: postinst-has-useless-call-to-ldconfig
+xneur: postrm-has-useless-call-to-ldconfig

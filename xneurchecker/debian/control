@@ -1,0 +1,15 @@
+Source: xneurchecker
+Section: x11
+Priority: optional
+Maintainer: Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, pkg-config, libxneur-dev (>= 0.12.0), libtool, docbook-to-man, libglib2.0-dev
+Standards-Version: 3.8.4
+Homepage: http://xneur.ru
+
+Package: xneurchecker
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Simple tool to check the affiliation of the sequence of letters a certain layout, based on xneur libs.
+ .
+ XNeur is an in-place converter of text typed in with a wrong keyboard layout.
+ See xneur package for more info.

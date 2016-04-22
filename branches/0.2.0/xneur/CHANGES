@@ -1,0 +1,37 @@
+(Nov-15-2006) [0.2.0]:
+- Сode rewritted
+- Fixed errors and memory leaks
+- The size of binary file is reduced
+- Algorithm rewrited
+- Added *BSD compatible
+- New makefile
+
+(Summer-2006) [0.1.0] (alpha):
+- Full recreating of sources code.
+- Fixed errors and memory leaks
+- Restore all features of old branch.
+- Add wrapping for create front-end.
+- Add lock-file for control of many copies of programm.
+- Add new feature - converting of selected text.
+
+(Summer-2006) [0.0.4]-[0.0.9]:
+- Add russian and english dictionaries.
+- Bugfixing and testing.
+
+(May-20-2006) [0.0.4]:
+- Added new algorithm language detecting
+- In setting file added new option LangDetectionMode
+- etc ...
+
+(Jan-20-2005) [0.0.3]:
+- Fixed `qt -trouble'
+- Fixed errors and memory leaks
+- etc ...
+
+(Nov-08-2004) [0.0.1]:
+Just testing release
+Features:
+- Automatic language switching
+- Supported applications names
+- Auto recognize of writed word in english chars
+- Simple config file (~/.xneurrc)

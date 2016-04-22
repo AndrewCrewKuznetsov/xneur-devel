@@ -1,0 +1,25 @@
+Xneur TODO file for more information see http://xneur.sf.net
+
+(c) Crew IT Research Laboratories 2002 - 2005
+
+by Alfeiks Kaänoken <kaanoken@crew.org.ru> (Maintainer of this project)
+
+ - rewrite all xlib part code to better style and organization
+ - separate xlib part from AI part and misc utils. So Why? Think deeper,
+ in a future we'll have too much code in one part, it will be mixed, I don't 
+ think it's good for us, and this good for layers - anybody can work with his part
+ in the project and don't make problems to other developers, and for future - it will be
+ simply to sepearate AI part and other to libruary for use from other software.
+ - write normal documntation and include it to project distribution
+ - make AI ;-) 
+ - dynamically support for other languages
+ - support for many languages at once time
+ - GUI for make settings (it's needed for dummies), and this is fun for developers. Why so?
+ ok, anyother software from office/business group has gui, why not to do gui for xneur?
+ - Developers documentation
+ - AI-Scheme publication
+ - Logic language
+ - Better config file
+ - logo for xneur (Where are there peoples who can do it?)
+
+I think it's all for present days.

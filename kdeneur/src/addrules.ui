@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddRules</class>
+ <widget class="QDialog" name="AddRules">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>358</width>
+    <height>375</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>358</width>
+    <height>375</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>358</width>
+    <height>375</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Add your rule change...</string>
+  </property>
+  <widget class="QDialogButtonBox" name="cmdBox">
+   <property name="geometry">
+    <rect>
+     <x>183</x>
+     <y>340</y>
+     <width>161</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>-1</y>
+     <width>341</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>The new rule change to that language. Enter a combination of letters and set the condition for its treatment:</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtWords">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>43</y>
+     <width>340</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>25</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>25</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>73</y>
+     <width>341</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>NOTE: Special characters [] \\ ^ $. |? * + () {} must be preceded by a \ (backslash).</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>117</y>
+     <width>340</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Condition</string>
+   </property>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>321</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>300</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Typed on the keyboard word must:</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>311</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QRadioButton" name="rdbComtaint">
+       <property name="text">
+        <string>contain that sequence of letters</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdbStart">
+       <property name="text">
+        <string>start with these letters</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdbEnd">
+       <property name="text">
+        <string>to end these letters</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdbCoincide">
+       <property name="text">
+        <string>coincide with the combination of letters</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>14</x>
+      <y>161</y>
+      <width>380</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>More:</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="chkInsensitive">
+    <property name="geometry">
+     <rect>
+      <x>43</x>
+      <y>180</y>
+      <width>281</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Insensitive</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cmdBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AddRules</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmdBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AddRules</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

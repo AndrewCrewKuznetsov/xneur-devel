@@ -1,0 +1,27 @@
+XNeur for Debian
+-----------------
+
+XNeur is auto/manual keyboard layout switcher. It's useful in multilingual (e.g.
+English and Russian) configuration. It works on Xserver layer. After starting it
+you can type some English text with keyboard layout turned to Russian. In
+automatic mode XNeur will detect this, switch layout to English and convert
+typed text to English too. In manual mode you control layout switching/text
+conversion via hotkey.
+
+For now XNeur support English, Russian, Ukrainian, Belarusian, French, Romanian,
+German, Kazakh, Bulgarian, Czech, Greek, Estonian, Armenian, Lithuanian,
+Latvian, Polish, Spanish and Uzbek.
+Feel free to contribute.
+
+gXNeur is GTK frontend for xneur which shows XNeur's status in tray and gives
+GUI to XNeur configuration.
+
+For documentation in Russian see http://xneur.ru
+Some English documentation is also avable there.
+
+NOTE:
+Config files in /etc/xneur is just a TEMPLATE. On first run XNeur copies
+configs into $HOME/.xneur, and after that only user's configs are used.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Wed, 22 Apr 2009 2:08:04 +0400
+

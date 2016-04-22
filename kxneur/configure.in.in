@@ -1,0 +1,13 @@
+#MIN_CONFIG(3.2.0)
+
+AM_INIT_AUTOMAKE(kxneur, 0.9.3)
+AC_C_BIGENDIAN
+AC_CHECK_KDEMAXPATHLEN
+
+AC_CHECK_HEADERS([X11/extensions/XKBrules.h], [], [], [
+  #include <stdio.h> 
+  #include <X11/XKBlib.h>])
+
+AC_CHECK_HEADERS([xneur/xnconfig.h xneur/list_char.h])
+
+PKG_CHECK_MODULES(XNEUR, [xnconfig >= 0.9.3])

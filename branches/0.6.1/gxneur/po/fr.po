@@ -1,0 +1,277 @@
+# translation of gxneur.
+# Copyright (C) 2007 THE gxneur'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gxneur package.
+# <>, 2007.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: gxneur 0.6.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-05-02 13:36+0400\n"
+"PO-Revision-Date: 2007-02-13 00:53+0300\n"
+"Last-Translator:  <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/interface.c:42
+msgid "gXNeur About..."
+msgstr "Sur gXNeur..."
+
+#: src/interface.c:49
+msgid ""
+"\n"
+"\t\t<b>X Neural Switcher for Gnome</b>\t\t\n"
+"\t\tGTK2 frontend for XNeur\t\t\n"
+"\n"
+"AUTHORS:\n"
+"Andrew Crew Kuznetsov\n"
+"Nikolay Yankin"
+msgstr ""
+"\n"
+"\t\t<b>X Neural Switcher для Gnome</b>\t\t\n"
+"\t\tGTK2 оболочка для XNeur\t\t\n"
+"\n"
+"Les Auteur:\n"
+"Andrew Crew Kuznetsov\n"
+"Nikolay Yankin"
+
+#: src/interface.c:189
+msgid "XNeur Settings"
+msgstr "XNeur Accordage"
+
+#: src/interface.c:218
+msgid "<b>Processing Mode\t\t</b>"
+msgstr "<b>Le mode du programme\t\t</b>"
+
+#: src/interface.c:227
+msgid "Automatic"
+msgstr "Automatique"
+
+#: src/interface.c:228
+msgid "Manual"
+msgstr "De main"
+
+#: src/interface.c:238
+msgid "<b>Key Bindings</b>"
+msgstr "<b>Les combinaisons des touches</b>"
+
+#: src/interface.c:248
+msgid "Replace Selected Text"
+msgstr "Le remplacement du texte choisi"
+
+#: src/interface.c:255
+msgid "Change Processing Mode"
+msgstr "Le remplacement du mode"
+
+#: src/interface.c:262
+msgid "Replace Last String "
+msgstr "Le remplacement de la dernière ligne"
+
+#: src/interface.c:269
+msgid "Replace / Cancel Replace "
+msgstr "Le remplacement / La suppression du remplacement "
+
+#: src/interface.c:281 src/interface.c:291 src/interface.c:301
+#: src/interface.c:311 src/interface.c:321 src/interface.c:331
+#: src/interface.c:341 src/interface.c:351 src/interface.c:368
+#: src/interface.c:378 src/interface.c:395 src/interface.c:405
+msgid "None"
+msgstr "Manque"
+
+#: src/interface.c:282 src/interface.c:302 src/interface.c:322
+#: src/interface.c:342 src/interface.c:369 src/interface.c:396
+msgid "Shift"
+msgstr ""
+
+#: src/interface.c:283 src/interface.c:303 src/interface.c:323
+#: src/interface.c:343 src/interface.c:370 src/interface.c:397
+msgid "Ctrl"
+msgstr ""
+
+#: src/interface.c:284 src/interface.c:304 src/interface.c:324
+#: src/interface.c:344 src/interface.c:371 src/interface.c:398
+msgid "Alt"
+msgstr ""
+
+#: src/interface.c:292 src/interface.c:312 src/interface.c:332
+#: src/interface.c:352 src/interface.c:379 src/interface.c:406
+msgid "Break"
+msgstr ""
+
+#: src/interface.c:293 src/interface.c:313 src/interface.c:333
+#: src/interface.c:353 src/interface.c:380 src/interface.c:407
+msgid "ScrollLock"
+msgstr ""
+
+#: src/interface.c:294 src/interface.c:314 src/interface.c:334
+#: src/interface.c:354 src/interface.c:381 src/interface.c:408
+msgid "PrtSc"
+msgstr ""
+
+#: src/interface.c:356
+msgid "Transliterate Selected Text"
+msgstr "La translitération du texte choisi"
+
+#: src/interface.c:383
+msgid "Change Case Of Selected Text "
+msgstr "Le remplacement du registre du texte choisi "
+
+#: src/interface.c:414
+msgid "<b>Advanced</b>"
+msgstr "<b>En supplément</b>"
+
+#: src/interface.c:424
+msgid "Process Mouse Events"
+msgstr "Traiter les événements de la souris"
+
+#: src/interface.c:430
+msgid "Enable Auto-Learn Mode"
+msgstr "Insérer le régime de l'autodidaxie"
+
+#: src/interface.c:436
+msgid "Remember Keyboard Layout For Each Window"
+msgstr "Retenir la répartition pour chaque fenêtre"
+
+#: src/interface.c:442
+msgid "Keep Selection After Changing Selected Text"
+msgstr "Garder la mise en relief après le changement du texte choisi"
+
+#: src/interface.c:448
+msgid "Preferences"
+msgstr "Les paramètres"
+
+#: src/interface.c:457
+msgid "Layout"
+msgstr "Les répartitions"
+
+#: src/interface.c:464
+msgid "Number\t"
+msgstr "Le numéro\t"
+
+#: src/interface.c:476 src/interface.c:486 src/interface.c:496
+#: src/interface.c:506
+msgid "0"
+msgstr ""
+
+#: src/interface.c:477 src/interface.c:487 src/interface.c:497
+#: src/interface.c:507
+msgid "1"
+msgstr ""
+
+#: src/interface.c:478 src/interface.c:488 src/interface.c:498
+#: src/interface.c:508
+msgid "2"
+msgstr ""
+
+#: src/interface.c:479 src/interface.c:489 src/interface.c:499
+#: src/interface.c:509
+msgid "3"
+msgstr ""
+
+#: src/interface.c:511 src/interface.c:517 src/interface.c:523
+#: src/interface.c:529
+msgid "Dictionary..."
+msgstr "Le dictionnaire..."
+
+#: src/interface.c:541 src/interface.c:554 src/interface.c:567
+#: src/interface.c:580 src/misc.c:297
+msgid "English"
+msgstr ""
+
+#: src/interface.c:542 src/interface.c:555 src/interface.c:568
+#: src/interface.c:581 src/misc.c:299
+msgid "Russian"
+msgstr ""
+
+#: src/interface.c:543 src/interface.c:556 src/interface.c:569
+#: src/interface.c:582 src/misc.c:301
+msgid "Ukrainian"
+msgstr ""
+
+#: src/interface.c:544 src/interface.c:557 src/interface.c:570
+#: src/interface.c:583
+msgid "Belarusian"
+msgstr ""
+
+#: src/interface.c:545 src/interface.c:558 src/interface.c:571
+#: src/interface.c:584 src/misc.c:305
+msgid "French"
+msgstr ""
+
+#: src/interface.c:546 src/interface.c:559 src/interface.c:572
+#: src/interface.c:585 src/misc.c:307
+msgid "Romanian"
+msgstr ""
+
+#: src/interface.c:587 src/interface.c:593 src/interface.c:599
+#: src/interface.c:605
+msgid "Regular Expressions..."
+msgstr "Les expressions régulières..."
+
+#: src/interface.c:611
+msgid "Layouts"
+msgstr "Les répartitions"
+
+#: src/interface.c:623
+msgid "Do not process these applications:"
+msgstr "La liste des exceptions:"
+
+#: src/interface.c:648 src/interface.c:689 src/interface.c:730
+msgid "Add..."
+msgstr "Ajouter..."
+
+#: src/interface.c:652 src/interface.c:693 src/interface.c:734
+msgid "Remove"
+msgstr "Enlever"
+
+#: src/interface.c:664
+msgid "Force Automatic Mode for these applications:"
+msgstr "La liste pour le traitement forcé automatique:"
+
+#: src/interface.c:705
+msgid "Force Manual Mode for these applications:"
+msgstr "La liste pour le traitement forcé de main:"
+
+#: src/interface.c:738
+msgid "Applications"
+msgstr "Les applications"
+
+#: src/interface.c:894
+msgid "File Editing"
+msgstr "L'édition du fichier"
+
+#: src/misc.c:182
+msgid "Current Version"
+msgstr "La Version Courante"
+
+#: src/misc.c:212 src/misc.c:239 src/misc.c:266
+msgid "Application"
+msgstr "Le application"
+
+#: src/trayicon.c:77
+msgid "Stop Daemon"
+msgstr "Arrêter le démon"
+
+#: src/trayicon.c:82
+msgid "Run Daemon"
+msgstr "Lancer le démon"
+
+#: src/trayicon.c:99
+msgid "Disable Input Autocorrection"
+msgstr "Déconnecter l'autocorrection de l'introduction"
+
+#: src/trayicon.c:104
+msgid "Enable Input Autocorrection"
+msgstr "Insérer l'autocorrection de l'introduction"
+
+#: src/trayicon.c:180
+msgid "X Neural Switcher RUNNING ("
+msgstr "X Neural Switcher est lancé ("
+
+#: src/trayicon.c:184
+msgid "X Neural Switcher STOPPED ("
+msgstr "X Neural Switcher est arrêté ("

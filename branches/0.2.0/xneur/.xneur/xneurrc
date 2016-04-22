@@ -1,0 +1,44 @@
+# It's a default X Neural Switcher configuration file
+# all values are default
+
+# Default mode in window, 0 is manual, 1 is automatically
+DefaultMode 0
+
+# Level of message what program can output
+# Example:
+#LogLevel Error
+#LogLevel Warning
+#LogLevel Log
+LogLevel Debug
+
+# Add Applications names for procces with xneur
+# Only for listed applications (it's window names)
+# xneur will process the input
+# Example:
+#AddApp Sylpheed
+AddApp Anjuta
+AddApp Firefox-bin
+AddApp Gaim
+AddApp Gedit
+AddApp Mozilla-thunderbird-bin
+AddApp Gnome-terminal
+AddApp Xfce4-terminal
+AddApp Ldcpp
+AddApp Beep-media-player
+AddApp Nvu-bin
+AddApp Linuxdcpp
+AddApp OpenOffice.org 2.0
+AddApp Gxneur
+AddApp Sunbird-bin
+
+# Binds hotkeys for some actions
+AddBind 1 1 0
+AddBind 2 1 11
+AddBind 3 3 11
+AddBind 4 1 10
+
+# Define xkb group
+EngXkbGroup 0
+RusXkbGroup 1
+
+# It's all

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>getNameApp</class>
+ <widget class="QDialog" name="getNameApp">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>211</width>
+    <height>115</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Add application...</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Application name:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="txtNameApp">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="cmdGetApp">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Get application name...</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="cmdBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

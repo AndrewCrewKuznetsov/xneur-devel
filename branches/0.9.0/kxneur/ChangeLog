@@ -1,0 +1,23 @@
+2007-05-02 Vadim Likhota <vadim-lvv@yandex.ru>
+ * Create test version (0.01) for work with xneur v.0.6.0
+
+2007-05-16 Vadim Likhota <vadim-lvv@yandex.ru>
+ * Update to xneur v.0.6.1 and set current version 0.6.1
+
+2007-05-30 Vadim Likhota <vadim-lvv@yandex.ru>
+ * Update flags, admin dir, small fix
+ 
+2007-06-07 Vadim Likhota <vadim-lvv@yandex.ru>
+ * fix bug with unsupported langs
+ 
+2007-07-04 Vadim Likhota <vadim-lvv@yandex.ru>
+ * update to xneur 0.6.2 (add default lang)
+ * rewrite keys page and find bug in kdelibs with ctrl+break
+ * tested on x86_64 (CentOS5)
+
+2007-09-25 Vadim Likhota <vadim-lvv@yandex.ru>
+ * update to xneur 0.8 (add German, Kazakh, sound)
+ * add sound page in Configure
+
+2008-01-04 Vadim Likhota <vadim-lvv@yandex.ru>
+ * update to xneur 0.9

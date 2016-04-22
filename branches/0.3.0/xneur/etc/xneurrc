@@ -1,0 +1,33 @@
+# It's a default X Neural Switcher configuration file
+# all values are default
+
+# Default work mode
+DefaultMode Auto
+
+# Level of message what program can output
+# Example:
+#LogLevel Error
+#LogLevel Log
+LogLevel Debug
+
+# Define used languages
+# See Settings page on http://www.xneur.ru for details
+AddLanguage English en
+AddLanguage Russian ru
+
+# Define xkb groups for languages
+SetXkbGroup English 0
+SetXkbGroup Russian 1
+
+# Add Applications names to exclude it from procces with xneur
+# Only for applications, what's window names don't exist in this list xneur will process the input
+# Example:
+#ExcludeApp Gaim
+
+# Binds hotkeys for some actions
+AddBind ChangeWord None Break
+AddBind ChangeString Ctrl Break
+AddBind ChangeMode Ctrl PrtSc
+AddBind ChangeSelected Shift Break
+
+# It's all

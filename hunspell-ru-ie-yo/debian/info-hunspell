@@ -1,0 +1,7 @@
+Language: русский (russian)
+Hash-Name: ru_RU
+Emacsen-Name: russian
+Casechars: [АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя]
+Not-Casechars: [^АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя]
+Otherchars: ^$
+Coding-System: utf-8

@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+#DEB_DH_SHLIBDEPS_ARGS_gxneur += --dpkg-shlibdeps-params=--ignore-missing-info
+
+PRESERVE_UPSTREAM := po/stamp-po gxneur.desktop
+
+pre-build::
+	for i in $(PRESERVE_UPSTREAM); do\
+		test -f $$i.upstream || cp $$i $$i.upstream; \
+	done
+
+clean::
+	for i in $(PRESERVE_UPSTREAM); do\
+		test ! -f $$i.upstream || mv -f $$i.upstream $$i; \
+	done
+

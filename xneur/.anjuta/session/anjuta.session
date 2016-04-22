@@ -1,0 +1,31 @@
+[Anjuta]
+Maximized=1
+Geometry=1366x744+0+24
+
+[Execution]
+Run in terminal=2
+Working directories=../../../../xneur-hg/xneur/xneur
+
+[File Loader]
+Files=../../lib/main/program.c#638%%%../../lib/config/xnconfig.c#1373%%%../../lib/main/utils.c#210%%%../../lib/lib/xneurlib.c#124%%%../../lib/notify/sound.c#235%%%../../lib/main/switchlang.c#56%%%../../lib/main/buffer.c#1%%%../../lib/main/switchlang.h#26%%%../../src/xneur.c#1%%%../../lib/lib/xneur.h#55%%%../../lib/ai/detection.c#263
+
+[Document Manager]
+bookmarks=<?xml version="1.0" encoding="UTF-8"?>\n<bookmarks/>\n
+
+[Search Box]
+Highlight Match=1
+
+[Project Manager]
+Shortcut=xneur//lib//notify//libxnnotify.la%%%xneur//lib//misc//libxnmisc.la%%%xneur//lib//main//libxnmain.la%%%xneur//lib//ai//libxnai.la%%%xneur//lib//lib//libxneur.la%%%xneur//lib//config//libxnconfig.la%%%xneur//src//xneur%%%xneur//plugins//test//libxntest.la%%%xneur//plugins//statistic//libxnstatistic.la
+Expand=xneur%%%xneur//etc%%%xneur//lib%%%xneur//lib//ai%%%xneur//lib//ai//libxnai.la%%%xneur//src%%%xneur//src//xneur
+
+[Debugger]
+Stop at beginning=2
+
+[Build]
+Configuration list=1:Default:%%%1:Debug:Debug%%%1:Profiling:Profiling%%%1:Optimized:Optimized
+Selected Configuration=Default
+BuildArgs/Default=--enable-maintainer-mode
+BuildArgs/Debug=--enable-maintainer-mode 'CFLAGS=-g -O0' 'CXXFLAGS=-g -O0' 'JFLAGS=-g -O0' 'FFLAGS=-g -O0'
+BuildArgs/Profiling=--enable-maintainer-mode 'CFLAGS=-g -pg' 'CXXFLAGS=-g -pg' 'JFLAGS=-g -pg' 'FFLAGS=-g -pg'
+BuildArgs/Optimized=--enable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2' 'JFLAGS=-O2' 'FFLAGS=-O2'

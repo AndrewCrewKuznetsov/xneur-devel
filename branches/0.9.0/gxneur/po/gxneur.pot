@@ -1,0 +1,1316 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: src/callbacks.c:140 src/interface.c:70 src/interface.c:541
+#: src/interface.c:556 src/interface.c:571 src/interface.c:586 src/main.c:38
+#: src/misc.c:58
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-11-26 17:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/callbacks.c:46 src/callbacks.c:108 src/interface.c:1377
+msgid "textview1"
+msgstr ""
+
+#: src/callbacks.c:50 src/callbacks.c:116 src/interface.c:1375
+msgid "entry10"
+msgstr ""
+
+#: src/callbacks.c:57 src/callbacks.c:63 src/callbacks.c:69 src/callbacks.c:75
+msgid "dict"
+msgstr ""
+
+#: src/callbacks.c:81 src/callbacks.c:87 src/callbacks.c:93
+#: src/callbacks.c:100
+msgid "regexp"
+msgstr ""
+
+#: src/callbacks.c:118
+#, c-format
+msgid "%s"
+msgstr ""
+
+#: src/callbacks.c:120
+msgid "w"
+msgstr ""
+
+#: src/callbacks.c:140 src/support.c:65 src/trayicon.c:182 src/trayicon.c:187
+#, c-format
+msgid "%s%s%s"
+msgstr ""
+
+#: src/callbacks.c:140 src/callbacks.c:155 src/misc.c:74 src/misc.c:772
+#: src/misc.c:780 src/misc.c:788 src/misc.c:796
+msgid "+"
+msgstr ""
+
+#: src/callbacks.c:143
+#, c-format
+msgid "%d"
+msgstr ""
+
+#: src/callbacks.c:160 src/misc.c:53 src/misc.c:80 src/misc.c:110
+msgid "Control"
+msgstr ""
+
+#: src/callbacks.c:161 src/misc.c:53 src/misc.c:81 src/misc.c:108
+msgid "Shift"
+msgstr ""
+
+#: src/callbacks.c:162 src/misc.c:53 src/misc.c:82 src/misc.c:112
+msgid "Alt"
+msgstr ""
+
+#: src/callbacks.c:163 src/misc.c:84
+msgid "Control_R"
+msgstr ""
+
+#: src/callbacks.c:164 src/misc.c:85
+msgid "Shift_R"
+msgstr ""
+
+#: src/callbacks.c:165 src/misc.c:86
+msgid "Alt_R"
+msgstr ""
+
+#: src/callbacks.c:166 src/misc.c:88
+msgid "Control_L"
+msgstr ""
+
+#: src/callbacks.c:167 src/misc.c:89
+msgid "Shift_L"
+msgstr ""
+
+#: src/callbacks.c:168 src/misc.c:90
+msgid "Alt_L"
+msgstr ""
+
+#: src/callbacks.c:170 src/misc.c:92
+msgid "Press any key"
+msgstr ""
+
+#: src/interface.c:42
+msgid "gXNeur About..."
+msgstr ""
+
+#: src/interface.c:49
+msgid ""
+"\n"
+"\t\t<b>X Neural Switcher for Gnome</b>\t\t\n"
+"\t\tGTK2 frontend for XNeur\t\t\n"
+"\n"
+"AUTHORS:\n"
+"Andrew Crew Kuznetsov\n"
+"Nikolay Yankin"
+msgstr ""
+
+#: src/interface.c:55 src/interface.c:238 src/interface.c:1322
+msgid "gxneur.png"
+msgstr ""
+
+#: src/interface.c:65
+msgid "gtk-close"
+msgstr ""
+
+#: src/interface.c:78 src/interface.c:1141 src/interface.c:1144
+#: src/interface.c:1147 src/interface.c:1150 src/interface.c:1153
+#: src/interface.c:1156 src/interface.c:1159 src/interface.c:1162
+#: src/interface.c:1365 src/interface.c:1368 src/misc.c:313 src/misc.c:316
+#: src/misc.c:340 src/misc.c:343 src/misc.c:366 src/misc.c:369 src/misc.c:392
+#: src/misc.c:395 src/misc.c:481 src/misc.c:484
+msgid "clicked"
+msgstr ""
+
+#: src/interface.c:83
+msgid "window1"
+msgstr ""
+
+#: src/interface.c:84
+msgid "vbox1"
+msgstr ""
+
+#: src/interface.c:85
+msgid "label21"
+msgstr ""
+
+#: src/interface.c:86
+msgid "image1"
+msgstr ""
+
+#: src/interface.c:87
+msgid "hbuttonbox2"
+msgstr ""
+
+#: src/interface.c:88
+msgid "button17"
+msgstr ""
+
+#: src/interface.c:89 src/misc.c:275
+msgid "label44"
+msgstr ""
+
+#: src/interface.c:90
+msgid "hseparator1"
+msgstr ""
+
+#: src/interface.c:236
+msgid "XNeur Settings"
+msgstr ""
+
+#: src/interface.c:265
+msgid "<b>Processing Mode\t\t</b>"
+msgstr ""
+
+#: src/interface.c:274
+msgid "Automatic"
+msgstr ""
+
+#: src/interface.c:275
+msgid "Manual"
+msgstr ""
+
+#: src/interface.c:285
+msgid "<b>Key Bindings</b>"
+msgstr ""
+
+#: src/interface.c:295
+msgid "Replace Selected Text"
+msgstr ""
+
+#: src/interface.c:302
+msgid "Change Processing Mode"
+msgstr ""
+
+#: src/interface.c:309
+msgid "Replace Last String "
+msgstr ""
+
+#: src/interface.c:316
+msgid "Replace / Cancel Replace "
+msgstr ""
+
+#: src/interface.c:323
+msgid "Transliterate Selected Text"
+msgstr ""
+
+#: src/interface.c:330
+msgid "Change Case Of Selected Text "
+msgstr ""
+
+#: src/interface.c:385
+msgid "Enable First Layout  "
+msgstr ""
+
+#: src/interface.c:392
+msgid "Enable Secondary Layout"
+msgstr ""
+
+#: src/interface.c:399
+msgid "Enable Third Layout"
+msgstr ""
+
+#: src/interface.c:438
+msgid "Enable Fourth Layout"
+msgstr ""
+
+#: src/interface.c:445
+msgid "Preferences"
+msgstr ""
+
+#: src/interface.c:458
+msgid "Layout"
+msgstr ""
+
+#: src/interface.c:465
+msgid "Number\t"
+msgstr ""
+
+#: src/interface.c:477 src/interface.c:487 src/interface.c:497
+#: src/interface.c:507 src/interface.c:625
+msgid "0"
+msgstr ""
+
+#: src/interface.c:478 src/interface.c:488 src/interface.c:498
+#: src/interface.c:508 src/interface.c:626
+msgid "1"
+msgstr ""
+
+#: src/interface.c:479 src/interface.c:489 src/interface.c:499
+#: src/interface.c:509 src/interface.c:627
+msgid "2"
+msgstr ""
+
+#: src/interface.c:480 src/interface.c:490 src/interface.c:500
+#: src/interface.c:510 src/interface.c:628
+msgid "3"
+msgstr ""
+
+#: src/interface.c:512 src/interface.c:518 src/interface.c:524
+#: src/interface.c:530
+msgid "Dictionary..."
+msgstr ""
+
+#: src/interface.c:542 src/interface.c:557 src/interface.c:572
+#: src/interface.c:587 src/misc.c:421
+msgid "English"
+msgstr ""
+
+#: src/interface.c:543 src/interface.c:558 src/interface.c:573
+#: src/interface.c:588 src/misc.c:423
+msgid "Russian"
+msgstr ""
+
+#: src/interface.c:544 src/interface.c:559 src/interface.c:574
+#: src/interface.c:589 src/misc.c:425
+msgid "Ukrainian"
+msgstr ""
+
+#: src/interface.c:545 src/interface.c:560 src/interface.c:575
+#: src/interface.c:590
+msgid "Belarusian"
+msgstr ""
+
+#: src/interface.c:546 src/interface.c:561 src/interface.c:576
+#: src/interface.c:591 src/misc.c:429
+msgid "French"
+msgstr ""
+
+#: src/interface.c:547 src/interface.c:562 src/interface.c:577
+#: src/interface.c:592 src/misc.c:431
+msgid "Romanian"
+msgstr ""
+
+#: src/interface.c:548 src/interface.c:563 src/interface.c:578
+#: src/interface.c:593 src/misc.c:433
+msgid "Kazakh"
+msgstr ""
+
+#: src/interface.c:549 src/interface.c:564 src/interface.c:579
+#: src/interface.c:594 src/misc.c:435
+msgid "German"
+msgstr ""
+
+#: src/interface.c:596 src/interface.c:602 src/interface.c:608
+#: src/interface.c:614
+msgid "Regular Expressions..."
+msgstr ""
+
+#: src/interface.c:630
+msgid "Initial Layout Number "
+msgstr ""
+
+#: src/interface.c:641
+msgid "Remember Keyboard Layout For Each Window"
+msgstr ""
+
+#: src/interface.c:675 src/interface.c:725 src/interface.c:766
+#: src/interface.c:807
+msgid "Add..."
+msgstr ""
+
+#: src/interface.c:679 src/interface.c:729 src/interface.c:770
+#: src/interface.c:811
+msgid "Remove"
+msgstr ""
+
+#: src/interface.c:683
+msgid "One Keyboard Layout For One Application"
+msgstr ""
+
+#: src/interface.c:688
+msgid "Layouts"
+msgstr ""
+
+#: src/interface.c:700
+msgid "Do not process these applications:"
+msgstr ""
+
+#: src/interface.c:741
+msgid "Force Automatic Mode for these applications:"
+msgstr ""
+
+#: src/interface.c:782
+msgid "Force Manual Mode for these applications:"
+msgstr ""
+
+#: src/interface.c:815
+msgid "Applications"
+msgstr ""
+
+#: src/interface.c:823
+msgid "Play Sounds"
+msgstr ""
+
+#: src/interface.c:835
+msgid "Press Key On Layout 1"
+msgstr ""
+
+#: src/interface.c:842
+msgid "Press Key On Layout 2"
+msgstr ""
+
+#: src/interface.c:849
+msgid "Press Key On Layout 3"
+msgstr ""
+
+#: src/interface.c:856
+msgid "Press Key On Layout 4"
+msgstr ""
+
+#: src/interface.c:863
+msgid "Enable Layout 1"
+msgstr ""
+
+#: src/interface.c:870
+msgid "Enable Layout 2"
+msgstr ""
+
+#: src/interface.c:877
+msgid "Enable Layout 3"
+msgstr ""
+
+#: src/interface.c:884
+msgid "Enable Layout 4"
+msgstr ""
+
+#: src/interface.c:891
+msgid "Automatic Change Word"
+msgstr ""
+
+#: src/interface.c:898
+msgid "Manual Change Word"
+msgstr ""
+
+#: src/interface.c:905
+msgid "Change String"
+msgstr ""
+
+#: src/interface.c:912
+msgid "Change Selected Text"
+msgstr ""
+
+#: src/interface.c:919
+msgid "Translit Selected Text"
+msgstr ""
+
+#: src/interface.c:926
+msgid "Changecase Selected Text"
+msgstr ""
+
+#: src/interface.c:1031
+msgid "Sounds"
+msgstr ""
+
+#: src/interface.c:1039
+msgid "Process Mouse Events"
+msgstr ""
+
+#: src/interface.c:1045
+msgid "Enable Auto-Learn Mode"
+msgstr ""
+
+#: src/interface.c:1051
+msgid "Keep Selection After Changing Selected Text"
+msgstr ""
+
+#: src/interface.c:1057
+msgid "Advanced"
+msgstr ""
+
+#: src/interface.c:1066 src/interface.c:1355
+msgid "gtk-cancel"
+msgstr ""
+
+#: src/interface.c:1072 src/interface.c:1360
+msgid "gtk-ok"
+msgstr ""
+
+#: src/interface.c:1078
+msgid "delete_event"
+msgstr ""
+
+#: src/interface.c:1081 src/interface.c:1087 src/interface.c:1093
+#: src/interface.c:1099 src/interface.c:1105 src/interface.c:1111
+#: src/interface.c:1117 src/interface.c:1123 src/interface.c:1129
+#: src/interface.c:1135
+msgid "key_press_event"
+msgstr ""
+
+#: src/interface.c:1084 src/interface.c:1090 src/interface.c:1096
+#: src/interface.c:1102 src/interface.c:1108 src/interface.c:1114
+#: src/interface.c:1120 src/interface.c:1126 src/interface.c:1132
+#: src/interface.c:1138
+msgid "key_release_event"
+msgstr ""
+
+#: src/interface.c:1167
+msgid "window2"
+msgstr ""
+
+#: src/interface.c:1168
+msgid "vbox7"
+msgstr ""
+
+#: src/interface.c:1169
+msgid "notebook1"
+msgstr ""
+
+#: src/interface.c:1170
+msgid "vbox2"
+msgstr ""
+
+#: src/interface.c:1171
+msgid "hbox2"
+msgstr ""
+
+#: src/interface.c:1172
+msgid "label5"
+msgstr ""
+
+#: src/interface.c:1173 src/misc.c:288 src/misc.c:569
+msgid "combobox1"
+msgstr ""
+
+#: src/interface.c:1174
+msgid "hseparator2"
+msgstr ""
+
+#: src/interface.c:1175
+msgid "vbox5"
+msgstr ""
+
+#: src/interface.c:1176
+msgid "label16"
+msgstr ""
+
+#: src/interface.c:1177
+msgid "table1"
+msgstr ""
+
+#: src/interface.c:1178
+msgid "label12"
+msgstr ""
+
+#: src/interface.c:1179
+msgid "label13"
+msgstr ""
+
+#: src/interface.c:1180
+msgid "label14"
+msgstr ""
+
+#: src/interface.c:1181
+msgid "label15"
+msgstr ""
+
+#: src/interface.c:1182
+msgid "label26"
+msgstr ""
+
+#: src/interface.c:1183
+msgid "label27"
+msgstr ""
+
+#: src/interface.c:1184 src/misc.c:398 src/misc.c:645
+msgid "entry11"
+msgstr ""
+
+#: src/interface.c:1185 src/misc.c:399 src/misc.c:646
+msgid "entry12"
+msgstr ""
+
+#: src/interface.c:1186 src/misc.c:400 src/misc.c:647
+msgid "entry13"
+msgstr ""
+
+#: src/interface.c:1187 src/misc.c:401 src/misc.c:648
+msgid "entry14"
+msgstr ""
+
+#: src/interface.c:1188 src/misc.c:402 src/misc.c:649
+msgid "entry15"
+msgstr ""
+
+#: src/interface.c:1189 src/misc.c:403 src/misc.c:650
+msgid "entry16"
+msgstr ""
+
+#: src/interface.c:1190
+msgid "label46"
+msgstr ""
+
+#: src/interface.c:1191
+msgid "label47"
+msgstr ""
+
+#: src/interface.c:1192
+msgid "label48"
+msgstr ""
+
+#: src/interface.c:1193 src/misc.c:404 src/misc.c:651
+msgid "entry17"
+msgstr ""
+
+#: src/interface.c:1194 src/misc.c:405 src/misc.c:652
+msgid "entry18"
+msgstr ""
+
+#: src/interface.c:1195 src/misc.c:406 src/misc.c:653
+msgid "entry19"
+msgstr ""
+
+#: src/interface.c:1196 src/misc.c:407 src/misc.c:654
+msgid "entry20"
+msgstr ""
+
+#: src/interface.c:1197
+msgid "label49"
+msgstr ""
+
+#: src/interface.c:1198
+msgid "label2"
+msgstr ""
+
+#: src/interface.c:1199
+msgid "vbox15"
+msgstr ""
+
+#: src/interface.c:1200
+msgid "table2"
+msgstr ""
+
+#: src/interface.c:1201
+msgid "label18"
+msgstr ""
+
+#: src/interface.c:1202
+msgid "label20"
+msgstr ""
+
+#: src/interface.c:1203 src/misc.c:411 src/misc.c:581
+msgid "combobox13"
+msgstr ""
+
+#: src/interface.c:1204 src/misc.c:411 src/misc.c:591
+msgid "combobox14"
+msgstr ""
+
+#: src/interface.c:1205 src/misc.c:411 src/misc.c:601
+msgid "combobox15"
+msgstr ""
+
+#: src/interface.c:1206 src/misc.c:411 src/misc.c:611
+msgid "combobox16"
+msgstr ""
+
+#: src/interface.c:1207
+msgid "button8"
+msgstr ""
+
+#: src/interface.c:1208
+msgid "button9"
+msgstr ""
+
+#: src/interface.c:1209
+msgid "button6"
+msgstr ""
+
+#: src/interface.c:1210
+msgid "button7"
+msgstr ""
+
+#: src/interface.c:1211 src/misc.c:410 src/misc.c:580 src/misc.c:717
+#: src/misc.c:728
+msgid "combobox21"
+msgstr ""
+
+#: src/interface.c:1212 src/misc.c:410 src/misc.c:590 src/misc.c:717
+#: src/misc.c:728
+msgid "combobox22"
+msgstr ""
+
+#: src/interface.c:1213 src/misc.c:410 src/misc.c:600 src/misc.c:717
+#: src/misc.c:728
+msgid "combobox23"
+msgstr ""
+
+#: src/interface.c:1214 src/misc.c:410 src/misc.c:610 src/misc.c:717
+#: src/misc.c:728
+msgid "combobox24"
+msgstr ""
+
+#: src/interface.c:1215
+msgid "button23"
+msgstr ""
+
+#: src/interface.c:1216
+msgid "button24"
+msgstr ""
+
+#: src/interface.c:1217
+msgid "button25"
+msgstr ""
+
+#: src/interface.c:1218
+msgid "button26"
+msgstr ""
+
+#: src/interface.c:1219 src/misc.c:440 src/misc.c:620
+msgid "combobox25"
+msgstr ""
+
+#: src/interface.c:1220
+msgid "label50"
+msgstr ""
+
+#: src/interface.c:1221
+msgid "hseparator6"
+msgstr ""
+
+#: src/interface.c:1222 src/misc.c:452 src/misc.c:668
+msgid "checkbutton3"
+msgstr ""
+
+#: src/interface.c:1223
+msgid "frame1"
+msgstr ""
+
+#: src/interface.c:1224
+msgid "alignment1"
+msgstr ""
+
+#: src/interface.c:1225
+msgid "hbox6"
+msgstr ""
+
+#: src/interface.c:1226
+msgid "scrolledwindow6"
+msgstr ""
+
+#: src/interface.c:1227 src/misc.c:372 src/misc.c:525
+msgid "treeview4"
+msgstr ""
+
+#: src/interface.c:1228
+msgid "vbox16"
+msgstr ""
+
+#: src/interface.c:1229 src/misc.c:391
+msgid "button27"
+msgstr ""
+
+#: src/interface.c:1230 src/misc.c:394
+msgid "button28"
+msgstr ""
+
+#: src/interface.c:1231
+msgid "label66"
+msgstr ""
+
+#: src/interface.c:1232
+msgid "label3"
+msgstr ""
+
+#: src/interface.c:1233
+msgid "vbox8"
+msgstr ""
+
+#: src/interface.c:1234
+msgid "vbox3"
+msgstr ""
+
+#: src/interface.c:1235
+msgid "label6"
+msgstr ""
+
+#: src/interface.c:1236
+msgid "hbox3"
+msgstr ""
+
+#: src/interface.c:1237
+msgid "scrolledwindow1"
+msgstr ""
+
+#: src/interface.c:1238 src/misc.c:292 src/misc.c:510
+msgid "treeview1"
+msgstr ""
+
+#: src/interface.c:1239
+msgid "vbox4"
+msgstr ""
+
+#: src/interface.c:1240 src/misc.c:311
+msgid "button2"
+msgstr ""
+
+#: src/interface.c:1241 src/misc.c:315
+msgid "button3"
+msgstr ""
+
+#: src/interface.c:1242
+msgid "hseparator3"
+msgstr ""
+
+#: src/interface.c:1243
+msgid "vbox10"
+msgstr ""
+
+#: src/interface.c:1244
+msgid "label23"
+msgstr ""
+
+#: src/interface.c:1245
+msgid "hbox4"
+msgstr ""
+
+#: src/interface.c:1246
+msgid "scrolledwindow4"
+msgstr ""
+
+#: src/interface.c:1247 src/misc.c:319 src/misc.c:515
+msgid "treeview2"
+msgstr ""
+
+#: src/interface.c:1248
+msgid "vbox11"
+msgstr ""
+
+#: src/interface.c:1249 src/misc.c:338
+msgid "button19"
+msgstr ""
+
+#: src/interface.c:1250 src/misc.c:341
+msgid "button20"
+msgstr ""
+
+#: src/interface.c:1251
+msgid "hseparator4"
+msgstr ""
+
+#: src/interface.c:1252
+msgid "vbox12"
+msgstr ""
+
+#: src/interface.c:1253
+msgid "label24"
+msgstr ""
+
+#: src/interface.c:1254
+msgid "hbox5"
+msgstr ""
+
+#: src/interface.c:1255
+msgid "scrolledwindow5"
+msgstr ""
+
+#: src/interface.c:1256 src/misc.c:346 src/misc.c:520
+msgid "treeview3"
+msgstr ""
+
+#: src/interface.c:1257
+msgid "vbox13"
+msgstr ""
+
+#: src/interface.c:1258 src/misc.c:365
+msgid "button21"
+msgstr ""
+
+#: src/interface.c:1259 src/misc.c:368
+msgid "button22"
+msgstr ""
+
+#: src/interface.c:1260
+msgid "label22"
+msgstr ""
+
+#: src/interface.c:1261
+msgid "vbox14"
+msgstr ""
+
+#: src/interface.c:1262 src/misc.c:460 src/misc.c:680
+msgid "checkbutton5"
+msgstr ""
+
+#: src/interface.c:1263
+msgid "hseparator5"
+msgstr ""
+
+#: src/interface.c:1264
+msgid "table4"
+msgstr ""
+
+#: src/interface.c:1265
+msgid "label52"
+msgstr ""
+
+#: src/interface.c:1266
+msgid "label53"
+msgstr ""
+
+#: src/interface.c:1267
+msgid "label54"
+msgstr ""
+
+#: src/interface.c:1268
+msgid "label55"
+msgstr ""
+
+#: src/interface.c:1269
+msgid "label56"
+msgstr ""
+
+#: src/interface.c:1270
+msgid "label57"
+msgstr ""
+
+#: src/interface.c:1271
+msgid "label58"
+msgstr ""
+
+#: src/interface.c:1272
+msgid "label59"
+msgstr ""
+
+#: src/interface.c:1273
+msgid "label60"
+msgstr ""
+
+#: src/interface.c:1274
+msgid "label61"
+msgstr ""
+
+#: src/interface.c:1275
+msgid "label62"
+msgstr ""
+
+#: src/interface.c:1276
+msgid "label63"
+msgstr ""
+
+#: src/interface.c:1277
+msgid "label64"
+msgstr ""
+
+#: src/interface.c:1278
+msgid "label65"
+msgstr ""
+
+#: src/interface.c:1279 src/misc.c:464 src/misc.c:687
+msgid "entry21"
+msgstr ""
+
+#: src/interface.c:1280 src/misc.c:465 src/misc.c:688
+msgid "entry22"
+msgstr ""
+
+#: src/interface.c:1281 src/misc.c:466 src/misc.c:689
+msgid "entry23"
+msgstr ""
+
+#: src/interface.c:1282 src/misc.c:467 src/misc.c:690
+msgid "entry24"
+msgstr ""
+
+#: src/interface.c:1283 src/misc.c:468 src/misc.c:691
+msgid "entry25"
+msgstr ""
+
+#: src/interface.c:1284 src/misc.c:469 src/misc.c:692
+msgid "entry26"
+msgstr ""
+
+#: src/interface.c:1285 src/misc.c:470 src/misc.c:693
+msgid "entry27"
+msgstr ""
+
+#: src/interface.c:1286 src/misc.c:471 src/misc.c:694
+msgid "entry28"
+msgstr ""
+
+#: src/interface.c:1287 src/misc.c:472 src/misc.c:695
+msgid "entry29"
+msgstr ""
+
+#: src/interface.c:1288 src/misc.c:473 src/misc.c:696
+msgid "entry30"
+msgstr ""
+
+#: src/interface.c:1289 src/misc.c:474 src/misc.c:697
+msgid "entry31"
+msgstr ""
+
+#: src/interface.c:1290 src/misc.c:475 src/misc.c:698
+msgid "entry32"
+msgstr ""
+
+#: src/interface.c:1291 src/misc.c:476 src/misc.c:699
+msgid "entry33"
+msgstr ""
+
+#: src/interface.c:1292 src/misc.c:477 src/misc.c:700
+msgid "entry34"
+msgstr ""
+
+#: src/interface.c:1293
+msgid "label45"
+msgstr ""
+
+#: src/interface.c:1294
+msgid "table3"
+msgstr ""
+
+#: src/interface.c:1295 src/misc.c:444 src/misc.c:656
+msgid "checkbutton1"
+msgstr ""
+
+#: src/interface.c:1296 src/misc.c:448 src/misc.c:662
+msgid "checkbutton2"
+msgstr ""
+
+#: src/interface.c:1297 src/misc.c:456 src/misc.c:674
+msgid "checkbutton4"
+msgstr ""
+
+#: src/interface.c:1298
+msgid "label51"
+msgstr ""
+
+#: src/interface.c:1299
+msgid "hbuttonbox1"
+msgstr ""
+
+#: src/interface.c:1300 src/misc.c:483
+msgid "button4"
+msgstr ""
+
+#: src/interface.c:1301 src/misc.c:480
+msgid "button5"
+msgstr ""
+
+#: src/interface.c:1320
+msgid "File Editing"
+msgstr ""
+
+#: src/interface.c:1373
+msgid "dialog1"
+msgstr ""
+
+#: src/interface.c:1374
+msgid "dialog_vbox1"
+msgstr ""
+
+#: src/interface.c:1376
+msgid "scrolledwindow3"
+msgstr ""
+
+#: src/interface.c:1378
+msgid "dialog_action_area1"
+msgstr ""
+
+#: src/interface.c:1379
+msgid "cancelbutton1"
+msgstr ""
+
+#: src/interface.c:1380
+msgid "okbutton1"
+msgstr ""
+
+#: src/main.c:40
+msgid "UTF-8"
+msgstr ""
+
+#: src/misc.c:53 src/misc.c:83 src/misc.c:114
+msgid "Super"
+msgstr ""
+
+#: src/misc.c:60
+msgid "Shift+"
+msgstr ""
+
+#: src/misc.c:62
+msgid "Control+"
+msgstr ""
+
+#: src/misc.c:64
+msgid "Alt+"
+msgstr ""
+
+#: src/misc.c:66
+msgid "Super+"
+msgstr ""
+
+#: src/misc.c:87
+msgid "Super_R"
+msgstr ""
+
+#: src/misc.c:91
+msgid "Super_L"
+msgstr ""
+
+#: src/misc.c:144
+msgid "xprop WM_CLASS"
+msgstr ""
+
+#: src/misc.c:144 src/misc.c:744
+msgid "r"
+msgstr ""
+
+#: src/misc.c:155
+msgid "WM_CLASS(STRING)"
+msgstr ""
+
+#: src/misc.c:159
+msgid "\", \""
+msgstr ""
+
+#: src/misc.c:204
+msgid "en"
+msgstr ""
+
+#: src/misc.c:204
+msgid "ru"
+msgstr ""
+
+#: src/misc.c:204
+msgid "uk"
+msgstr ""
+
+#: src/misc.c:204
+msgid "be"
+msgstr ""
+
+#: src/misc.c:204
+msgid "fr"
+msgstr ""
+
+#: src/misc.c:204
+msgid "ro"
+msgstr ""
+
+#: src/misc.c:204
+msgid "kz"
+msgstr ""
+
+#: src/misc.c:204
+msgid "de"
+msgstr ""
+
+#: src/misc.c:221
+#, c-format
+msgid ""
+"Wrong XNeur configuration library api version.\n"
+"Please install libxnconfig version %d.x\n"
+msgstr ""
+
+#: src/misc.c:226
+#, c-format
+msgid "Using libxnconfig API version %d.%d (build with %d.%d)\n"
+msgstr ""
+
+#: src/misc.c:230
+#, c-format
+msgid ""
+"XNeur config broken!\n"
+"Please, remove ~/.xneur/xneurrc and reinstall package!\n"
+msgstr ""
+
+#: src/misc.c:240
+msgid "xneur"
+msgstr ""
+
+#: src/misc.c:241
+#, c-format
+msgid ""
+"ERROR: Couldn't start xneur\n"
+"Verify that it installed\n"
+msgstr ""
+
+#: src/misc.c:276
+#, c-format
+msgid "%s %s"
+msgstr ""
+
+#: src/misc.c:276
+msgid "Current Version"
+msgstr ""
+
+#: src/misc.c:307 src/misc.c:334 src/misc.c:361 src/misc.c:387
+msgid "Application"
+msgstr ""
+
+#: src/misc.c:307 src/misc.c:334 src/misc.c:361 src/misc.c:387
+msgid "text"
+msgstr ""
+
+#: src/misc.c:427
+msgid "Belarussian"
+msgstr ""
+
+#: src/support.c:32
+msgid "GladeParentKey"
+msgstr ""
+
+#: src/support.c:41
+#, c-format
+msgid "Widget not found: %s"
+msgstr ""
+
+#: src/support.c:91 src/support.c:115
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr ""
+
+#: src/support.c:122
+#, c-format
+msgid "Failed to load pixbuf file: %s: %s\n"
+msgstr ""
+
+#: src/trayicon.c:78
+msgid "Stop Daemon"
+msgstr ""
+
+#: src/trayicon.c:79
+msgid "gtk-stop"
+msgstr ""
+
+#: src/trayicon.c:83
+msgid "Run Daemon"
+msgstr ""
+
+#: src/trayicon.c:84
+msgid "gtk-execute"
+msgstr ""
+
+#: src/trayicon.c:90 src/trayicon.c:111
+msgid "image"
+msgstr ""
+
+#: src/trayicon.c:95 src/trayicon.c:116 src/trayicon.c:131 src/trayicon.c:137
+#: src/trayicon.c:143
+msgid "activate"
+msgstr ""
+
+#: src/trayicon.c:100
+msgid "Disable Input Autocorrection"
+msgstr ""
+
+#: src/trayicon.c:101
+msgid "gtk-disconnect"
+msgstr ""
+
+#: src/trayicon.c:105
+msgid "Enable Input Autocorrection"
+msgstr ""
+
+#: src/trayicon.c:106
+msgid "gtk-connect"
+msgstr ""
+
+#: src/trayicon.c:128
+msgid "gtk-preferences"
+msgstr ""
+
+#: src/trayicon.c:134
+msgid "gtk-about"
+msgstr ""
+
+#: src/trayicon.c:140
+msgid "gtk-quit"
+msgstr ""
+
+#: src/trayicon.c:173
+msgid "gxneur"
+msgstr ""
+
+#: src/trayicon.c:175
+#, c-format
+msgid "%s%s"
+msgstr ""
+
+#: src/trayicon.c:175
+msgid ".png"
+msgstr ""
+
+#: src/trayicon.c:182
+msgid "X Neural Switcher RUNNING ("
+msgstr ""
+
+#: src/trayicon.c:182 src/trayicon.c:187
+msgid ")"
+msgstr ""
+
+#: src/trayicon.c:187
+msgid "X Neural Switcher STOPPED ("
+msgstr ""
+
+#: src/trayicon.c:209
+msgid "X Neural Switcher"
+msgstr ""
+
+#: src/trayicon.c:210
+msgid "button_press_event"
+msgstr ""
+
+#: src/trayicon.c:211
+msgid "button_release_event"
+msgstr ""
+
+#: src/tray_widget.c:33
+msgid "gXNeurTrayIcon"
+msgstr ""
+
+#: src/tray_widget.c:105 src/tray_widget.c:275
+msgid "orientation"
+msgstr ""
+
+#: src/tray_widget.c:207
+msgid "expose_event"
+msgstr ""
+
+#: src/tray_widget.c:208
+msgid "style_set"
+msgstr ""
+
+#: src/tray_widget.c:223
+#, c-format
+msgid "_NET_SYSTEM_TRAY_S%d"
+msgstr ""
+
+#: src/tray_widget.c:226
+msgid "MANAGER"
+msgstr ""
+
+#: src/tray_widget.c:227
+msgid "_NET_SYSTEM_TRAY_OPCODE"
+msgstr ""
+
+#: src/tray_widget.c:228
+msgid "_NET_SYSTEM_TRAY_ORIENTATION"
+msgstr ""
+
+#: src/tray_widget.c:258
+msgid "realize"
+msgstr ""
+
+#: src/tray_widget.c:275
+msgid "Orientation"
+msgstr ""
+
+#: src/tray_widget.c:275
+msgid "The orientation of the tray."
+msgstr ""
+
+#: src/tray_widget.c:313
+msgid "title"
+msgstr ""

@@ -1,0 +1,126 @@
+.TH XNEURRC 1 
+.SH NAME
+xneurrc - configuration file for XNeur
+.SH DESCRIPTION
+.PP
+In this file defined options for XNeur. May be created or changed manuallly or with \fIgXNeur\fP or \fIkXNeur\fP. Location for manual settings: ~/.xneur/xneurrc. Location of base settings: {prefix}/etc/xneur/xneurrc
+.SH OPTIONS
+.TP 8
+.B Version <number>
+Defines conformity of the configuration file to the program version. For XNeur version 0.5.0, the value of <number> is 0.5.0.
+.TP 8
+.B DefaultMode <mode>
+Describes program mode. Here, the value of <mode> can be "Auto" or "Manual", which means, respectively, automatic or manual operation mode.
+
+In the automatic mode, the program "on fly" determines the input language and switches the keyboard layout, at the same time changing the word typed in. In the manual mode, the program does not use algorithms of language recognition, layout switching and text conversion take place on user request by pressing hot keys. 
+.TP 8
+.B LogLevel <level>
+Defines level of diagnostic output to console.
+
+Here, <level> takes the values "Error", "Warning", "Log", "Debug", "Trace". By changing this parameter, the detail of output to console can be controlled. 
+.TP 8
+.B AddLanguage <language> <dir> <group>
+Defines the language, with which the program will work.
+
+Here, <language> stands for the language, for which the layout should be specified (English or Russian), <dir> is a subdirectory in ~/.xneur/, where a config file for this language is located, and <group> is layout number group for the language in the system (takes values from 0 to 3). 
+.TP 8
+.B DefaultXkbGroup <group>
+Define initial keyboard layout for all new applications.
+
+Here, <group> stands for the number of XKB layout for this language in the system (takes values from 0 to 3).
+.TP 8
+.B ExcludeApp <app_name>
+Defines an application, in which the program WILL NOT work.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by XNeur.
+<app_name> can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option ExcludeApp". 
+.TP 8
+.B SetAutoApp <app_name>
+Defines an application, in which the program will always work in the automatic mode, independent of the DefaultMode option.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option SetAutoApp". 
+.TP 8
+.B SetManualApp <app_name>
+Defines an application, in which the program will always work in the manual mode, independent of the DefaultMode option.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option SetManualApp". 
+.TP 8
+.B AddBind <action> [Control | Alt | Shift | Super] [key]
+Defines hot keys for xneur control.
+
+Here, <action> stands for an action of XNeur, <key> stands for a special key.
+
+<action> takes the following values: "ChangeWord" (replace word/cancel last auto replacement), 
+"ChangeString" (replace last string), "ChangeMode" (switch between the auto and the manual program modes), 
+"ChangeSelected" (convert selected text to another layout), "TranslitSelected" (convert selected Cyrillic test to translit),
+"ChangecaseSelected" (change lettercase of selected text), "EnableLayout1" (enable of first layout),
+"EnableLayout2" (enable of second layout), "EnableLayout3" (enable of third layout), "EnableLayout4" (enable of fourth layout).
+
+[key] takes the values defined in your latin keyboard. Skip this value if hot key undefined.
+.TP 8
+.B PlaySound <param>
+This option enable or disable sound playing.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B AddSound <action> <sound>
+Binds sounds for some actions.
+
+Here, <action> takes the following values: "PressKeyLayout1", "PressKeyLayout2", "PressKeyLayout3", "PressKeyLayout4",
+"EnableLayout1", "EnableLayout2", "EnableLayout3", "EnableLayout4",
+"AutomaticChangeWord", "ManualChangeWord", "ChangeString", "ChangeSelected", "TranslitSelected", "ChangecaseSelected".
+
+<sound> is .wav file placed in ~/.xneur/sounds or in basic place ({prefix}/share/xneur/sounds/).
+.TP 8
+.B GrabMouse <param>
+Defines, if xneur will intercept mouse events to clear its buffer.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B EducationMode <param>
+Defines, if XNeur will work in self-training. A wrong input will be added to the dictionary, if it is twice converted into a specific layout manually. If this option is on, this will lead to a bigger dictionary. Does not make sence for the manual operating mode.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B LayoutRememberMode <param>
+This option enable or disable layout remember for each window
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B SaveSelectionMode <param>
+Define, if a selection will stay after changes, made by user actions, defined by the AddBind parameter.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B SendDelay <value>
+This option define delay in milliseconds before sendind events to application. 
+
+Here, <value> must be until 0 to 50. 
+.TP 8
+.B AddFlagPixmap <name> [pixmap]
+This option define pixmap for layout with <name>. Pixmap only in xpm format. 
+
+Here, <name> takes the following values: "Layout1Flag", "Layout2Flag", "Layout3Flag", "Layout4Flag"
+.TP 8
+.B DrawFlagApp <app_name>
+Defines an application, in which the program will draw flag.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option SetAutoApp".
+.TP 8
+.B SaveLog <param>
+This option enable or disable logging keyboard. Log places in ~/.xneur/xneurlog
+
+Here, <param> takes the values "Yes", "No". 
+
+
+.SH "SEE ALSO"
+xneur(1), gxneur(1), kxneur(1)
+.SH AUTHOR
+Andrew Crew Kuznetsov, Nikolay Yankin

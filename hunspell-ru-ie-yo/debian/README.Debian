@@ -1,0 +1,9 @@
+This dictionary contains Russian dictionary for the hunspell
+spellchecker currently supported by LibreOffice and Mozilla.
+
+This is a new hunspell dictionary aimed to provide a better
+alternative for myspell-ru.
+
+Refer to project homepage [1] for details.
+
+[1] http://code.google.com/p/hunspell-ru

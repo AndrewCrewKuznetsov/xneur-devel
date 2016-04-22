@@ -1,0 +1,19 @@
+1. Install.
+
+./configure
+make
+sudo make install
+
+
+2. Run.
+
+xcurf /path/to/pixmap/for/layout1.png /path/to/pixmap/for/layout2.png [/path/to/pixmap/for/layout3.png /path/to/pixmap/for/layout4.png]
+
+
+3. Example, in ENG-RU system:
+
+xcurf /usr/local/share/gxneur/pixmaps/en.png /usr/local/share/gxneur/pixmaps/ru.png
+
+
+4. More pixmaps for layout see here
+http://xneur.ru/browser/icons

@@ -1,0 +1,398 @@
+# translation of uk.po to Ukrainian
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the KXNeur package.
+#
+# Vadim Likhota <vadim-lvv{@}yandex.ru>, 2007.
+# Yuri Chornoivan <yurchor@ukr.net>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: uk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-07-07 16:22+0300\n"
+"PO-Revision-Date: 2007-07-01 12:24+0300\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+"Language-Team: Ukrainian <uk@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "Вадим Лiхота, Юрій Чорноіван"
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "vadim-lvv{@}yandex.ru, yurchor@ukr.net"
+
+#: kxneur.cpp:60 kxneur.cpp:130
+msgid "Start xneur daemon"
+msgstr "Запустити службу xneur"
+
+#: kxneur.cpp:103 kxneurtray.cpp:44
+msgid "Stop xneur daemon"
+msgstr "Зупинити службу xneur"
+
+#: kxneur.cpp:191 kxneurtray.cpp:42
+msgid "Set manual mode"
+msgstr "Встановити ручний режим"
+
+#: kxneur.cpp:196
+msgid "Set auto mode"
+msgstr "Встановити автоматичний режим"
+
+#: kxneur.cpp:265
+msgid "* Unknown lang *"
+msgstr "* Нерозпiзнана мова* "
+
+#: kxneurconf.cpp:93
+msgid "Run NXeur with start KXNeur"
+msgstr "Запускати службу xneur разом з kxneur"
+
+#: kxneurconf.cpp:97
+msgid "Start XNeur with '--force' option"
+msgstr "Запускати xneur з параметром '--force"
+
+#: kxneurconf.cpp:99
+msgid "With this option xneur don't check other xneur copies in ram"
+msgstr ""
+"Якщо обрати цей параметр xneur не перевірятиме наявність інших запущених "
+"копій"
+
+#: kxneurconf.cpp:101
+msgid "Autostart"
+msgstr "Автозапуск"
+
+#: kxneurconf.cpp:103
+msgid ""
+"Autostart of the program when entering the session. If recovery mode was "
+"enabled in KDE and KXNeur is running when exiting from this session, then "
+"KXneur will run automatically regardless of  autostart setting."
+msgstr ""
+"Автозапуск програми під час відкриття сеансу. Якщо в KDE встановлено режим "
+"відновлення сеансу і KXNeur було запущено під час виходу з останнього "
+"сеансу, то програма запуститься незалежно від того, чи встановлено "
+"автозапуск."
+
+#: kxneurconf.cpp:107
+msgid "show flag in tray"
+msgstr "показувати прапорець у лотку"
+
+#: kxneurconf.cpp:108
+msgid "show lang in tray"
+msgstr "показувати код мови у лотку"
+
+#: kxneurconf.cpp:110
+msgid "The style of icon reflected in the tray"
+msgstr "Стиль значка, що показується у лотку"
+
+#: kxneurconf.cpp:112
+msgid "Switcher mode"
+msgstr "Режим перемикача"
+
+#: kxneurconf.cpp:114
+msgid ""
+"This mode  switches between two languages used the last. For select anothey "
+"language need pointed it. For selecting the third language one needs to "
+"click it in the program menu. The switcher mode makes sense if one uses "
+"three or more languages."
+msgstr ""
+"Цей режим перемикає між двома мовами, що використовувалися востаннє. Для "
+"вибору третьої мови необхідно вказати її мишею у меню програми. Режим "
+"перемикача має сенс за наявності трьох чи більше мов."
+
+#: kxneurconf.cpp:133
+msgid "Set Mode on Start"
+msgstr "Встановити режим роботи при запуску"
+
+#: kxneurconf.cpp:136
+msgid "Automatic"
+msgstr "Автоматичний"
+
+#: kxneurconf.cpp:137
+msgid "Manual"
+msgstr "Ручний"
+
+#: kxneurconf.cpp:139
+msgid "The mode of program working set with its start"
+msgstr "Режим роботи програми, який буде встановлено під час її старту"
+
+#: kxneurconf.cpp:142
+msgid "Layouts"
+msgstr "Розкладки"
+
+#: kxneurconf.cpp:144
+msgid " Language Name "
+msgstr " Мова "
+
+#: kxneurconf.cpp:145
+msgid " Number "
+msgstr " Номер "
+
+#: kxneurconf.cpp:150
+msgid " "
+msgstr " "
+
+#: kxneurconf.cpp:151
+msgid "English"
+msgstr "Англійська"
+
+#: kxneurconf.cpp:152
+msgid "Russian"
+msgstr "Російська"
+
+#: kxneurconf.cpp:153
+msgid "Ukrainian"
+msgstr "Українська"
+
+#: kxneurconf.cpp:154
+msgid "Belarusian"
+msgstr "Білоруська"
+
+#: kxneurconf.cpp:155
+msgid "French"
+msgstr "Французька"
+
+#: kxneurconf.cpp:156
+msgid "Romanian"
+msgstr "Румунська"
+
+#: kxneurconf.cpp:166
+msgid "A number of the language group. NB! The numbers must be unique."
+msgstr "Номер групи мови. Номера не повинні повторюватися!"
+
+#: kxneurconf.cpp:167
+msgid "Dictionary..."
+msgstr "Словник..."
+
+#: kxneurconf.cpp:174
+msgid ""
+"The dictionaries for identification of certain language words. The words "
+"must be typed in Latine layout. For example, Russian 'tree' must be typed as "
+"'lthtdj'."
+msgstr ""
+"Словники розпізнавання слів будь-якої мови. Слова повинні набиратися в "
+"латинській розкладці. Наприклад, 'дерево' має бути набрано як 'lthtdj'."
+
+#: kxneurconf.cpp:175
+msgid "Regular Expressions..."
+msgstr "Регулярні вирази..."
+
+#: kxneurconf.cpp:182
+msgid "To set a word in the form of regular expression"
+msgstr "Задати слово у вигляді регулярного виразу"
+
+#: kxneurconf.cpp:189
+msgid ""
+"The block of layouts allow to set  languages and words for their processing "
+"by the program."
+msgstr ""
+"Блок розкладок дозволяє задати мови й слова, що використовуватимуться для їх "
+"обробки програмою."
+
+#: kxneurconf.cpp:191
+msgid "Additional"
+msgstr "Додатково"
+
+#: kxneurconf.cpp:194
+msgid "Processing Mouse Events"
+msgstr "Обробляти клацання мишею"
+
+#: kxneurconf.cpp:196
+msgid ""
+"If activated this mode considers not only Space, Tab, Enter etc. to be the "
+"end of a word, but also mouse clicking to another field."
+msgstr ""
+"За умови активації цього режиму закінченням слова буде вважатися не тільки "
+"Пробіл, Табуляція, Enter та інше, але й переведення курсора до іншого поля "
+"введення клацанням миші."
+
+#: kxneurconf.cpp:197
+msgid "Enable Education Mode"
+msgstr "Увімкнути режим самонавчання"
+
+#: kxneurconf.cpp:199
+msgid ""
+"All the returned (incorrect) switchings will be automatically added to the "
+"dictionary."
+msgstr ""
+"Усі повернуті (невірні) перемикання будуть автоматично заноситися до "
+"словника."
+
+#: kxneurconf.cpp:200
+msgid "Remember Layoute For Each Window"
+msgstr "Запам'ятати розкладку для кожного вікна"
+
+#: kxneurconf.cpp:202
+msgid "Program will save a language for each window."
+msgstr "Програма буде запам'ятовувати мову для кожного вiкна."
+
+#: kxneurconf.cpp:203
+msgid "Save Selection After Change Selected Text"
+msgstr "Зберігати виділення після зміни виділеного тексту"
+
+#: kxneurconf.cpp:306
+msgid "Excluded List"
+msgstr "Перелік винятків"
+
+#: kxneurconf.cpp:307
+msgid "Force Automatic Processing List"
+msgstr "Перелік для примусової автоматичної обробки"
+
+#: kxneurconf.cpp:308
+msgid "Force Manual Processing List"
+msgstr "Перелік для примусової ручної обробки"
+
+#: kxneurconf.cpp:313
+msgid ""
+"List of the programs or names of MainWindow of these programs that coincide "
+"in most cases."
+msgstr ""
+"Перелік програм чи назв MainWindow цих програм, які в бiльшостi випадкiв "
+"спiвпадають."
+
+#: kxneurconf.cpp:314
+msgid "Add program from list..."
+msgstr "Додати програму з переліку"
+
+#: kxneurconf.cpp:317
+msgid ""
+"List of the running graphical programs or the names of their  MainWindow "
+"(for several programs, for example sim, they do not coincide). If You do not "
+"see in the list  your program use the button 'Point the window' below. The "
+"list of the programs was received  by a query of child windows of the root-"
+"window by means of xwininfo from x11-tools."
+msgstr ""
+"Перелiк поточних графічних програм чи назв їх MainWindow (для деяких "
+"програм, наприклад sim, вони не співпадають). Якщо Ви не бачите у переліку "
+"своєї програми, скористайтеся кнопкою нижче 'Вказати вікно'. Перелік програм "
+"було отримано опитуванням дочірніх вікон root-window за допомогою xwininfo з "
+"x11-tools."
+
+#: kxneurconf.cpp:318
+msgid "Point window..."
+msgstr "Вказати вікно..."
+
+#: kxneurconf.cpp:321
+msgid ""
+"After pressing the button 'Point the button' one should make mouse click on "
+"a program window that must be added to the list. It is possible one will "
+"have to point out several windows for some sdi programs that have "
+"independant windows. Xprop from X11 is used for receiving the information of "
+"pointed window."
+msgstr ""
+"Після натиснення кнопки 'Вказати вікно' слід клацнути мишею на вікні "
+"програми, яку потрібно додати до переліку. Для деяких sdi програм, що мають "
+"незалежні вікна, можливо, доведеться вказати декілька вікон. Для отримання "
+"інформації про вказане вікно використовується xprop з X11."
+
+#: kxneurconf.cpp:337
+msgid "Settings"
+msgstr "Налаштування"
+
+#: kxneurconf.cpp:344 kxneurtray.cpp:58
+msgid "KXNeur"
+msgstr "KXNeur"
+
+#: kxneurconf.cpp:344
+msgid "KXNeur Options"
+msgstr "Налаштування KXNeur"
+
+#: kxneurconf.cpp:345
+msgid "XNeur"
+msgstr "XNeur"
+
+#: kxneurconf.cpp:345
+msgid "XNeur Daemon Options"
+msgstr "Налаштування служби XNeur"
+
+#: kxneurconf.cpp:346
+msgid "Keys"
+msgstr "Клавіші"
+
+#: kxneurconf.cpp:346
+msgid "Key Combinations"
+msgstr "Комбінації клавіш"
+
+#: kxneurconf.cpp:347
+msgid "Programs"
+msgstr "Програми"
+
+#: kxneurconf.cpp:347
+msgid "Exclusions for Program"
+msgstr "Винятки для програм"
+
+#: kxneurconf.cpp:453
+msgid "Replace / Cancel Replace "
+msgstr "Заміна / Скасування заміни "
+
+#: kxneurconf.cpp:454
+msgid "Replace Last String "
+msgstr "Заміна останнього рядка "
+
+#: kxneurconf.cpp:455
+msgid "Change Processing Mode "
+msgstr "Зміна режима роботи "
+
+#: kxneurconf.cpp:456
+msgid "Replace Selected Text "
+msgstr "Заміна виділеного тексту "
+
+#: kxneurconf.cpp:457
+msgid "Transliterate Selected Text "
+msgstr "Транслітерація виділеного тексту "
+
+#: kxneurconf.cpp:458
+msgid "Change Case Selected Text "
+msgstr "Зміна регістру виділеного тексту "
+
+#: kxneurconf.cpp:459
+msgid "Enable First Layout "
+msgstr ""
+
+#: kxneurconf.cpp:460
+msgid "Enable Secondary Layout "
+msgstr ""
+
+#: kxneurconf.cpp:461
+msgid "Enable Thrid Layout "
+msgstr ""
+
+#: kxneurconf.cpp:462
+msgid "Enable Fourth Layout "
+msgstr ""
+
+#: kxnlistbox.cpp:59
+msgid "current programs:"
+msgstr "поточні програми"
+
+#: main.cpp:29
+msgid ""
+"KXNeur (KDE X Neural Switcher) is XNeur front-end for KDE ( http://xneur."
+"ru ).\n"
+"This version work with XNeur v.0.6.2 only"
+msgstr ""
+"KXNeur (KDE X Neural Switcher) -- фронт-енд XNeur для KDE ( http://xneur."
+"ru ).\n"
+"Ця версія працює тільки з XNeur v.0.6.2"
+
+#: main.cpp:41
+msgid "keyboard autoswitcher"
+msgstr "автоперемикач розкладок клавіатури"
+
+#: main.cpp:45
+msgid ""
+"Authors X Neural Switcher, including Andrew Crew Kuznetsov and Yankin "
+"Nickolay Valerevich"
+msgstr ""
+"Автори X Neural Switcher, у т.ч. Андрiй Crew Кузнецов и Янкiн Микола "
+"Валерiйович"
+
+#: main.cpp:46
+msgid "Author kkbswitch, "
+msgstr "Автор kkbswitch, "
+

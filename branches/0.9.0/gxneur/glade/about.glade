@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
+<!--*- mode: xml -*-->
+<glade-interface>
+  <widget class="GtkWindow" id="window1">
+    <property name="visible">True</property>
+    <property name="title" translatable="yes">gXNeur About...</property>
+    <property name="resizable">False</property>
+    <child>
+      <widget class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <child>
+          <widget class="GtkLabel" id="label21">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">
+		&lt;b&gt;X Neural Switcher for Gnome&lt;/b&gt;		
+		GTK2 frontend for XNeur		
+
+AUTHORS:
+Andrew Crew Kuznetsov
+Nikolay Yankin</property>
+            <property name="use_markup">True</property>
+            <property name="justify">GTK_JUSTIFY_CENTER</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkImage" id="image1">
+            <property name="visible">True</property>
+            <property name="stock">gtk-missing-image</property>
+          </widget>
+          <packing>
+            <property name="padding">4</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkLabel" id="label44">
+            <property name="visible">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">3</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkHSeparator" id="hseparator1">
+            <property name="visible">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkHButtonBox" id="hbuttonbox2">
+            <property name="visible">True</property>
+            <property name="border_width">3</property>
+            <property name="layout_style">GTK_BUTTONBOX_END</property>
+            <child>
+              <widget class="GtkButton" id="button17">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="label">gtk-close</property>
+                <property name="use_stock">True</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="gtk_widget_destroy" object="window1"/>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="pack_type">GTK_PACK_END</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</glade-interface>

@@ -1,0 +1,106 @@
+.TH "kxneur" "1" 
+.SH "NAME" 
+kxneur \(em KDE frontend for xneur keyboard layout switcher 
+.SH "SYNOPSIS" 
+.PP 
+\fBkxneur\fR [\fBQt-options\fP]  [\fBKDE-options\fP]  
+.SH "DESCRIPTION" 
+.PP 
+This manual page documents briefly \fBkxneur\fR command. 
+.PP 
+kXNeur is a KDE frontend for xneur keyboard layout switcher. kXNeur runs in system tray and shows XNeur's state. It also allows to configure XNeur via GUI dialog. 
+.SH "OPTIONS" 
+.PP 
+Thes program accepts the same options any usual KDE appilcations do. 
+.PP 
+Generic options: 
+.IP "\fB\-\-help\fP" 10 
+Show help about options 
+.IP "\fB\-\-help-qt\fP" 10 
+Show Qt specific options 
+.IP "\fB\-\-help-kde\fP" 10 
+Show KDE specific options 
+.IP "\fB\-\-help-all\fP" 10 
+Show all options 
+.IP "\fB\-\-author\fP" 10 
+Show author information 
+.IP "\fB-v\fP, \fB\-\-version\fP" 10 
+Show version information 
+.IP "\fB\-\-license\fP" 10 
+Show license information 
+.IP "\fB\-\-\fP" 10 
+End of options 
+.PP 
+Qt options: 
+.IP "\fB\-\-display <displayname>\fP" 10 
+Use the X-server display 'displayname' 
+.IP "\fB\-\-session <sessionId>\fP" 10 
+Restore the application for the given 'sessionId' 
+.IP "\fB\-\-cmap\fP" 10 
+Causes the application to install a private color map on an 8-bit display 
+.IP "\fB\-\-ncols <count>\fP" 10 
+Limits the number of colors allocated in the color cube on an 8-bit display, if the  application  is  using  the  QApplication::ManyColor color specification 
+.IP "\fB\-\-nograb\fP" 10 
+tells Qt to never grab the mouse or the keyboard 
+.IP "\fB\-\-dograb\fP" 10 
+running under a debugger can cause an implicit \-nograb, use \-dograb to override 
+.IP "\fB\-\-sync\fP" 10 
+switches to synchronous mode for debugging 
+.IP "\fB\-\-fn\fP, \fB\-\-font <fontname>\fP" 10 
+defines the application font 
+.IP "\fB\-\-bg\fP, \fB\-\-background <color>\fP" 10 
+sets the default background color and an application palette (light and dark shades are calculated) 
+.IP "\fB\-\-fg\fP, \fB\-\-foreground <color>\fP" 10 
+sets the default foreground color 
+.IP "\fB\-\-btn\fP, \fB\-\-button <color>\fP" 10 
+sets the default button color 
+.IP "\fB\-\-name <name>\fP" 10 
+sets the application name 
+.IP "\fB\-\-title <title>\fP" 10 
+sets the application title (caption) 
+.IP "\fB\-\-visual TrueColor\fP" 10 
+forces the application to use a TrueColor visual on an 8-bit display 
+.IP "\fB\-\-inputstyle <inputstyle>\fP" 10 
+sets XIM (X Input Method) input style. Possible values are onthespot, overthespot, offthespot and root 
+.IP "\fB\-\-im <XIM server>\fP" 10 
+set XIM server 
+.IP "\fB\-\-noxim\fP" 10 
+disable XIM 
+.IP "\fB\-\-reverse\fP" 10 
+mirrors the whole layout of widgets 
+.PP 
+KDE options: 
+.IP "\fB\-\-caption <caption>\fP" 10 
+Use 'caption' as name in the titlebar 
+.IP "\fB\-\-icon <icon>\fP" 10 
+Use 'icon' as the application icon 
+.IP "\fB\-\-miniicon <icon>\fP" 10 
+Use 'icon' as the icon in the titlebar 
+.IP "\fB\-\-config <filename>\fP" 10 
+Use alternative configuration file 
+.IP "\fB\-\-dcopserver <server>\fP" 10 
+Use the DCOP Server specified by 'server' 
+.IP "\fB\-\-nocrashhandler\fP" 10 
+Disable crash handler, to get core dumps 
+.IP "\fB\-\-waitforwm\fP" 10 
+Waits for a WM_NET compatible windowmanager 
+.IP "\fB\-\-style <style>\fP" 10 
+sets the application GUI style 
+.IP "\fB\-\-geometry <geometry>\fP" 10 
+sets the client geometry of the main widget \- see man X for the argument format 
+.SH "SEE ALSO" 
+.PP 
+xneur (1), gxneur(1) 
+.SH "AUTHOR" 
+.PP 
+This manual page was written by Alexander GQ Gerasiov <gq@cs.msu.su> for 
+the \fBDebian\fP system (but may be used by others).  Permission is 
+granted to copy, distribute and/or modify this document under 
+the terms of the GNU General Public License, Version 2 any  
+later version published by the Free Software Foundation. 
+ 
+.PP 
+On Debian systems, the complete text of the GNU General Public 
+License can be found in /usr/share/common-licenses/GPL. 
+ 
+.\" created by instant / docbook-to-man, Thu 27 Dec 2007, 01:05 

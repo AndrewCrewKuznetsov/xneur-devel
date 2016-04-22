@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<dock-layout>
+  <layout name="__default__">
+    <dock name="__dock_1" floating="no" width="-1" height="-1" floatx="0" floaty="0" skip-taskbar="yes">
+      <paned orientation="horizontal" locked="no" iconified="no" closed="no" position="243">
+        <paned orientation="vertical" locked="no" iconified="no" closed="no" position="167">
+          <notebook orientation="vertical" locked="no" iconified="no" closed="no" page="1">
+            <item name="AnjutaFileManager" orientation="vertical" locked="no" iconified="no" closed="no"/>
+            <item name="AnjutaProjectManager" orientation="vertical" locked="no" iconified="no" closed="no"/>
+            <item name="AnjutaSymbolDB" orientation="vertical" locked="no" iconified="no" closed="yes"/>
+          </notebook>
+          <item name="search_files" orientation="vertical" locked="no" iconified="no" closed="yes"/>
+        </paned>
+        <paned orientation="vertical" locked="no" iconified="no" closed="no" position="500">
+          <item name="AnjutaDocumentManager" orientation="vertical" locked="no" iconified="no" closed="no"/>
+          <item name="AnjutaMessageView" orientation="vertical" locked="no" iconified="no" closed="yes"/>
+        </paned>
+      </paned>
+    </dock>
+  </layout>
+</dock-layout>

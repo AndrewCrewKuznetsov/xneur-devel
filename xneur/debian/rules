@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_CONFIGURE_EXTRA_FLAGS := 
+DEB_DH_STRIP_ARGS := --dbg-package=xneur-dbg
+DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+
+PRESERVE_UPSTREAM := po/stamp-po xnconfig.pc xneur.pc
+
+pre-build::
+	for i in $(PRESERVE_UPSTREAM); do\
+		test -f $$i.upstream || cp $$i $$i.upstream; \
+	done
+
+clean::
+	for i in $(PRESERVE_UPSTREAM); do\
+		test ! -f $$i.upstream || mv -f $$i.upstream $$i; \
+	done
+

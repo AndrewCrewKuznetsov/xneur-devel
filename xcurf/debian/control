@@ -1,0 +1,12 @@
+Source: xcurf
+Section: x11
+Priority: optional
+Maintainer: Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, pkg-config, libimlib2-dev, libtool, docbook-to-man
+Standards-Version: 3.8.4
+Homepage: http://xneur.ru
+
+Package: xcurf
+Architecture: any
+Description: Utility to display the flag icon beside the cursor.
+

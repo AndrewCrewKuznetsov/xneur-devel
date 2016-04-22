@@ -1,0 +1,257 @@
+# translation of gxneur.
+# Copyright (C) 2007 THE gxneur'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gxneur package.
+# <>, 2007.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: gxneur 0.5.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-03-07 13:29+0300\n"
+"PO-Revision-Date: 2007-02-13 00:53+0300\n"
+"Last-Translator:  <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/support.c:91 src/support.c:115
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr ""
+
+#: src/interface.c:41
+msgid "gXNeur About..."
+msgstr "О gXNeur..."
+
+#: src/interface.c:48
+msgid ""
+"\n"
+"\t\t<b>X Neural Switcher for Gnome</b>\t\t\n"
+"\t\tGTK2 frontend for XNeur\t\t\n"
+"\n"
+"AUTHORS:\n"
+"Andrew Crew Kuznetsov\n"
+"Nikolay Yankin"
+msgstr ""
+"\n"
+"\t\t<b>X Neural Switcher для Gnome</b>\t\t\n"
+"\t\tGTK2 оболонка для XNeur\t\t\n"
+"\n"
+"Автори:\n"
+"Андрей Crew Кузнецов\n"
+"Николай Янкин"
+
+#: src/interface.c:184
+msgid "XNeur Settings"
+msgstr "Настройка XNeur"
+
+#: src/interface.c:213
+msgid "<b>Processing Mode\t\t</b>"
+msgstr "<b>Режим роботи програми\t\t</b>"
+
+#: src/interface.c:222
+msgid "Automatic"
+msgstr "Автоматичний"
+
+#: src/interface.c:223
+msgid "Manual"
+msgstr "Ручною"
+
+#: src/interface.c:233
+msgid "<b>Key Bindings</b>"
+msgstr "<b>Поєднання клавіш</b>"
+
+#: src/interface.c:243
+msgid "Replace Selected Text"
+msgstr "Заміна виделеного тексту"
+
+#: src/interface.c:250
+msgid "Change Processing Mode"
+msgstr "Зміна режиму роботи"
+
+#: src/interface.c:257
+msgid "Replace Last String "
+msgstr "Заміна останнього рядка"
+
+#: src/interface.c:264
+msgid "Replace / Cancel Replace "
+msgstr "Заміна / Відміна Заміни "
+
+#: src/interface.c:276 src/interface.c:286 src/interface.c:296
+#: src/interface.c:306 src/interface.c:316 src/interface.c:326
+#: src/interface.c:336 src/interface.c:346 src/interface.c:363
+#: src/interface.c:373 src/interface.c:390 src/interface.c:400
+msgid "None"
+msgstr "Відсутній"
+
+#: src/interface.c:277 src/interface.c:297 src/interface.c:317
+#: src/interface.c:337 src/interface.c:364 src/interface.c:391
+msgid "Shift"
+msgstr ""
+
+#: src/interface.c:278 src/interface.c:298 src/interface.c:318
+#: src/interface.c:338 src/interface.c:365 src/interface.c:392
+msgid "Ctrl"
+msgstr ""
+
+#: src/interface.c:279 src/interface.c:299 src/interface.c:319
+#: src/interface.c:339 src/interface.c:366 src/interface.c:393
+msgid "Alt"
+msgstr ""
+
+#: src/interface.c:287 src/interface.c:307 src/interface.c:327
+#: src/interface.c:347 src/interface.c:374 src/interface.c:401
+msgid "Break"
+msgstr ""
+
+#: src/interface.c:288 src/interface.c:308 src/interface.c:328
+#: src/interface.c:348 src/interface.c:375 src/interface.c:402
+msgid "ScrollLock"
+msgstr ""
+
+#: src/interface.c:289 src/interface.c:309 src/interface.c:329
+#: src/interface.c:349 src/interface.c:376 src/interface.c:403
+msgid "PrtSc"
+msgstr ""
+
+#: src/interface.c:351
+msgid "Transliterate Selected Text"
+msgstr "Транслітер. виделеного тексту "
+
+#: src/interface.c:378
+msgid "Change Case Selected Text "
+msgstr "Зміна регістру виділеного тексту "
+
+#: src/interface.c:409
+msgid "<b>Additional</b>"
+msgstr "<b>Додатково</b>"
+
+#: src/interface.c:419
+msgid "Processing Mouse Events"
+msgstr "Обробляти події миші"
+
+#: src/interface.c:425
+msgid "Enable Education Mode"
+msgstr "Включити режим самонавчання"
+
+#: src/interface.c:431
+msgid "Remember Layoute For Each Window"
+msgstr "Запам'ятовувати розкладку для кожного вікна"
+
+#: src/interface.c:437
+msgid "Save Selection After Change Selected Text"
+msgstr "Зберігати виділення після зміни виділеного тексту"
+
+#: src/interface.c:443
+msgid "Preferences"
+msgstr "Параметри"
+
+#: src/interface.c:452
+msgid "Language Name"
+msgstr "Назва мови"
+
+#: src/interface.c:487
+msgid "Number\t"
+msgstr "Номер\t"
+
+#: src/interface.c:494
+msgid "Settings Folder"
+msgstr "Тека настройок"
+
+#: src/interface.c:501 src/interface.c:510 src/interface.c:519
+#: src/interface.c:528
+msgid "Select File"
+msgstr "Виберіть файл"
+
+#: src/interface.c:542 src/interface.c:552 src/interface.c:562
+#: src/interface.c:572
+msgid "0"
+msgstr ""
+
+#: src/interface.c:543 src/interface.c:553 src/interface.c:563
+#: src/interface.c:573
+msgid "1"
+msgstr ""
+
+#: src/interface.c:544 src/interface.c:554 src/interface.c:564
+#: src/interface.c:574
+msgid "2"
+msgstr ""
+
+#: src/interface.c:545 src/interface.c:555 src/interface.c:565
+#: src/interface.c:575
+msgid "3"
+msgstr ""
+
+#: src/interface.c:577 src/interface.c:583 src/interface.c:589
+#: src/interface.c:595
+msgid "Dictionary..."
+msgstr "Словник..."
+
+#: src/interface.c:601
+msgid "Layouts"
+msgstr "Розкладки"
+
+#: src/interface.c:613
+msgid "Excluded List"
+msgstr "Список виключень"
+
+#: src/interface.c:638 src/interface.c:679 src/interface.c:720
+msgid "Add..."
+msgstr "Додати..."
+
+#: src/interface.c:642 src/interface.c:683 src/interface.c:724
+msgid "Remove"
+msgstr "Видалити"
+
+#: src/interface.c:654
+msgid "Force Automatic Processing List"
+msgstr "Список для примусової автоматичної обробки"
+
+#: src/interface.c:695
+msgid "Force Manual Processing List"
+msgstr "Список для примусової ручної обробки"
+
+#: src/interface.c:728
+msgid "Applications"
+msgstr "Приложения"
+
+#: src/interface.c:873
+msgid "Dictionary Editing"
+msgstr "Редагування словника"
+
+#: src/misc.c:174 src/misc.c:203 src/misc.c:232
+msgid "Application"
+msgstr "Приложение"
+
+#: src/trayicon.c:74
+msgid "Stop Daemon"
+msgstr "Зупинити демон"
+
+#: src/trayicon.c:79
+msgid "Run Daemon"
+msgstr "Запустити демон"
+
+#: src/trayicon.c:94
+msgid "Disable Input Autocorrection"
+msgstr "Відключити автокорекцію введення"
+
+#: src/trayicon.c:99
+msgid "Enable Input Autocorrection"
+msgstr "Включити автокорекцію введення"
+
+#: src/trayicon.c:181
+msgid "X Neural Switcher RUNNING ("
+msgstr "X Neural Switcher запущений ("
+
+#: src/trayicon.c:186
+msgid "X Neural Switcher STOPPED ("
+msgstr "X Neural Switcher зупинений ("
+
+#: src/trayicon.c:208
+#, fuzzy
+msgid "X Neural Switcher"
+msgstr "X Neural Switcher запущений ("

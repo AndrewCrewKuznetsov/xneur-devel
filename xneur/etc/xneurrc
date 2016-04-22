@@ -1,0 +1,405 @@
+# It's a X Neural Switcher configuration file by XNeur
+# All values writted XNeur
+
+# Config version
+Version 0.15.0
+
+# Work in manual mode
+ManualMode No
+
+# Level of messages program will write to output
+#LogLevel Error
+#LogLevel Warning
+#LogLevel Log
+#LogLevel Debug
+#LogLevel Trace
+LogLevel Trace
+
+# Define unused languages
+# Example:
+#ExcludeLanguage de
+
+# Define initial keyboard layout for all new applications
+DefaultXkbGroup 0
+
+# Add Applications names to exclude it from procces with xneur
+# Xneur will not process the input for this applications
+# Example:
+#ExcludeApp Gaim
+ExcludeApp Krdc
+ExcludeApp Palimpsest
+ExcludeApp Remmina
+ExcludeApp VirtualBox
+ExcludeApp Wine
+ExcludeApp rdesktop
+ExcludeApp Xfdesktop
+
+# Use this parameter to force set work mode in current application to Auto.
+# Example:
+#SetAutoApp Gedit
+
+# Use this parameter to force set work mode in current application to Manual.
+# Example:
+#SetManualApp Anjuta
+
+# Binds hotkeys for some actions
+AddBind ChangeWord Break
+AddBind TranslitWord 
+AddBind ChangecaseWord 
+AddBind PreviewChangeWord 
+AddBind ChangeString 
+AddBind ChangeMode Control Print
+AddBind ChangeSelected Shift Break
+AddBind TranslitSelected Alt Scroll_Lock
+AddBind ChangecaseSelected Shift Alt Break
+AddBind PreviewChangeSelected Control Pause
+AddBind ChangeClipboard Control Scroll_Lock
+AddBind TranslitClipboard 
+AddBind ChangecaseClipboard 
+AddBind PreviewChangeClipboard 
+AddBind EnableLayout1 
+AddBind EnableLayout2 
+AddBind EnableLayout3 
+AddBind EnableLayout4 
+AddBind RotateLayout 
+AddBind ReplaceAbbreviation Control Tab
+AddBind RotateLayoutBack 
+AddBind AutocompletionConfirmation Tab
+AddBind BlockKeyboardAndMouseEvents 
+AddBind InsertDate Super d
+
+# This option add user action when pressed key bind
+# Example:
+#AddAction Control Alt f Firefox Browser <cmd>firefox</cmd>
+AddAction Alt t Вызов терминала <cmd>gnome-terminal</cmd>
+AddAction Alt g Открыть Gedit <cmd>gedit</cmd>
+AddAction Super_L Открыть Nautilus <cmd>nautilus ~/</cmd>
+AddAction Super f Открыть ссылку в Firefox <cmd>xsel -o | xargs firefox --new-tab</cmd>
+AddAction Super g Google - Искать <cmd>xsel -o | sed -r '2~1d;s/(^\s+|\s+$)//g;s/%/%25/g;s/#/%23/g;s/\$/%24/g;s/&/%26/g;s/\+/%2B/;s/,/%2C/g;s/:/%3A/g;s/;/%3B/g;s/=/%3D/g;s/\?/%3F/g;s/@/%40/g;s/\s/+/g' | awk '{print "http://www.google.ru/search?hl=ru&q=" $1}' | xargs firefox -new-tab</cmd>
+AddAction Super r Google - Перевести на русский <cmd>xsel -o | sed -r '2~1d;s/(^\s+|\s+$)//g;s/%/%25/g;s/#/%23/g;s/\$/%24/g;s/&/%26/g;s/\+/%2B/;s/,/%2C/g;s/:/%3A/g;s/;/%3B/g;s/=/%3D/g;s/\?/%3F/g;s/@/%40/g;s/\s/+/g' | awk '{print "translate.google.com/translate_t?hl=ru#auto|ru|" $1}' | xargs firefox -new-tab</cmd>
+AddAction Super a Google - Перевести на английский <cmd>xsel -o | sed -r '2~1d;s/(^\s+|\s+$)//g;s/%/%25/g;s/#/%23/g;s/\$/%24/g;s/&/%26/g;s/\+/%2B/;s/,/%2C/g;s/:/%3A/g;s/;/%3B/g;s/=/%3D/g;s/\?/%3F/g;s/@/%40/g;s/\s/+/g' | awk '{print "translate.google.com/translate_t?hl=ru#auto|en|" $1}' | xargs firefox -new-tab</cmd>
+AddAction Super y Яndex - Поиск <cmd>xsel -o | sed -r '2~1d;s/(^\s+|\s+$)//g;s/%/%25/g;s/#/%23/g;s/\$/%24/g;s/&/%26/g;s/\+/%2B/;s/,/%2C/g;s/:/%3A/g;s/;/%3B/g;s/=/%3D/g;s/\?/%3F/g;s/@/%40/g;s/\s/+/g' | awk '{print "http://yandex.ru/yandsearch?text=" $1 }' | xargs firefox -new-tab</cmd>
+
+# Word Replacing
+# Ignore keyboard layout for abbreviations list
+# Example:
+#ReplaceAbbreviationIgnoreLayout No
+ReplaceAbbreviationIgnoreLayout Yes
+
+# Abbreviations list
+# Example:
+#ReplaceAbbreviation xneur X Neural Switcher
+
+# This option enable or disable sound playing
+# Example:
+#PlaySounds No
+PlaySounds Yes
+
+# This option defined sound playing volume percent
+# Example:
+#SoundVolumePercent 10
+SoundVolumePercent 15
+
+# Binds sounds for some actions
+AddSound XneurStart 
+AddSound XneurReload 
+AddSound XneurStop 
+AddSound PressKeyLayout1 Enable layout1type.wav
+AddSound PressKeyLayout2 Enable layout2type.wav
+AddSound PressKeyLayout3 
+AddSound PressKeyLayout4 
+AddSound EnableLayout1 
+AddSound EnableLayout2 
+AddSound EnableLayout3 
+AddSound EnableLayout4 
+AddSound AutomaticChangeWord Enable itemback.wav
+AddSound ManualChangeWord 
+AddSound ManualTranslitWord 
+AddSound ManualChangecaseWord 
+AddSound ManualPreviewChangeWord 
+AddSound ChangeString 
+AddSound ChangeSelected 
+AddSound TranslitSelected 
+AddSound ChangecaseSelected 
+AddSound PreviewChangeSelected 
+AddSound ChangeClipboard 
+AddSound TranslitClipboard 
+AddSound ChangecaseClipboard 
+AddSound PreviewChangeClipboard 
+AddSound ReplaceAbbreviation Enable switch.wav
+AddSound CorrectIncidentalCaps 
+AddSound CorrectTwoCapitalLetter 
+AddSound ExecuteUserAction Enable switch.wav
+AddSound BlockKeyboardAndMouseEvents 
+AddSound UnblockKeyboardAndMouseEvents 
+
+# This option enable or disable self education of xneur
+# Example:
+#EducationMode No
+EducationMode Yes
+
+# This option enable or disable layout remember for each window
+# Example:
+#LayoutRememberMode No
+LayoutRememberMode Yes
+
+# Use this parameter to force enable layout remember for each application, not window.
+# Option "LayoutRememberMode" must be enabled.
+# Example:
+#LayoutRememberModeForApp Gaim
+LayoutRememberModeForApp Wine
+
+# This option enable or disable saving selection text
+# Example:
+#SaveSelectionMode No
+SaveSelectionMode Yes
+
+# This option enable or disable rotating layout after convert selected text
+# Example:
+#RotateLayoutAfterChangeSelectedMode No
+RotateLayoutAfterChangeSelectedMode No
+
+# This option define delay before sendind events to application (in milliseconds between 0 to 50).
+SendDelay 0
+
+# This option enable or disable logging keyboard
+# Example:
+#LogSave No
+LogSave No
+
+# This option set max size of log file (bytes).
+# Example:
+#LogSize 1048576
+LogSize 1048576
+
+# This option define e-mail for send log file, if it's size greater then max size.
+# Example:
+#LogMail your.mail@your.server.com
+
+# This option define host to send e-mail without login and password.
+# Example:
+#LogHostIP 127.0.0.1
+#LogHostIP mail.example.com
+
+# This option define port to send e-mail without login and password.
+# Example:
+#LogPort 25
+
+# This option enable or disable correction of iNCIDENTAL CapsLock
+# Example:
+#CorrectIncidentalCaps Yes
+CorrectIncidentalCaps Yes
+
+# This option enable or disable correction of two CApital letter
+# Example:
+#CorrectTwoCapitalLetter Yes
+CorrectTwoCapitalLetter Yes
+
+# This option enable or disable correction of small letter to capital letter after dot
+# Example:
+#CorrectCapitalLetterAfterDot Yes
+CorrectCapitalLetterAfterDot Yes
+
+# This option enable or disable correction of two space with a comma and a space
+# Example:
+#CorrectTwoSpaceWithCommaAndSpace Yes
+CorrectTwoSpaceWithCommaAndSpace No
+
+# This option enable or disable correction of two minus with a dash
+# Example:
+#CorrectTwoMinusWithDash Yes
+CorrectTwoMinusWithDash No
+
+# This option enable or disable correction of two minus with a emdash
+# Example:
+#CorrectDashWithEmDash Yes
+CorrectDashWithEmDash Yes
+
+# This option enable or disable correction of (c) with a copyright sign
+# Example:
+#CorrectCWithCopyright Yes
+CorrectCWithCopyright No
+
+# This option enable or disable correction of (tm) with a trademark sign
+# Example:
+#CorrectTMWithTrademark Yes
+CorrectTMWithTrademark No
+
+# This option enable or disable correction of (r) with a registered sign
+# Example:
+#CorrectRWithRegistered Yes
+CorrectRWithRegistered No
+
+# This option enable or disable correction of three points with a ellipsis sign
+# Example:
+#CorrectThreePointsWithEllipsis Yes
+CorrectThreePointsWithEllipsis No
+
+# This option enable or disable flushing internal buffer when pressed Escape
+# Example:
+#FlushBufferWhenPressEscape Yes
+FlushBufferWhenPressEscape No
+
+# This option enable or disable flushing internal buffer when pressed Enter or Tab
+# Example:
+#FlushBufferWhenPressEnter Yes
+FlushBufferWhenPressEnter No
+
+# This option disable or enable show OSD
+# Example:
+#ShowOSD Yes
+ShowOSD No
+
+# This option set font for OSD
+# Example:
+#FontOSD -*-*-*-*-*-*-32-*-*-*-*-*-*-u
+FontOSD -*-*-*-*-*-*-32-*-*-*-*-*-*-u
+
+# Binds OSDs for some actions
+AddOSD XneurStart Enable X Neural Switcher запущен
+AddOSD XneurReload Enable X Neural Switcher перезагружен
+AddOSD XneurStop Enable X Neural Switcher остановлен
+AddOSD PressKeyLayout1
+AddOSD PressKeyLayout2
+AddOSD PressKeyLayout3
+AddOSD PressKeyLayout4
+AddOSD EnableLayout1
+AddOSD EnableLayout2
+AddOSD EnableLayout3
+AddOSD EnableLayout4
+AddOSD AutomaticChangeWord
+AddOSD ManualChangeWord
+AddOSD ManualTranslitWord
+AddOSD ManualChangecaseWord
+AddOSD ManualPreviewChangeWord
+AddOSD ChangeString
+AddOSD ChangeSelected
+AddOSD TranslitSelected
+AddOSD ChangecaseSelected
+AddOSD PreviewChangeSelected
+AddOSD ChangeClipboard
+AddOSD TranslitClipboard
+AddOSD ChangecaseClipboard
+AddOSD PreviewChangeClipboard
+AddOSD ReplaceAbbreviation
+AddOSD CorrectIncidentalCaps
+AddOSD CorrectTwoCapitalLetter
+AddOSD ExecuteUserAction Enable Выполняется команда
+AddOSD BlockKeyboardAndMouseEvents
+AddOSD UnblockKeyboardAndMouseEvents
+
+# This option disable or enable show popup messages
+# Example:
+#ShowPopup Yes
+ShowPopup Yes
+
+# This option defines popup expiration interval in milliseconds
+# Example:
+#PopupExpireTimeout 1000
+PopupExpireTimeout 1000
+
+# Binds popup messages for some actions
+AddPopup XneurStart Enable X Neural Switcher запущен
+AddPopup XneurReload Enable X Neural Switcher перезагружен
+AddPopup XneurStop Enable X Neural Switcher остановлен
+AddPopup PressKeyLayout1
+AddPopup PressKeyLayout2
+AddPopup PressKeyLayout3
+AddPopup PressKeyLayout4
+AddPopup EnableLayout1
+AddPopup EnableLayout2
+AddPopup EnableLayout3
+AddPopup EnableLayout4
+AddPopup AutomaticChangeWord
+AddPopup ManualChangeWord
+AddPopup ManualTranslitWord
+AddPopup ManualChangecaseWord
+AddPopup ManualPreviewChangeWord
+AddPopup ChangeString
+AddPopup ChangeSelected
+AddPopup TranslitSelected
+AddPopup ChangecaseSelected
+AddPopup PreviewChangeSelected Enable Предпросмотр коррекции выделеного текста
+AddPopup ChangeClipboard
+AddPopup TranslitClipboard
+AddPopup ChangecaseClipboard
+AddPopup PreviewChangeClipboard Enable Предпросмотр коррекции буфера обмена
+AddPopup ReplaceAbbreviation
+AddPopup CorrectIncidentalCaps
+AddPopup CorrectTwoCapitalLetter
+AddPopup ExecuteUserAction Enable Выполняется команда
+AddPopup BlockKeyboardAndMouseEvents 
+AddPopup UnblockKeyboardAndMouseEvents 
+
+# This option disable or enable checking language on input process
+# Example:
+#CheckOnProcess Yes
+CheckOnProcess Yes
+
+# This option disable or enable CapsLock use
+# Example:
+#DisableCapsLock Yes
+DisableCapsLock No
+
+# This option disable or enable correction spaces befor punctuation
+# Example:
+#CorrectSpaceWithPunctuation No
+CorrectSpaceWithPunctuation No
+
+# This option disable or enable pattern mining and recognition (autocompletion)
+# Example:
+#Autocompletion No
+Autocompletion Yes
+
+# This option disable or enable adding space after autocompletion
+# Example:
+#AddSpaceAfterAutocompletion No
+AddSpaceAfterAutocompletion No
+
+# Add Applications names to exclude it from autocompletion process
+# Xneur will not process the autocompletion for this applications
+# Example:
+#AutocompletionExcludeApp Gnome-terminal
+AutocompletionExcludeApp Gnome-terminal
+
+# Use next options for troubleshoot on autoswitching
+# Disable autoswitching if pressed backspace
+TroubleshootBackspace No
+# Disable autoswitching if pressed left arrow
+TroubleshootLeftArrow No
+# Disable autoswitching if pressed right arrow
+TroubleshootRightArrow No
+# Disable autoswitching if pressed up arrow
+TroubleshootUpArrow No
+# Disable autoswitching if pressed down arrow
+TroubleshootDownArrow No
+# Disable autoswitching if pressed delete
+TroubleshootDelete No
+# Disable autoswitching if pressed enter
+TroubleshootEnter No
+# Disable autoswitching if pressed tab
+TroubleshootTab No
+# Disable autoswitching if layout switched
+TroubleshootSwitch Yes
+# Disable autoswitching for full screen apps
+TroubleshootFullScreen Yes
+
+# Add Applications names to exclude it from sending KeyRelease process
+# Xneur will not send KeyRelease events for this applications
+# Example:
+#SetDontSendKeyReleaseApp libreoffice-writer
+
+# Work-arround for compatibility with the completion
+CompatibilityWithCompletion Yes
+
+# Disabling this option will add any application to the list of excluded applications.
+TrackingInput Yes
+
+# Disabling this option will disable mouse tracking.
+TrackingMouse Yes
+
+# Modules list
+# Example:
+#LoadModule libxntest.so
+
+# That's all

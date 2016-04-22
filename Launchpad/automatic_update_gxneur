@@ -1,0 +1,121 @@
+#!/bin/sh
+
+# Must be from GPG key
+export DEBEMAIL="Andrew Crew Kuznetsov <andrewcrew@rambler.ru>"
+
+if !([ -e gxneur_*.orig.tar.gz ]); then
+  echo "File gxneur_*.orig.tar.gz is not found.";
+  export OLD_VER=0;
+else
+  export OLD_VER=$(ls gxneur_*.orig.tar.gz | sed -e "s/^gxneur_\(.*\).orig.tar.gz$/\1/");
+fi
+
+export LAST_REVISION=$(hg su | grep "родитель:[\ ]*[0-9]\+" | sed -e "s/^родитель:[\ ]*\([0-9]\+\).*$/\1/")
+
+echo "Number of last revision: ${LAST_REVISION}"
+
+if [ -z ${LAST_REVISION} ]; then
+  echo "Error: number of last revision is empty!";
+  exit 0;
+fi
+
+echo "Updating is started."
+# begin local updating
+hg pull
+hg update
+hg merge
+
+export CUR_VER=$(cat ../gxneur/configure.ac | grep "AC_INIT" | sed -e "s/^AC_INIT(gxneur, \(.*\))$/\1/")
+export NEW_VER="${CUR_VER}+hg${LAST_REVISION}"
+
+echo "OLD_VER = ${OLD_VER}"
+echo "NEW_VER = ${NEW_VER}"
+
+if [ ${NEW_VER} = ${OLD_VER} ]; then
+	echo "Upgrading is not required.";
+	read -p "You'r rebuild packages (y/N)?" RESP
+	
+	if [ "$RESP" != y ] ; then
+		echo "Rebuilding is not required.";
+		exit 0;
+	fi
+fi
+
+# begin local updating
+hg archive -t files "gxneur-tmp"
+
+# end local updating
+
+# building to dist
+cd ./"gxneur-tmp"/gxneur
+# save debianize settings
+mv ./debian ../../
+./autogen.sh
+make dist
+mkdir ../../"gxneur-${CUR_VER}"
+tar -xvf "gxneur-${CUR_VER}.tar.gz" -C ../../
+cd ../..
+rm -R ./"gxneur-tmp"
+# end building
+
+#Create .orig.tar.gz
+tar -czf "gxneur_$NEW_VER.orig.tar.gz" "gxneur-${CUR_VER}"
+
+cd "gxneur-${CUR_VER}"
+# restore debianize settings
+mv ../debian ./
+
+read -p "Build package only on local system (y/N)?" RESPONSE
+echo
+if [ "$RESPONSE" = y ] ; then
+	# If you want to build package on your system uncomment this:
+	dch -v "$NEW_VER-mybuild1" "Minor update."
+	dpkg-buildpackage -rfakeroot
+
+	cd ..
+	rm -R ./"gxneur-${NEW_VER}"
+else
+
+# Note: I am using gnupg-agent for comfortable work
+
+# begin update for basic releases
+dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+  "Minor update."
+debuild -S -sa
+# end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "vivid" -v "${NEW_VER}-0vivid" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "trusty" -v "${NEW_VER}-0trusty" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "precise" -v "${NEW_VER}-0precise" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+# end update for other releases
+
+cd ..
+echo "Download to Launchpad Wily..."
+dput ppa gxneur_${NEW_VER}-0wily_source.changes | cat
+echo "Download to Launchpad Vivid..."
+dput ppa gxneur_${NEW_VER}-0vivid_source.changes | cat
+echo "Download to Launchpad Trusty..."
+dput ppa gxneur_${NEW_VER}-0trusty_source.changes | cat
+echo "Download to Launchpad Precise..."
+dput ppa gxneur_${NEW_VER}-0precise_source.changes | cat
+
+rm -R ./"gxneur-${NEW_VER}"
+rm -R ./"gxneur-${CUR_VER}"
+
+fi
+
+echo "Update gxneur finished successfully"
+
+

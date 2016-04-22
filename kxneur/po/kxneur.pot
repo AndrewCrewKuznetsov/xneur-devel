@@ -1,0 +1,507 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-11-03 22:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr ""
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr ""
+
+#: kxneur.cpp:64 kxneur.cpp:151
+msgid "Start xneur daemon"
+msgstr ""
+
+#: kxneur.cpp:104
+msgid ""
+"Wrong XNeur configuration library api version.\n"
+"Please install libxnconfig version "
+msgstr ""
+
+#: kxneur.cpp:112
+msgid ""
+"XNeur config broken!\n"
+"Please, remove ~/.xneur/xneurrc and reinstall XNeur package!\n"
+msgstr ""
+
+#: kxneur.cpp:121 kxneurtray.cpp:43
+msgid "Stop xneur daemon"
+msgstr ""
+
+#: kxneur.cpp:130
+msgid ""
+"Couldn't start xneur\n"
+"Verify that it installed\n"
+msgstr ""
+
+#: kxneur.cpp:188
+msgid "Set auto mode"
+msgstr ""
+
+#: kxneur.cpp:193 kxneurtray.cpp:41
+msgid "Set manual mode"
+msgstr ""
+
+#: kxneur.cpp:265
+msgid "* Unknown lang *"
+msgstr ""
+
+#: kxneurconf.cpp:94
+msgid "KXNeur (front-end) options "
+msgstr ""
+
+#: kxneurconf.cpp:98
+msgid "Run NXeur with start KXNeur"
+msgstr ""
+
+#: kxneurconf.cpp:102
+msgid "Start XNeur with '--force' option"
+msgstr ""
+
+#: kxneurconf.cpp:104
+msgid "With this option xneur don't check other xneur copies in ram"
+msgstr ""
+
+#: kxneurconf.cpp:106
+msgid "Autostart"
+msgstr ""
+
+#: kxneurconf.cpp:108
+msgid ""
+"Autostart of the program when entering the session. If recovery mode was "
+"enabled in KDE and KXNeur is running when exiting from this session, then "
+"KXneur will run automatically regardless of  autostart setting."
+msgstr ""
+
+#: kxneurconf.cpp:110
+msgid "Switcher mode"
+msgstr ""
+
+#: kxneurconf.cpp:112
+msgid ""
+"This mode  switches between two languages used the last. For select anothey "
+"language need pointed it. For selecting the third language one needs to "
+"click it in the program menu. The switcher mode makes sense if one uses "
+"three or more languages."
+msgstr ""
+
+#: kxneurconf.cpp:116
+msgid "show flag in tray"
+msgstr ""
+
+#: kxneurconf.cpp:117
+msgid "show lang in tray"
+msgstr ""
+
+#: kxneurconf.cpp:119
+msgid "The style of icon reflected in the tray"
+msgstr ""
+
+#: kxneurconf.cpp:123
+msgid "XNeur (daemon) options "
+msgstr ""
+
+#: kxneurconf.cpp:127
+msgid "Change iNCIDENTAL CapsLock"
+msgstr ""
+
+#: kxneurconf.cpp:130
+msgid "Change two CApital letter"
+msgstr ""
+
+#: kxneurconf.cpp:133
+msgid "Flush internal buffer when pressed Enter"
+msgstr ""
+
+#: kxneurconf.cpp:136
+msgid "Don't correct word when pressed Enter"
+msgstr ""
+
+#: kxneurconf.cpp:139
+msgid "Enable Education Mode"
+msgstr ""
+
+#: kxneurconf.cpp:141
+msgid ""
+"All the returned (incorrect) switchings will be automatically added to the "
+"dictionary."
+msgstr ""
+
+#: kxneurconf.cpp:143
+msgid "Processing Mouse Events"
+msgstr ""
+
+#: kxneurconf.cpp:145
+msgid ""
+"If activated this mode considers not only Space, Tab, Enter etc. to be the "
+"end of a word, but also mouse clicking to another field."
+msgstr ""
+
+#: kxneurconf.cpp:147
+msgid "Save Selection After Change Selected Text"
+msgstr ""
+
+#: kxneurconf.cpp:151
+msgid "Save Keyboard Log"
+msgstr ""
+
+#: kxneurconf.cpp:156
+msgid "Set Mode on Start"
+msgstr ""
+
+#: kxneurconf.cpp:159
+msgid "Automatic"
+msgstr ""
+
+#: kxneurconf.cpp:160
+msgid "Manual"
+msgstr ""
+
+#: kxneurconf.cpp:161
+msgid "The mode of program working set with its start"
+msgstr ""
+
+#: kxneurconf.cpp:181
+msgid "Set Default Language for programs"
+msgstr ""
+
+#: kxneurconf.cpp:184
+msgid "Define initial keyboard layout for all new applications"
+msgstr ""
+
+#: kxneurconf.cpp:186
+msgid "Delay before send event (in milliseconds)                "
+msgstr ""
+
+#: kxneurconf.cpp:190
+msgid "Layouts"
+msgstr ""
+
+#: kxneurconf.cpp:192
+msgid " Language Name "
+msgstr ""
+
+#: kxneurconf.cpp:193
+msgid " Number "
+msgstr ""
+
+#: kxneurconf.cpp:198
+msgid " "
+msgstr ""
+
+#: kxneurconf.cpp:199 kxneurconf.cpp:529
+msgid "English"
+msgstr ""
+
+#: kxneurconf.cpp:200 kxneurconf.cpp:535
+msgid "Russian"
+msgstr ""
+
+#: kxneurconf.cpp:201 kxneurconf.cpp:541
+msgid "Ukrainian"
+msgstr ""
+
+#: kxneurconf.cpp:202 kxneurconf.cpp:547
+msgid "Belarusian"
+msgstr ""
+
+#: kxneurconf.cpp:203 kxneurconf.cpp:553
+msgid "French"
+msgstr ""
+
+#: kxneurconf.cpp:204 kxneurconf.cpp:559
+msgid "Romanian"
+msgstr ""
+
+#: kxneurconf.cpp:205 kxneurconf.cpp:565
+msgid "Kazakh"
+msgstr ""
+
+#: kxneurconf.cpp:206 kxneurconf.cpp:571
+msgid "German"
+msgstr ""
+
+#: kxneurconf.cpp:216
+msgid "A number of the language group. NB! The numbers must be unique."
+msgstr ""
+
+#: kxneurconf.cpp:217
+msgid "Dictionary..."
+msgstr ""
+
+#: kxneurconf.cpp:224
+msgid ""
+"The dictionaries for identification of certain language words. The words "
+"must be typed in Latine layout. For example, Russian 'tree' must be typed as "
+"'lthtdj'."
+msgstr ""
+
+#: kxneurconf.cpp:225
+msgid "Regular Expressions..."
+msgstr ""
+
+#: kxneurconf.cpp:232
+msgid "To set a word in the form of regular expression"
+msgstr ""
+
+#: kxneurconf.cpp:239
+msgid ""
+"The block of layouts allow to set  languages and words for their processing "
+"by the program."
+msgstr ""
+
+#: kxneurconf.cpp:242
+msgid "Remember Layout For Each Window"
+msgstr ""
+
+#: kxneurconf.cpp:244
+msgid "Program will save a language for each window."
+msgstr ""
+
+#: kxneurconf.cpp:246
+msgid "Excluded List (one layout for program) "
+msgstr ""
+
+#: kxneurconf.cpp:250 kxneurconf.cpp:337
+msgid ""
+"List of the programs or names of MainWindow of these programs that coincide "
+"in most cases."
+msgstr ""
+
+#: kxneurconf.cpp:251 kxneurconf.cpp:339
+msgid "Add program from list..."
+msgstr ""
+
+#: kxneurconf.cpp:254 kxneurconf.cpp:342
+msgid ""
+"List of the running graphical programs or the names of their  MainWindow "
+"(for several programs, for example sim, they do not coincide). If You do not "
+"see in the list  your program use the button 'Point the window' below. The "
+"list of the programs was received  by a query of child windows of the root-"
+"window by means of xwininfo from x11-tools."
+msgstr ""
+
+#: kxneurconf.cpp:255 kxneurconf.cpp:344
+msgid "Point window..."
+msgstr ""
+
+#: kxneurconf.cpp:258 kxneurconf.cpp:347
+msgid ""
+"After pressing the button 'Point the button' one should make mouse click on "
+"a program window that must be added to the list. It is possible one will "
+"have to point out several windows for some sdi programs that have "
+"independant windows. Xprop from X11 is used for receiving the information of "
+"pointed window."
+msgstr ""
+
+#: kxneurconf.cpp:329
+msgid "Excluded List"
+msgstr ""
+
+#: kxneurconf.cpp:330
+msgid "Force Automatic Processing List"
+msgstr ""
+
+#: kxneurconf.cpp:331
+msgid "Force Manual Processing List"
+msgstr ""
+
+#: kxneurconf.cpp:392
+msgid "Enable sounds on XNeur actions"
+msgstr ""
+
+#: kxneurconf.cpp:402
+msgid "Press Key On Layout 1 "
+msgstr ""
+
+#: kxneurconf.cpp:403
+msgid "Press Key On Layout 2 "
+msgstr ""
+
+#: kxneurconf.cpp:404
+msgid "Press Key On Layout 3 "
+msgstr ""
+
+#: kxneurconf.cpp:405
+msgid "Press Key On Layout 4 "
+msgstr ""
+
+#: kxneurconf.cpp:406
+msgid "Enable Layout 1 "
+msgstr ""
+
+#: kxneurconf.cpp:407
+msgid "Enable Layout 2 "
+msgstr ""
+
+#: kxneurconf.cpp:408
+msgid "Enable Layout 3 "
+msgstr ""
+
+#: kxneurconf.cpp:409
+msgid "Enable Layout 4 "
+msgstr ""
+
+#: kxneurconf.cpp:410
+msgid "Automatic Change Word "
+msgstr ""
+
+#: kxneurconf.cpp:411
+msgid "Manual Change Word "
+msgstr ""
+
+#: kxneurconf.cpp:412
+msgid "Change String "
+msgstr ""
+
+#: kxneurconf.cpp:413
+msgid "Change Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:414
+msgid "Translit Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:415
+msgid "Changecase Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:428
+msgid "List of sounds"
+msgstr ""
+
+#: kxneurconf.cpp:439
+msgid "Settings"
+msgstr ""
+
+#: kxneurconf.cpp:449
+msgid "Common"
+msgstr ""
+
+#: kxneurconf.cpp:449
+msgid "Commons Options"
+msgstr ""
+
+#: kxneurconf.cpp:450
+msgid "Languages"
+msgstr ""
+
+#: kxneurconf.cpp:450
+msgid "Languages Options"
+msgstr ""
+
+#: kxneurconf.cpp:451
+msgid "Keys"
+msgstr ""
+
+#: kxneurconf.cpp:451
+msgid "Key Combinations"
+msgstr ""
+
+#: kxneurconf.cpp:452
+msgid "Programs"
+msgstr ""
+
+#: kxneurconf.cpp:452
+msgid "Exclusions for Program"
+msgstr ""
+
+#: kxneurconf.cpp:453
+msgid "Sounds"
+msgstr ""
+
+#: kxneurconf.cpp:453
+msgid "Sounds for Events"
+msgstr ""
+
+#: kxneurconf.cpp:594
+msgid "Replace / Cancel Replace "
+msgstr ""
+
+#: kxneurconf.cpp:595
+msgid "Replace Last String "
+msgstr ""
+
+#: kxneurconf.cpp:596
+msgid "Change Processing Mode "
+msgstr ""
+
+#: kxneurconf.cpp:597
+msgid "Replace Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:598
+msgid "Transliterate Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:599
+msgid "Change Case Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:600
+msgid "Enable First Layout "
+msgstr ""
+
+#: kxneurconf.cpp:601
+msgid "Enable Secondary Layout "
+msgstr ""
+
+#: kxneurconf.cpp:602
+msgid "Enable Thrid Layout "
+msgstr ""
+
+#: kxneurconf.cpp:603
+msgid "Enable Fourth Layout "
+msgstr ""
+
+#: kxneurconf.cpp:609
+msgid "warning! kdelibs have bug with Ctrl+Break"
+msgstr ""
+
+#: kxneurtray.cpp:57
+msgid "KXNeur"
+msgstr ""
+
+#: kxnlistbox.cpp:68
+msgid "current programs:"
+msgstr ""
+
+#: main.cpp:27
+msgid ""
+"KXNeur (KDE X Neural Switcher) is XNeur front-end for KDE ( http://xneur."
+"ru ).\n"
+"This version work with XNeur v.0.9.2 only"
+msgstr ""
+
+#: main.cpp:39
+msgid "keyboard autoswitcher"
+msgstr ""
+
+#: main.cpp:43
+msgid ""
+"Authors X Neural Switcher, including Andrew Crew Kuznetsov and Yankin "
+"Nickolay Valerevich"
+msgstr ""
+
+#: main.cpp:44
+msgid "Author kkbswitch, "
+msgstr ""

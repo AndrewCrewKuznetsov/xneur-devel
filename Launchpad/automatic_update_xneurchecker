@@ -1,0 +1,137 @@
+#!/bin/sh
+
+# Must be from GPG key
+export DEBEMAIL="Andrew Crew Kuznetsov <andrewcrew@rambler.ru>"
+
+cd "${HOME}/develop/xneur/Launchpad"
+
+if !([ -e xneurchecker_*.orig.tar.gz ]); then
+  echo "File xneurchecker_*.orig.tar.gz is not found.";
+  export OLD_VER=0;
+else
+  export OLD_VER=$(ls xneurchecker_*.orig.tar.gz | sed -e "s/^xneurchecker_\(.*\).orig.tar.gz$/\1/");
+fi
+
+export LAST_REVISION=$(svn log svn://xneur.ru:3690/xneur -r HEAD --quiet | grep "r[0-9]\+" | sed -e "s/^r\([0-9]\+\).*$/\1/")
+
+echo "Number of last revision: ${LAST_REVISION}"
+
+if [ -z ${LAST_REVISION} ]; then
+  echo "Error: number of last revision is empty!";
+  exit 0;
+fi
+
+echo "Updating is started."
+
+export CUR_VER=$(svn cat svn://xneur.ru:3690/xneur/xneurchecker/configure.in | grep "AM_INIT_AUTOMAKE" | sed -e "s/^AM_INIT_AUTOMAKE(xneurchecker, \(.*\))$/\1/")
+export NEW_VER="${CUR_VER}+svn${LAST_REVISION}"
+
+echo "OLD_VER = ${OLD_VER}"
+echo "NEW_VER = ${NEW_VER}"
+
+if [ ${NEW_VER} = ${OLD_VER} ]; then
+	echo "Upgrading is not required.";
+	read -p "You'r rebuild packages (y/N)?" RESP
+	
+	if [ "$RESP" != y ] ; then
+		echo "Rebuilding is not required.";
+		exit 0;
+	fi
+fi
+
+# begin local updating
+svn update ../xneurchecker/
+svn export ../xneurchecker/ "xneurchecker-tmp"
+# end local updating
+
+# building to dist
+cd ./"xneurchecker-tmp"
+# save debianize settings
+mv ./debian ../
+./autogen.sh
+make distcheck
+mkdir ../"xneurchecker-${CUR_VER}"
+tar -xvf "xneurchecker-${CUR_VER}.tar.gz" -C ../
+cd ..
+rm -R ./"xneurchecker-tmp"
+# end building
+
+#Create .orig.tar.gz
+tar -czf "xneurchecker_$NEW_VER.orig.tar.gz" "xneurchecker-${CUR_VER}"
+
+cd "xneurchecker-${CUR_VER}"
+# restore debianize settings
+mv ../debian ./
+
+read -p "Build package only on local system (y/N)?" RESPONSE
+echo
+if [ "$RESPONSE" = y ] ; then
+	# If you want to build package on your system uncomment this:
+	dch -b --force-distribution --distribution "maverick" -v "${NEW_VER}-0maverick1" \
+  "Automated backport upload; no source changes."
+	#dch -v "$NEW_VER-mybuild1" "Minor update."
+	dpkg-buildpackage -rfakeroot
+
+	cd ..
+	rm -R "xneurchecker-${CUR_VER}"
+else
+
+# Note: I am using gnupg-agent for comfortable work
+
+# begin update for basic releases
+dch -b --force-distribution --distribution "natty" -v "${NEW_VER}-0natty1" \
+  "Minor update."
+debuild -S -sa
+# end update for basic releases
+
+# Full list: hardy intrepid jaunty karmic lucid maverick natty
+# But not all of them are available, see: https://launchpad.net/ubuntu/+ppas
+# begin update for other releases
+cp debian/changelog ../changelog # copy basic changelog
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "maverick" -v "${NEW_VER}-0maverick1" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "lucid" -v "${NEW_VER}-0lucid1" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "karmic" -v "${NEW_VER}-0karmic1" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+mv debian/source ../ # make dirty hack
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "jaunty" -v "${NEW_VER}-0jaunty1" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+mv ../source debian/ # rollback dirty hack
+
+mv ../changelog debian/changelog # rollback basic changelog
+# end update for other releases
+
+cd ..
+echo "Download to Launchpad Natty..."
+dput ppa xneurchecker_${NEW_VER}-0natty1_source.changes | cat
+echo "Download to Launchpad Maverick..."
+dput ppa xneurchecker_${NEW_VER}-0maverick1_source.changes | cat
+echo "Download to Launchpad Lucid..."
+dput ppa xneurchecker_${NEW_VER}-0lucid1_source.changes | cat
+echo "Download to Launchpad Karmic..."
+dput ppa xneurchecker_${NEW_VER}-0karmic1_source.changes | cat
+echo "Download to Launchpad Jaunty..."
+dput ppa xneurchecker_${NEW_VER}-0jaunty1_source.changes | cat
+
+rm -R "xneurchecker-${CUR_VER}"
+
+fi
+
+echo "Update xneurchecker finished successfully"
+
+

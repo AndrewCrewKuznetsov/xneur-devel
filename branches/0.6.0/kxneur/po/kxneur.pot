@@ -1,0 +1,330 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-05-17 09:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: kxneurconf.cpp:93
+msgid "Run NXeur with start KXNeur"
+msgstr ""
+
+#: kxneurconf.cpp:97
+msgid "Autostart"
+msgstr ""
+
+#: kxneurconf.cpp:99
+msgid "auto_start"
+msgstr ""
+
+#: kxneurconf.cpp:103
+msgid "show flag in tray"
+msgstr ""
+
+#: kxneurconf.cpp:104
+msgid "show lang in tray"
+msgstr ""
+
+#: kxneurconf.cpp:106
+msgid "in_tray"
+msgstr ""
+
+#: kxneurconf.cpp:108
+msgid "Switcher mode"
+msgstr ""
+
+#: kxneurconf.cpp:110
+msgid "sw_mode"
+msgstr ""
+
+#: kxneurconf.cpp:129
+msgid "Set Mode on Start"
+msgstr ""
+
+#: kxneurconf.cpp:132
+msgid "Automatic"
+msgstr ""
+
+#: kxneurconf.cpp:133
+msgid "Manual"
+msgstr ""
+
+#: kxneurconf.cpp:135
+msgid "hbox"
+msgstr ""
+
+#: kxneurconf.cpp:138
+msgid "Layouts"
+msgstr ""
+
+#: kxneurconf.cpp:140
+msgid " Language Name "
+msgstr ""
+
+#: kxneurconf.cpp:141
+msgid " Number "
+msgstr ""
+
+#: kxneurconf.cpp:146
+msgid " "
+msgstr ""
+
+#: kxneurconf.cpp:147
+msgid "English"
+msgstr ""
+
+#: kxneurconf.cpp:148
+msgid "Russian"
+msgstr ""
+
+#: kxneurconf.cpp:149
+msgid "Ukrainian"
+msgstr ""
+
+#: kxneurconf.cpp:150
+msgid "Belarussian"
+msgstr ""
+
+#: kxneurconf.cpp:151
+msgid "French"
+msgstr ""
+
+#: kxneurconf.cpp:152
+msgid "Romanian"
+msgstr ""
+
+#: kxneurconf.cpp:162
+msgid "num_i"
+msgstr ""
+
+#: kxneurconf.cpp:163
+msgid "Dictionary..."
+msgstr ""
+
+#: kxneurconf.cpp:170
+msgid "dict_i"
+msgstr ""
+
+#: kxneurconf.cpp:171
+msgid "Regular Expressions..."
+msgstr ""
+
+#: kxneurconf.cpp:178
+msgid "regexp_i"
+msgstr ""
+
+#: kxneurconf.cpp:185
+msgid "group1"
+msgstr ""
+
+#: kxneurconf.cpp:187
+msgid "Additional"
+msgstr ""
+
+#: kxneurconf.cpp:190
+msgid "Processing Mouse Events"
+msgstr ""
+
+#: kxneurconf.cpp:192
+msgid "mouse_mode"
+msgstr ""
+
+#: kxneurconf.cpp:193
+msgid "Enable Education Mode"
+msgstr ""
+
+#: kxneurconf.cpp:195
+msgid "edu_mode"
+msgstr ""
+
+#: kxneurconf.cpp:196
+msgid "Remember Layoute For Each Window"
+msgstr ""
+
+#: kxneurconf.cpp:198
+msgid "remem_win"
+msgstr ""
+
+#: kxneurconf.cpp:199
+msgid "Save Selection After Change Selected Text"
+msgstr ""
+
+#: kxneurconf.cpp:254
+msgid "Key Bindings "
+msgstr ""
+
+#: kxneurconf.cpp:255
+msgid "Modifier "
+msgstr ""
+
+#: kxneurconf.cpp:256
+msgid "Keys "
+msgstr ""
+
+#: kxneurconf.cpp:260
+msgid "Replace / Cancel Replace "
+msgstr ""
+
+#: kxneurconf.cpp:261 kxneurconf.cpp:263
+msgid "Replace Last String "
+msgstr ""
+
+#: kxneurconf.cpp:262
+msgid "Change Processing Mode "
+msgstr ""
+
+#: kxneurconf.cpp:264
+msgid "Transliterate Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:265
+msgid "Change Case Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:270 kxneurconf.cpp:277
+msgid "None"
+msgstr ""
+
+#: kxneurconf.cpp:271
+msgid "Shift"
+msgstr ""
+
+#: kxneurconf.cpp:272
+msgid "Control"
+msgstr ""
+
+#: kxneurconf.cpp:273
+msgid "Alt"
+msgstr ""
+
+#: kxneurconf.cpp:278
+msgid "Break"
+msgstr ""
+
+#: kxneurconf.cpp:279
+msgid "Scroll Lock"
+msgstr ""
+
+#: kxneurconf.cpp:280
+msgid "Prt Scr"
+msgstr ""
+
+#: kxneurconf.cpp:302
+msgid "Excluded List"
+msgstr ""
+
+#: kxneurconf.cpp:303
+msgid "Force Automatic Processing List"
+msgstr ""
+
+#: kxneurconf.cpp:304
+msgid "Force Manual Processing List"
+msgstr ""
+
+#: kxneurconf.cpp:309
+msgid "Add program from list..."
+msgstr ""
+
+#: kxneurconf.cpp:312
+msgid "Point window..."
+msgstr ""
+
+#: kxneurconf.cpp:330
+msgid "Settings"
+msgstr ""
+
+#: kxneurconf.cpp:337 kxneurtray.cpp:59
+msgid "KXNeur"
+msgstr ""
+
+#: kxneurconf.cpp:337
+msgid "KXNeur Options"
+msgstr ""
+
+#: kxneurconf.cpp:338
+msgid "XNeur"
+msgstr ""
+
+#: kxneurconf.cpp:338
+msgid "XNeur Daemon Options"
+msgstr ""
+
+#: kxneurconf.cpp:339
+msgid "Keys"
+msgstr ""
+
+#: kxneurconf.cpp:339
+msgid "Key Combinations"
+msgstr ""
+
+#: kxneurconf.cpp:340
+msgid "Programs"
+msgstr ""
+
+#: kxneurconf.cpp:340
+msgid "Exclusions for Program"
+msgstr ""
+
+#: kxneur.cpp:52 kxneur.cpp:100
+msgid "Start xneur daemon"
+msgstr ""
+
+#: kxneur.cpp:83 kxneurtray.cpp:45
+msgid "Stop xneur daemon"
+msgstr ""
+
+#: kxneur.cpp:148 kxneurtray.cpp:43
+msgid "Set manual mode"
+msgstr ""
+
+#: kxneur.cpp:153
+msgid "Set auto mode"
+msgstr ""
+
+#: kxnlistbox.cpp:59
+msgid "current programs:"
+msgstr ""
+
+#: main.cpp:29
+msgid ""
+"KXNeur (KDE X Neural Switcher) is XNeur front-end for KDE ( http://xneur."
+"ru ).\n"
+"This version work with XNeur v.0.6.0 only"
+msgstr ""
+
+#: main.cpp:41
+msgid "keyboard autoswitcher"
+msgstr ""
+
+#: main.cpp:45
+msgid "Author kkbswitch, "
+msgstr ""
+
+#: main.cpp:46
+msgid ""
+"Authors X Neural Switcher, including Andrew Crew Kuznetsov and Yankin "
+"Nickolay Valerevich"
+msgstr ""
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr ""
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr ""

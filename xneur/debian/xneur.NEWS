@@ -1,0 +1,11 @@
+xneur (0.8.0+svn20080310-1) unstable; urgency=low
+
+  From now we put dictionaries to /usr/share/xneur. Old dictionaries should be
+  removed in preinst. If you changed something there, your modified version
+  will be saved as <file>.dpkg-bak
+
+  If you wish to override default dictionaries with your own, feel free to put
+  them in /etc/xneur, they will have higher priority then ones in
+  /usr/share/xneur.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Sat, 22 Mar 2008 21:30:16 +0300

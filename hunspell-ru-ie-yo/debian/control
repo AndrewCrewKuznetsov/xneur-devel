@@ -1,0 +1,20 @@
+Source: hunspell-ru-ie-yo
+Section: text
+Priority: optional
+Maintainer: Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
+Build-Depends: debhelper (>= 8)
+Build-Depends-Indep: dictionaries-common-dev (>= 1.10.5)
+Standards-Version: 3.9.3
+Homepage: http://code.google.com/p/hunspell-ru
+
+Package: hunspell-ru-ie-yo
+Architecture: all
+Depends: dictionaries-common (>= 1.0.0), ${misc:Depends}
+Conflicts: openoffice.org (<= 1.0.3-2), myspell-ru, hunspell-ru
+Replaces: myspell-ru, hunspell-ru
+Description: Russian dictionary for hunspell include Cyrillic Yo
+ This package contains Russian dictionary (include Cyrillic Yo) for the hunspell
+ spell-checker currently supported by LibreOffice and Mozilla.
+ .
+ This is a new hunspell dictionary aimed to provide a better
+ alternative for myspell-ru.

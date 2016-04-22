@@ -1,0 +1,361 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-07-07 16:22+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr ""
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr ""
+
+#: kxneur.cpp:60 kxneur.cpp:130
+msgid "Start xneur daemon"
+msgstr ""
+
+#: kxneur.cpp:103 kxneurtray.cpp:44
+msgid "Stop xneur daemon"
+msgstr ""
+
+#: kxneur.cpp:191 kxneurtray.cpp:42
+msgid "Set manual mode"
+msgstr ""
+
+#: kxneur.cpp:196
+msgid "Set auto mode"
+msgstr ""
+
+#: kxneur.cpp:265
+msgid "* Unknown lang *"
+msgstr ""
+
+#: kxneurconf.cpp:93
+msgid "Run NXeur with start KXNeur"
+msgstr ""
+
+#: kxneurconf.cpp:97
+msgid "Start XNeur with '--force' option"
+msgstr ""
+
+#: kxneurconf.cpp:99
+msgid "With this option xneur don't check other xneur copies in ram"
+msgstr ""
+
+#: kxneurconf.cpp:101
+msgid "Autostart"
+msgstr ""
+
+#: kxneurconf.cpp:103
+msgid ""
+"Autostart of the program when entering the session. If recovery mode was "
+"enabled in KDE and KXNeur is running when exiting from this session, then "
+"KXneur will run automatically regardless of  autostart setting."
+msgstr ""
+
+#: kxneurconf.cpp:107
+msgid "show flag in tray"
+msgstr ""
+
+#: kxneurconf.cpp:108
+msgid "show lang in tray"
+msgstr ""
+
+#: kxneurconf.cpp:110
+msgid "The style of icon reflected in the tray"
+msgstr ""
+
+#: kxneurconf.cpp:112
+msgid "Switcher mode"
+msgstr ""
+
+#: kxneurconf.cpp:114
+msgid ""
+"This mode  switches between two languages used the last. For select anothey "
+"language need pointed it. For selecting the third language one needs to "
+"click it in the program menu. The switcher mode makes sense if one uses "
+"three or more languages."
+msgstr ""
+
+#: kxneurconf.cpp:133
+msgid "Set Mode on Start"
+msgstr ""
+
+#: kxneurconf.cpp:136
+msgid "Automatic"
+msgstr ""
+
+#: kxneurconf.cpp:137
+msgid "Manual"
+msgstr ""
+
+#: kxneurconf.cpp:139
+msgid "The mode of program working set with its start"
+msgstr ""
+
+#: kxneurconf.cpp:142
+msgid "Layouts"
+msgstr ""
+
+#: kxneurconf.cpp:144
+msgid " Language Name "
+msgstr ""
+
+#: kxneurconf.cpp:145
+msgid " Number "
+msgstr ""
+
+#: kxneurconf.cpp:150
+msgid " "
+msgstr ""
+
+#: kxneurconf.cpp:151
+msgid "English"
+msgstr ""
+
+#: kxneurconf.cpp:152
+msgid "Russian"
+msgstr ""
+
+#: kxneurconf.cpp:153
+msgid "Ukrainian"
+msgstr ""
+
+#: kxneurconf.cpp:154
+msgid "Belarusian"
+msgstr ""
+
+#: kxneurconf.cpp:155
+msgid "French"
+msgstr ""
+
+#: kxneurconf.cpp:156
+msgid "Romanian"
+msgstr ""
+
+#: kxneurconf.cpp:166
+msgid "A number of the language group. NB! The numbers must be unique."
+msgstr ""
+
+#: kxneurconf.cpp:167
+msgid "Dictionary..."
+msgstr ""
+
+#: kxneurconf.cpp:174
+msgid ""
+"The dictionaries for identification of certain language words. The words "
+"must be typed in Latine layout. For example, Russian 'tree' must be typed as "
+"'lthtdj'."
+msgstr ""
+
+#: kxneurconf.cpp:175
+msgid "Regular Expressions..."
+msgstr ""
+
+#: kxneurconf.cpp:182
+msgid "To set a word in the form of regular expression"
+msgstr ""
+
+#: kxneurconf.cpp:189
+msgid ""
+"The block of layouts allow to set  languages and words for their processing "
+"by the program."
+msgstr ""
+
+#: kxneurconf.cpp:191
+msgid "Additional"
+msgstr ""
+
+#: kxneurconf.cpp:194
+msgid "Processing Mouse Events"
+msgstr ""
+
+#: kxneurconf.cpp:196
+msgid ""
+"If activated this mode considers not only Space, Tab, Enter etc. to be the "
+"end of a word, but also mouse clicking to another field."
+msgstr ""
+
+#: kxneurconf.cpp:197
+msgid "Enable Education Mode"
+msgstr ""
+
+#: kxneurconf.cpp:199
+msgid ""
+"All the returned (incorrect) switchings will be automatically added to the "
+"dictionary."
+msgstr ""
+
+#: kxneurconf.cpp:200
+msgid "Remember Layoute For Each Window"
+msgstr ""
+
+#: kxneurconf.cpp:202
+msgid "Program will save a language for each window."
+msgstr ""
+
+#: kxneurconf.cpp:203
+msgid "Save Selection After Change Selected Text"
+msgstr ""
+
+#: kxneurconf.cpp:306
+msgid "Excluded List"
+msgstr ""
+
+#: kxneurconf.cpp:307
+msgid "Force Automatic Processing List"
+msgstr ""
+
+#: kxneurconf.cpp:308
+msgid "Force Manual Processing List"
+msgstr ""
+
+#: kxneurconf.cpp:313
+msgid ""
+"List of the programs or names of MainWindow of these programs that coincide "
+"in most cases."
+msgstr ""
+
+#: kxneurconf.cpp:314
+msgid "Add program from list..."
+msgstr ""
+
+#: kxneurconf.cpp:317
+msgid ""
+"List of the running graphical programs or the names of their  MainWindow "
+"(for several programs, for example sim, they do not coincide). If You do not "
+"see in the list  your program use the button 'Point the window' below. The "
+"list of the programs was received  by a query of child windows of the root-"
+"window by means of xwininfo from x11-tools."
+msgstr ""
+
+#: kxneurconf.cpp:318
+msgid "Point window..."
+msgstr ""
+
+#: kxneurconf.cpp:321
+msgid ""
+"After pressing the button 'Point the button' one should make mouse click on "
+"a program window that must be added to the list. It is possible one will "
+"have to point out several windows for some sdi programs that have "
+"independant windows. Xprop from X11 is used for receiving the information of "
+"pointed window."
+msgstr ""
+
+#: kxneurconf.cpp:337
+msgid "Settings"
+msgstr ""
+
+#: kxneurconf.cpp:344 kxneurtray.cpp:58
+msgid "KXNeur"
+msgstr ""
+
+#: kxneurconf.cpp:344
+msgid "KXNeur Options"
+msgstr ""
+
+#: kxneurconf.cpp:345
+msgid "XNeur"
+msgstr ""
+
+#: kxneurconf.cpp:345
+msgid "XNeur Daemon Options"
+msgstr ""
+
+#: kxneurconf.cpp:346
+msgid "Keys"
+msgstr ""
+
+#: kxneurconf.cpp:346
+msgid "Key Combinations"
+msgstr ""
+
+#: kxneurconf.cpp:347
+msgid "Programs"
+msgstr ""
+
+#: kxneurconf.cpp:347
+msgid "Exclusions for Program"
+msgstr ""
+
+#: kxneurconf.cpp:453
+msgid "Replace / Cancel Replace "
+msgstr ""
+
+#: kxneurconf.cpp:454
+msgid "Replace Last String "
+msgstr ""
+
+#: kxneurconf.cpp:455
+msgid "Change Processing Mode "
+msgstr ""
+
+#: kxneurconf.cpp:456
+msgid "Replace Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:457
+msgid "Transliterate Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:458
+msgid "Change Case Selected Text "
+msgstr ""
+
+#: kxneurconf.cpp:459
+msgid "Enable First Layout "
+msgstr ""
+
+#: kxneurconf.cpp:460
+msgid "Enable Secondary Layout "
+msgstr ""
+
+#: kxneurconf.cpp:461
+msgid "Enable Thrid Layout "
+msgstr ""
+
+#: kxneurconf.cpp:462
+msgid "Enable Fourth Layout "
+msgstr ""
+
+#: kxnlistbox.cpp:59
+msgid "current programs:"
+msgstr ""
+
+#: main.cpp:29
+msgid ""
+"KXNeur (KDE X Neural Switcher) is XNeur front-end for KDE ( http://xneur."
+"ru ).\n"
+"This version work with XNeur v.0.6.2 only"
+msgstr ""
+
+#: main.cpp:41
+msgid "keyboard autoswitcher"
+msgstr ""
+
+#: main.cpp:45
+msgid ""
+"Authors X Neural Switcher, including Andrew Crew Kuznetsov and Yankin "
+"Nickolay Valerevich"
+msgstr ""
+
+#: main.cpp:46
+msgid "Author kkbswitch, "
+msgstr ""

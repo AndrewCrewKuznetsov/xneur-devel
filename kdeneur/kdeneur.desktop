@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kdeneur
+Icon=kdeneur
+Terminal=false
+Type=Application
+Categories=Utility
+StartupNotify=true
+Name=KDENeur
+Name[ru]=KDENeur
+Comment=Automatic keyboard layout switcher
+Comment[ru]=Автоматический переключатель раскладки клавиатуры

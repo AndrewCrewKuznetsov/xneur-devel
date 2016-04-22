@@ -1,0 +1,7 @@
+?package(gxneur):needs="X11"\
+ section="Applications/General"\
+ title="X Neural Switcher GTK frontend"\
+ command="/usr/bin/gxneur"\
+ longtitle="X Neural Switcher GTK frontend"\
+ hints="Keyboard layout switcher"\
+ icon="/usr/share/pixmaps/gxneur.png"

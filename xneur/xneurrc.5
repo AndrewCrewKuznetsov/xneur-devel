@@ -1,0 +1,358 @@
+.TH XNEURRC 5 
+.SH NAME
+xneurrc - configuration file for XNeur
+.SH DESCRIPTION
+.PP
+In this file defined options for XNeur. May be created or changed manuallly or with \fIgXNeur\fP or \fIkXNeur\fP. Location for manual settings: ~/.xneur/xneurrc. Location of base settings: {prefix}/etc/xneur/xneurrc
+.SH OPTIONS
+.TP 8
+.B Version <number>
+Defines conformity of the configuration file to the program version. For XNeur version 0.5.0, the value of <number> is 0.5.0.
+.TP 8
+.B ManualMode <param>
+Describes program working mode. Here, the value of <param> can be "Yes" or "No", which means, respectively, work in manual or automatic mode.
+
+In the automatic mode, the program "on fly" determines the input language and switches the keyboard layout, at the same time changing the word typed in. In the manual mode, the program does not use algorithms of language recognition, layout switching and text conversion take place on user request by pressing hot keys. 
+.TP 8
+.B LogLevel <level>
+Defines level of diagnostic output to console.
+
+Here, <level> takes the values "Error", "Warning", "Log", "Debug", "Trace". By changing this parameter, the detail of output to console can be controlled. 
+.TP 8
+.B ExcludeLanguage <language>
+Defines the language, with which the program WILL NOT work.
+
+Here, <language> stands for the language, for which the layout should be specified (e.g. ru, us, by, de...).
+.TP 8
+.B DefaultXkbGroup <group>
+Define initial keyboard layout for all new applications.
+
+Here, <group> stands for the number of XKB layout for this language in the system (takes values from 0 to 3).
+.TP 8
+.B ExcludeApp <app_name>
+Defines an application, in which the program WILL NOT work.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by XNeur.
+<app_name> can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option ExcludeApp". 
+.TP 8
+.B SetAutoApp <app_name>
+Defines an application, in which the program will always work in the automatic mode, independent of the DefaultMode option.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option SetAutoApp". 
+.TP 8
+.B SetManualApp <app_name>
+Defines an application, in which the program will always work in the manual mode, independent of the DefaultMode option.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option SetManualApp". 
+.TP 8
+.B AddBind <action> [Control | Alt | Shift | Super] [key]
+Defines hot keys for xneur control.
+
+Here, <action> stands for an action of XNeur, <key> stands for a special key.
+
+<action> takes the following values: "ChangeWord" (replace word/cancel last auto replacement), 
+"ChangeString" (replace last string), "ChangeMode" (switch between the auto and the manual program modes), 
+"ChangeSelected" (convert selected text to another layout), "TranslitSelected" (convert selected Cyrillic test to translit),
+"ChangecaseSelected" (change lettercase of selected text), "EnableLayout1" (enable of first layout),
+"EnableLayout2" (enable of second layout), "EnableLayout3" (enable of third layout), "EnableLayout4" (enable of fourth layout), "ReplaceAbbreviation" (replace abbreviation to full text) or "BlockKeyboardAndMouseEvents" (blocking all events of keyboard and mouse).
+
+[key] takes the values defined in your latin keyboard. Skip this value if hot key undefined.
+.TP 8
+.B AddAction [Control | Alt | Shift | Super] <key> <action>
+Defines hot keys for user actions.
+
+Here, <action> is user actions (e.g. firefox or gnome-terminal), <key> stands for a special key.
+
+<key> takes the values defined in your latin keyboard.
+.TP 8
+.B ReplaceAbbreviationIgnoreLayout <param>
+This option enable or disable of the ignore keyboard layout for abbreviations list.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B ReplaceAbbreviation <abbreviation> <full_text>
+Define an abbreviation, which be replased to full text.
+
+Here, <abbreviation> is abreviation and <full_text> is text.
+Multiple entries for this option in a single configuration file are allowed, like "one abbreviation - one option ReplaceAbbreviation". 
+.TP 8
+.B PlaySound <param>
+This option enable or disable sound playing.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B AddSound <action> <state> <sound>
+Binds sounds for some actions.
+
+Here, <action> takes the following values: "XneurStart", "XneurReload", "XneurStop", "PressKeyLayout1", "PressKeyLayout2", "PressKeyLayout3", "PressKeyLayout4",
+"EnableLayout1", "EnableLayout2", "EnableLayout3", "EnableLayout4",
+"AutomaticChangeWord", "ManualChangeWord", "ChangeString", "ChangeSelected", "TranslitSelected", "ChangecaseSelected", "ReplaceAbbreviation", "CorrectIncidentalCaps", "CorrectTwoCapitalLetter", "ExecuteUserAction" and "BlockKeyboardAndMouseEvents".
+
+<sound> is .wav file placed in ~/.xneur/sounds or in basic place ({prefix}/share/xneur/sounds/).
+
+<state> takes the values "Disable", "Enable".
+.TP 8
+.B SoundVolumePercent <percent>
+Defined sound playing volume percent. 
+
+Here, <percent> takes the values from 0 to 100. 
+.TP 8
+.B EducationMode <param>
+Defines, if XNeur will work in self-training. A wrong input will be added to the dictionary, if it is twice converted into a specific layout manually. If this option is on, this will lead to a bigger dictionary. Does not make sence for the manual operating mode.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B LayoutRememberMode <param>
+This option enable or disable layout remember for each window
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B LayoutRememberModeForApp <app_name>
+This option force enable layout remember for each application, not window.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+.TP 8
+.B SaveSelectionMode <param>
+Define, if a selection will stay after changes, made by user actions, defined by the AddBind parameter.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B RotateLayoutAfterChangeSelectedMode <param>
+This option enable or disable rotating layout after convert selected text.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B SendDelay <value>
+This option define delay in milliseconds before sendind events to application. 
+
+Here, <value> must be until 0 to 50. 
+.TP 8
+.B LogSave <param>
+This option enable or disable logging keyboard. Log places in ~/.xneur/xneurlog
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B LogSize <bytes>
+This option set max size of log file (bytes)
+.TP 8
+.B LogMail <e-mail>
+This option define e-mail for send log file, if it's size greater then max size
+.TP 8
+.B LogHostIP <ip>
+This option define ip of host to send e-mail without login and password.
+.TP 8
+.B LogPort <port>
+This option define port of host to send e-mail without login and password.
+.TP 8
+.B CorrectIncidentalCaps <param>
+This option enable or disable correction of iNCIDENTAL CapsLock.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B CorrectTwoCapitalLetter <param>
+This option enable or disable correction of two CApital letter.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B FlushBufferWhenPressEscape <param>
+This option enable or disable flushing internal buffer when pressed Escape.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B FlushBufferWhenPressEnter <param>
+This option enable or disable flushing internal buffer when pressed Enter or Tab.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B DontProcessWhenPressEnter <param>
+This option disable or enable processing word when pressed Enter or Tab.
+
+Here, <param> takes the values "Yes", "No". 
+.TP 8
+.B ShowOSD <param>
+This option disable or enable show OSD.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B FontOSD <param>
+This option set font for OSD.
+
+Here, <param> takes the value, that can be received with command "xfontsel -print".
+.TP 8
+.B AddOSD <action> <state> <text>
+Binds OSD for some actions.
+
+Here, <action> takes the following values: "XneurStart", "XneurReload", "XneurStop", "PressKeyLayout1", "PressKeyLayout2", "PressKeyLayout3", "PressKeyLayout4",
+"EnableLayout1", "EnableLayout2", "EnableLayout3", "EnableLayout4",
+"AutomaticChangeWord", "ManualChangeWord", "ChangeString", "ChangeSelected", "TranslitSelected", "ChangecaseSelected", "ReplaceAbbreviation", "CorrectIncidentalCaps", "CorrectTwoCapitalLetter", "ExecuteUserAction" and "BlockKeyboardAndMouseEvents".
+
+<text> is text will be displayed.
+
+<state> takes the values "Disable", "Enable".
+.TP 8
+.B ShowPopup <param>
+This option disable or enable show popup messages.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B PopupExpireTimeout <value>
+This option define popup expiration interval in milliseconds. 
+
+Here, <value> must be until 0 to 30000.
+.TP 8
+.B AddPopup <action> <state> <text>
+Binds popup messages for some actions.
+
+Here, <action> takes the following values: "XneurStart", "XneurReload", "XneurStop", "PressKeyLayout1", "PressKeyLayout2", "PressKeyLayout3", "PressKeyLayout4",
+"EnableLayout1", "EnableLayout2", "EnableLayout3", "EnableLayout4",
+"AutomaticChangeWord", "ManualChangeWord", "ChangeString", "ChangeSelected", "TranslitSelected", "ChangecaseSelected", "ReplaceAbbreviation", "CorrectIncidentalCaps", "CorrectTwoCapitalLetter", "ExecuteUserAction" and "BlockKeyboardAndMouseEvents".
+
+<text> is text will be displayed.
+
+<state> takes the values "Disable", "Enable".
+.TP 8
+.B CheckOnProcess <param>
+This option disable or enable checking language on input process.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B DisableCapsLock <param>
+This option disable or enable CapsLock use.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectSpaceWithPunctuation <param>
+This option disable or enable correction spaces before and after punctuation.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectTwoSpaceWithCommaAndSpace <param>
+This option disable or enable correction of two space with a comma and a space.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectTwoMinusWithDash <param>
+This option disable or enable correction of two minus with a dash.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectDashWithEmDas <param>
+This option disable or enable correction of two minus with a emdash.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectCWithCopyright <param>
+This option disable or enable correction of (c) with a copyright sign.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectTMWithTrademark <param>
+This option disable or enable correction of (tm) with a trademark sign.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectRWithRegistered <param>
+This option disable or enable correction of (r) with a registered sign.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B CorrectThreePointsWithEllipsis <param>
+This option disable or enable correction of three points with a ellipsis sign.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B Autocompletion <param>
+This option disable or enable pattern mining and recognition (autocompletion).
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B AddSpaceAfterAutocompletion <param>
+This option disable or enable adding space after autocompletion.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B AutocompletionExcludeApp <app_name>
+Defines an application, in which the program will exclude it from autocompletion process.
+
+Here, <app_name> is an identifier of the program window, input in which is processed by xneur.
+app_name can be obtained with the xprop utility.
+Multiple entries for this option in a single configuration file are allowed, like "one program - one option AutocompletionExcludeApp". 
+.TP 8
+.B LoadModule <module.so>
+This option define loadable plugin for xneur.
+
+Here, <module.so> is name of shared library.
+.TP 8
+.B TroubleshootBackspace <param>
+This option disable or enable autoswitching if pressed backspace.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootLeftArrow <param>
+This option disable or enable autoswitching if pressed left arrow.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootRightArrow <param>
+This option disable or enable autoswitching if pressed right arrow.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootUpArrow <param>
+This option disable or enable autoswitching if pressed up arrow.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootDownArrow <param>
+This option disable or enable autoswitching if pressed Down arrow.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootDelete <param>
+This option disable or enable autoswitching if pressed Delete.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootSwitch <param>
+This option disable or enable autoswitching if layout switched (Pause/Break by default).
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B TroubleshootFullScreen <param>
+This option disable or enable autoswitching for full screen apps.
+
+Here, <param> takes the values "Yes", "No".
+.TP 8
+.B DontSendKeyRelease <param>
+This option disable or enable sending KeyRelease event.
+
+Here, <param> takes the values "Yes", "No".
+
+.TP 8
+.B CompatibilityWithCompletion <param>
+This option disable or enable work-arround for compatibility with the completion.
+
+Here, <param> takes the values "Yes", "No".
+
+.TP 8
+.B TrackingInput <param>
+Disabling this option will add any application to the list of excluded applications.
+
+Here, <param> takes the values "Yes", "No".
+
+.TP 8
+.B TrackingMouse <param>
+Disabling this option will disable mouse tracking.
+
+Here, <param> takes the values "Yes", "No".
+
+.SH "SEE ALSO"
+xneur(1), gxneur(1)
+.SH AUTHOR
+Andrew Crew Kuznetsov, Nikolay Yankin

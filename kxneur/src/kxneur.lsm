@@ -1,0 +1,16 @@
+Begin3
+Title:          kxneur -- Some description
+Version:        0.9.0
+Entered-date:   
+Description:    
+Keywords:       KDE Qt
+Author:         Vadim Likhota <vadim-lvv@yandex.ru>
+Maintained-by:  Vadim Likhota <vadim-lvv@yandex.ru>
+Home-page:      
+Alternate-site: 
+Primary-site:   ftp://ftp.kde.org/pub/kde/unstable/apps/utils
+                xxxxxx  kxneur-0.9.0.tar.gz
+                xxx     kxneur-0.9.0.lsm
+Platform:       Linux. Needs KDE
+Copying-policy: GPL
+End

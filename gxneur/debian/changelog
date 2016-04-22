@@ -1,0 +1,225 @@
+gxneur (0.9.9-1) unstable; urgency=low
+
+  * New Upstream version 0.9.9
+  * debian/control: Increased xneur's version in depends.
+  * 01_old_gtk_compat.patch removed: fixed ustream.
+  * 03_fix_ftbfs_with_binutils_gold.patch updated to new version.
+
+ -- Alexander GQ Gerasiov <gq@debian.org>  Sat, 22 May 2010 16:52:19 +0400
+
+gxneur (0.9.8-1) unstable; urgency=low
+
+  * New upstream version 0.9.8
+  * debian/control: depends on xneur >= 0.9.8
+  * debian/control: Vcs-* fields updated.
+  * debian/watch updated.
+  * Switch package to dpkg 3.0 (quilt).
+  * 01_old_gtk_compat.patch: revert to old tray_widget code on old
+    libgtk.
+  * Use upstream gxneur.desktop instead of own.
+  * debian/rules: keep some crap exists in upstream against make
+    distclean.
+  * 03_fix_ftbfs_with_binutils_gold.patch: fix linking with binutils-
+    gold (Closes: #554765).
+  * debian/control: updated standard's version: no changes needed.
+
+ -- Alexander GQ Gerasiov <gq@debian.org>  Thu, 01 Apr 2010 15:46:18 +0400
+
+gxneur (0.9.7-1) unstable; urgency=low
+
+  * Switch to cdbs.
+  * Fix "debhelper-but-no-misc-depends gxneur".
+  * Imported Upstream version 0.9.7
+
+ -- Alexander GQ Gerasiov <gq@debian.org>  Tue, 20 Oct 2009 19:42:23 +0400
+
+gxneur (0.9.5.1-1) unstable; urgency=low
+
+  * New Upstream Version.
+  * debian/control: updated to xneur 0.9.5
+  * debian/control: bump standards version (no changes needed).
+  * debian/rules: fix dh_desktop-is-deprecated warning.
+  * debian/rules: fix installation of manpage from debian/ (not upstream
+    one).
+  * My e-mail updated.
+
+ -- Alexander GQ Gerasiov <gq@debian.org>  Fri, 21 Aug 2009 11:55:32 +0400
+
+gxneur (0.9.4-1) unstable; urgency=low
+
+  * New Upstream Version
+  * debian/control updated to version of backend.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Wed, 22 Apr 2009 01:59:57 +0400
+
+gxneur (0.9.3-1) unstable; urgency=low
+
+  * New Upstream Version
+  * Bump xneur's version in dependences.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Sun, 11 Jan 2009 01:32:32 +0300
+
+gxneur (0.9.2-1) unstable; urgency=low
+
+  * New Upstream Version
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Wed, 05 Nov 2008 18:53:43 +0300
+
+gxneur (0.9.1-1) unstable; urgency=low
+
+  * Update 05_correct_error_message.dpatch.
+  * Bump Standards-Version to 3.8.0 (no changes needed).
+  * Update xneur's version in (built-)depends.
+  * Imported Upstream version 0.9.1
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Thu, 24 Jul 2008 00:08:34 +0400
+
+gxneur (0.8.0+svn20080428-1) unstable; urgency=low
+
+  * Imported SVN r20 (20080428):
+    + Some minor changes.
+    + Also include sources, which are provided in SVN, but often absent in
+      tarball. (Closes: #476224)
+  * Upstream now provides gxneur.1 so we should not overwrite it in our
+    build scripts.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Tue, 29 Apr 2008 13:06:28 +0400
+
+gxneur (0.8.0+svn20080310-1) unstable; urgency=low
+
+  * Imported upstream version 0.8.0+svn20080310
+  * Standards-Version: 3.7.3 (no changes needed).
+  * Homepage, XS-Vcs-Git and XS-Vcs-Browser fields added.
+  * Depends on XNeur >= 0.8.0+svn20080310.
+  * Patches were updated to new upstream.
+  * Added libtool into build-depends.
+  * Added docbook-to-man into build-depends.
+  * Added manpage for gxneur.
+  * Fixed spelling in description.
+  * Clean po/*.gmo as upstream forgot to do it.
+  * Added dh_desktop into debian/rules: not really needed, but this
+    prevent lintian worning.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Sat, 22 Mar 2008 20:05:13 +0300
+
+gxneur (0.8.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Build-Depends update (libxnconfig version).
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Fri, 19 Oct 2007 22:29:03 +0400
+
+gxneur (0.6.2-2) unstable; urgency=low
+
+  * Upload to Debian (Closes: #406220, #431004).
+  * 06_pixmapdir patch added: install pixmaps into /u/s/pixmaps/gxneur, to
+    avoid conflict with kxneur.
+  * Cleaned some crap from debian/ (some dh-make comments from rules and
+    watch, removed debian/dirs, some typos fixed etc.)
+  * 02_app_pixmap patch dropped. Instead manually install icon from
+    debian/install.
+  * Updated package description.
+  * Updated gxneur.menu and gxneur.desktop.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Tue, 09 Oct 2007 03:02:47 +0400
+
+gxneur (0.6.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Right patch for debian-rules-ignores-make-clean-error, now it should be
+    ok.
+  * Updated dependencies in debian/control.
+  * Dropped 03_localeproblems.dpatch: fixed upstream.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Wed, 18 Jul 2007 16:54:52 +0400
+
+gxneur (0.6.1-1) unstable; urgency=low
+
+  * New upstream release
+    + Updated to XNeur 0.6.1
+    + Non-free pixmaps replaced with the free ones.
+    + Copyright problem with LGPL code solved.
+  * 03_localeproblems.dpatch added: it fix locate problems which breaks gettext
+    in non-utf locales.
+  * Let's try again to upload it into Debian.
+  * Removed build-dependence on libpcre-dev, because libxneur6-dev already
+    depends on it.
+  * lintian warning in debian/rules fixed.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Mon, 21 May 2007 17:06:19 +0400
+
+gxneur (0.6.0-2) unstable; urgency=low
+
+  * Added patch for English strings (from gXNeur's BTS).
+  * Changed priority to optional.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Tue,  8 May 2007 19:54:56 +0400
+
+gxneur (0.6.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Updated control a little bit, .desktop file added.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Fri, 27 Apr 2007 21:09:09 +0400
+
+gxneur (0.5.0-1) unstable; urgency=low
+
+  * New upstream release
+    + Updated to xneur 0.5.0
+  * Dropped patches:
+    + 01_remove_header, 90_gxneur_script - fixed upstream.
+  * Added patches:
+    + 05_correct_error_message: Correct a little bit error message on wrong
+      .xneur/xneurrc
+  * watch file updated.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Thu, 22 Mar 2007 01:27:15 +0300
+
+gxneur (0.4.0-3) unstable; urgency=low
+
+  * Bashism fixed in 90_gxneur_script.dpatch.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Wed, 21 Feb 2007 00:01:03 +0300
+
+gxneur (0.4.0-2) unstable; urgency=low
+
+  * gxneur also copies /etc/xneur into user's home on first run.
+    90_gxneur_script.dpatch
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Sun, 28 Jan 2007 14:14:29 +0300
+
+gxneur (0.4.0-1) unstable; urgency=low
+
+  * New upstream release:
+    + Updated to xneur 0.4.0.
+    + Now shows keyboard layout.
+    + Many interface enhancements.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Tue, 23 Jan 2007 13:05:02 +0300
+
+gxneur (0.3-2) unstable; urgency=low
+
+  * Update package description.
+  * Don't install empty upstream changelog.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Tue,  9 Jan 2007 19:30:59 +0300
+
+gxneur (0.3-1a) unstable; urgency=low
+
+  * Rebuild with correct libxnconfig.
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Thu, 28 Dec 2006 19:12:53 +0300
+
+gxneur (0.3-1) unstable; urgency=low
+
+  * New upstream release
+  * Now use libxnconfig-dev as build-depends
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Tue, 26 Dec 2006 19:13:16 +0300
+
+gxneur (0.2.0-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Alexander GQ Gerasiov <gq@cs.msu.su>  Wed, 13 Dec 2006 10:20:28 +0300
+

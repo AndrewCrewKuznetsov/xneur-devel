@@ -1,0 +1,94 @@
+October 24 2013:
+Version 0.17.0 released.
+Add more xneur options.
+
+October 25 2012:
+Version 0.16.0 released.
+Add more xneur options.
+Remove deprecated gtk function
+
+November 10 2011:
+Version 0.15.0 released.
+Add more xneur options.
+
+October 24 2011:
+Version 0.14.0 released.
+Some bugfixes for rendering engine selection.
+Add CLI options for gxneur.
+Add option for setup Gnome3 extension for placing icon on shell area.
+
+May 24 2011:
+Version 0.13.0 released.
+Add App Indicator icon and option to select icon rendering engine (StatusIcon, AppIndicator and Built-in engines).
+Add option to change icon (flag, icon, text).
+
+February 01 2011:
+Version 0.12.0 released.
+
+November 26 2010:
+Version 0.11.1 released.
+New UI for creating user dictionaries.
+Icon resize to tray size (optional).
+Add personal settings for gxneur (autostart, icon theme, keyboard properties and others). 
+Lot of bugfixes
+
+October 07 2010:
+Version 0.10.0 released.
+View log-file over gxneur
+Lot of bugfixes
+Add delay before start
+Add autostart option
+Add option for change flag theme
+Add option to view keyboard settings 
+
+May 21 2010:
+Version 0.9.9 released.
+New logo of gxneur.
+Make with old versions GTK+2.0
+
+March 19 2010:
+Version 0.9.8 released.
+New logo of gxneur.
+Add more xneur options.
+Bugfix tray resize.
+Undefined layouts (flag not exist) showing letters.
+
+October 14 2009:
+Version 0.9.7 released.
+Executing user actions from gxneur tray icon menu.
+Add option to adding application manually.
+Add more xneur options
+
+September 16 2009:
+Version 0.9.6 released.
+Add more xneur options
+
+August 04 2009:
+Version 0.9.5 released.
+Add more xneur options
+
+April 21 2009:
+Version 0.9.4 released.
+Add more xneur options
+
+November 02 2008
+Version 0.9.2 released.
+Redisign of setup window
+Add more xneur options
+
+July 23 2008:
+Version 0.9.1 released.
+Redisign of setup window
+Add more xneur options
+
+June 24 2008:
+Version 0.9.0 released.
+GUI over libglade
+Add more xneur options
+
+May 17 2007:
+Version 0.6.1 released.
+Many fixes in configure scripts.
+Flag icons changed to free set from http://www.jfitz.com/flags/index.html
+Changed source code for tray icon part.
+All files of gXNeur is FREE!

@@ -1,0 +1,286 @@
+# translation of gxneur.
+# Copyright (C) 2007 THE gxneur'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gxneur package.
+# <>, 2007.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: gxneur 0.6.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-04-19 15:38+0400\n"
+"PO-Revision-Date: 2007-02-13 00:53+0300\n"
+"Last-Translator:  <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/support.c:91 src/support.c:115
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Ня знойдзеный файл растравай карты: %s"
+
+#: src/interface.c:42
+msgid "gXNeur About..."
+msgstr "Пра gXNeur…"
+
+#: src/interface.c:49
+msgid ""
+"\n"
+"\t\t<b>X Neural Switcher for Gnome</b>\t\t\n"
+"\t\tGTK2 frontend for XNeur\t\t\n"
+"\n"
+"AUTHORS:\n"
+"Andrew Crew Kuznetsov\n"
+"Nikolay Yankin"
+msgstr ""
+"\n"
+"\t\t<b>X Neural Switcher для Gnome</b>\t\t\n"
+"\t\tGTK2-абалонка для XNeur\t\t\n"
+"\n"
+"АЎТАРЫ:\n"
+"Андрэй Crew Кузьняцоў\n"
+"Мікалай Янкін"
+
+#: src/interface.c:189
+msgid "XNeur Settings"
+msgstr "Налады XNeur"
+
+#: src/interface.c:218
+msgid "<b>Processing Mode\t\t</b>"
+msgstr "<b>Рэжым працы праграмы\t\t</b>"
+
+#: src/interface.c:227
+msgid "Automatic"
+msgstr "Аўтаматычны"
+
+#: src/interface.c:228
+msgid "Manual"
+msgstr "Ручны"
+
+#: src/interface.c:238
+msgid "<b>Key Bindings</b>"
+msgstr "<b>Спалучэнні клявішаў</b>"
+
+#: src/interface.c:248
+msgid "Replace Selected Text"
+msgstr "Замена вылучанага тэксту"
+
+#: src/interface.c:255
+msgid "Change Processing Mode"
+msgstr "Зьмена рэжыму працы"
+
+#: src/interface.c:262
+msgid "Replace Last String "
+msgstr "Замена апошняга радка "
+
+#: src/interface.c:269
+msgid "Replace / Cancel Replace "
+msgstr "Замена / Адмена Замены "
+
+#: src/interface.c:281 src/interface.c:291 src/interface.c:301
+#: src/interface.c:311 src/interface.c:321 src/interface.c:331
+#: src/interface.c:341 src/interface.c:351 src/interface.c:368
+#: src/interface.c:378 src/interface.c:395 src/interface.c:405
+msgid "None"
+msgstr "Адсутнічае"
+
+#: src/interface.c:282 src/interface.c:302 src/interface.c:322
+#: src/interface.c:342 src/interface.c:369 src/interface.c:396
+msgid "Shift"
+msgstr "Shift"
+
+#: src/interface.c:283 src/interface.c:303 src/interface.c:323
+#: src/interface.c:343 src/interface.c:370 src/interface.c:397
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: src/interface.c:284 src/interface.c:304 src/interface.c:324
+#: src/interface.c:344 src/interface.c:371 src/interface.c:398
+msgid "Alt"
+msgstr "Alt"
+
+#: src/interface.c:292 src/interface.c:312 src/interface.c:332
+#: src/interface.c:352 src/interface.c:379 src/interface.c:406
+msgid "Break"
+msgstr "Break"
+
+#: src/interface.c:293 src/interface.c:313 src/interface.c:333
+#: src/interface.c:353 src/interface.c:380 src/interface.c:407
+msgid "ScrollLock"
+msgstr "ScrollLock"
+
+#: src/interface.c:294 src/interface.c:314 src/interface.c:334
+#: src/interface.c:354 src/interface.c:381 src/interface.c:408
+msgid "PrtSc"
+msgstr "PrtSc"
+
+#: src/interface.c:356
+msgid "Transliterate Selected Text"
+msgstr "Трансьлітэрацыя вылучанага тэксту"
+
+#: src/interface.c:383
+msgid "Change Case Selected Text "
+msgstr "Зьмена рэгістра вылучанага тэксту "
+
+#: src/interface.c:414
+msgid "<b>Additional</b>"
+msgstr "<b>Дадаткова</b>"
+
+#: src/interface.c:424
+msgid "Processing Mouse Events"
+msgstr "Апрацоўваць падзеі мышы"
+
+#: src/interface.c:430
+msgid "Enable Education Mode"
+msgstr "Уключыць рэжым саманавучаньня"
+
+#: src/interface.c:436
+msgid "Remember Layoute For Each Window"
+msgstr "Запамінаць раскладку для кожнага вакна"
+
+#: src/interface.c:442
+msgid "Save Selection After Change Selected Text"
+msgstr "Пакідаць вылучэньне пасьля зьмены вылучанага тэкста"
+
+#: src/interface.c:448
+msgid "Preferences"
+msgstr "Парамэтры"
+
+#: src/interface.c:457
+msgid "Language Name"
+msgstr "Назва мовы"
+
+#: src/interface.c:464
+msgid "Number\t"
+msgstr "Нумар\t"
+
+#: src/interface.c:476 src/interface.c:486 src/interface.c:496
+#: src/interface.c:506
+msgid "0"
+msgstr "0"
+
+#: src/interface.c:477 src/interface.c:487 src/interface.c:497
+#: src/interface.c:507
+msgid "1"
+msgstr "1"
+
+#: src/interface.c:478 src/interface.c:488 src/interface.c:498
+#: src/interface.c:508
+msgid "2"
+msgstr "2"
+
+#: src/interface.c:479 src/interface.c:489 src/interface.c:499
+#: src/interface.c:509
+msgid "3"
+msgstr "3"
+
+#: src/interface.c:511 src/interface.c:517 src/interface.c:523
+#: src/interface.c:529
+msgid "Dictionary..."
+msgstr "Слоўнік…"
+
+#: src/interface.c:541 src/interface.c:554 src/interface.c:567
+#: src/interface.c:580
+msgid "English"
+msgstr ""
+
+#: src/interface.c:542 src/interface.c:555 src/interface.c:568
+#: src/interface.c:581
+msgid "Russian"
+msgstr ""
+
+#: src/interface.c:543 src/interface.c:556 src/interface.c:569
+#: src/interface.c:582
+msgid "Ukrainian"
+msgstr ""
+
+#: src/interface.c:544 src/interface.c:557 src/interface.c:570
+#: src/interface.c:583
+msgid "Belarussian"
+msgstr ""
+
+#: src/interface.c:545 src/interface.c:558 src/interface.c:571
+#: src/interface.c:584
+msgid "French"
+msgstr ""
+
+#: src/interface.c:546 src/interface.c:559 src/interface.c:572
+#: src/interface.c:585
+msgid "Romanian"
+msgstr ""
+
+#: src/interface.c:587 src/interface.c:593 src/interface.c:599
+#: src/interface.c:605
+msgid "Regular Expressions..."
+msgstr "Рэгулярныя выразы…"
+
+#: src/interface.c:611
+msgid "Layouts"
+msgstr "Раскладкі"
+
+#: src/interface.c:623
+msgid "Excluded List"
+msgstr "Сьпіс выключэньняў"
+
+#: src/interface.c:648 src/interface.c:689 src/interface.c:730
+msgid "Add..."
+msgstr "Дадаць…"
+
+#: src/interface.c:652 src/interface.c:693 src/interface.c:734
+msgid "Remove"
+msgstr "Выдаліць"
+
+#: src/interface.c:664
+msgid "Force Automatic Processing List"
+msgstr "Сьпіс для прымусовай аўтаматычнай апрацоўкі"
+
+#: src/interface.c:705
+msgid "Force Manual Processing List"
+msgstr "Сьпіс для прымусовай ручной апрацоўкі"
+
+#: src/interface.c:738
+msgid "Applications"
+msgstr "Праграмы"
+
+#: src/interface.c:894
+msgid "File Editing"
+msgstr "Рэдагаваньне файла"
+
+#: src/misc.c:142
+msgid "Current Version"
+msgstr "Бягучая вэрсія"
+
+#: src/misc.c:178 src/misc.c:207 src/misc.c:236
+msgid "Application"
+msgstr "Праграма"
+
+#: src/trayicon.c:76
+msgid "Stop Daemon"
+msgstr "Спыніць дэман"
+
+#: src/trayicon.c:81
+msgid "Run Daemon"
+msgstr "Запусьціць дэман"
+
+#: src/trayicon.c:96
+msgid "Disable Input Autocorrection"
+msgstr "Адкл. аўтакарэкцыю ўводу"
+
+#: src/trayicon.c:101
+msgid "Enable Input Autocorrection"
+msgstr "Укл. аўтакарэкцыю ўводу"
+
+#: src/trayicon.c:178
+msgid "X Neural Switcher RUNNING ("
+msgstr "X Neural Switcher ПРАЦУЕ ("
+
+#: src/trayicon.c:182
+msgid "X Neural Switcher STOPPED ("
+msgstr "X Neural Switcher СПЫНЕНЫ ("
+
+#: src/trayicon.c:202
+msgid "X Neural Switcher"
+msgstr "X Neural Switcher запушчаны"

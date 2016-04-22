@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="noLayout">icons/layout.png</file>
+        <file>icons/kdeneur.png</file>
+    </qresource>
+</RCC>

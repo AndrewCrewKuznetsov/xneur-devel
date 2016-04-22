@@ -1,0 +1,59 @@
+# It's a default X Neural Switcher configuration file 
+# all values are defaultur
+
+# Default work mode
+DefaultMode Auto
+
+# Level of message what program can output
+# Example:
+#LogLevel Error
+#LogLevel Log
+LogLevel Debug
+
+# Define used languages
+# See Settings page on http://www.xneur.ru for details
+AddLanguage English en
+SetXkbGroup English 0
+AddLanguage Russian ru
+SetXkbGroup Russian 1
+
+# Add Applications names to exclude it from procces with xneur
+# Only for applications, what's window names don't exist in this list xneur will process the input
+# Example:
+#ExcludeApp Gaim
+
+# Use this parameter, if you use Beryl, Compiz, ion3 etc. 
+# Add Applications names to dummy list, if in Application keyboard events flushed.
+# Not use this list for Gnome and KDE.
+# Example:
+#DummyApp Anjuta
+DummyApp Anjuta
+DummyApp Swiftfox-bin
+DummyApp Firefox-bin
+DummyApp Mozilla-thunderbird-bin
+
+# Use this parameter to force set work mode in current application to Auto.
+# Example:
+#SetAutoApp Gedit
+
+# Use this parameter to force set work mode in current application to Manual.
+# Example:
+#SetManualApp Anjuta
+
+# Binds hotkeys for some actions
+AddBind ChangeWord None Break
+AddBind ChangeString Ctrl Break
+AddBind ChangeMode Ctrl PrtSc
+AddBind ChangeSelected Shift Break
+
+# This option enable or disable mouse processing
+# Example:
+#GrabMouse Yes
+GrabMouse No
+
+# This option enable or disable self education of xneur
+# Example:
+#EducationMode Yes
+EducationMode No
+
+# It's all

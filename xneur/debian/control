@@ -1,0 +1,47 @@
+Source: xneur
+Section: x11
+Priority: optional
+Maintainer: Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
+Build-Depends: debhelper (>= 6.0.7), cdbs, libx11-dev, libxtst-dev, libpcre3-dev, pkg-config, libaspell-dev, libgstreamer1.0-dev | libgstreamer0.10-dev, libxosd-dev, libnotify-dev | libnotify4-dev, libenchant-dev
+Standards-Version: 3.8.4
+Homepage: http://xneur.ru
+
+Package: xneur
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: gxneur (>=0.17), xsel
+Suggests: myspell-en-us | myspell-en-gb | aspell-en | aspell-dictionary
+Description: in-place conversion of text typed in with a wrong keyboard layout
+ When users work in multilingual environment (e.g. Russian+English), they
+ sometimes type in text with wrong keyboard layout. In auto mode XNeur can
+ automatically detect language of word user typed, switch keyboard layout and
+ convert word from one keyboard layout into another. In manual mode user has
+ ability to convert last typed word or some selected text with hot-keys.
+ The main idea of this utility is similar to Punto Switcher for MS Windows.
+ For now XNeur support English, Russian, Ukrainian, Belarusian, French,
+ Romanian, German, Kazakh and many other languages.
+
+Package: libxneur
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libxnconfig, libxnconfig7
+Replaces: libxnconfig
+Description: xneur library
+ This package provides libraries needed for XNeur backend and frontends to work.
+
+Package: libxneur-dev
+Architecture: any
+Section: libdevel
+Depends: ${shlibs:Depends}, ${misc:Depends}, libpcre3-dev, libaspell-dev, libenchant-dev, libxneur (= ${binary:Version})
+Description: development files for xneur frontends and plugins.
+ This package provides development files for building XNeur frontends and
+ its plugins.
+
+Package: xneur-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: xneur (= ${binary:Version}), ${misc:Depends}
+Description: XNeur debugging symbols
+ This package includes the debugging symbols for XNeur.

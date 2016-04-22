@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+#DEB_DH_SHLIBDEPS_ARGS_xneurchecker += --dpkg-shlibdeps-params=--ignore-missing-info
+
+pre-build::
+	for i in $(PRESERVE_UPSTREAM); do\
+		test -f $$i.upstream || cp $$i $$i.upstream; \
+	done
+
+clean::
+	for i in $(PRESERVE_UPSTREAM); do\
+		test ! -f $$i.upstream || mv -f $$i.upstream $$i; \
+	done
+

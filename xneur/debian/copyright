@@ -1,0 +1,43 @@
+This package was debianized by Alexander Gerasiov <gq@cs.msu.su> on
+Wed, 13 Dec 2006 10:19:54 +0300.
+
+It was downloaded from http://www.xneur.ru
+
+Upstream Author:  XNeur Team
+
+Copyright: 2006, XNeur Team
+
+License:
+
+   This package is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This package is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this package; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'.
+
+Sounds:
+GPL v2:
+switch.wav (FreeDroid/sounds/effects/CameraTakePicture.wav)
+layout1type.wav (FreeDroid/sounds/effects/item_sounds/Item_Drop_Sound_3.wav)
+layout2type.wav (FreeDroid/sounds/effects/No_Ammo_Sound_0.wav)
+
+Free (no restriction):
+itemback.wav (Sauerbraten/packages/sounds/free/itemback.wav)
+layout1.wav (Sauerbraten/packages/sounds/free/)
+layout2.wav (Sauerbraten/packages/sounds/free/)
+replace.wav (Sauerbraten/packages/sounds/free/)
+
+The Debian packaging is (C) 2006, Alexander GQ Gerasiov <gq@cs.msu.su> and
+is licensed under the GPL, see above.
+
