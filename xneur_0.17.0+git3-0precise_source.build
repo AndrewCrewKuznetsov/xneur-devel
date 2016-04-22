@@ -1,0 +1,11 @@
+ dpkg-buildpackage -rfakeroot -d -us -uc -S -sd
+dpkg-buildpackage: пакет исходного кода xneur
+dpkg-buildpackage: версия исходного кода 0.17.0+git3-0precise
+dpkg-buildpackage: дистрибутив исходного кода precise
+dpkg-buildpackage: исходный код изменён Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
+ dpkg-source --before-build xneur-0.17.0
+ fakeroot debian/rules clean
+debian/rules:2: /usr/share/cdbs/1/rules/debhelper.mk: Нет такого файла или каталога
+debian/rules:3: /usr/share/cdbs/1/class/autotools.mk: Нет такого файла или каталога
+make: *** Нет правила для сборки цели «/usr/share/cdbs/1/class/autotools.mk».  Останов.
+dpkg-buildpackage: ошибка: fakeroot debian/rules clean возвратил код ошибки 2
