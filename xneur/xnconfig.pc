@@ -6,6 +6,6 @@ includedir=${prefix}/include
 Name: xnconfig
 Description: XNeur config library
 Requires: libpcre
-Version: 0.17.0
+Version: 0.18.0
 Libs: -L${exec_prefix}/lib -lxnconfig -lpcre  -lpthread -ldl
 Cflags: -I${prefix}/include

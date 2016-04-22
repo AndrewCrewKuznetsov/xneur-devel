@@ -1,4 +1,4 @@
-AC_INIT(xneur, 0.17.0)
+AC_INIT(xneur, 0.18.0)
 AC_CONFIG_SRCDIR(configure.ac)
 AM_INIT_AUTOMAKE
 

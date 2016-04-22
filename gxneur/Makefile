@@ -200,7 +200,7 @@ DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/gxneur.desktop.in ABOUT-NLS AUTHORS COPYING \
 	ChangeLog INSTALL NEWS README TODO compile config.guess \
-	config.rpath config.sub install-sh ltmain.sh missing
+	config.rpath config.sub depcomp install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -315,10 +315,10 @@ OTOOL64 =
 PACKAGE = gxneur
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = gxneur
-PACKAGE_STRING = gxneur 0.17.0
+PACKAGE_STRING = gxneur 0.18.0
 PACKAGE_TARNAME = gxneur
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.17.0
+PACKAGE_VERSION = 0.18.0
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 POSUB = po
@@ -328,7 +328,7 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 USE_NLS = yes
-VERSION = 0.17.0
+VERSION = 0.18.0
 X11_CFLAGS = 
 X11_LIBS = -lX11
 XGETTEXT = /usr/bin/xgettext

@@ -149,6 +149,7 @@ gxneur-main.o: main.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h \
+ /usr/include/glib-2.0/gio/gdatagrambased.h \
  /usr/include/glib-2.0/gio/gdatainputstream.h \
  /usr/include/glib-2.0/gio/gdataoutputstream.h \
  /usr/include/glib-2.0/gio/gdbusaddress.h \
@@ -164,6 +165,9 @@ gxneur-main.o: main.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/glib-2.0/gio/gdbusserver.h \
  /usr/include/glib-2.0/gio/gdbusutils.h \
  /usr/include/glib-2.0/gio/gdrive.h \
+ /usr/include/glib-2.0/gio/gdtlsclientconnection.h \
+ /usr/include/glib-2.0/gio/gdtlsconnection.h \
+ /usr/include/glib-2.0/gio/gdtlsserverconnection.h \
  /usr/include/glib-2.0/gio/gemblemedicon.h \
  /usr/include/glib-2.0/gio/gicon.h /usr/include/glib-2.0/gio/gemblem.h \
  /usr/include/glib-2.0/gio/gfileattribute.h \
@@ -925,6 +929,8 @@ gxneur-main.o: main.c /usr/include/stdc-predef.h ../config.h \
 
 /usr/include/x86_64-linux-gnu/bits/unistd.h:
 
+/usr/include/glib-2.0/gio/gdatagrambased.h:
+
 /usr/include/glib-2.0/gio/gdatainputstream.h:
 
 /usr/include/glib-2.0/gio/gdataoutputstream.h:
@@ -954,6 +960,12 @@ gxneur-main.o: main.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/glib-2.0/gio/gdbusutils.h:
 
 /usr/include/glib-2.0/gio/gdrive.h:
+
+/usr/include/glib-2.0/gio/gdtlsclientconnection.h:
+
+/usr/include/glib-2.0/gio/gdtlsconnection.h:
+
+/usr/include/glib-2.0/gio/gdtlsserverconnection.h:
 
 /usr/include/glib-2.0/gio/gemblemedicon.h:
 

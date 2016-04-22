@@ -43,14 +43,14 @@ fi
 cp -rf ../xneur/ ./xneur-tmp
 
 # building to dist
-cd ./"xneur-tmp"/xneur
+cd ./"xneur-tmp"
 # save debianize settings
-mv ./debian ../../
+mv ./debian ../
 ./autogen.sh
 make dist
-mkdir ../../"xneur-${CUR_VER}"
-tar -xvf "xneur-${CUR_VER}.tar.gz" -C ../../
-cd ../..
+mkdir ../"xneur-${CUR_VER}"
+tar -xvf "xneur-${CUR_VER}.tar.gz" -C ../
+cd ..
 rm -R ./"xneur-tmp"
 # end building
 
@@ -64,21 +64,28 @@ mv ../debian ./
 read -p "Build package only on local system (y/N)?" RESPONSE
 echo
 if [ "$RESPONSE" = y ] ; then
+        
 	# If you want to build package on your system uncomment this:
 	dch -v "$NEW_VER-mybuild1" "Minor update."
 	dpkg-buildpackage -rfakeroot
 
 	cd ..
 	rm -R ./"xneur-${NEW_VER}"
+	rm -R ./"xneur-${CUR_VER}"
 else
 
 # Note: I am using gnupg-agent for comfortable work
 
-# begin update for basic releases
-dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+# begin update for basic releases 
+dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "vivid" -v "${NEW_VER}-0vivid" \
@@ -99,6 +106,8 @@ debuild -S -sd
 # end update for other releases
 
 cd ..
+echo "Download to Launchpad Xenial..."
+dput ppa xneur_${NEW_VER}-0xenial_source.changes | cat
 echo "Download to Launchpad Wily..."
 dput ppa xneur_${NEW_VER}-0wily_source.changes | cat
 echo "Download to Launchpad Vivid..."

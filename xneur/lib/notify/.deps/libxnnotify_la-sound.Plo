@@ -186,6 +186,9 @@ libxnnotify_la-sound.lo: sound.c /usr/include/stdc-predef.h \
  /usr/include/gstreamer-1.0/gst/gstsystemclock.h \
  /usr/include/gstreamer-1.0/gst/gsttagsetter.h \
  /usr/include/gstreamer-1.0/gst/gsttocsetter.h \
+ /usr/include/gstreamer-1.0/gst/gsttracer.h \
+ /usr/include/gstreamer-1.0/gst/gsttracerfactory.h \
+ /usr/include/gstreamer-1.0/gst/gsttracerrecord.h \
  /usr/include/gstreamer-1.0/gst/gsttypefind.h \
  /usr/include/gstreamer-1.0/gst/gsttypefindfactory.h \
  /usr/include/gstreamer-1.0/gst/gstutils.h \
@@ -633,6 +636,12 @@ libxnnotify_la-sound.lo: sound.c /usr/include/stdc-predef.h \
 /usr/include/gstreamer-1.0/gst/gsttagsetter.h:
 
 /usr/include/gstreamer-1.0/gst/gsttocsetter.h:
+
+/usr/include/gstreamer-1.0/gst/gsttracer.h:
+
+/usr/include/gstreamer-1.0/gst/gsttracerfactory.h:
+
+/usr/include/gstreamer-1.0/gst/gsttracerrecord.h:
 
 /usr/include/gstreamer-1.0/gst/gsttypefind.h:
 

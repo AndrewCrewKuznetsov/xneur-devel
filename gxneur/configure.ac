@@ -1,4 +1,4 @@
-AC_INIT(gxneur, 0.17.0)
+AC_INIT(gxneur, 0.18.0)
 AC_CONFIG_SRCDIR(configure.ac)
 AM_INIT_AUTOMAKE
 
@@ -18,8 +18,8 @@ AC_HEADER_STDC
 
 PKG_PROG_PKG_CONFIG([0.20])
 
-PKG_CHECK_MODULES(XNEURCONF, [xnconfig = 0.17.0])
-PKG_CHECK_MODULES(XNEURLIB, [xneur = 0.17.0])
+PKG_CHECK_MODULES(XNEURCONF, [xnconfig = 0.18.0])
+PKG_CHECK_MODULES(XNEURLIB, [xneur = 0.18.0])
 
 PKG_CHECK_MODULES(X11, [x11 >= 1.1], found_x11="yes", found_x11="no")
 if test "x$found_x11" = "xno"; then

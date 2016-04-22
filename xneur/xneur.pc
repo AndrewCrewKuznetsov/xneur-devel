@@ -5,6 +5,6 @@ includedir=${prefix}/include
 
 Name: xneur
 Description: XNeur library
-Version: 0.17.0
+Version: 0.18.0
 Libs: -L${exec_prefix}/lib -lxneur  -lpcre -lenchant -lpthread -ldl
 Cflags: -I${prefix}/include
