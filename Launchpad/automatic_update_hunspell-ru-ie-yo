@@ -10,7 +10,7 @@ else
   export OLD_VER=$(ls hunspell-ru-ie-yo_*.orig.tar.gz | sed -e "s/^hunspell-ru-ie-yo_\(.*\).orig.tar.gz$/\1/");
 fi
 
-export LAST_REVISION=$(hg su | grep "родитель:[\ ]*[0-9]\+" | sed -e "s/^родитель:[\ ]*\([0-9]\+\).*$/\1/")
+export LAST_REVISION=$(git rev-list HEAD --count)
 
 echo "Number of last revision: ${LAST_REVISION}"
 
@@ -21,12 +21,10 @@ fi
 
 echo "Updating is started."
 # begin local updating
-hg pull
-hg update
-hg merge
+git pull
 
-export CUR_VER="0.3.9-2"
-export NEW_VER="0.3.9-2"
+export CUR_VER="0.3.9-3"
+export NEW_VER="0.3.9-3"
 
 echo "OLD_VER = ${OLD_VER}"
 echo "NEW_VER = ${NEW_VER}"
@@ -42,18 +40,19 @@ if [ ${NEW_VER} = ${OLD_VER} ]; then
 fi
 
 # begin local updating
-hg archive -t files "hunspell-ru-ie-yo-tmp"
+cp -rf ../"hunspell-ru-ie-yo" ./"hunspell-ru-ie-yo-tmp"
 
 # end local updating
 
 # building to dist
-cd ./"hunspell-ru-ie-yo-tmp"/hunspell-ru-ie-yo
+cd ./"hunspell-ru-ie-yo-tmp"
 # save debianize settings
-mv ./debian ../../
-mkdir ../../"hunspell-ru-ie-yo-${CUR_VER}"
-cp ./ru_RU.aff ./ru_RU.dic ../../"hunspell-ru-ie-yo-${CUR_VER}"
+mv ./debian ./
 
-cd ../..
+mkdir ../"hunspell-ru-ie-yo-${CUR_VER}"
+cp ./ru_RU.aff ./ru_RU.dic ../"hunspell-ru-ie-yo-${CUR_VER}"
+
+cd ..
 rm -R ./"hunspell-ru-ie-yo-tmp"
 # end building
 
@@ -78,10 +77,15 @@ else
 # Note: I am using gnupg-agent for comfortable work
 
 # begin update for basic releases
-dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "vivid" -v "${NEW_VER}-0vivid" \
@@ -102,6 +106,8 @@ debuild -S -sd
 
 cd ..
 
+echo "Download to Launchpad Xenial..."
+dput ppa hunspell-ru-ie-yo_${NEW_VER}-0xenial_source.changes | cat
 echo "Download to Launchpad Wily..."
 dput ppa hunspell-ru-ie-yo_${NEW_VER}-0wily_source.changes | cat
 echo "Download to Launchpad Vivid..."

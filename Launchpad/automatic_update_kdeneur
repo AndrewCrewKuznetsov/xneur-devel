@@ -10,7 +10,7 @@ else
   export OLD_VER=$(ls kdeneur_*.orig.tar.gz | sed -e "s/^kdeneur_\(.*\).orig.tar.gz$/\1/");
 fi
 
-export LAST_REVISION=$(hg su | grep "родитель:[\ ]*[0-9]\+" | sed -e "s/^родитель:[\ ]*\([0-9]\+\).*$/\1/")
+export LAST_REVISION=$(git rev-list HEAD --count)
 
 echo "Number of last revision: ${LAST_REVISION}"
 
@@ -21,12 +21,10 @@ fi
 
 echo "Updating is started."
 # begin local updating
-hg pull
-hg update
-hg merge
+git pull
 
 export CUR_VER=$(cat ../kdeneur/configure.in | grep "AM_INIT_AUTOMAKE" | sed -e "s/^AM_INIT_AUTOMAKE(kdeneur, \(.*\))$/\1/")
-export NEW_VER="${CUR_VER}+hg${LAST_REVISION}"
+export NEW_VER="${CUR_VER}+git${LAST_REVISION}"
 
 echo "OLD_VER = ${OLD_VER}"
 echo "NEW_VER = ${NEW_VER}"
@@ -42,19 +40,19 @@ if [ ${NEW_VER} = ${OLD_VER} ]; then
 fi
 
 # begin local updating
-hg archive -t files "kdeneur-tmp"
+cp -rf ../kdeneur/ ./kdeneur-tmp
 
 # end local updating
 
 # building to dist
-cd ./"kdeneur-tmp"/kdeneur
+cd ./"kdeneur-tmp"
 # save debianize settings
-mv ./debian ../../
+mv ./debian ../
 ./autogen.sh
 make dist
-mkdir ../../"kdeneur-${CUR_VER}"
-tar -xvf "kdeneur-${CUR_VER}.tar.gz" -C ../../
-cd ../..
+mkdir ../"kdeneur-${CUR_VER}"
+tar -xvf "kdeneur-${CUR_VER}.tar.gz" -C ../
+cd ..
 rm -R ./"kdeneur-tmp"
 # end building
 
@@ -74,15 +72,21 @@ if [ "$RESPONSE" = y ] ; then
 
 	cd ..
 	rm -R ./"kdeneur-${NEW_VER}"
+	rm -R ./"kdeneur-${OLD_VER}"
 else
 
 # Note: I am using gnupg-agent for comfortable work
 
 # begin update for basic releases
-dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
+  "Automated backport upload; no source changes."
+debuild -S -sd 
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "vivid" -v "${NEW_VER}-0vivid" \
@@ -102,6 +106,8 @@ debuild -S -sd
 # end update for other releases
 
 cd ..
+echo "Download to Launchpad Xenial..."
+dput ppa kdeneur_${NEW_VER}-0xenial_source.changes | cat
 echo "Download to Launchpad Wily..."
 dput ppa kdeneur_${NEW_VER}-0wily_source.changes | cat
 echo "Download to Launchpad Vivid..."
