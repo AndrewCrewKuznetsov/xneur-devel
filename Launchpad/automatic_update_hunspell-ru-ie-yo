@@ -47,7 +47,7 @@ cp -rf ../"hunspell-ru-ie-yo" ./"hunspell-ru-ie-yo-tmp"
 # building to dist
 cd ./"hunspell-ru-ie-yo-tmp"
 # save debianize settings
-mv ./debian ./
+mv ./debian ../
 
 mkdir ../"hunspell-ru-ie-yo-${CUR_VER}"
 cp ./ru_RU.aff ./ru_RU.dic ../"hunspell-ru-ie-yo-${CUR_VER}"
