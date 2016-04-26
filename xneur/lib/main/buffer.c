@@ -356,10 +356,8 @@ static void buffer_set_i18n_content(struct _buffer *p)
 static void buffer_set_content(struct _buffer *p, const char *new_content)
 {
 	p->clear(p);
-	
 	char *content = NULL;
 	content = strdup(new_content);
-
 	p->cur_pos = strlen(content);
 	if (p->cur_pos >= p->cur_size)
 		set_new_size(p, p->cur_pos + 1);
@@ -491,7 +489,8 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 		char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, keycode, i, modifier);
 		if (symbol_unchanged == NULL)
 			continue;
-		
+
+		//log_message (ERROR, _("'%c' - '%c' - '%c'"), sym, symbol, symbol_unchanged);
 		p->i18n_content[i].content = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
 		p->i18n_content[i].content = strcat(p->i18n_content[i].content, symbol);
 

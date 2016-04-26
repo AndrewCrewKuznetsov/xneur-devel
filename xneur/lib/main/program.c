@@ -95,6 +95,8 @@ extern struct _xneur_config *xconfig;
 
 struct _window *main_window;
 
+int last_event_type = 0;
+
 // Private
 static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 {
@@ -481,7 +483,11 @@ static void program_process_input(struct _program *p)
 			}
 			case MappingNotify:
 			{
-				/* В xneur стало валиться слишком много этих сообщений в 13.10, отключено до лучших времен.
+				//* В xneur стало валиться слишком много этих сообщений в 13.10, отключено до лучших времен.
+				if (last_event_type == MappingNotify)
+				{
+					break;
+				}
 				log_message(TRACE, _("Received MappingNotify (event type %d)"), type);
 
 				p->buffer->uninit(p->buffer);
@@ -496,7 +502,7 @@ static void program_process_input(struct _program *p)
 				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
 				p->correction_action = ACTION_NONE;
 				
-				log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);*/
+				log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);
 
 				break;
 			}
@@ -511,6 +517,7 @@ static void program_process_input(struct _program *p)
 				break;
 			}
 		}
+		last_event_type = type;
 	}
 }
 
@@ -2222,9 +2229,13 @@ static void program_check_misprint(struct _program *p)
 	if (xconfig->handle->languages[lang].disable_auto_detection || xconfig->handle->languages[lang].excluded)
 		return;
 
+	log_message (ERROR, _("BM p->correction_buffer->content = '%s'"), p->correction_buffer->content);
+	log_message (ERROR, _("BM p->buffer->content = '%s'"), p->buffer->content);
 	char *word = strdup(get_last_word(p->buffer->i18n_content[lang].content_unchanged));
+	
 	del_final_numeric_char(word);
 
+	log_message (ERROR, _("Word '%s'"), word);
 	if (word == NULL)
 		return;
 
@@ -2373,11 +2384,12 @@ static void program_check_misprint(struct _program *p)
 		p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 		log_message (DEBUG, _("Found a misprint , correction '%s' to '%s'..."), word+offset, possible_word);
-
+;
 		p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 		
 		int backspaces_count = p->buffer->cur_pos - get_last_word_offset (p->buffer->content, p->buffer->cur_pos) - offset;
 		p->event->send_backspaces(p->event, backspaces_count);
+		log_message (ERROR, _("Sended backspace '%d'"), backspaces_count);
 		if (p->last_action == ACTION_AUTOCOMPLETION)
 			p->event->send_backspaces(p->event, 1);
 		for (int i = 0; i < (backspaces_count); i++)
@@ -2391,7 +2403,7 @@ static void program_check_misprint(struct _program *p)
 		//memset(new_content, 0, 1024 * sizeof(char));
 		new_content = strcat(new_content, p->buffer->content);
 		new_content = strcat(new_content, possible_word);
-
+		// после исправления опечатки, добавляем запятые и прочее, идущее после слова >>>
 		int finish_offset = 0;
 		for (int i = strlen(p->correction_buffer->i18n_content[lang].content_unchanged) - 1; i >= 0 ; i--)
 		{
@@ -2404,6 +2416,8 @@ static void program_check_misprint(struct _program *p)
 			}
 		}
 		new_content = strcat(new_content, p->correction_buffer->i18n_content[lang].content_unchanged + strlen(p->correction_buffer->i18n_content[lang].content_unchanged) - finish_offset + 1);
+		// <<<
+		
 		p->buffer->set_content(p->buffer, new_content);
 		if (new_content != NULL)
 			free(new_content);

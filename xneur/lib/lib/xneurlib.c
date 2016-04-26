@@ -213,7 +213,7 @@ struct _xneur_handle *xneur_handle_create (void)
 			free(handle);
 			return NULL;
 		}
-		
+
 		prop_count++;
 		// 1 - Keyboard Driver
 		// 2 - Keyboard Model
@@ -230,7 +230,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
-	
+	//log_message(ERROR, "%s", 
 	handle->languages = (struct _xneur_language *) malloc(sizeof(struct _xneur_language));
 	handle->total_languages = 0;
 

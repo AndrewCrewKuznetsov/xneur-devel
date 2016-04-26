@@ -328,10 +328,9 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 
 						size_t _symbol_len = strlen(symbol);
 
-						event.xkey.state = 0;
+						event.xkey.state = get_keycode_mod(p->latin_group);
 						event.xkey.state |= state_masks[m];
 						event.xkey.state |= state_masks[n];
-
 						nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
@@ -341,6 +340,9 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						free(prev_symbols);
 						free(symbol);
 						*kc		= event.xkey.keycode;
+						event.xkey.state = 0;
+						event.xkey.state |= state_masks[m];
+						event.xkey.state |= state_masks[n];
 						*modifier	= get_keycode_mod(lang) | event.xkey.state;
 						if (symbol_len)
 							*symbol_len = _symbol_len;
@@ -366,7 +368,7 @@ static char keymap_get_ascii(struct _keymap *p, const char *sym, int* preferred_
 	int _preferred_lang = 0;
 	if (preferred_lang)
 		_preferred_lang = *preferred_lang;
-
+	
 	size_t sym_size = strlen(sym);
 
 	/* Look up cache */
@@ -423,7 +425,7 @@ static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent e)
 		mod |= NumlockMask;
 	
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
-
+	
 	ke->state = get_keycode_mod(p->latin_group);
 	ke->state |= mod;
 
@@ -442,14 +444,13 @@ static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent e)
 static void keymap_convert_text_to_ascii(struct _keymap *p, char *text, KeyCode *kc, int *kc_mod)
 {
 	int text_len = strlen(text);
-
 	int j = 0;
 	size_t symbol_len = 0;
 	int preferred_lang = 0;
+
 	for (int i = 0; i < text_len; i += symbol_len)
 	{
 		char new_symbol = p->get_ascii(p, &text[i], &preferred_lang, &kc[j], &kc_mod[j], &symbol_len);
-
 		if (new_symbol != NULLSYM && symbol_len > 0)
 			text[j++] = new_symbol;
 		else
@@ -638,7 +639,13 @@ struct _keymap* keymap_init(struct _xneur_handle *handle, Display *display)
 	p->symbol_to_keycode_cache_pos = 0;
 
 	get_offending_modifiers(p);
-
+	for (int i = 0; i < p->handle->total_languages; i++)
+	{
+		if (strcmp(p->handle->languages[i].dir, "us") == 0)
+		{
+			p->latin_group = i;
+		}
+	}
 	p->purge_caches			= keymap_purge_caches;
 	p->get_keysyms_by_string	= keymap_get_keysyms_by_string;
 	p->keycode_to_symbol		= keymap_keycode_to_symbol;
