@@ -502,7 +502,42 @@ static void program_process_input(struct _program *p)
 				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
 				p->correction_action = ACTION_NONE;
 				
-				log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);
+				//log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);
+				log_message(LOG, _("Keyboard layouts present in system:"));
+				for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
+				{
+					if (xconfig->handle->languages[lang].excluded)
+						log_message(LOG, _("   Excluded XKB Group '%s', layout '%s', group '%d'"), xconfig->handle->languages[lang].name, xconfig->handle->languages[lang].dir, lang);
+					else
+						log_message(LOG, _("   Included XKB Group '%s', layout '%s', group '%d'"), xconfig->handle->languages[lang].name, xconfig->handle->languages[lang].dir, lang);
+
+					char *lang_name = xconfig->handle->languages[lang].name;
+
+					log_message(DEBUG, _("      %s dictionary has %d records"), lang_name, xconfig->handle->languages[lang].dictionary->data_count);
+					log_message(DEBUG, _("      %s proto has %d records"), lang_name, xconfig->handle->languages[lang].proto->data_count);
+					log_message(DEBUG, _("      %s big proto has %d records"), lang_name, xconfig->handle->languages[lang].big_proto->data_count);
+			#ifdef WITH_ASPELL
+					if (xconfig->handle->has_spell_checker[lang])
+					{
+						loKg_message(DEBUG, _("      %s aspell dictionary loaded"), lang_name);
+					}
+					else
+					{
+						log_message(DEBUG, _("      %s aspell dictionary not found"), lang_name);
+					}
+			#endif	
+			#ifdef WITH_ENCHANT
+					if (xconfig->handle->enchant_dicts[lang])
+					{
+						log_message(DEBUG, _("      %s enchant wrapper dictionary loaded"), lang_name);
+					}
+					else
+					{
+						log_message(DEBUG, _("      %s enchant wrapper dictionary not found"), lang_name);
+					}
+			#endif	
+				}
+				log_message(LOG, _("Total %d keyboard layouts detected"), xconfig->handle->total_languages);
 
 				break;
 			}
@@ -2229,13 +2264,10 @@ static void program_check_misprint(struct _program *p)
 	if (xconfig->handle->languages[lang].disable_auto_detection || xconfig->handle->languages[lang].excluded)
 		return;
 
-	log_message (ERROR, _("BM p->correction_buffer->content = '%s'"), p->correction_buffer->content);
-	log_message (ERROR, _("BM p->buffer->content = '%s'"), p->buffer->content);
 	char *word = strdup(get_last_word(p->buffer->i18n_content[lang].content_unchanged));
 	
 	del_final_numeric_char(word);
 
-	log_message (ERROR, _("Word '%s'"), word);
 	if (word == NULL)
 		return;
 
@@ -2389,7 +2421,7 @@ static void program_check_misprint(struct _program *p)
 		
 		int backspaces_count = p->buffer->cur_pos - get_last_word_offset (p->buffer->content, p->buffer->cur_pos) - offset;
 		p->event->send_backspaces(p->event, backspaces_count);
-		log_message (ERROR, _("Sended backspace '%d'"), backspaces_count);
+
 		if (p->last_action == ACTION_AUTOCOMPLETION)
 			p->event->send_backspaces(p->event, 1);
 		for (int i = 0; i < (backspaces_count); i++)

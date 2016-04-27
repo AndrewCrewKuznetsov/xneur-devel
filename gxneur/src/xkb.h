@@ -22,7 +22,14 @@
 
 #include <X11/XKBlib.h>
 
+struct _xkb_name
+{
+	char *symbol;
+	char *variant;
+};
+
 int get_active_kbd_group(Display *dpy);
+char *get_active_kbd_symbol(Display *dpy);
 int get_kbd_group_count(Display *dpy);
 int set_next_kbd_group(Display *dpy);
 

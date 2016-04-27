@@ -169,10 +169,13 @@ static KeySym event_get_cur_keysym(struct _event *p)
     char str[256+1];
 	XKeyEvent *e = (XKeyEvent *) &p->event;
     nbytes = XLookupString (e, str, 256, &ks, NULL);
+	if (nbytes) {};
 	return ks;*/
 
 	XKeyEvent *e = (XKeyEvent *) &p->event;
-	return XkbKeycodeToKeysym(main_window->display, e->keycode, 0, 0);
+	//int group = get_curr_keyboard_group();
+	//log_message (ERROR, "Curr group %d", group);
+	return XkbKeycodeToKeysym(main_window->display, e->keycode, 0/*group*/, 0);
 }
 
 static int event_get_cur_modifiers(struct _event *p)

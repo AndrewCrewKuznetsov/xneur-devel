@@ -45,7 +45,7 @@ struct _tray_icon
 	GtkStatusIcon *status_icon;
 
 	// All
-	gchar  *images[MAX_LAYOUTS];
+	//gchar  *images[MAX_LAYOUTS];
 	GtkMenu *menu;
 	GtkWidget *status;
 	

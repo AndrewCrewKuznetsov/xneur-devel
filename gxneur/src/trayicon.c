@@ -53,6 +53,8 @@ Display *dpy = NULL;
 static int xneur_old_pid = -1;
 static int xneur_old_state = -1;
 static int xneur_old_group = -1;
+static char *xneur_old_symbol = NULL;
+
 static int force_update = FALSE;
 
 //#define ICON_SIZE 24
@@ -266,6 +268,7 @@ GdkPixbuf *text_to_gtk_pixbuf (gchar *text)
 static const char *get_tray_icon_name (char *name)
 {
 	const char * icon_name;
+	char *full_name = g_strdup_printf("%s-%s", PACKAGE, name);
 
 	if (strcasecmp(show_in_the_tray, "Icon") == 0)
 	{
@@ -277,18 +280,18 @@ static const char *get_tray_icon_name (char *name)
 
 	// if the tray's icon is a 48x48 file, use it;
 	// otherwise, use the fallback builtin icon 
-	if (!gtk_icon_theme_has_icon (theme, name))
+	if (!gtk_icon_theme_has_icon (theme, full_name))
 	{
 		icon_name = PACKAGE;
 	}
 	else
 	{
-		GtkIconInfo * icon_info = gtk_icon_theme_lookup_icon (theme, name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
+		GtkIconInfo * icon_info = gtk_icon_theme_lookup_icon (theme, full_name, 48, GTK_ICON_LOOKUP_USE_BUILTIN);
 		const gboolean icon_is_builtin = gtk_icon_info_get_filename (icon_info) == NULL;
 		gtk_icon_info_free (icon_info);
-		icon_name = icon_is_builtin ? PACKAGE : name;
+		icon_name = icon_is_builtin ? PACKAGE : full_name;
 	}
-
+	
 	return icon_name;
 }
 
@@ -314,40 +317,40 @@ gboolean clock_check(gpointer dummy)
 	if (xneur_pid == -1)
 		xneur_pid = xconfig->get_pid(xconfig);
 	
-	
 	int xneur_state = xconfig->manual_mode;
 	int xneur_group = get_active_kbd_group(dpy);
-
-	if (get_kbd_group_count(dpy) != xconfig->handle->total_languages)
+	char *xneur_symbol = get_active_kbd_symbol(dpy);
+	
+	/*if (get_kbd_group_count(dpy) != xconfig->handle->total_languages)
 	{
-		for (int i = 0; i < MAX_LAYOUTS; i++)
-		{
-			if (tray->images[i] != NULL)
-				g_free(tray->images[i]);
-		}
-
 		gtk_widget_destroy(GTK_WIDGET(tray->menu));
 		tray->menu = NULL;
 		
 		g_spawn_command_line_async(PACKAGE, NULL);
 		
 		gtk_main_quit();
-	}
+	}*/
 
 
 	if  (xneur_pid == xneur_old_pid &&
-	     xneur_state == xneur_old_state &&
-	    xneur_group == xneur_old_group &&
-	    force_update == FALSE)
+		xneur_state == xneur_old_state &&
+		xneur_group == xneur_old_group &&
+	    strcmp(xneur_old_symbol, xneur_symbol) == 0 && 
+		force_update == FALSE)
+	{
+		g_free(xneur_symbol);
 		return TRUE;
-	
+	}
 	force_update = FALSE;
 
 	xneur_old_pid = xneur_pid;
 	xneur_old_state = xneur_state;
 	xneur_old_group = xneur_group;
-		
-	int lang = get_active_kbd_group(dpy);
+	if (xneur_old_symbol != NULL)
+	{
+		g_free(xneur_old_symbol);
+	}
+	xneur_old_symbol = xneur_symbol;
 	
 	gchar *hint;
 	gchar *status_text;
@@ -355,29 +358,26 @@ gboolean clock_check(gpointer dummy)
 	if (xneur_pid != -1)
 	{
 		//saturation = 1.0;
-		hint = g_strdup_printf("%s%s%s", _("X Neural Switcher running ("), xconfig->handle->languages[lang].dir, ")");
+		hint = g_strdup_printf("%s%s%s", _("X Neural Switcher running ("), xneur_symbol, ")");
 		status_text = g_strdup_printf("%s", _("Stop daemon"));
 	}
 	else
 	{
 		//saturation = 0.25;
-		hint = g_strdup_printf("%s%s%s", _("X Neural Switcher stopped ("), xconfig->handle->languages[lang].dir, ")");
+		hint = g_strdup_printf("%s%s%s", _("X Neural Switcher stopped ("), xneur_symbol, ")");
 		status_text = g_strdup_printf("%s", _("Start daemon"));
 	}
 
 	gtk_menu_item_set_label(GTK_MENU_ITEM(tray->status), status_text);
 
-	gint kbd_gr = get_active_kbd_group(dpy);
-
-
-	const char *icon_name = get_tray_icon_name(tray->images[kbd_gr]);
+	const char *icon_name = get_tray_icon_name(xneur_symbol);
 	if (tray->tray_icon)
 	{
 		gtk_widget_hide_all(GTK_WIDGET(tray->tray_icon));
 		gtk_widget_destroy (tray->image);
 		if (strcasecmp(show_in_the_tray, "Text") == 0)
 		{
-			char *layout_name = strdup(xconfig->handle->languages[kbd_gr].dir);
+			char *layout_name = get_active_kbd_symbol(dpy);
 			for (unsigned int i=0; i < strlen(layout_name); i++)
 				layout_name[i] = toupper(layout_name[i]); 
 			tray->image = gtk_label_new ((const gchar *)layout_name);
@@ -397,10 +397,9 @@ gboolean clock_check(gpointer dummy)
 		{					
 			if (strcasecmp(show_in_the_tray, "Text") == 0)
 			{
-				char *layout_name = strdup(xconfig->handle->languages[kbd_gr].dir);
+				char *layout_name = get_active_kbd_symbol(dpy);
 				for (unsigned int i=0; i < strlen(layout_name); i++)
 					layout_name[i] = toupper(layout_name[i]);
-
 				GdkPixbuf *pb = text_to_gtk_pixbuf (layout_name);
 				free(layout_name);
 				pb = gdk_pixbuf_add_alpha(pb, TRUE, 255, 255, 255);
@@ -418,13 +417,12 @@ gboolean clock_check(gpointer dummy)
 #ifdef HAVE_APP_INDICATOR
 	else if (tray->app_indicator)
 	{
-		char *layout_name = strdup(xconfig->handle->languages[kbd_gr].name);
 		if (strcasecmp(show_in_the_tray, "Text") == 0)
 		{
 #ifdef HAVE_DEPREC_APP_INDICATOR	
 			app_indicator_set_icon (tray->app_indicator, icon_name);
 #else
-			app_indicator_set_label (tray->app_indicator, layout_name, layout_name);
+			app_indicator_set_label (tray->app_indicator, xneur_symbol, xneur_symbol);
 			app_indicator_set_icon (tray->app_indicator, "");
 #endif
 		}
@@ -437,13 +435,13 @@ gboolean clock_check(gpointer dummy)
 			app_indicator_set_label (tray->app_indicator,"", "");
 #endif
 		}
-		free(layout_name);
 	}
 #endif
 
 	g_free (hint);
 	g_free (status_text);
-
+	//g_free (icon_name);
+	
 	return TRUE;
 }
 
@@ -461,11 +459,11 @@ void xneur_start_stop(void)
 
 void xneur_exit(void)
 {
-	for (int i = 0; i < MAX_LAYOUTS; i++)
+	/*for (int i = 0; i < MAX_LAYOUTS; i++)
 	{
 		if (tray->images[i] != NULL)
 			g_free(tray->images[i]);
-	}
+	}*/
 
 	gtk_widget_destroy(GTK_WIDGET(tray->menu));
 	tray->menu = NULL;
@@ -502,11 +500,11 @@ void rendering_engine_callback(gpointer user_data)
 	if (strcasecmp(new_engine, rendering_engine) == 0)
 		return;
 	
-	for (int i = 0; i < MAX_LAYOUTS; i++)
+	/*for (int i = 0; i < MAX_LAYOUTS; i++)
 	{
 		if (tray->images[i] != NULL)
 			g_free(tray->images[i]);
-	}
+	}*/
 
 	gtk_widget_destroy(GTK_WIDGET(tray->menu));
 	tray->menu = NULL;
@@ -546,18 +544,18 @@ void create_tray_icon (void)
 	tray->tray_icon = NULL;
 	
 	// Init pixbuf array
-	for (int i = 0; i < MAX_LAYOUTS; i++)
+	/*for (int i = 0; i < MAX_LAYOUTS; i++)
 	{
 		tray->images[i] = NULL;
-	}
+	}*/
 
 	// Load images names
-	for (int i = 0; i < xconfig->handle->total_languages; i++)
+	/*for (int i = 0; i < xconfig->handle->total_languages; i++)
 	{
 		char *layout_name = strdup(xconfig->handle->languages[i].dir);
 		tray->images[i] = g_strdup_printf("%s-%s", PACKAGE, layout_name);
 		free(layout_name);
-	}
+	}*/
 	
 	tray->menu = create_menu(tray, xconfig->manual_mode);
 
@@ -588,9 +586,8 @@ void create_tray_icon (void)
 		tray_icon_failed = 1;
 #endif	
 	}
-	
-	gint kbd_gr = get_active_kbd_group(dpy);
-	
+
+
 	// Tray icon
 	if (strcasecmp(rendering_engine, "Built-in") == 0 /*|| tray_icon_failed*/)
 	{
@@ -605,7 +602,7 @@ void create_tray_icon (void)
 			gtk_event_box_set_visible_window(GTK_EVENT_BOX(tray->evbox), 0);
 			if (strcasecmp(show_in_the_tray, "Text") == 0)
 			{
-				char *layout_name = strdup(xconfig->handle->languages[kbd_gr].dir);
+				char *layout_name = get_active_kbd_symbol (dpy);
 				for (unsigned int i=0; i < strlen(layout_name); i++)
 					layout_name[i] = toupper(layout_name[i]); 
 				tray->image = gtk_label_new ((const gchar *)layout_name);
@@ -614,7 +611,10 @@ void create_tray_icon (void)
 			}
 			else
 			{
-				tray->image = gtk_image_new_from_icon_name(tray->images[kbd_gr], GTK_ICON_SIZE_LARGE_TOOLBAR);
+				char *layout_name = get_active_kbd_symbol (dpy);
+				tray->image = gtk_image_new_from_icon_name(layout_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+				//tray->image = gtk_image_new_from_icon_name(tray->images[kbd_gr], GTK_ICON_SIZE_LARGE_TOOLBAR);
+				free(layout_name);
 			}
 			gtk_container_add(GTK_CONTAINER(tray->evbox), tray->image);
 			gtk_container_add(GTK_CONTAINER(tray->tray_icon), tray->evbox);
@@ -644,7 +644,7 @@ void create_tray_icon (void)
 
 		if (strcasecmp(show_in_the_tray, "Text") == 0)
 		{
-			char *layout_name = strdup(xconfig->handle->languages[kbd_gr].dir);
+			char *layout_name = get_active_kbd_symbol (dpy);
 			for (unsigned int i=0; i < strlen(layout_name); i++)
 				layout_name[i] = toupper(layout_name[i]);
 
@@ -656,7 +656,10 @@ void create_tray_icon (void)
 		}
 		else
 		{
-			gtk_status_icon_set_from_icon_name(tray->status_icon, tray->images[kbd_gr]);
+			char *layout_name = get_active_kbd_symbol (dpy);
+			//gtk_status_icon_set_from_icon_name(tray->status_icon, tray->images[kbd_gr]);
+			gtk_status_icon_set_from_icon_name(tray->status_icon, layout_name);
+			free(layout_name);
 		}
 	}
 	

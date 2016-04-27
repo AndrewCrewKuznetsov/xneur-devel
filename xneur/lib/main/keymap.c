@@ -641,11 +641,13 @@ struct _keymap* keymap_init(struct _xneur_handle *handle, Display *display)
 	get_offending_modifiers(p);
 	for (int i = 0; i < p->handle->total_languages; i++)
 	{
+		// FIXME Replace hardcode "us" to setting
 		if (strcmp(p->handle->languages[i].dir, "us") == 0)
 		{
 			p->latin_group = i;
 		}
 	}
+	
 	p->purge_caches			= keymap_purge_caches;
 	p->get_keysyms_by_string	= keymap_get_keysyms_by_string;
 	p->keycode_to_symbol		= keymap_keycode_to_symbol;

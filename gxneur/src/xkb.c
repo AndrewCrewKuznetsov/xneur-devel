@@ -18,8 +18,135 @@
  */
  
 
-#include "xkb.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#include "xkb.h"
+
+int isXkbLayoutSymbol(char *symbol)
+{
+	if ((strcmp(symbol, "group") == 0) || 
+	    (strcmp(symbol, "inet") == 0) ||
+	    (strcmp(symbol, "pc") == 0))
+	{
+		return 0;
+	}
+	return 1;
+}
+void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
+{
+    int inSymbol = 0;
+	
+    char *curSymbol = (char *) malloc (sizeof(char));
+    char *curVariant = (char *) malloc (sizeof(char));
+	curSymbol[0] = '\0';
+	curVariant[0] = '\0';
+	
+	int curLayout = 0;
+	
+	//printf("%s", symbols);
+	// A sample line:
+	// pc+fi(dvorak)+fi:2+ru:3+inet(evdev)+group(menu_toggle)
+    
+	for (size_t i = 0; i < strlen(symbols); i++) 
+	{
+		char ch = symbols[i];
+		if (ch == '+' || ch == '_') 
+		{
+			if (inSymbol) 
+			{
+				if (isXkbLayoutSymbol(curSymbol)) 
+				{
+					symbolList[curLayout].symbol = (char *)strdup(curSymbol);
+					symbolList[curLayout].variant = (char *)strdup(curVariant);
+					curLayout++;
+                }
+				curSymbol = (char *) realloc (curSymbol, sizeof(char));
+				curVariant = (char *) realloc (curVariant, sizeof(char));
+				curSymbol[0] = '\0';
+				curVariant[0] = '\0';
+			} 
+			else 
+			{
+				inSymbol = 1;
+			}
+		} 
+		else if (inSymbol && (isalpha(ch) || ch == '_')) 
+		{
+			int len = strlen(curSymbol);
+			curSymbol = (char *) realloc (curSymbol, sizeof(char)*(len+2));
+			curSymbol[len] = ch;
+			curSymbol[len+1] = '\0';
+		} 
+		else if (inSymbol && ch == '(') 
+		{
+			while (++i < strlen(symbols)) 
+			{
+				ch = symbols[i];
+				if (ch == ')')
+				{
+					break;
+				}
+				else
+				{
+					int len = strlen(curVariant);
+					curVariant = (char *) realloc (curVariant, sizeof(char)*(len+2));
+					curVariant[len] = ch;
+					curVariant[len+1] = '\0';
+				}
+			}
+		} 
+		else 
+		{
+			if (inSymbol) 
+			{
+				if (isXkbLayoutSymbol(curSymbol)) 
+				{
+					symbolList[curLayout].symbol = (char *)strdup(curSymbol);
+					symbolList[curLayout].variant = (char *)strdup(curVariant);
+					curLayout++;
+				}
+				curSymbol = (char *) realloc (curSymbol, sizeof(char));
+				curVariant = (char *) realloc (curVariant, sizeof(char));
+				curSymbol[0] = '\0';
+				curVariant[0] = '\0';
+				inSymbol = 0;
+			}
+		}
+	}
+	free(curSymbol);
+	free(curVariant);
+}
+
+char *get_active_kbd_symbol(Display *dpy)
+{
+	if (dpy == NULL)
+		return NULL;
+
+	XkbDescRec desc[1];
+	memset(desc, 0, sizeof(desc));
+    desc->device_spec = XkbUseCoreKbd;
+    XkbGetControls(dpy, XkbGroupsWrapMask, desc);
+	XkbGetNames(dpy, XkbGroupNamesMask, desc);
+	XkbGetNames(dpy, XkbSymbolsNameMask, desc);
+	
+	struct _xkb_name *xkb_names = (struct _xkb_name *) malloc(sizeof(struct _xkb_name) * desc->ctrls->num_groups);
+	XkbSymbolParse(XGetAtomName(dpy, desc->names->symbols), xkb_names);
+	//printf("gxneur active grp symbol: %s, variant: %s\n",xkb_names[get_active_kbd_group(dpy)].symbol,xkb_names[get_active_kbd_group(dpy)].variant);
+	char *symbol = strdup(xkb_names[get_active_kbd_group(dpy)].symbol);
+	
+	for (int i = 0; i < desc->ctrls->num_groups; i++)
+	{
+		free(xkb_names[i].symbol);
+		free(xkb_names[i].variant);
+	}
+	XkbFreeControls(desc, XkbGroupsWrapMask, True);
+    XkbFreeNames(desc, XkbSymbolsNameMask, True);
+	XkbFreeNames(desc, XkbGroupNamesMask, True);
+	return symbol;
+}
 
 int get_active_kbd_group(Display *dpy)
 {
@@ -42,6 +169,7 @@ int get_kbd_group_count(Display *dpy)
     desc->device_spec = XkbUseCoreKbd;
     XkbGetControls(dpy, XkbGroupsWrapMask, desc);
     XkbGetNames(dpy, XkbGroupNamesMask, desc);
+	XkbGetNames(dpy, XkbSymbolsNameMask, desc);
 	gc = desc->ctrls->num_groups;
     XkbFreeControls(desc, XkbGroupsWrapMask, True);
     XkbFreeNames(desc, XkbGroupNamesMask, True);
