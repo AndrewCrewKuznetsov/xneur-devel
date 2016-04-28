@@ -351,7 +351,7 @@ static void program_process_input(struct _program *p)
 
 				// Processing received event
 				p->on_key_action(p, type);
-				
+		
 				// Resend special key back to window
 				if (p->event->default_event.xkey.keycode != 0)
 				{
@@ -360,6 +360,7 @@ static void program_process_input(struct _program *p)
 					p->event->send_next_event(p->event);
 					p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 				}
+					
 				break;
 			}
 			case KeyRelease:
@@ -490,16 +491,16 @@ static void program_process_input(struct _program *p)
 				}
 				log_message(TRACE, _("Received MappingNotify (event type %d)"), type);
 
-				p->buffer->uninit(p->buffer);
-				p->correction_buffer->uninit(p->correction_buffer);
 				main_window->uninit_keymap(main_window);
 				
 				xneur_handle_destroy(xconfig->handle);
 				xconfig->handle = xneur_handle_create();
 				
 				main_window->init_keymap(main_window);
-				p->buffer = buffer_init(xconfig->handle, main_window->keymap);
-				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
+				p->buffer->handle = xconfig->handle;
+				p->buffer->keymap = main_window->keymap;
+				p->correction_buffer->handle = xconfig->handle;
+				p->correction_buffer->keymap = main_window->keymap;
 				p->correction_action = ACTION_NONE;
 				
 				//log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);
@@ -737,26 +738,25 @@ static void program_process_selection_notify(struct _program *p)
 static void program_on_key_action(struct _program *p, int type)
 {
 	KeySym key = p->event->get_cur_keysym(p->event);
-
 	// Delete language modifier mask
 	int modifier_mask = p->event->get_cur_modifiers(p->event);
-
 	if (type == KeyPress)
 	{	
 		
 		p->user_action = get_user_action(key, modifier_mask);
 		p->manual_action = get_manual_action(key, modifier_mask);
+
 		// If blocked events then processing stop 
 		if ((p->user_action >= 0) || (p->manual_action != ACTION_NONE) || (xconfig->block_events)) 
 		{
 			p->event->default_event.xkey.keycode = 0;
 			return;
 		}
-		
+
 		p->plugin->key_press(p->plugin, key, modifier_mask);
-		
+
 		int auto_action = get_auto_action(p, key, modifier_mask);
-	
+
 		if ((auto_action != KLB_NO_ACTION) && (auto_action != KLB_CLEAR))
 		{
 			int lang = get_curr_keyboard_group();
@@ -785,7 +785,7 @@ static void program_on_key_action(struct _program *p, int type)
 				}
 			}
 		}
-		
+
 		p->perform_auto_action(p, auto_action);
 	}
 
@@ -921,12 +921,12 @@ static void program_perform_auto_action(struct _program *p, int action)
 			}
 			
 			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
-			
+
 			if (action == KLB_ADD_SYM)
 			{
 				// Correct small letter to capital letter after dot
 				p->check_capital_letter_after_dot(p);
-				
+
 				// Add symbol to internal bufer
 				int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 				p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
