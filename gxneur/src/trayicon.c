@@ -422,8 +422,12 @@ gboolean clock_check(gpointer dummy)
 #ifdef HAVE_DEPREC_APP_INDICATOR	
 			app_indicator_set_icon (tray->app_indicator, icon_name);
 #else
-			app_indicator_set_label (tray->app_indicator, xneur_symbol, xneur_symbol);
-			app_indicator_set_icon (tray->app_indicator, "");
+			char *layout_name = get_active_kbd_symbol(dpy);
+			for (unsigned int i=0; i < strlen(layout_name); i++)
+				layout_name[i] = toupper(layout_name[i]);
+			app_indicator_set_label (tray->app_indicator, layout_name, layout_name);
+			free(layout_name);
+			app_indicator_set_icon_full (tray->app_indicator, "", "");
 #endif
 		}
 		else
@@ -431,7 +435,7 @@ gboolean clock_check(gpointer dummy)
 #ifdef HAVE_DEPREC_APP_INDICATOR
 			app_indicator_set_icon (tray->app_indicator, icon_name);
 #else
-			app_indicator_set_icon (tray->app_indicator, icon_name);
+			app_indicator_set_icon_full (tray->app_indicator, icon_name, icon_name);
 			app_indicator_set_label (tray->app_indicator,"", "");
 #endif
 		}
