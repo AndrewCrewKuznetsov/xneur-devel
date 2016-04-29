@@ -3,7 +3,7 @@ QT += core gui dbus
 TARGET = kdeneur
 TEMPLATE = app
 SEPARATOR = -
-VERSION = 0.17.0
+VERSION = 0.18.0
 
 CONFIG += dbus
 

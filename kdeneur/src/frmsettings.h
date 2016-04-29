@@ -75,6 +75,8 @@ namespace kXneurApp
     void openLogFile();
 
     //tab advanced
+    void addDelay_tabAdvanced();
+    void removeDelay_tabAdvanced();
     void addApp_tabAdvanced();
     void removeApp_tabAdvanced();
 
@@ -138,6 +140,7 @@ namespace kXneurApp
     void auto_get_list_app_autocomp(QStringList);
 
     void adv_get_list_key_release_app(QStringList);
+    void adv_get_list_delay_app(QStringList);
   };
 }
 #endif // FRMSETTINGS_H

@@ -119,6 +119,7 @@ void kXneurApp::frmSettings::saveSettingsNeur()
     //tab Advanced
     cfgNeur->adv_save_log_level(ui->tabAdvanced_cmbLogLevel->currentIndex());
     cfgNeur->adv_save_delay_sending_events(ui->tabAdvanced_spbDelay->value());
+    cfgNeur->adv_save_delay_app(getListFromWidget(ui->tabAdvanced_tabDelayList));
     cfgNeur->adv_save_key_release_app(getListFromWidget(ui->tabAdvanced_tabAppList));
 
     //tab Plugins
@@ -167,6 +168,7 @@ void kXneurApp::frmSettings::settintgGrid()
     notif_get_list_action_popup(cfgNeur->notif_get_list_action_popup_msg());
 
     //tab Advanced
+    adv_get_list_delay_app(cfgNeur->adv_get_delay_app());
     adv_get_list_key_release_app(cfgNeur->adv_get_key_release_app());
 
     //tab Abbreviations
@@ -335,6 +337,8 @@ void kXneurApp::frmSettings::createConnect()
   connect(ui->tabLog_cmdOpenLog, SIGNAL(clicked()),SLOT(openLogFile()));
 
   //tab advanced
+  connect(ui->tabAdvanced_cmdAddDelay, SIGNAL(clicked()), SLOT(addDelay_tabAdvanced()));
+  connect(ui->tabAdvanced_cmdRemoveDelay, SIGNAL(clicked()), SLOT(removeDelay_tabAdvanced()));
   connect(ui->tabAdvanced_cmdAddApp, SIGNAL(clicked()), SLOT(addApp_tabAdvanced()));
   connect(ui->tabAdvanced_cmdRemoveApp, SIGNAL(clicked()), SLOT(removeApp_tabAdvanced()));
 
@@ -420,7 +424,7 @@ void kXneurApp::frmSettings::chekAutostart(bool cheked)
 {
     KStandardDirs dir;
     QString kdeneur = "kdeneur.desktop";
-    QString str="[Desktop Entry]\nCategories=Qt;KDE;Utility;\nComment[ru]=Автоматический переключатель раскладки клавиатуры\nComment=Автоматический переключатель раскладки клавиатуры\nExec=kdeneur\nIcon=kdexneur\nName[ru]=kdeNeur\nName=kdeNeur\nStartupNotify=true\nTerminal=false\nType=Application\nX-KDE-SubstituteUID=false";
+    QString str="[Desktop Entry]\nCategories=Qt;KDE;Utility;\nComment[ru]=Автоматический переключатель раскладки клавиатуры\nComment=Автоматический переключатель раскладки клавиатуры\nExec=kdeneur\nIcon=kdeneur\nName[ru]=kdeNeur\nName=kdeNeur\nStartupNotify=true\nTerminal=false\nType=Application\nX-KDE-SubstituteUID=false";
     QString pathAutostart = dir.findResourceDir("xdgconf-autostart", "");
     QString fileDesktop = QString("%1%2").arg(pathAutostart).arg(kdeneur);
 
@@ -521,6 +525,10 @@ void kXneurApp::frmSettings::adv_get_list_key_release_app(QStringList lstApp)
     ui->tabAdvanced_tabAppList->addItems(lstApp);
 }
 
+void kXneurApp::frmSettings::adv_get_list_delay_app(QStringList lstApp)
+{
+    ui->tabAdvanced_tabDelayList->addItems(lstApp);
+}
 
 void kXneurApp::frmSettings::tab_lay_get_list_app(QStringList lstApp)
 {
@@ -1006,6 +1014,16 @@ QMap<QString, QMultiMap<bool, QString> > kXneurApp::frmSettings::get_lget_from_n
         mapTmp.clear();
     }
     return mapList;
+}
+
+void kXneurApp::frmSettings::addDelay_tabAdvanced()
+{
+    add_Application_to_Widget(ui->tabAdvanced_tabDelayList);
+}
+
+void kXneurApp::frmSettings::removeDelay_tabAdvanced()
+{
+    del_Application_to_Widget(ui->tabAdvanced_tabDelayList);
 }
 
 void kXneurApp::frmSettings::addApp_tabAdvanced()

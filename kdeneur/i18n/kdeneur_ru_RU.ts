@@ -5,67 +5,67 @@
     <name>AddRules</name>
     <message>
         <location filename="../src/addrules.ui" line="26"/>
-        <location filename="../src/ui_addrules.h" line="122"/>
+        <location filename="../src/ui_addrules.h" line="121"/>
         <source>Add your rule change...</source>
         <translation>Добавить свое правило переключения...</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="54"/>
-        <location filename="../src/ui_addrules.h" line="123"/>
+        <location filename="../src/ui_addrules.h" line="122"/>
         <source>The new rule change to that language. Enter a combination of letters and set the condition for its treatment:</source>
         <translation>Новое правило переключения для данного языка. Введите буквосочетание и задайте условие его обработки:</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="92"/>
-        <location filename="../src/ui_addrules.h" line="124"/>
+        <location filename="../src/ui_addrules.h" line="123"/>
         <source>NOTE: Special characters [] \\ ^ $. |? * + () {} must be preceded by a \ (backslash).</source>
         <translation>ЗАМЕЧАНИЕ: Специальные символы [ ] \\ ^ $ . | ? * + ( ) { } должны предваряться символом \ (обратная косая черта).</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="108"/>
-        <location filename="../src/ui_addrules.h" line="125"/>
+        <location filename="../src/ui_addrules.h" line="124"/>
         <source>Condition</source>
         <translation>Условие</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="126"/>
-        <location filename="../src/ui_addrules.h" line="126"/>
+        <location filename="../src/ui_addrules.h" line="125"/>
         <source>Typed on the keyboard word must:</source>
         <translation>абираемое на клавиатуре слово должно:</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="142"/>
-        <location filename="../src/ui_addrules.h" line="127"/>
+        <location filename="../src/ui_addrules.h" line="126"/>
         <source>contain that sequence of letters</source>
         <translation>содержать данное сочетание букв</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="149"/>
-        <location filename="../src/ui_addrules.h" line="128"/>
+        <location filename="../src/ui_addrules.h" line="127"/>
         <source>start with these letters</source>
         <translation>начинаться с данных букв</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="156"/>
-        <location filename="../src/ui_addrules.h" line="129"/>
+        <location filename="../src/ui_addrules.h" line="128"/>
         <source>to end these letters</source>
         <translation>заканчиваться данными буквами</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="163"/>
-        <location filename="../src/ui_addrules.h" line="130"/>
+        <location filename="../src/ui_addrules.h" line="129"/>
         <source>coincide with the combination of letters</source>
         <translation>совпадать с данным сочетанием букв</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="179"/>
-        <location filename="../src/ui_addrules.h" line="131"/>
+        <location filename="../src/ui_addrules.h" line="130"/>
         <source>More:</source>
         <translation>Дополнительно:</translation>
     </message>
     <message>
         <location filename="../src/addrules.ui" line="192"/>
-        <location filename="../src/ui_addrules.h" line="132"/>
+        <location filename="../src/ui_addrules.h" line="131"/>
         <source>Insensitive</source>
         <translation>Не учитывать регистр</translation>
     </message>
@@ -74,37 +74,37 @@
     <name>EditHotKey</name>
     <message>
         <location filename="../src/edithotkey.ui" line="26"/>
-        <location filename="../src/ui_edithotkey.h" line="107"/>
+        <location filename="../src/ui_edithotkey.h" line="106"/>
         <source>Add user action...</source>
         <translation>Добавить пользовательское действие...</translation>
     </message>
     <message>
         <location filename="../src/edithotkey.ui" line="32"/>
-        <location filename="../src/ui_edithotkey.h" line="108"/>
+        <location filename="../src/ui_edithotkey.h" line="107"/>
         <source>Action name:</source>
         <translation>Название действия:</translation>
     </message>
     <message>
         <location filename="../src/edithotkey.ui" line="55"/>
-        <location filename="../src/ui_edithotkey.h" line="109"/>
+        <location filename="../src/ui_edithotkey.h" line="108"/>
         <source>Key bind:</source>
         <translation>Комбинация клавиш:</translation>
     </message>
     <message>
         <location filename="../src/edithotkey.ui" line="82"/>
-        <location filename="../src/ui_edithotkey.h" line="110"/>
+        <location filename="../src/ui_edithotkey.h" line="109"/>
         <source>TextLabel</source>
         <translation>Пусто</translation>
     </message>
     <message>
         <location filename="../src/edithotkey.ui" line="103"/>
-        <location filename="../src/ui_edithotkey.h" line="111"/>
+        <location filename="../src/ui_edithotkey.h" line="110"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../src/edithotkey.ui" line="113"/>
-        <location filename="../src/ui_edithotkey.h" line="112"/>
+        <location filename="../src/ui_edithotkey.h" line="111"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -113,55 +113,55 @@
     <name>RulesChange</name>
     <message>
         <location filename="../src/ruleschange.ui" line="14"/>
-        <location filename="../src/ui_ruleschange.h" line="96"/>
+        <location filename="../src/ui_ruleschange.h" line="95"/>
         <source>Rules change...</source>
         <translation>Правила переключения...</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="21"/>
-        <location filename="../src/ui_ruleschange.h" line="98"/>
+        <location filename="../src/ui_ruleschange.h" line="97"/>
         <source>Combination of letters</source>
         <translation>Буквосочетание</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="26"/>
-        <location filename="../src/ui_ruleschange.h" line="100"/>
+        <location filename="../src/ui_ruleschange.h" line="99"/>
         <source>Condition</source>
         <translation>Условие</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="31"/>
-        <location filename="../src/ui_ruleschange.h" line="102"/>
+        <location filename="../src/ui_ruleschange.h" line="101"/>
         <source>Insensitive</source>
         <translation>Не учитывать регистр</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="41"/>
-        <location filename="../src/ui_ruleschange.h" line="103"/>
+        <location filename="../src/ui_ruleschange.h" line="102"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="48"/>
-        <location filename="../src/ui_ruleschange.h" line="104"/>
+        <location filename="../src/ui_ruleschange.h" line="103"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="55"/>
-        <location filename="../src/ui_ruleschange.h" line="105"/>
+        <location filename="../src/ui_ruleschange.h" line="104"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="62"/>
-        <location filename="../src/ui_ruleschange.h" line="106"/>
+        <location filename="../src/ui_ruleschange.h" line="105"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../src/ruleschange.ui" line="69"/>
-        <location filename="../src/ui_ruleschange.h" line="107"/>
+        <location filename="../src/ui_ruleschange.h" line="106"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
@@ -170,37 +170,37 @@
     <name>addUserAction</name>
     <message>
         <location filename="../src/adduseraction.ui" line="26"/>
-        <location filename="../src/ui_adduseraction.h" line="119"/>
+        <location filename="../src/ui_adduseraction.h" line="118"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
     <message>
         <location filename="../src/adduseraction.ui" line="32"/>
-        <location filename="../src/ui_adduseraction.h" line="120"/>
+        <location filename="../src/ui_adduseraction.h" line="119"/>
         <source>Action name:</source>
         <translation>Название действия:</translation>
     </message>
     <message>
         <location filename="../src/adduseraction.ui" line="58"/>
-        <location filename="../src/ui_adduseraction.h" line="121"/>
+        <location filename="../src/ui_adduseraction.h" line="120"/>
         <source>Key bind:</source>
         <translation>Комбинация клавиш:</translation>
     </message>
     <message>
         <location filename="../src/adduseraction.ui" line="87"/>
-        <location filename="../src/ui_adduseraction.h" line="123"/>
+        <location filename="../src/ui_adduseraction.h" line="122"/>
         <source>User action:</source>
         <translation>Пользовательское действие:</translation>
     </message>
     <message>
         <location filename="../src/adduseraction.ui" line="128"/>
-        <location filename="../src/ui_adduseraction.h" line="124"/>
+        <location filename="../src/ui_adduseraction.h" line="123"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../src/adduseraction.ui" line="135"/>
-        <location filename="../src/ui_adduseraction.h" line="125"/>
+        <location filename="../src/ui_adduseraction.h" line="124"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -209,37 +209,37 @@
     <name>frmAbout</name>
     <message>
         <location filename="../src/frmabout.ui" line="14"/>
-        <location filename="../src/ui_frmabout.h" line="98"/>
+        <location filename="../src/ui_frmabout.h" line="97"/>
         <source>kXneur About...</source>
         <translation>О kXneur...</translation>
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="33"/>
-        <location filename="../src/ui_frmabout.h" line="99"/>
+        <location filename="../src/ui_frmabout.h" line="98"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="66"/>
-        <location filename="../src/ui_frmabout.h" line="100"/>
+        <location filename="../src/ui_frmabout.h" line="99"/>
         <source>X Neural Switch for Kde</source>
         <translation>X Neural Switcher для Kde</translation>
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="82"/>
-        <location filename="../src/ui_frmabout.h" line="101"/>
+        <location filename="../src/ui_frmabout.h" line="100"/>
         <source>Kde frontend for xNeur</source>
         <translation>Kde оболочка для xNeur</translation>
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="98"/>
-        <location filename="../src/ui_frmabout.h" line="102"/>
+        <location filename="../src/ui_frmabout.h" line="101"/>
         <source>AUTHORS:</source>
         <translation>АВТОРЫ:</translation>
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="114"/>
-        <location filename="../src/ui_frmabout.h" line="103"/>
+        <location filename="../src/ui_frmabout.h" line="102"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -269,7 +269,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="135"/>
-        <location filename="../src/ui_frmabout.h" line="109"/>
+        <location filename="../src/ui_frmabout.h" line="108"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -287,7 +287,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/frmabout.ui" line="176"/>
-        <location filename="../src/ui_frmabout.h" line="117"/>
+        <location filename="../src/ui_frmabout.h" line="116"/>
         <source>Current Version:%1</source>
         <translation>Текущая версия: %1</translation>
     </message>
@@ -296,19 +296,19 @@ p, li { white-space: pre-wrap; }
     <name>frmAddAbbreviature</name>
     <message>
         <location filename="../src/frmaddabbreviature.ui" line="26"/>
-        <location filename="../src/ui_frmaddabbreviature.h" line="82"/>
+        <location filename="../src/ui_frmaddabbreviature.h" line="81"/>
         <source>Add Abbreviation...</source>
         <translation>Добавить Сокращение...</translation>
     </message>
     <message>
         <location filename="../src/frmaddabbreviature.ui" line="32"/>
-        <location filename="../src/ui_frmaddabbreviature.h" line="83"/>
+        <location filename="../src/ui_frmaddabbreviature.h" line="82"/>
         <source>Abbreviation:</source>
         <translation>Сокращение:</translation>
     </message>
     <message>
         <location filename="../src/frmaddabbreviature.ui" line="42"/>
-        <location filename="../src/ui_frmaddabbreviature.h" line="84"/>
+        <location filename="../src/ui_frmaddabbreviature.h" line="83"/>
         <source>Expansion text:</source>
         <translation>Полный текст:</translation>
     </message>
@@ -317,169 +317,169 @@ p, li { white-space: pre-wrap; }
     <name>frmSettings</name>
     <message>
         <location filename="../src/frmsettings.ui" line="20"/>
-        <location filename="../src/ui_frmsettings.h" line="1441"/>
+        <location filename="../src/ui_frmsettings.h" line="1476"/>
         <source>XNeur Settings</source>
         <translation>Настройки xNeur</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="43"/>
-        <location filename="../src/ui_frmsettings.h" line="1463"/>
+        <location filename="../src/ui_frmsettings.h" line="1498"/>
         <source>General</source>
         <translation>Общее</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="53"/>
-        <location filename="../src/ui_frmsettings.h" line="1448"/>
+        <location filename="../src/ui_frmsettings.h" line="1483"/>
         <source>Main</source>
         <translation>Основное</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="61"/>
-        <location filename="../src/ui_frmsettings.h" line="1442"/>
+        <location filename="../src/ui_frmsettings.h" line="1477"/>
         <source>Use manual switching mode</source>
         <translation>Включить ручной режим переключения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="68"/>
-        <location filename="../src/ui_frmsettings.h" line="1443"/>
+        <location filename="../src/ui_frmsettings.h" line="1478"/>
         <source>Enable auto-learning mode</source>
         <translation>Включить режим самообучения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="75"/>
-        <location filename="../src/ui_frmsettings.h" line="1444"/>
+        <location filename="../src/ui_frmsettings.h" line="1479"/>
         <source>Keep selection after changing selected text</source>
         <translation>Сохранять выделение после изменения выделенного текста</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="82"/>
-        <location filename="../src/ui_frmsettings.h" line="1445"/>
+        <location filename="../src/ui_frmsettings.h" line="1480"/>
         <source>Rotate layout after changing selected text</source>
         <translation>Переключать раскладку после изменения выделенного текста</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="89"/>
-        <location filename="../src/ui_frmsettings.h" line="1446"/>
+        <location filename="../src/ui_frmsettings.h" line="1481"/>
         <source>Check language on input process</source>
         <translation>Проверять язык при вводе</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="96"/>
-        <location filename="../src/ui_frmsettings.h" line="1447"/>
+        <location filename="../src/ui_frmsettings.h" line="1482"/>
         <source>Check similar words</source>
         <translation>Проверять похожие слова</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="119"/>
-        <location filename="../src/ui_frmsettings.h" line="1462"/>
+        <location filename="../src/ui_frmsettings.h" line="1497"/>
         <source>Tipographics</source>
         <translation>Типографика</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="127"/>
-        <location filename="../src/ui_frmsettings.h" line="1449"/>
+        <location filename="../src/ui_frmsettings.h" line="1484"/>
         <source>Correct aCCIDENTAL caps</source>
         <translation>Исправление сЛУЧАЙНОГО CapsLock</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="134"/>
-        <location filename="../src/ui_frmsettings.h" line="1450"/>
+        <location filename="../src/ui_frmsettings.h" line="1485"/>
         <source>Disable CapsLock use</source>
         <translation>Отключение кнопки CapsLock</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="141"/>
-        <location filename="../src/ui_frmsettings.h" line="1451"/>
+        <location filename="../src/ui_frmsettings.h" line="1486"/>
         <source>Correct TWo INitial caps</source>
         <translation>Исправление двух ПРописных букв</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="148"/>
-        <location filename="../src/ui_frmsettings.h" line="1452"/>
+        <location filename="../src/ui_frmsettings.h" line="1487"/>
         <source>Correct spaces with punctuation</source>
         <translation>Исправление пробелов со знаками пунктуации</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="155"/>
-        <location filename="../src/ui_frmsettings.h" line="1453"/>
+        <location filename="../src/ui_frmsettings.h" line="1488"/>
         <source>Сorrect small letter to capital letter after dot</source>
         <translation>Исправление строчной буквы на прописную после точки</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="162"/>
-        <location filename="../src/ui_frmsettings.h" line="1454"/>
+        <location filename="../src/ui_frmsettings.h" line="1489"/>
         <source>Сorrect two space with a comma and a space</source>
         <translation>Исправление двух пробелов на запятую и пробел</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="169"/>
-        <location filename="../src/ui_frmsettings.h" line="1455"/>
+        <location filename="../src/ui_frmsettings.h" line="1490"/>
         <source>Сorrect two minus with a dash</source>
         <translation>Исправление двух минусов на тире</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="176"/>
-        <location filename="../src/ui_frmsettings.h" line="1456"/>
+        <location filename="../src/ui_frmsettings.h" line="1491"/>
         <source>Сorrect dash with a emdash</source>
         <translation>Исправление тире на длинное тире</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="183"/>
-        <location filename="../src/ui_frmsettings.h" line="1457"/>
+        <location filename="../src/ui_frmsettings.h" line="1492"/>
         <source>Сorrect (c) with a copyright sign</source>
         <translation>Исправление (с) на знак копирайта</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="190"/>
-        <location filename="../src/ui_frmsettings.h" line="1458"/>
+        <location filename="../src/ui_frmsettings.h" line="1493"/>
         <source>Сorrect (tm) with a trademark sign</source>
         <translation>Исправление (tm) на знак торговой марки</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="197"/>
-        <location filename="../src/ui_frmsettings.h" line="1459"/>
+        <location filename="../src/ui_frmsettings.h" line="1494"/>
         <source>Сorrect (r) with a registered sign</source>
         <translation>Исправление (r) на знак регистрации</translation>
     </message>
     <message utf8="true">
         <location filename="../src/frmsettings.ui" line="204"/>
-        <location filename="../src/ui_frmsettings.h" line="1460"/>
+        <location filename="../src/ui_frmsettings.h" line="1495"/>
         <source>Сorrect three points with a ellipsis sign</source>
         <translation>Исправление трёх точек на знак многоточия</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="211"/>
-        <location filename="../src/ui_frmsettings.h" line="1461"/>
+        <location filename="../src/ui_frmsettings.h" line="1496"/>
         <source>Correct misprint</source>
         <translation>Исправление опечаток</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="241"/>
-        <location filename="../src/ui_frmsettings.h" line="1470"/>
+        <location filename="../src/ui_frmsettings.h" line="1505"/>
         <source>Layouts</source>
         <translation>Раскладки</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="276"/>
-        <location filename="../src/ui_frmsettings.h" line="1464"/>
+        <location filename="../src/ui_frmsettings.h" line="1499"/>
         <source>Initial layout number:</source>
         <translation>Номер раскладки по умолчанию: </translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="323"/>
-        <location filename="../src/ui_frmsettings.h" line="1465"/>
+        <location filename="../src/ui_frmsettings.h" line="1500"/>
         <source>Rules change...</source>
         <translation>Правила переключения...</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="345"/>
-        <location filename="../src/ui_frmsettings.h" line="1466"/>
+        <location filename="../src/ui_frmsettings.h" line="1501"/>
         <source>Remember keyboard layout for each application instance</source>
         <translation>Запоминать раскладку отдельно для каждой копии приложения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="352"/>
-        <location filename="../src/ui_frmsettings.h" line="1467"/>
+        <location filename="../src/ui_frmsettings.h" line="1502"/>
         <source>Exceptions (One keyboard layout for all application instances)</source>
         <translation>Исключения (одна раскладка для всех копий приложения)</translation>
     </message>
@@ -491,15 +491,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="722"/>
         <location filename="../src/frmsettings.ui" line="789"/>
         <location filename="../src/frmsettings.ui" line="1122"/>
-        <location filename="../src/frmsettings.ui" line="1688"/>
-        <location filename="../src/ui_frmsettings.h" line="1468"/>
-        <location filename="../src/ui_frmsettings.h" line="1483"/>
-        <location filename="../src/ui_frmsettings.h" line="1489"/>
-        <location filename="../src/ui_frmsettings.h" line="1494"/>
-        <location filename="../src/ui_frmsettings.h" line="1497"/>
-        <location filename="../src/ui_frmsettings.h" line="1500"/>
-        <location filename="../src/ui_frmsettings.h" line="1542"/>
-        <location filename="../src/ui_frmsettings.h" line="1592"/>
+        <location filename="../src/frmsettings.ui" line="1691"/>
+        <location filename="../src/frmsettings.ui" line="1732"/>
+        <location filename="../src/ui_frmsettings.h" line="1503"/>
+        <location filename="../src/ui_frmsettings.h" line="1518"/>
+        <location filename="../src/ui_frmsettings.h" line="1524"/>
+        <location filename="../src/ui_frmsettings.h" line="1529"/>
+        <location filename="../src/ui_frmsettings.h" line="1532"/>
+        <location filename="../src/ui_frmsettings.h" line="1535"/>
+        <location filename="../src/ui_frmsettings.h" line="1577"/>
+        <location filename="../src/ui_frmsettings.h" line="1627"/>
+        <location filename="../src/ui_frmsettings.h" line="1630"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -511,15 +513,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="735"/>
         <location filename="../src/frmsettings.ui" line="802"/>
         <location filename="../src/frmsettings.ui" line="1129"/>
-        <location filename="../src/frmsettings.ui" line="1695"/>
-        <location filename="../src/ui_frmsettings.h" line="1469"/>
-        <location filename="../src/ui_frmsettings.h" line="1485"/>
-        <location filename="../src/ui_frmsettings.h" line="1490"/>
-        <location filename="../src/ui_frmsettings.h" line="1495"/>
-        <location filename="../src/ui_frmsettings.h" line="1498"/>
-        <location filename="../src/ui_frmsettings.h" line="1501"/>
-        <location filename="../src/ui_frmsettings.h" line="1543"/>
-        <location filename="../src/ui_frmsettings.h" line="1593"/>
+        <location filename="../src/frmsettings.ui" line="1698"/>
+        <location filename="../src/frmsettings.ui" line="1739"/>
+        <location filename="../src/ui_frmsettings.h" line="1504"/>
+        <location filename="../src/ui_frmsettings.h" line="1520"/>
+        <location filename="../src/ui_frmsettings.h" line="1525"/>
+        <location filename="../src/ui_frmsettings.h" line="1530"/>
+        <location filename="../src/ui_frmsettings.h" line="1533"/>
+        <location filename="../src/ui_frmsettings.h" line="1536"/>
+        <location filename="../src/ui_frmsettings.h" line="1578"/>
+        <location filename="../src/ui_frmsettings.h" line="1628"/>
+        <location filename="../src/ui_frmsettings.h" line="1631"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
@@ -527,15 +531,15 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="399"/>
         <location filename="../src/frmsettings.ui" line="411"/>
         <location filename="../src/frmsettings.ui" line="456"/>
-        <location filename="../src/ui_frmsettings.h" line="1474"/>
-        <location filename="../src/ui_frmsettings.h" line="1480"/>
-        <location filename="../src/ui_frmsettings.h" line="1486"/>
+        <location filename="../src/ui_frmsettings.h" line="1509"/>
+        <location filename="../src/ui_frmsettings.h" line="1515"/>
+        <location filename="../src/ui_frmsettings.h" line="1521"/>
         <source>HotKeys</source>
         <translation>Комбинации клавиш</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="406"/>
-        <location filename="../src/ui_frmsettings.h" line="1472"/>
+        <location filename="../src/ui_frmsettings.h" line="1507"/>
         <source>Actions</source>
         <translation>Действия</translation>
     </message>
@@ -543,17 +547,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="421"/>
         <location filename="../src/frmsettings.ui" line="478"/>
         <location filename="../src/frmsettings.ui" line="899"/>
-        <location filename="../src/frmsettings.ui" line="1936"/>
-        <location filename="../src/ui_frmsettings.h" line="1475"/>
-        <location filename="../src/ui_frmsettings.h" line="1484"/>
-        <location filename="../src/ui_frmsettings.h" line="1505"/>
-        <location filename="../src/ui_frmsettings.h" line="1617"/>
+        <location filename="../src/frmsettings.ui" line="1980"/>
+        <location filename="../src/ui_frmsettings.h" line="1510"/>
+        <location filename="../src/ui_frmsettings.h" line="1519"/>
+        <location filename="../src/ui_frmsettings.h" line="1540"/>
+        <location filename="../src/ui_frmsettings.h" line="1655"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="428"/>
-        <location filename="../src/ui_frmsettings.h" line="1476"/>
+        <location filename="../src/ui_frmsettings.h" line="1511"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
@@ -562,94 +566,94 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="928"/>
         <location filename="../src/frmsettings.ui" line="992"/>
         <location filename="../src/frmsettings.ui" line="1067"/>
-        <location filename="../src/ui_frmsettings.h" line="1478"/>
-        <location filename="../src/ui_frmsettings.h" line="1507"/>
-        <location filename="../src/ui_frmsettings.h" line="1521"/>
-        <location filename="../src/ui_frmsettings.h" line="1530"/>
+        <location filename="../src/ui_frmsettings.h" line="1513"/>
+        <location filename="../src/ui_frmsettings.h" line="1542"/>
+        <location filename="../src/ui_frmsettings.h" line="1556"/>
+        <location filename="../src/ui_frmsettings.h" line="1565"/>
         <source>Action</source>
         <translation>Действие</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="461"/>
-        <location filename="../src/ui_frmsettings.h" line="1482"/>
+        <location filename="../src/ui_frmsettings.h" line="1517"/>
         <source>User Actions</source>
         <translation>Пользовательские действия</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="511"/>
-        <location filename="../src/ui_frmsettings.h" line="1492"/>
+        <location filename="../src/ui_frmsettings.h" line="1527"/>
         <source>Autocompletion</source>
         <translation>Автодополнение</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="587"/>
-        <location filename="../src/ui_frmsettings.h" line="1491"/>
+        <location filename="../src/ui_frmsettings.h" line="1526"/>
         <source>Enable autocompletion</source>
         <translation>Включить автодополнение</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="517"/>
-        <location filename="../src/ui_frmsettings.h" line="1487"/>
+        <location filename="../src/ui_frmsettings.h" line="1522"/>
         <source>Add space after autocompletion</source>
         <translation>Добавлять пробел после автодополнения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="534"/>
-        <location filename="../src/ui_frmsettings.h" line="1488"/>
+        <location filename="../src/ui_frmsettings.h" line="1523"/>
         <source>Disable the autocompletion for these applications</source>
         <translation>Отключить автодополнение для этих приложений</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="598"/>
-        <location filename="../src/ui_frmsettings.h" line="1502"/>
+        <location filename="../src/ui_frmsettings.h" line="1537"/>
         <source>Applications</source>
         <translation>Приложения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="616"/>
-        <location filename="../src/ui_frmsettings.h" line="1493"/>
+        <location filename="../src/ui_frmsettings.h" line="1528"/>
         <source>Ignore these applications</source>
         <translation>Не обрабатывать эти приложения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="686"/>
-        <location filename="../src/ui_frmsettings.h" line="1496"/>
+        <location filename="../src/ui_frmsettings.h" line="1531"/>
         <source>Force automatic mode for these applications</source>
         <translation>Принудительный автоматический режим для этих приложений</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="756"/>
-        <location filename="../src/ui_frmsettings.h" line="1499"/>
+        <location filename="../src/ui_frmsettings.h" line="1534"/>
         <source>Force manual mode for these applications</source>
         <translation>Принудительный ручной режим для этих приложений</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="828"/>
-        <location filename="../src/ui_frmsettings.h" line="1536"/>
+        <location filename="../src/ui_frmsettings.h" line="1571"/>
         <source>Notifications</source>
         <translation>Уведомления</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="838"/>
-        <location filename="../src/ui_frmsettings.h" line="1512"/>
+        <location filename="../src/ui_frmsettings.h" line="1547"/>
         <source>Sounds</source>
         <translation>Звуки</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="844"/>
-        <location filename="../src/ui_frmsettings.h" line="1503"/>
+        <location filename="../src/ui_frmsettings.h" line="1538"/>
         <source>Enable sounds</source>
         <translation>Проигрывать звуки</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="853"/>
-        <location filename="../src/ui_frmsettings.h" line="1504"/>
+        <location filename="../src/ui_frmsettings.h" line="1539"/>
         <source>Sound volume:  </source>
         <translation>Уровень громкости: </translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="933"/>
-        <location filename="../src/ui_frmsettings.h" line="1509"/>
+        <location filename="../src/ui_frmsettings.h" line="1544"/>
         <source>Sound</source>
         <translation>Звук</translation>
     </message>
@@ -657,35 +661,35 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="938"/>
         <location filename="../src/frmsettings.ui" line="1002"/>
         <location filename="../src/frmsettings.ui" line="1077"/>
-        <location filename="../src/frmsettings.ui" line="1715"/>
-        <location filename="../src/ui_frmsettings.h" line="1511"/>
-        <location filename="../src/ui_frmsettings.h" line="1525"/>
-        <location filename="../src/ui_frmsettings.h" line="1534"/>
-        <location filename="../src/ui_frmsettings.h" line="1596"/>
+        <location filename="../src/frmsettings.ui" line="1759"/>
+        <location filename="../src/ui_frmsettings.h" line="1546"/>
+        <location filename="../src/ui_frmsettings.h" line="1560"/>
+        <location filename="../src/ui_frmsettings.h" line="1569"/>
+        <location filename="../src/ui_frmsettings.h" line="1634"/>
         <source>Enabled</source>
         <translation>Включено</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="950"/>
-        <location filename="../src/ui_frmsettings.h" line="1526"/>
+        <location filename="../src/ui_frmsettings.h" line="1561"/>
         <source>OSD</source>
         <translation>OSD</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="956"/>
-        <location filename="../src/ui_frmsettings.h" line="1513"/>
+        <location filename="../src/ui_frmsettings.h" line="1548"/>
         <source>Show OSD</source>
         <translation>Показывать OSD</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="965"/>
-        <location filename="../src/ui_frmsettings.h" line="1514"/>
+        <location filename="../src/ui_frmsettings.h" line="1549"/>
         <source>OSD Font:  </source>
         <translation>Шрифт OSD:  </translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="977"/>
-        <location filename="../src/ui_frmsettings.h" line="1515"/>
+        <location filename="../src/ui_frmsettings.h" line="1550"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -699,213 +703,213 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="997"/>
-        <location filename="../src/ui_frmsettings.h" line="1523"/>
+        <location filename="../src/ui_frmsettings.h" line="1558"/>
         <source>OSD text</source>
         <translation>Текст OSD</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1011"/>
-        <location filename="../src/ui_frmsettings.h" line="1535"/>
+        <location filename="../src/ui_frmsettings.h" line="1570"/>
         <source>Popup messages</source>
         <translation>Всплывающие сообщения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1017"/>
-        <location filename="../src/ui_frmsettings.h" line="1527"/>
+        <location filename="../src/ui_frmsettings.h" line="1562"/>
         <source>Show popup messages</source>
         <translation>Показывать всплывающие сообщения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1035"/>
-        <location filename="../src/ui_frmsettings.h" line="1528"/>
+        <location filename="../src/ui_frmsettings.h" line="1563"/>
         <source>Popup expiration interval (in milliseconds)</source>
         <translation>Время показа всплывающего сообщения (в миллисекундах)</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1072"/>
-        <location filename="../src/ui_frmsettings.h" line="1532"/>
+        <location filename="../src/ui_frmsettings.h" line="1567"/>
         <source>Popup message text</source>
         <translation>Текст всплывающего сообщения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1093"/>
-        <location filename="../src/ui_frmsettings.h" line="1544"/>
+        <location filename="../src/ui_frmsettings.h" line="1579"/>
         <source>Abbreviations</source>
         <translation>Сокращения</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1099"/>
-        <location filename="../src/ui_frmsettings.h" line="1537"/>
+        <location filename="../src/ui_frmsettings.h" line="1572"/>
         <source>Ignore keyboard layout for abbreviations</source>
         <translation>Игнорировать раскладку для сокращений</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1107"/>
-        <location filename="../src/ui_frmsettings.h" line="1539"/>
+        <location filename="../src/ui_frmsettings.h" line="1574"/>
         <source>Abbreviation</source>
         <translation>Сокращение</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1112"/>
-        <location filename="../src/ui_frmsettings.h" line="1541"/>
+        <location filename="../src/ui_frmsettings.h" line="1576"/>
         <source>Expansion text</source>
         <translation>Полный текст</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1155"/>
-        <location filename="../src/frmsettings.ui" line="1643"/>
-        <location filename="../src/ui_frmsettings.h" line="1557"/>
-        <location filename="../src/ui_frmsettings.h" line="1587"/>
+        <location filename="../src/frmsettings.ui" line="1626"/>
+        <location filename="../src/ui_frmsettings.h" line="1592"/>
+        <location filename="../src/ui_frmsettings.h" line="1621"/>
         <source>Log</source>
         <translation>Журнал</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1179"/>
-        <location filename="../src/ui_frmsettings.h" line="1545"/>
+        <location filename="../src/ui_frmsettings.h" line="1580"/>
         <source>Enable keyboard logging</source>
         <translation>Включить сохранение набираемого текста в файл журнала</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1201"/>
-        <location filename="../src/ui_frmsettings.h" line="1546"/>
+        <location filename="../src/ui_frmsettings.h" line="1581"/>
         <source>Log file size in bytes</source>
         <translation>Размер журнала в байтах</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1230"/>
-        <location filename="../src/ui_frmsettings.h" line="1547"/>
+        <location filename="../src/ui_frmsettings.h" line="1582"/>
         <source>Send log to e-mail</source>
         <translation>Отправить журнал на e-mail</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1253"/>
-        <location filename="../src/ui_frmsettings.h" line="1548"/>
+        <location filename="../src/ui_frmsettings.h" line="1583"/>
         <source>Send log via host (name or IP)</source>
         <translation>Отправить журнал через сервер (адрес или IP)</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1276"/>
-        <location filename="../src/ui_frmsettings.h" line="1549"/>
+        <location filename="../src/ui_frmsettings.h" line="1584"/>
         <source>Send log via port</source>
         <translation>Отправить журнал через порт</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1308"/>
-        <location filename="../src/ui_frmsettings.h" line="1550"/>
+        <location filename="../src/ui_frmsettings.h" line="1585"/>
         <source>Open log file in</source>
         <translation>Открывать файл журнала в </translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1328"/>
-        <location filename="../src/ui_frmsettings.h" line="1553"/>
+        <location filename="../src/ui_frmsettings.h" line="1588"/>
         <source>Open in browser</source>
         <translation>Открыть в браузере</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1333"/>
-        <location filename="../src/ui_frmsettings.h" line="1554"/>
+        <location filename="../src/ui_frmsettings.h" line="1589"/>
         <source>Opening in the internal viewer</source>
         <translation>Открыть внутреней программой просмотра</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1341"/>
-        <location filename="../src/ui_frmsettings.h" line="1556"/>
+        <location filename="../src/ui_frmsettings.h" line="1591"/>
         <source>View log...</source>
         <translation>Посмотреть журнал...</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1379"/>
-        <location filename="../src/ui_frmsettings.h" line="1579"/>
+        <location filename="../src/ui_frmsettings.h" line="1614"/>
         <source>Troubleshooting</source>
         <translation>Устранение проблем</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1385"/>
-        <location filename="../src/ui_frmsettings.h" line="1558"/>
+        <location filename="../src/ui_frmsettings.h" line="1593"/>
         <source>Don&apos;t switch layout if before input where pressed</source>
         <translation>Не переключать раскладку, если перед вводом были нажаты</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1393"/>
-        <location filename="../src/ui_frmsettings.h" line="1559"/>
+        <location filename="../src/ui_frmsettings.h" line="1594"/>
         <source>Backspace</source>
         <translation>Backspace</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1400"/>
-        <location filename="../src/ui_frmsettings.h" line="1560"/>
+        <location filename="../src/ui_frmsettings.h" line="1595"/>
         <source>Left arrow</source>
         <translation>Стрелка влево</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1407"/>
-        <location filename="../src/ui_frmsettings.h" line="1561"/>
+        <location filename="../src/ui_frmsettings.h" line="1596"/>
         <source>Right arrow</source>
         <translation>Стрелка вправо</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1414"/>
-        <location filename="../src/ui_frmsettings.h" line="1562"/>
+        <location filename="../src/ui_frmsettings.h" line="1597"/>
         <source>Up arrow</source>
         <translation>Стрелка вверх</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1421"/>
-        <location filename="../src/ui_frmsettings.h" line="1563"/>
+        <location filename="../src/ui_frmsettings.h" line="1598"/>
         <source>Down arrow</source>
         <translation>Стрелка вниз</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1428"/>
-        <location filename="../src/ui_frmsettings.h" line="1564"/>
+        <location filename="../src/ui_frmsettings.h" line="1599"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1435"/>
-        <location filename="../src/ui_frmsettings.h" line="1565"/>
+        <location filename="../src/ui_frmsettings.h" line="1600"/>
         <source>Enter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1442"/>
-        <location filename="../src/ui_frmsettings.h" line="1566"/>
+        <location filename="../src/ui_frmsettings.h" line="1601"/>
         <source>Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1449"/>
-        <location filename="../src/ui_frmsettings.h" line="1567"/>
+        <location filename="../src/ui_frmsettings.h" line="1602"/>
         <source>You changed layout</source>
         <translation>Вы переключили раскладку</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1456"/>
-        <location filename="../src/ui_frmsettings.h" line="1568"/>
+        <location filename="../src/ui_frmsettings.h" line="1603"/>
         <source>Application in full screen mode</source>
         <translation>Приложение в полноэкранном режиме</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1463"/>
-        <location filename="../src/ui_frmsettings.h" line="1569"/>
+        <location filename="../src/ui_frmsettings.h" line="1604"/>
         <source>This will help avoid switching layout when editing parts previously introduced word.</source>
         <translation>Это поможет избежать переключений раскладки при редактировании частей ранее введенного слова.</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1491"/>
-        <location filename="../src/ui_frmsettings.h" line="1570"/>
+        <location filename="../src/ui_frmsettings.h" line="1605"/>
         <source>Additional</source>
         <translation>Дополнительно</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1499"/>
-        <location filename="../src/ui_frmsettings.h" line="1571"/>
+        <location filename="../src/ui_frmsettings.h" line="1606"/>
         <source>Flush internal buffer on Escape</source>
         <translation>Сбрасывать внутренний буфер при нажатии Escape</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1506"/>
-        <location filename="../src/ui_frmsettings.h" line="1572"/>
+        <location filename="../src/ui_frmsettings.h" line="1607"/>
         <source>Flush internal buffer on Enter or Tab</source>
         <translation>Сбрасывать внутренний буфер при нажатии Enter или Tab</translation>
     </message>
@@ -915,49 +919,49 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1513"/>
-        <location filename="../src/ui_frmsettings.h" line="1573"/>
+        <location filename="../src/ui_frmsettings.h" line="1608"/>
         <source>Compatibility with the completion</source>
         <translation>Совместимость с автодополнением</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1525"/>
-        <location filename="../src/ui_frmsettings.h" line="1574"/>
+        <location filename="../src/ui_frmsettings.h" line="1609"/>
         <source>Tracking input</source>
         <translation>Слежение за вводом</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1533"/>
-        <location filename="../src/ui_frmsettings.h" line="1575"/>
+        <location filename="../src/ui_frmsettings.h" line="1610"/>
         <source>Monitor the input</source>
         <translation>Следить за вводом</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1540"/>
-        <location filename="../src/ui_frmsettings.h" line="1576"/>
+        <location filename="../src/ui_frmsettings.h" line="1611"/>
         <source>Disabling this option will add any application to the list of excluded applications.</source>
         <translation>Выключение этой опции добавит ВСЕ приложения в список исключенных приложений.</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1547"/>
-        <location filename="../src/ui_frmsettings.h" line="1577"/>
+        <location filename="../src/ui_frmsettings.h" line="1612"/>
         <source>Monitor the mouse</source>
         <translation>Следить за мышью</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1554"/>
-        <location filename="../src/ui_frmsettings.h" line="1578"/>
+        <location filename="../src/ui_frmsettings.h" line="1613"/>
         <source>Disabling this option will disable mouse tracking. Reset buffer when clicking the mouse will not.</source>
         <translation>Выключение этой опции выключит слежение за мышью. Сброса буфера при клике мышью не будет.</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1586"/>
-        <location filename="../src/ui_frmsettings.h" line="1594"/>
+        <location filename="../src/ui_frmsettings.h" line="1632"/>
         <source>Advanced</source>
         <translation>Специальное</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1594"/>
-        <location filename="../src/ui_frmsettings.h" line="1580"/>
+        <location filename="../src/frmsettings.ui" line="1657"/>
+        <location filename="../src/ui_frmsettings.h" line="1625"/>
         <source>Delay before sending events (in milliseconds)</source>
         <translation>Задержка перед отправкой событий (в миллисекундах)</translation>
     </message>
@@ -966,116 +970,122 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Не отправлять событие KeyRelease</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1614"/>
-        <location filename="../src/ui_frmsettings.h" line="1581"/>
+        <location filename="../src/frmsettings.ui" line="1597"/>
+        <location filename="../src/ui_frmsettings.h" line="1615"/>
         <source>Log verbosity level</source>
         <translation>Уровень подробности выводимых сообщений</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1628"/>
-        <location filename="../src/ui_frmsettings.h" line="1584"/>
+        <location filename="../src/frmsettings.ui" line="1611"/>
+        <location filename="../src/ui_frmsettings.h" line="1618"/>
         <source>None</source>
         <translation>Отсутствует</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1633"/>
-        <location filename="../src/ui_frmsettings.h" line="1585"/>
+        <location filename="../src/frmsettings.ui" line="1616"/>
+        <location filename="../src/ui_frmsettings.h" line="1619"/>
         <source>Error</source>
         <translation>Ошибки</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1638"/>
-        <location filename="../src/ui_frmsettings.h" line="1586"/>
+        <location filename="../src/frmsettings.ui" line="1621"/>
+        <location filename="../src/ui_frmsettings.h" line="1620"/>
         <source>Warning</source>
         <translation>Предупреждения</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1648"/>
-        <location filename="../src/ui_frmsettings.h" line="1588"/>
+        <location filename="../src/frmsettings.ui" line="1631"/>
+        <location filename="../src/ui_frmsettings.h" line="1622"/>
         <source>Debug</source>
         <translation>Лог</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1653"/>
-        <location filename="../src/ui_frmsettings.h" line="1589"/>
+        <location filename="../src/frmsettings.ui" line="1636"/>
+        <location filename="../src/ui_frmsettings.h" line="1623"/>
         <source>Trace</source>
         <translation>Трассировка</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1663"/>
-        <location filename="../src/ui_frmsettings.h" line="1591"/>
+        <location filename="../src/frmsettings.ui" line="1666"/>
+        <location filename="../src/ui_frmsettings.h" line="1626"/>
+        <source>Delay before sending events in these applications:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/frmsettings.ui" line="1707"/>
+        <location filename="../src/ui_frmsettings.h" line="1629"/>
         <source>Don&apos;t send event KeyRelease in these applications:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1708"/>
-        <location filename="../src/ui_frmsettings.h" line="1601"/>
+        <location filename="../src/frmsettings.ui" line="1752"/>
+        <location filename="../src/ui_frmsettings.h" line="1639"/>
         <source>Plugins</source>
         <translation>Модули</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1720"/>
-        <location filename="../src/ui_frmsettings.h" line="1598"/>
+        <location filename="../src/frmsettings.ui" line="1764"/>
+        <location filename="../src/ui_frmsettings.h" line="1636"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1725"/>
-        <location filename="../src/ui_frmsettings.h" line="1600"/>
+        <location filename="../src/frmsettings.ui" line="1769"/>
+        <location filename="../src/ui_frmsettings.h" line="1638"/>
         <source>File name</source>
         <translation>Имя файла</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1737"/>
-        <location filename="../src/ui_frmsettings.h" line="1619"/>
+        <location filename="../src/frmsettings.ui" line="1781"/>
+        <location filename="../src/ui_frmsettings.h" line="1657"/>
         <source>Properties</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1743"/>
-        <location filename="../src/ui_frmsettings.h" line="1602"/>
+        <location filename="../src/frmsettings.ui" line="1787"/>
+        <location filename="../src/ui_frmsettings.h" line="1640"/>
         <source>Startup</source>
         <translation>Параметры запуска</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1751"/>
-        <location filename="../src/ui_frmsettings.h" line="1603"/>
+        <location filename="../src/frmsettings.ui" line="1795"/>
+        <location filename="../src/ui_frmsettings.h" line="1641"/>
         <source>Autostartup</source>
         <translation>Запускать автоматически при старте системы</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1766"/>
-        <location filename="../src/ui_frmsettings.h" line="1604"/>
+        <location filename="../src/frmsettings.ui" line="1810"/>
+        <location filename="../src/ui_frmsettings.h" line="1642"/>
         <source>Delay before startup</source>
         <translation>Задержка перед запуском</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1815"/>
-        <location filename="../src/ui_frmsettings.h" line="1605"/>
+        <location filename="../src/frmsettings.ui" line="1859"/>
+        <location filename="../src/ui_frmsettings.h" line="1643"/>
         <source>UI</source>
         <translation>Внешний вид</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1836"/>
-        <location filename="../src/ui_frmsettings.h" line="1608"/>
+        <location filename="../src/frmsettings.ui" line="1880"/>
+        <location filename="../src/ui_frmsettings.h" line="1646"/>
         <source>Show flag</source>
         <translation>Показывать флаг</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1841"/>
-        <location filename="../src/ui_frmsettings.h" line="1609"/>
+        <location filename="../src/frmsettings.ui" line="1885"/>
+        <location filename="../src/ui_frmsettings.h" line="1647"/>
         <source>Show user flag</source>
         <translation>Показывать пользовательский флаг</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1846"/>
-        <location filename="../src/ui_frmsettings.h" line="1610"/>
+        <location filename="../src/frmsettings.ui" line="1890"/>
+        <location filename="../src/ui_frmsettings.h" line="1648"/>
         <source>Show text</source>
         <translation>Показывать текст</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1851"/>
-        <location filename="../src/ui_frmsettings.h" line="1611"/>
+        <location filename="../src/frmsettings.ui" line="1895"/>
+        <location filename="../src/ui_frmsettings.h" line="1649"/>
         <source>Show icon</source>
         <translation>Показывать значок</translation>
     </message>
@@ -1096,32 +1106,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Индикаторов приложений</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1862"/>
-        <location filename="../src/ui_frmsettings.h" line="1613"/>
+        <location filename="../src/frmsettings.ui" line="1906"/>
+        <location filename="../src/ui_frmsettings.h" line="1651"/>
         <source>Folder icon indicator</source>
         <translation>Каталог расположения используемых флагов</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1914"/>
-        <location filename="../src/ui_frmsettings.h" line="1614"/>
+        <location filename="../src/frmsettings.ui" line="1958"/>
+        <location filename="../src/ui_frmsettings.h" line="1652"/>
         <source>System</source>
         <translation>Системное</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1922"/>
-        <location filename="../src/ui_frmsettings.h" line="1615"/>
+        <location filename="../src/frmsettings.ui" line="1966"/>
+        <location filename="../src/ui_frmsettings.h" line="1653"/>
         <source>Keyboard properties command: </source>
         <translation>Команда запуска параметров клавиатуры: </translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1929"/>
-        <location filename="../src/ui_frmsettings.h" line="1616"/>
+        <location filename="../src/frmsettings.ui" line="1973"/>
+        <location filename="../src/ui_frmsettings.h" line="1654"/>
         <source>/usr/bin/kcmshell4 --args=--tab=layouts kcm_keyboard</source>
         <translation>/usr/bin/kcmshell4 --args=--tab=layouts kcm_keyboard</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.ui" line="1943"/>
-        <location filename="../src/ui_frmsettings.h" line="1618"/>
+        <location filename="../src/frmsettings.ui" line="1987"/>
+        <location filename="../src/ui_frmsettings.h" line="1656"/>
         <source>Recover</source>
         <translation>Восстановить</translation>
     </message>
@@ -1130,19 +1140,19 @@ p, li { white-space: pre-wrap; }
     <name>getNameApp</name>
     <message>
         <location filename="../src/getnameapp.ui" line="14"/>
-        <location filename="../src/ui_getnameapp.h" line="75"/>
+        <location filename="../src/ui_getnameapp.h" line="74"/>
         <source>Add application...</source>
         <translation>Добавить приложение...</translation>
     </message>
     <message>
         <location filename="../src/getnameapp.ui" line="26"/>
-        <location filename="../src/ui_getnameapp.h" line="76"/>
+        <location filename="../src/ui_getnameapp.h" line="75"/>
         <source>Application name:</source>
         <translation>Имя приложения:</translation>
     </message>
     <message>
         <location filename="../src/getnameapp.ui" line="49"/>
-        <location filename="../src/ui_getnameapp.h" line="77"/>
+        <location filename="../src/ui_getnameapp.h" line="76"/>
         <source>Get application name...</source>
         <translation>Получить имя приложения...</translation>
     </message>
@@ -1213,78 +1223,78 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>kXneurApp::frmSettings</name>
     <message>
-        <location filename="../src/frmsettings.cpp" line="387"/>
+        <location filename="../src/frmsettings.cpp" line="391"/>
         <source>Select execute file</source>
         <translation>Выберите исполняемый файл</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="411"/>
+        <location filename="../src/frmsettings.cpp" line="415"/>
         <source>Select Directory with icon tray</source>
         <translation>Укажите каталог содержащий иконки для трея</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="479"/>
+        <location filename="../src/frmsettings.cpp" line="483"/>
         <source>You don&apos;t select abbreviation for remove.</source>
         <translation>Вы не выбрали какое сокращение необходимо удалить.</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="493"/>
+        <location filename="../src/frmsettings.cpp" line="497"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="494"/>
+        <location filename="../src/frmsettings.cpp" line="498"/>
         <source>Layout</source>
         <translation>Раскладка</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="495"/>
+        <location filename="../src/frmsettings.cpp" line="499"/>
         <source>Excluded</source>
         <translation>Включено</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="556"/>
+        <location filename="../src/frmsettings.cpp" line="564"/>
         <source>Nothing deleted</source>
         <translation>Нечего удалять</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="556"/>
+        <location filename="../src/frmsettings.cpp" line="564"/>
         <source>You don&apos;t select an application that must be removed</source>
         <translation>Вы не указали какие именно приложение необходимо удалить из списка</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="580"/>
+        <location filename="../src/frmsettings.cpp" line="588"/>
         <source>WAR: Don&apos;t select language!</source>
         <translation>WAR: Не выбран язык!</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="479"/>
-        <location filename="../src/frmsettings.cpp" line="581"/>
+        <location filename="../src/frmsettings.cpp" line="483"/>
+        <location filename="../src/frmsettings.cpp" line="589"/>
         <source>Warning....</source>
         <translation>Предупреждение...</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="381"/>
+        <location filename="../src/frmsettings.cpp" line="385"/>
         <source>Log file not found...</source>
         <translation>Файл журнала не найден...</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="381"/>
+        <location filename="../src/frmsettings.cpp" line="385"/>
         <source>Log file xneurlog.html not found. Maybe you do not have the option of logging!</source>
         <translation>Файл журнала xneur.html не найден. Возможно вы не включили опцию сохранения набираемого текста в журнал, проверьте настройки приложения!</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="581"/>
+        <location filename="../src/frmsettings.cpp" line="589"/>
         <source>You don&apos;t select lang</source>
         <translation>Вы не выбрали язык</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="978"/>
+        <location filename="../src/frmsettings.cpp" line="986"/>
         <source>Open File</source>
         <translation>Открыть файл</translation>
     </message>
     <message>
-        <location filename="../src/frmsettings.cpp" line="978"/>
+        <location filename="../src/frmsettings.cpp" line="986"/>
         <source>Audio ( *.wav)</source>
         <translation>Аудио (*.wav)</translation>
     </message>
@@ -1371,7 +1381,7 @@ and manually patch new configuration which will be created after first run.</sou
     </message>
     <message>
         <location filename="../src/kxneurtray.cpp" line="67"/>
-        <location filename="../src/kxneurtray.cpp" line="256"/>
+        <location filename="../src/kxneurtray.cpp" line="259"/>
         <source>Start daemon</source>
         <translation>Запустить демон</translation>
     </message>
@@ -1381,22 +1391,22 @@ and manually patch new configuration which will be created after first run.</sou
         <translation>X Neural Switcher работает</translation>
     </message>
     <message>
-        <location filename="../src/kxneurtray.cpp" line="180"/>
+        <location filename="../src/kxneurtray.cpp" line="183"/>
         <source>Log file not found...</source>
         <translation>Файл журнала не найден...</translation>
     </message>
     <message>
-        <location filename="../src/kxneurtray.cpp" line="180"/>
+        <location filename="../src/kxneurtray.cpp" line="183"/>
         <source>Log file xneurlog.html not found. Maybe you do not have the option of logging!</source>
         <translation>Файл журнала xneur.html не найден. Возможно вы не включили опцию сохранения набираемого текста в журнал, проверьте настройки приложения!</translation>
     </message>
     <message>
-        <location filename="../src/kxneurtray.cpp" line="236"/>
+        <location filename="../src/kxneurtray.cpp" line="239"/>
         <source>Error: Execute Actions</source>
         <translation>Ошибка: Выполнения пользовательского действия</translation>
     </message>
     <message>
-        <location filename="../src/kxneurtray.cpp" line="252"/>
+        <location filename="../src/kxneurtray.cpp" line="255"/>
         <source>Stop daemon</source>
         <translation>Остановить демон</translation>
     </message>

@@ -116,8 +116,10 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 			}
 		}
 	}
-	free(curSymbol);
-	free(curVariant);
+	if (curSymbol != NULL)
+		free(curSymbol);
+	if (curVariant != NULL)
+		free(curVariant);
 }
 
 char *get_active_kbd_symbol(Display *dpy)
@@ -133,8 +135,9 @@ char *get_active_kbd_symbol(Display *dpy)
 	XkbGetNames(dpy, XkbSymbolsNameMask, desc);
 	
 	struct _xkb_name *xkb_names = (struct _xkb_name *) malloc(sizeof(struct _xkb_name) * desc->ctrls->num_groups);
+	
 	XkbSymbolParse(XGetAtomName(dpy, desc->names->symbols), xkb_names);
-	//printf("gxneur active grp symbol: %s, variant: %s\n",xkb_names[get_active_kbd_group(dpy)].symbol,xkb_names[get_active_kbd_group(dpy)].variant);
+	//printf("gxneur active group symbol: %s, variant: %s\n",xkb_names[get_active_kbd_group(dpy)].symbol,xkb_names[get_active_kbd_group(dpy)].variant);
 	char *symbol = strdup(xkb_names[get_active_kbd_group(dpy)].symbol);
 	
 	for (int i = 0; i < desc->ctrls->num_groups; i++)

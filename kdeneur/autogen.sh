@@ -6,7 +6,7 @@ args=$@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-if [ ! -f $srcdir/configure.in ]; then
+if [ ! -f $srcdir/configure.ac ]; then
 	echo -n "**Error**: Directory '"$srcdir"' does not look like the top-level package directory"
 	exit 1
 fi

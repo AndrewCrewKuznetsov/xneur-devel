@@ -91,6 +91,8 @@ void kXneurApp::kXneurTray::setTrayIconFlags(QString lang)
     QString path, usrPath;
     int tray = properties.readEntry("Typeicontray", 0);
     usrPath = properties.readEntry("Iconpath", PACKAGE_PIXMAPS_DIR);
+    
+    qDebug()<< "ICON PATH " << usrPath;
     switch(tray)
     {
     case FLAG:
@@ -98,6 +100,7 @@ void kXneurApp::kXneurTray::setTrayIconFlags(QString lang)
         qDebug()<< "TYPE ICON " << FLAG << path;
         if (QFile::exists(path))
         {
+	    qDebug()<< "File " << path << "found!";
             trayIcon->setIcon(QIcon(path));
         }
         else

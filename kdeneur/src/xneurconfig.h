@@ -196,7 +196,10 @@ namespace kXneurApp
         //tab Advanced
         void adv_save_delay_sending_events(int);
         int adv_get_delay_sending_events();
-
+	
+	void adv_save_delay_app(QStringList);
+        QStringList adv_get_delay_app();
+	
         void adv_save_key_release_app(QStringList);
         QStringList adv_get_key_release_app();
 

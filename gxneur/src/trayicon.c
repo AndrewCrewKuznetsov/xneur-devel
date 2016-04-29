@@ -338,7 +338,8 @@ gboolean clock_check(gpointer dummy)
 	    strcmp(xneur_old_symbol, xneur_symbol) == 0 && 
 		force_update == FALSE)
 	{
-		g_free(xneur_symbol);
+		if (xneur_symbol != NULL)
+			g_free(xneur_symbol);
 		return TRUE;
 	}
 	force_update = FALSE;
@@ -382,7 +383,8 @@ gboolean clock_check(gpointer dummy)
 				layout_name[i] = toupper(layout_name[i]); 
 			tray->image = gtk_label_new ((const gchar *)layout_name);
 			gtk_label_set_justify (GTK_LABEL(tray->image), GTK_JUSTIFY_CENTER);
-			free(layout_name);
+			if (layout_name != NULL)
+				free(layout_name);
 		}
 		else
 		{
@@ -401,7 +403,8 @@ gboolean clock_check(gpointer dummy)
 				for (unsigned int i=0; i < strlen(layout_name); i++)
 					layout_name[i] = toupper(layout_name[i]);
 				GdkPixbuf *pb = text_to_gtk_pixbuf (layout_name);
-				free(layout_name);
+				if (layout_name != NULL)
+					free(layout_name);
 				pb = gdk_pixbuf_add_alpha(pb, TRUE, 255, 255, 255);
 				gtk_status_icon_set_from_pixbuf(tray->status_icon, pb);
 				g_object_unref(pb);
@@ -426,7 +429,8 @@ gboolean clock_check(gpointer dummy)
 			for (unsigned int i=0; i < strlen(layout_name); i++)
 				layout_name[i] = toupper(layout_name[i]);
 			app_indicator_set_label (tray->app_indicator, layout_name, layout_name);
-			free(layout_name);
+			if (layout_name != NULL)
+				free(layout_name);
 			app_indicator_set_icon_full (tray->app_indicator, "", "");
 #endif
 		}
@@ -444,7 +448,6 @@ gboolean clock_check(gpointer dummy)
 
 	g_free (hint);
 	g_free (status_text);
-	//g_free (icon_name);
 	
 	return TRUE;
 }
