@@ -23,7 +23,7 @@ echo "Updating is started."
 # begin local updating
 git pull
 
-export CUR_VER=$(cat ../kdeneur/configure.in | grep "AM_INIT_AUTOMAKE" | sed -e "s/^AM_INIT_AUTOMAKE(kdeneur, \(.*\))$/\1/")
+export CUR_VER=$(cat ../kdeneur/configure.ac | grep "AM_INIT_AUTOMAKE" | sed -e "s/^AM_INIT_AUTOMAKE(kdeneur, \(.*\))$/\1/")
 export NEW_VER="${CUR_VER}+git${LAST_REVISION}"
 
 echo "OLD_VER = ${OLD_VER}"
