@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2012 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -65,7 +65,6 @@ extern int arg_delay;
 extern const char* arg_keyboard_properties;
 extern const char* arg_show_in_the_tray;
 extern const char* arg_rendering_engine;
-
 
 void xneur_edit_regexp(GtkWidget *treeview);
 void xneur_edit_rule(GtkWidget *treeview);
@@ -207,7 +206,7 @@ static void split_bind(char *text, int action)
 	g_strfreev(key_stat);
 }
 
-static void get_xprop_name(GladeXML *gxml)
+static void get_xprop_name(GtkBuilder* builder)
 {
 	FILE *fp = popen("xprop WM_CLASS", "r");
 	if (fp == NULL)
@@ -236,7 +235,7 @@ static void get_xprop_name(GladeXML *gxml)
 
 	p[len - 2] = '\0';
 
-	GtkWidget *entry1 = glade_xml_get_widget (gxml, "entry1");
+	GtkWidget *entry1 = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 	gtk_entry_set_text(GTK_ENTRY(entry1), p);
 }
 
@@ -267,9 +266,9 @@ void xneur_get_logfile()
 	error_msg(buffer);
 }
 
-static void xneur_insert_application(GladeXML *gxml)
+static void xneur_insert_application(GtkBuilder* builder)
 {
-	GtkWidget *entry1 = glade_xml_get_widget (gxml, "entry1");
+	GtkWidget *entry1 = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 
 	if (gtk_entry_get_text(GTK_ENTRY(entry1)) != NULL)
 	{
@@ -278,26 +277,32 @@ static void xneur_insert_application(GladeXML *gxml)
 		gtk_list_store_set(GTK_LIST_STORE(tmp_widget), &iter, 0, gtk_entry_get_text(GTK_ENTRY(entry1)), -1);
 	}
 
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
 }
 
 static void xneur_add_application(GtkListStore *store)
 {
-	GladeXML *gxml = glade_xml_new (GLADE_FILE_APP_ADD, NULL, NULL);
-
-	glade_xml_signal_autoconnect (gxml);
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_APP_ADD, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
+	
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 
 	gtk_widget_show(window);
 
-	GtkWidget *widget = glade_xml_get_widget (gxml, "button3");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(get_xprop_name), gxml);
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "button3"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(get_xprop_name), builder);
 
 	// Button OK
 	tmp_widget = GTK_WIDGET(store);
-	widget = glade_xml_get_widget (gxml, "button2");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_application), gxml);
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button2"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_application), builder);
 	
 	if (store) {};
 }
@@ -367,13 +372,19 @@ void xneur_start(void)
 }
 
 void xneur_about(void)
-{ 
-	GladeXML *gxml = glade_xml_new (GLADE_FILE_ABOUT, NULL, NULL);
+{
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_ABOUT, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
 	
-	glade_xml_signal_autoconnect (gxml);
-	GtkWidget *window = glade_xml_get_widget (gxml, "window1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window1"));
 
-	GtkWidget *widget = glade_xml_get_widget(gxml, "label44");
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "label44"));
 	gchar *text = g_strdup_printf("%s %s", _("Current Version"), VERSION);
 	gtk_label_set_text(GTK_LABEL(widget), text);	
 
@@ -436,37 +447,73 @@ static void notify_enable (GtkCellRendererToggle *renderer, gchar *path, GtkTree
 		gtk_list_store_set (GTK_LIST_STORE (model), &iter, 2, value, -1);
 }
 
-static void xneur_restore_keyboard_properties(GladeXML *gxml)
+static void xneur_restore_keyboard_properties(GtkBuilder* builder)
 {
-	GtkWidget *widget = glade_xml_get_widget (gxml, "entry5");
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry5"));
 
 	gtk_entry_set_text(GTK_ENTRY(widget), DEFAULT_KEYBOARD_PROPERTIES);
 }
 
-static void xneur_replace_keyboard_properties(GladeXML *gxml)
+static void xneur_replace_keyboard_properties(GtkBuilder* builder)
 {
-	GtkWidget *window = glade_xml_get_widget (gxml, "filechooserdialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "filechooserdialog1"));
 
 	gtk_entry_set_text(GTK_ENTRY(tmp_widget), gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (window)));
 	
 	gtk_widget_destroy(window);
 }	
 
-static void xneur_edit_keyboard_properties(GladeXML *parent_gxml)
+static void xneur_edit_icons_directory(GtkBuilder* parent_builder)
 {
-	GladeXML *gxml = glade_xml_new (GLADE_FILE_CHOOSE, NULL, NULL);
-	
-	glade_xml_signal_autoconnect (gxml);
-	GtkWidget *window = glade_xml_get_widget (gxml, "filechooserdialog1");
+	if (parent_builder) {};
+	GtkWidget *dialog;
+	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
+	gint res;
 
-	tmp_widget = glade_xml_get_widget (parent_gxml, "entry5");
+	dialog = gtk_file_chooser_dialog_new ("Open Directory",
+		                                  NULL,
+		                                  action,
+		                                  _("_Cancel"),
+		                                  GTK_RESPONSE_CANCEL,
+		                                  _("_Open"),
+		                                  GTK_RESPONSE_ACCEPT,
+		                                  NULL);
+
+	res = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (res == GTK_RESPONSE_ACCEPT)
+	  {
+		char *dirname;
+		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+		dirname = gtk_file_chooser_get_filename (chooser);
+		tmp_widget = GTK_WIDGET(gtk_builder_get_object (parent_builder, "entry1"));
+		gtk_entry_set_text(GTK_ENTRY(tmp_widget), dirname);
+		g_free (dirname);
+	  }
+
+	gtk_widget_destroy (dialog);
+}
+
+static void xneur_edit_keyboard_properties(GtkBuilder* parent_builder)
+{
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_CHOOSE, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
+	
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "filechooserdialog1"));
+
+	tmp_widget = GTK_WIDGET(gtk_builder_get_object (parent_builder, "entry5"));
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(window), gtk_entry_get_text(GTK_ENTRY(tmp_widget)));
 		
 	gtk_widget_show(window);
 		
 	// Button OK
-	GtkWidget *widget = glade_xml_get_widget (gxml, "button5");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_keyboard_properties), gxml);
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "button5"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_keyboard_properties), builder);
 }
 
 void xneur_kb_preference(void)
@@ -485,25 +532,32 @@ void xneur_kb_preference(void)
 		error_msg(_("Couldn't start %s\nVerify that it installed\n"), cmd);
 		fprintf(stderr, _("Couldn't start %s\nVerify that it installed\n"), cmd);
 	}
-
-	g_free(string_value);
+	
+	if (string_value != NULL)
+		g_free(string_value);
 }
 
 void xneur_preference(void)
 {
-	GladeXML *gxml = glade_xml_new (GLADE_FILE_CONFIG, NULL, NULL);
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_CONFIG, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
 	
-	glade_xml_signal_autoconnect (gxml);
-	GtkWidget *window = glade_xml_get_widget (gxml, "window2");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 
 	gtk_widget_show(window);
 
 	// Mode set
-	GtkWidget *widget = glade_xml_get_widget (gxml, "checkbutton7");
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton7"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->manual_mode);
 
 	// Exclude App set
-	GtkWidget *treeview = glade_xml_get_widget (gxml, "treeview1");
+	GtkWidget *treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview1"));
 
 	store_exclude_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_exclude_app));
@@ -522,14 +576,14 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing Exclude App
-	widget = glade_xml_get_widget (gxml, "button2");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button2"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_exclude_app), G_OBJECT(window));
 
-	widget = glade_xml_get_widget (gxml, "button3");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button3"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_exclude_app), G_OBJECT(treeview));
 
 	// Auto App Set
-	treeview = glade_xml_get_widget (gxml, "treeview2");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview2"));
 
 	store_auto_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_auto_app));
@@ -548,15 +602,15 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing Auto App
-	widget = glade_xml_get_widget (gxml, "button19");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button19"));
 
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_auto_app), G_OBJECT(window));
-	widget = glade_xml_get_widget (gxml, "button20");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button20"));
 
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_auto_app), G_OBJECT(treeview));
 
 	// Manual App Set
-	treeview = glade_xml_get_widget (gxml, "treeview3");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview3"));
 	
 	store_manual_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_manual_app));
@@ -575,15 +629,15 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing Manual App
-	widget = glade_xml_get_widget (gxml, "button21");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button21"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_manual_app), G_OBJECT(window));
 
-	widget = glade_xml_get_widget (gxml, "button22");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button22"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_manual_app), G_OBJECT(treeview));
 
 	
 	// DontSendKeyRelease App Set
-	treeview = glade_xml_get_widget (gxml, "treeview14");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview14"));
 	
 	store_dont_send_keyrelease_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_dont_send_keyrelease_app));
@@ -602,15 +656,15 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing DontSendKeyRelease App
-	widget = glade_xml_get_widget (gxml, "button7");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button7"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_dont_send_keyrelease_app), G_OBJECT(window));
 
-	widget = glade_xml_get_widget (gxml, "button9");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button9"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_dont_send_keyrelease_app), G_OBJECT(treeview));
 	
 	
 	// Layout Remember App Set
-	treeview = glade_xml_get_widget (gxml, "treeview4");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview4"));
 	
 	store_layout_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_layout_app));
@@ -629,14 +683,14 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing Layour Remember App
-	widget = glade_xml_get_widget (gxml, "button27");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button27"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_layout_app), G_OBJECT(window));
 
-	widget = glade_xml_get_widget (gxml, "button28");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button28"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_layout_app), G_OBJECT(treeview));
 	
 	// Languages
-	treeview = glade_xml_get_widget (gxml, "treeview13");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview13"));
 
 	store_language = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_language));
@@ -672,120 +726,120 @@ void xneur_preference(void)
 												-1);
 	}
 
-	widget = glade_xml_get_widget (gxml, "button6");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button6"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_dictionary), G_OBJECT(treeview));
 
 	// Default Layout Group
-	widget = glade_xml_get_widget (gxml, "combobox25");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "combobox25"));
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), xconfig->default_group);
 	
 	// Education Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton2");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton2"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->educate);
 
 	// Check similar words
-	widget = glade_xml_get_widget (gxml, "checkbutton43");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton43"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->check_similar_words);
 	
 	// Layout Remember Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton3");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton3"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->remember_layout);
 	
 	// Saving Selection Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton4");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton4"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->save_selection_after_convert);
 
 	// Rotate Layout after correction selected text Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton30");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton30"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->rotate_layout_after_convert);
 	
 	// Sound Playing Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton5");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton5"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->play_sounds);
 	// Volume Percent
-	widget = glade_xml_get_widget (gxml, "spinbutton3");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton3"));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), xconfig->volume_percent);
 
 	// Logging Keyboard Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton6");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton6"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->save_keyboard_log);
 
 	// Log size
-	widget = glade_xml_get_widget (gxml, "spinbutton2");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton2"));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), xconfig->size_keyboard_log);
 
 	// Log send to e-mail
-	widget = glade_xml_get_widget (gxml, "entry3");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 	if (xconfig->mail_keyboard_log != NULL)
 		gtk_entry_set_text(GTK_ENTRY(widget), xconfig->mail_keyboard_log);
 	
 	// Log send via host
-	widget = glade_xml_get_widget (gxml, "entry4");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry4"));
 	if (xconfig->host_keyboard_log != NULL)
 		gtk_entry_set_text(GTK_ENTRY(widget), xconfig->host_keyboard_log);
 
 	// Log port
-	widget = glade_xml_get_widget (gxml, "spinbutton4");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton4"));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), xconfig->port_keyboard_log);
 
 	// View log
-	widget = glade_xml_get_widget (gxml, "button8");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button8"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_get_logfile), NULL);
 	
 	// Ignore Keyboard Layout Mode
-	widget = glade_xml_get_widget (gxml, "checkbutton8");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton8"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->abbr_ignore_layout);
 
 	// Check language on input process 
-	widget = glade_xml_get_widget (gxml, "checkbutton18");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton18"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->check_lang_on_process);
 
 	// Disable CapsLock use 
-	widget = glade_xml_get_widget (gxml, "checkbutton19");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton19"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->disable_capslock);
 
 	// 
-	widget = glade_xml_get_widget (gxml, "checkbutton20");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton20"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_space_with_punctuation);
 
 	// 
-	widget = glade_xml_get_widget (gxml, "checkbutton31");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton31"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_capital_letter_after_dot);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton29");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton29"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_two_space_with_comma_and_space);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton37");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton37"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_two_minus_with_dash);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton41");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton41"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_dash_with_emdash);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton38");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton38"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_c_with_copyright);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton39");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton39"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_tm_with_trademark);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton40");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton40"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_r_with_registered);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton42");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton42"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_three_points_with_ellipsis);
 
-	widget = glade_xml_get_widget (gxml, "checkbutton44");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton44"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_misprint);
 	
 	// Autocompletion
-	widget = glade_xml_get_widget (gxml, "checkbutton21");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton21"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->autocompletion);
 
 	// Space after autocompletion
-	widget = glade_xml_get_widget (gxml, "checkbutton1");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton1"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->add_space_after_autocompletion);
 
 	// Exclude autocompletion App set
-	treeview = glade_xml_get_widget (gxml, "treeview8");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview8"));
 
 	store_autocompletion_exclude_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_autocompletion_exclude_app));
@@ -804,14 +858,14 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing Exclude App
-	widget = glade_xml_get_widget (gxml, "button11");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button11"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_autocompletion_exclude_app), G_OBJECT(window));
 
-	widget = glade_xml_get_widget (gxml, "button13");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button13"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_autocompletion_exclude_app), G_OBJECT(treeview));
 
 	// Hotkeys List set
-	treeview = glade_xml_get_widget (gxml, "treeview5");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview5"));
 
 	store_hotkey = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_hotkey));
@@ -849,15 +903,15 @@ void xneur_preference(void)
 						(gpointer) treeview);
 	
 	// Button Edit Action
-	widget = glade_xml_get_widget (gxml, "button10");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button10"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_action), G_OBJECT(treeview));
 
 	// Button Clear Action
-	widget = glade_xml_get_widget (gxml, "button1");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_clear_action), G_OBJECT(treeview));
 	
 	// Abbreviations List set
-	treeview = glade_xml_get_widget (gxml, "treeview6");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview6"));
 
 	store_abbreviation = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_abbreviation));
@@ -894,16 +948,16 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Button Add Abbreviation
-	widget = glade_xml_get_widget (gxml, "button32");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button32"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_abbreviation), G_OBJECT(treeview));
 	
 	// Button Remove Abbreviation
-	widget = glade_xml_get_widget (gxml, "button33");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button33"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_abbreviation), G_OBJECT(treeview));
 
 	// Sound Paths Preference
 	// Sound List set
-	treeview = glade_xml_get_widget (gxml, "treeview7");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview7"));
 
 	store_sound = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_sound));
@@ -948,16 +1002,16 @@ void xneur_preference(void)
 						(gpointer) treeview);
 	                  
 	// Button Edit Sound
-	widget = glade_xml_get_widget (gxml, "button12");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button12"));
 	tmp_widget = GTK_WIDGET(treeview);
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_sound), G_OBJECT(treeview));
 
 	// Delay Before Send
-	widget = glade_xml_get_widget (gxml, "spinbutton1");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton1"));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), xconfig->send_delay);
 
 	// Delay App Set
-	treeview = glade_xml_get_widget (gxml, "treeview15");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview15"));
 	
 	store_delay_send_key_app = gtk_list_store_new(1, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_delay_send_key_app));
@@ -976,38 +1030,38 @@ void xneur_preference(void)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), GTK_TREE_VIEW_COLUMN(column));
 
 	// Adding/Removing Delay App
-	widget = glade_xml_get_widget (gxml, "button14");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button14"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_delay_send_key_app), G_OBJECT(window));
 
-	widget = glade_xml_get_widget (gxml, "button17");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button17"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_delay_send_key_app), G_OBJECT(treeview));
 	
 	// Log Level
-	widget = glade_xml_get_widget (gxml, "combobox1");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "combobox1"));
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), xconfig->log_level);
 	
 	// Correct two capital letter mode
-	widget = glade_xml_get_widget (gxml, "checkbutton10");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton10"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_two_capital_letter);
 
 	// Correct iNCIDENTAL CapsLock mode
-	widget = glade_xml_get_widget (gxml, "checkbutton9");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton9"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->correct_incidental_caps);
 
 	// Flush internal buffer when pressed Escape mode
-	widget = glade_xml_get_widget (gxml, "checkbutton32");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton32"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->flush_buffer_when_press_escape);
 
 	// Flush internal buffer when pressed Enter mode
-	widget = glade_xml_get_widget (gxml, "checkbutton11");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton11"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->flush_buffer_when_press_enter);
 
 	// Compatibility with completion
-	widget = glade_xml_get_widget (gxml, "checkbutton33");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton33"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->compatibility_with_completion);
 	
 	// User Actions List set
-	treeview = glade_xml_get_widget (gxml, "treeview9");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview9"));
 
 	store_action = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_action));
@@ -1071,24 +1125,24 @@ void xneur_preference(void)
 						(gpointer) treeview);
 	
 	// Button Add User Action
-	widget = glade_xml_get_widget (gxml, "button36");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button36"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_user_action), G_OBJECT(treeview));
 	
 	// Button Remove User Action
-	widget = glade_xml_get_widget (gxml, "button37");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button37"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_user_action), G_OBJECT(treeview));
 
 	// Button Edit User Action
-	widget = glade_xml_get_widget (gxml, "button38");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button38"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_user_action), G_OBJECT(treeview));
 			
 	// Show OSD
-	widget = glade_xml_get_widget (gxml, "checkbutton13");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton13"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->show_osd);
 	
 	// OSD Text Preference
 	// OSD List set
-	treeview = glade_xml_get_widget (gxml, "treeview10");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview10"));
 
 	store_osd = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_osd));
@@ -1129,20 +1183,20 @@ void xneur_preference(void)
 	}
 	
 	// OSD Font
-	widget = glade_xml_get_widget (gxml, "entry2");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 	gtk_entry_set_text(GTK_ENTRY(widget), xconfig->osd_font);
 
 	// Show popup
-	widget = glade_xml_get_widget (gxml, "checkbutton22");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton22"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->show_popup);
 
 	// Popup expiration delay
-	widget = glade_xml_get_widget (gxml, "spinbutton6");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton6"));
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), xconfig->popup_expire_timeout);
 	
 	// Popup Text Preference
 	// Popup List set
-	treeview = glade_xml_get_widget (gxml, "treeview12");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview12"));
 
 	store_popup = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_popup));
@@ -1183,37 +1237,37 @@ void xneur_preference(void)
 	}
 
 	// Troubleshooting
-	widget = glade_xml_get_widget (gxml, "checkbutton14");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton14"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_backspace);
-	widget = glade_xml_get_widget (gxml, "checkbutton15");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton15"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_left_arrow);
-	widget = glade_xml_get_widget (gxml, "checkbutton16");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton16"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_right_arrow);
-	widget = glade_xml_get_widget (gxml, "checkbutton17");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton17"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_up_arrow);
-	widget = glade_xml_get_widget (gxml, "checkbutton23");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton23"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_down_arrow);
-	widget = glade_xml_get_widget (gxml, "checkbutton24");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton24"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_delete);
-	widget = glade_xml_get_widget (gxml, "checkbutton25");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton25"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_switch);
-	widget = glade_xml_get_widget (gxml, "checkbutton35");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton35"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_full_screen);
-	widget = glade_xml_get_widget (gxml, "checkbutton12");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton12"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_enter);
-	widget = glade_xml_get_widget (gxml, "checkbutton45");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton45"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->troubleshoot_tab);
 	
 	// Tracking input mode set
-	widget = glade_xml_get_widget (gxml, "checkbutton34");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton34"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->tracking_input);
 
 	// Tracking mouse mode set
-	widget = glade_xml_get_widget (gxml, "checkbutton28");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton28"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), xconfig->tracking_mouse);
 	
 	// Plugins
-	treeview = glade_xml_get_widget (gxml, "treeview11");
+	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview11"));
 	store_plugin = gtk_list_store_new(3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_plugin));
 	gtk_widget_show(treeview);
@@ -1304,12 +1358,12 @@ void xneur_preference(void)
 	if (stream != NULL)
 	{
 		fclose(stream);
-		widget = glade_xml_get_widget (gxml, "checkbutton27");
+		widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton27"));
 	    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
 	}
 
 	// Gnome 3 shell
-	widget = glade_xml_get_widget (gxml, "checkbutton36");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton36"));
 	path_file = g_build_filename(getenv("HOME"), GNOME3_EXT_PATH, NULL);
 	if (g_file_test(path_file, G_FILE_TEST_IS_DIR))
 	{
@@ -1319,7 +1373,7 @@ void xneur_preference(void)
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(on_extension_install_check), G_OBJECT(widget));
 	
 	// Delay before start
-	widget = glade_xml_get_widget (gxml, "spinbutton5");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton5"));
 	int value = DEFAULT_DELAY;
 	if (gxneur_config_read_int("delay", &value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
@@ -1328,7 +1382,7 @@ void xneur_preference(void)
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), value);
 
 	// Show on tray
-	widget = glade_xml_get_widget (gxml, "combobox2");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "combobox2"));
 	int show_in_the_tray = 0;
 	gchar *string_value = NULL;
 	if (gxneur_config_read_str("show_in_the_tray", &string_value) == CONFIG_NOT_SUPPORTED)
@@ -1343,18 +1397,37 @@ void xneur_preference(void)
 		show_in_the_tray = 0;
 	else if (strcasecmp(string_value, "Text") == 0)
 		show_in_the_tray = 1;
-	else
+	else if (strcasecmp(string_value, "Icon") == 0)
 		show_in_the_tray = 2;
+	else
+		show_in_the_tray = 3;
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), show_in_the_tray);
 	g_free(string_value);
 
+	// Define icons directory
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
+	int icons_directory_config_not_supported = 0;
+	string_value = NULL;
+	if (gxneur_config_read_str("icons_directory", &string_value) == CONFIG_NOT_SUPPORTED)
+		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE), icons_directory_config_not_supported = 1;
+	gtk_entry_set_text(GTK_ENTRY(widget), string_value ? string_value : "");
+	if (!string_value)
+		g_free(string_value);
 
+	// Button Icons Directory Edit
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button18"));
+	if (!icons_directory_config_not_supported)
+		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_icons_directory), builder);
+	else
+		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
+	
 	// Define rendering engine
-	widget = glade_xml_get_widget (gxml, "combobox3");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "combobox3"));
 	int rendering_engine = 0;
 	string_value = NULL;
 	if (gxneur_config_read_str("rendering_engine", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
+	
 	if (arg_rendering_engine) {
 		g_free(string_value);
 		string_value = g_strdup(arg_rendering_engine);
@@ -1370,40 +1443,42 @@ void xneur_preference(void)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), rendering_engine);
 	
 	// Keyboard properties
-	widget = glade_xml_get_widget (gxml, "entry5");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry5"));
 	int keyboard_properties_config_not_supported = 0;
+	string_value = NULL;
 	if (gxneur_config_read_str("keyboard_properties", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE),
 		keyboard_properties_config_not_supported = 1;
 	if (arg_keyboard_properties) {
-		g_free(string_value);
+		if (!string_value)
+			g_free(string_value);
 		string_value = g_strdup(arg_keyboard_properties);
 	}
 	gtk_entry_set_text(GTK_ENTRY(widget), string_value ? string_value : DEFAULT_KEYBOARD_PROPERTIES);
-	g_free(string_value);
-
+	if (!string_value)
+		g_free(string_value);
 
 	// Button Keyboard properties Edit
-	widget = glade_xml_get_widget (gxml, "button15");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button15"));
 	if (!keyboard_properties_config_not_supported)
-		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_keyboard_properties), gxml);
+		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_edit_keyboard_properties), builder);
 	else
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
 
 	// Button Keyboard properties Restore
-	widget = glade_xml_get_widget (gxml, "button16");
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button16"));
 	if (!keyboard_properties_config_not_supported)
-		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_restore_keyboard_properties), gxml);
+		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_restore_keyboard_properties), builder);
 	else
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
 
 	// Button OK
-	widget = glade_xml_get_widget (gxml, "button5");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_save_preference), gxml);
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button5"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_save_preference), builder);
 
 	// Button Cancel
-	widget = glade_xml_get_widget (gxml, "button4");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_dontsave_preference), gxml);
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button4"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_dontsave_preference), builder);
 
 }
 
@@ -1442,10 +1517,10 @@ void xneur_add_layout_app(void)
 	xneur_add_application(store_layout_app);
 }
 
-static void xneur_insert_abbreviation(GladeXML *gxml)
+static void xneur_insert_abbreviation(GtkBuilder* builder)
 {
-	GtkWidget *entry1 = glade_xml_get_widget (gxml, "entry1");
-	GtkWidget *entry2 = glade_xml_get_widget (gxml, "entry2");
+	GtkWidget *entry1 = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
+	GtkWidget *entry2 = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 	const gchar *abbreviation = gtk_entry_get_text(GTK_ENTRY(entry1));
 	const gchar *full_text = gtk_entry_get_text(GTK_ENTRY(entry2));
 	if (strlen(abbreviation) == 0) 
@@ -1466,29 +1541,35 @@ static void xneur_insert_abbreviation(GladeXML *gxml)
 											1, gtk_entry_get_text(GTK_ENTRY(entry2)), 
 										   -1);
 	
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
 }
 
 void xneur_add_abbreviation(void)
 {
-	GladeXML *gxml = glade_xml_new (GLADE_FILE_ABBREVIATION_ADD, NULL, NULL);
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_ABBREVIATION_ADD, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
 	
-	glade_xml_signal_autoconnect (gxml);
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 
 	gtk_widget_show(window);
 	
 	// Button OK
-	GtkWidget *widget = glade_xml_get_widget (gxml, "button1");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_abbreviation), gxml);
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_abbreviation), builder);
 }
 
-static void xneur_insert_user_action(GladeXML *gxml)
+static void xneur_insert_user_action(GtkBuilder* builder)
 {
-	GtkWidget *entry1 = glade_xml_get_widget (gxml, "entry1");
-	GtkWidget *entry2 = glade_xml_get_widget (gxml, "entry2");
-	GtkWidget *entry3 = glade_xml_get_widget (gxml, "entry3");
+	GtkWidget *entry1 = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
+	GtkWidget *entry2 = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+	GtkWidget *entry3 = GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 	const gchar *action = gtk_entry_get_text(GTK_ENTRY(entry1));
 	const gchar *key_bind = gtk_entry_get_text(GTK_ENTRY(entry2));
 	if (strlen(key_bind) == 0) 
@@ -1510,28 +1591,34 @@ static void xneur_insert_user_action(GladeXML *gxml)
 											2, gtk_entry_get_text(GTK_ENTRY(entry1)), 
 										   -1);
 	
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
 }
 
 void xneur_add_user_action(void)
 {
-	GladeXML *gxml = glade_xml_new (GLADE_FILE_ACTION_ADD, NULL, NULL);
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_ACTION_ADD, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
 	
-	glade_xml_signal_autoconnect (gxml);
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	
-	GtkWidget *widget= glade_xml_get_widget (gxml, "entry2");
-	g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), gxml);
+	GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+	g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), builder);
 	
 	gtk_widget_show(window);
 	
 	// Button OK
-	widget = glade_xml_get_widget (gxml, "button1");
-	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_user_action), gxml);
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_user_action), builder);
 }
 
-static void xneur_replace_user_action(GladeXML *gxml)
+static void xneur_replace_user_action(GtkBuilder* builder)
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(store_action);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tmp_widget));
@@ -1541,9 +1628,9 @@ static void xneur_replace_user_action(GladeXML *gxml)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GtkWidget *widget1= glade_xml_get_widget (gxml, "entry1");
-		GtkWidget *widget2= glade_xml_get_widget (gxml, "entry2");
-		GtkWidget *widget3= glade_xml_get_widget (gxml, "entry3");
+		GtkWidget *widget1= GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
+		GtkWidget *widget2= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+		GtkWidget *widget3= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
 		                   					0, gtk_entry_get_text(GTK_ENTRY(widget3)),
 											1, gtk_entry_get_text(GTK_ENTRY(widget2)),
@@ -1551,7 +1638,7 @@ static void xneur_replace_user_action(GladeXML *gxml)
 										   -1);
 	}
 	
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
 }
 
@@ -1566,36 +1653,42 @@ void xneur_edit_user_action(GtkWidget *treeview)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GladeXML *gxml = glade_xml_new (GLADE_FILE_ACTION_ADD, NULL, NULL);
-	
-		glade_xml_signal_autoconnect (gxml);
-		GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+		GError* error = NULL;
+		GtkBuilder* builder = gtk_builder_new ();
+		if (!gtk_builder_add_from_file (builder, UI_FILE_ACTION_ADD, &error))
+		{
+			g_warning ("Couldn't load builder file: %s", error->message);
+			g_error_free (error);
+		}
+		gtk_builder_connect_signals(builder, NULL);
+		
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 		
 		char *key_bind;
 		char *user_action;
 		char *action_name;
 		gtk_tree_model_get(GTK_TREE_MODEL(store_action), &iter, 0, &action_name, 1, &key_bind, 2, &user_action, -1);
 
-		GtkWidget *widget= glade_xml_get_widget (gxml, "entry1");
+		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 		gtk_entry_set_text(GTK_ENTRY(widget), user_action);
 		
-		widget= glade_xml_get_widget (gxml, "entry2");
-		g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), gxml);
-		g_signal_connect ((gpointer) widget, "key-release-event", G_CALLBACK (on_key_release_event), gxml);
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+		g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), builder);
+		g_signal_connect ((gpointer) widget, "key-release-event", G_CALLBACK (on_key_release_event), builder);
 		gtk_entry_set_text(GTK_ENTRY(widget), key_bind);
 
-		widget= glade_xml_get_widget (gxml, "entry3");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 		gtk_entry_set_text(GTK_ENTRY(widget), action_name);
 		
 		gtk_widget_show(window);
 		
 		// Button OK
-		widget = glade_xml_get_widget (gxml, "button1");
-		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_user_action), gxml);
+		widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
+		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_user_action), builder);
 	}
 }
 
-static void xneur_replace_action(GladeXML *gxml)
+static void xneur_replace_action(GtkBuilder* builder)
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(store_hotkey);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tmp_widget));
@@ -1605,15 +1698,15 @@ static void xneur_replace_action(GladeXML *gxml)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GtkWidget *widget1= glade_xml_get_widget (gxml, "entry3");
-		GtkWidget *widget2= glade_xml_get_widget (gxml, "entry2");
+		GtkWidget *widget1= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
+		GtkWidget *widget2= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 		gtk_list_store_set(GTK_LIST_STORE(store_hotkey), &iter, 
 											0, gtk_entry_get_text(GTK_ENTRY(widget1)),
 											1, gtk_entry_get_text(GTK_ENTRY(widget2)), 
 										   -1);
 	}
 	
-	GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
 }
 
@@ -1645,39 +1738,45 @@ void xneur_edit_action(GtkWidget *treeview)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GladeXML *gxml = glade_xml_new (GLADE_FILE_ACTION_ADD, NULL, NULL);
-	
-		glade_xml_signal_autoconnect (gxml);
-		GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+		GError* error = NULL;
+		GtkBuilder* builder = gtk_builder_new ();
+		if (!gtk_builder_add_from_file (builder, UI_FILE_ACTION_ADD, &error))
+		{
+			g_warning ("Couldn't load builder file: %s", error->message);
+			g_error_free (error);
+		}
+		gtk_builder_connect_signals(builder, NULL);
+		
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 		
 		char *key_bind;
 		char *action;
 		gtk_tree_model_get(GTK_TREE_MODEL(store_hotkey), &iter, 0, &action, 1, &key_bind, -1);
 
-		GtkWidget *widget= glade_xml_get_widget (gxml, "entry3");
+		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 		gtk_editable_set_editable(GTK_EDITABLE(widget), FALSE);
 		gtk_entry_set_text(GTK_ENTRY(widget), action);
 		
-		widget= glade_xml_get_widget (gxml, "entry2");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 		gtk_widget_grab_focus(widget);
-		g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), gxml);
-		g_signal_connect ((gpointer) widget, "key-release-event", G_CALLBACK (on_key_release_event), gxml);
+		g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), builder);
+		g_signal_connect ((gpointer) widget, "key-release-event", G_CALLBACK (on_key_release_event), builder);
 		gtk_entry_set_text(GTK_ENTRY(widget), key_bind);
 
-		widget= glade_xml_get_widget (gxml, "entry1");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 		gtk_widget_hide (widget);
-		widget= glade_xml_get_widget (gxml, "label1");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "label1"));
 		gtk_widget_hide (widget);
 		
 		gtk_widget_show(window);
 		
 		// Button OK
-		widget = glade_xml_get_widget (gxml, "button1");
-		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_action), gxml);
+		widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
+		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_action), builder);
 	}
 }
 
-static void xneur_replace_sound(GladeXML *gxml)
+static void xneur_replace_sound(GtkBuilder* builder)
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(store_sound);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tmp_widget));
@@ -1687,14 +1786,14 @@ static void xneur_replace_sound(GladeXML *gxml)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GtkWidget *filechooser = glade_xml_get_widget (gxml, "filechooserdialog1");
+		GtkWidget *filechooser = GTK_WIDGET(gtk_builder_get_object (builder, "filechooserdialog1"));
 	
 		gtk_list_store_set(GTK_LIST_STORE(store_sound), &iter, 
 											1, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (filechooser)), 
 										   -1);
 	}
 	
-	GtkWidget *window = glade_xml_get_widget (gxml, "filechooserdialog1");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "filechooserdialog1"));
 	gtk_widget_destroy(window);
 }
 
@@ -1709,10 +1808,16 @@ void xneur_edit_sound(GtkWidget *treeview)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GladeXML *gxml = glade_xml_new (GLADE_FILE_CHOOSE, NULL, NULL);
-	
-		glade_xml_signal_autoconnect (gxml);
-		GtkWidget *window = glade_xml_get_widget (gxml, "filechooserdialog1");
+		GError* error = NULL;
+		GtkBuilder* builder = gtk_builder_new ();
+		if (!gtk_builder_add_from_file (builder, UI_FILE_CHOOSE, &error))
+		{
+			g_warning ("Couldn't load builder file: %s", error->message);
+			g_error_free (error);
+		}
+		gtk_builder_connect_signals(builder, NULL);
+		
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "filechooserdialog1"));
 		
 		char *file;
 		gtk_tree_model_get(GTK_TREE_MODEL(store_sound), &iter, 1, &file, -1);
@@ -1721,8 +1826,8 @@ void xneur_edit_sound(GtkWidget *treeview)
 		gtk_widget_show(window);
 		
 		// Button OK
-		GtkWidget *widget = glade_xml_get_widget (gxml, "button5");
-		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_sound), gxml);
+		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "button5"));
+		g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_replace_sound), builder);
 	}
 }
 
@@ -1739,9 +1844,16 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 	{
 		char *dir;
 		gtk_tree_model_get(GTK_TREE_MODEL(store_language), &iter, 1, &dir, -1);
-		
-		GladeXML *gxml = glade_xml_new (GLADE_FILE_LIST, NULL, NULL);
 
+		GError* error = NULL;
+		GtkBuilder* builder = gtk_builder_new ();
+		if (!gtk_builder_add_from_file (builder, UI_FILE_LIST, &error))
+		{
+			g_warning ("Couldn't load builder file: %s", error->message);
+			g_error_free (error);
+		}
+		gtk_builder_connect_signals(builder, NULL);
+		
 		int dir_len = strlen(LANGUAGES_DIR) + strlen(DIR_SEPARATOR) + strlen(dir) + 1;
 		char *dir_name = (char *) malloc(dir_len * sizeof(char));
 		snprintf(dir_name, dir_len, "%s%s%s", LANGUAGES_DIR, DIR_SEPARATOR, dir);
@@ -1757,11 +1869,11 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 			return;
 		}
 	
-		GtkWidget *window = glade_xml_get_widget (gxml, "dialog1");
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 
 		gtk_widget_show(window);
 
-		GtkWidget *widget = glade_xml_get_widget (gxml, "treeview1");
+		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "treeview1"));
 		GtkListStore *store_dict = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 		gtk_tree_view_set_model(GTK_TREE_VIEW(widget), GTK_TREE_MODEL(store_dict));
 
@@ -1823,26 +1935,26 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 												-1);
 		}
 
-		widget = glade_xml_get_widget (gxml, "entry10");
+		widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry10"));
 		gtk_entry_set_text(GTK_ENTRY(widget), text_home_path);
 
 		xyz_t *ud = malloc(sizeof(xyz_t));
-		ud->x = gxml;
+		ud->x = builder;
 		ud->y = store_dict;
 
-		widget= glade_xml_get_widget (gxml, "addbutton");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "addbutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK(on_addbutton_clicked), ud);
 
-		widget= glade_xml_get_widget (gxml, "editbutton");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "editbutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK(on_editbutton_clicked), ud);
 
-		widget= glade_xml_get_widget (gxml, "deletebutton");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "deletebutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK(on_deletebutton_clicked), ud);
 	
-		widget= glade_xml_get_widget (gxml, "okbutton");
+		widget= GTK_WIDGET(gtk_builder_get_object (builder, "okbutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (on_okbutton_clicked), ud);
 
-		widget = glade_xml_get_widget (gxml, "cancelbutton");
+		widget = GTK_WIDGET(gtk_builder_get_object (builder, "cancelbutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (on_cancelbutton_clicked), ud);
 	
 		free(text);
@@ -2154,13 +2266,13 @@ gboolean save_language(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter
 	return FALSE;
 }
 
-void xneur_save_preference(GladeXML *gxml)
+void xneur_save_preference(GtkBuilder* builder)
 {
 	xconfig->clear(xconfig);
 
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_language), save_language, NULL);
 	
-	GtkWidget *widgetPtrToBefound = glade_xml_get_widget (gxml, "combobox25");
+	GtkWidget *widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "combobox25"));
 	xconfig->default_group = gtk_combo_box_get_active(GTK_COMBO_BOX(widgetPtrToBefound));
 
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_exclude_app), save_exclude_app, NULL);
@@ -2178,164 +2290,164 @@ void xneur_save_preference(GladeXML *gxml)
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_autocompletion_exclude_app), save_autocompletion_exclude_app, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_plugin), save_plugin, NULL);
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton7");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton7"));
 	xconfig->manual_mode = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton2");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton2"));
 	xconfig->educate = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton43");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton43"));
 	xconfig->check_similar_words = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton3");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton3"));
 	xconfig->remember_layout = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton4");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton4"));
 	xconfig->save_selection_after_convert = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton30");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton30"));
 	xconfig->rotate_layout_after_convert = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton5");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton5"));
 	xconfig->play_sounds = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "spinbutton3");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton3"));
 	xconfig->volume_percent = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton6");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton6"));
 	xconfig->save_keyboard_log = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
 	// Log size
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "spinbutton2");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton2"));
 	xconfig->size_keyboard_log = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 
 	// Log send to e-mail
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "entry3");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 	if (xconfig->mail_keyboard_log != NULL)
 	    free(xconfig->mail_keyboard_log);
 	xconfig->mail_keyboard_log = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 	
 	// Log send via host
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "entry4");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry4"));
 	if (xconfig->host_keyboard_log != NULL)
 	    free(xconfig->host_keyboard_log);
 	xconfig->host_keyboard_log = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Log port
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "spinbutton4");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton4"));
 	xconfig->port_keyboard_log = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton8");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton8"));
 	xconfig->abbr_ignore_layout = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
 	// Delay Before Send
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "spinbutton1");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton1"));
 	xconfig->send_delay = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 	
 	// Log Level
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "combobox1");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "combobox1"));
 	xconfig->log_level = gtk_combo_box_get_active(GTK_COMBO_BOX(widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton10");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton10"));
 	xconfig->correct_two_capital_letter = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton9");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton9"));
 	xconfig->correct_incidental_caps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton32");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton32"));
 	xconfig->flush_buffer_when_press_escape = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton11");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton11"));
 	xconfig->flush_buffer_when_press_enter = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton33");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton33"));
 	xconfig->compatibility_with_completion = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton13");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton13"));
 	xconfig->show_osd = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton18");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton18"));
 	xconfig->check_lang_on_process = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton19");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton19"));
 	xconfig->disable_capslock = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton20");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton20"));
 	xconfig->correct_space_with_punctuation = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton31");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton31"));
 	xconfig->correct_capital_letter_after_dot = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton29");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton29"));
 	xconfig->correct_two_space_with_comma_and_space = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton37");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton37"));
 	xconfig->correct_two_minus_with_dash = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton41");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton41"));
 	xconfig->correct_dash_with_emdash = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton38");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton38"));
 	xconfig->correct_c_with_copyright = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton39");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton39"));
 	xconfig->correct_tm_with_trademark = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton40");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton40"));
 	xconfig->correct_r_with_registered = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton42");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton42"));
 	xconfig->correct_three_points_with_ellipsis = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton44");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton44"));
 	xconfig->correct_misprint = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton21");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton21"));
 	xconfig->autocompletion = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton1");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton1"));
 	xconfig->add_space_after_autocompletion = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
 	// Show popup
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton22");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton22"));
 	xconfig->show_popup = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "spinbutton6");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton6"));
 	xconfig->popup_expire_timeout = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 	
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "entry2");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 	if (xconfig->osd_font != NULL)
 		free(xconfig->osd_font);
 	xconfig->osd_font = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Troubleshooting
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton14");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton14"));
 	xconfig->troubleshoot_backspace = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton15");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton15"));
 	xconfig->troubleshoot_left_arrow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton16");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton16"));
 	xconfig->troubleshoot_right_arrow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton17");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton17"));
 	xconfig->troubleshoot_up_arrow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton23");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton23"));
 	xconfig->troubleshoot_down_arrow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton24");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton24"));
 	xconfig->troubleshoot_delete = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton25");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton25"));
 	xconfig->troubleshoot_switch = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton35");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton35"));
 	xconfig->troubleshoot_full_screen = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton12");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton12"));
 	xconfig->troubleshoot_enter = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton45");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton45"));
 	xconfig->troubleshoot_tab = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	
 	// Tracking input mode
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton34");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton34"));
 	xconfig->tracking_input = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
 	// Tracking input mode
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton28");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton28"));
 	xconfig->tracking_mouse = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 
 	// Save
@@ -2345,7 +2457,7 @@ void xneur_save_preference(GladeXML *gxml)
 	// GXNEUR Preferences
 
 	// Autostart
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton27");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton27"));
 
 	gchar *path_file = g_build_filename(getenv("HOME"), AUTOSTART_PATH, NULL);
 	if (!g_file_test(path_file, G_FILE_TEST_IS_DIR))
@@ -2381,7 +2493,7 @@ void xneur_save_preference(GladeXML *gxml)
 	g_free(path_file);
 
 	// Gnome 3 Shell Area
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "checkbutton36");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton36"));
 
 	path_file = g_build_filename(getenv("HOME"), GNOME3_EXT_PATH, NULL);
 	if (!g_file_test(path_file, G_FILE_TEST_IS_DIR))
@@ -2467,24 +2579,33 @@ void xneur_save_preference(GladeXML *gxml)
 	g_free(path_file);
 	
 	// Delay
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "spinbutton5");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton5"));
 	if (!gxneur_config_write_int("delay", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound)), FALSE))
 		arg_delay = -1;
 
 	// Show on the tray
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "combobox2");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "combobox2"));
 	int show_in_the_tray = gtk_combo_box_get_active(GTK_COMBO_BOX(widgetPtrToBefound));
 	const char *string_value = "Flag";
 	if (show_in_the_tray == 1)
 		string_value = "Text";
 	else if (show_in_the_tray == 2)
 		string_value = "Icon";
+	else if (show_in_the_tray == 3)
+		string_value = "Directory";
 	if (!gxneur_config_write_str("show_in_the_tray", string_value, FALSE))
 		arg_show_in_the_tray = NULL,
 		gxneur_config_write_str("show_in_the_tray", string_value, TRUE);
+	
+	// Icons directory
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
+	if (!gxneur_config_write_str("icons_directory", gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)), FALSE))
+		arg_keyboard_properties = NULL;
+	//add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
+	
 	// Rendering engine
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "combobox3");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "combobox3"));
 	int rendering_engine = gtk_combo_box_get_active(GTK_COMBO_BOX(widgetPtrToBefound));
 	string_value = "Built-in";
 	if (rendering_engine == 1)
@@ -2496,19 +2617,19 @@ void xneur_save_preference(GladeXML *gxml)
 		gxneur_config_write_str("rendering_engine", string_value, TRUE);
 
 	// Keyboard properties
-	widgetPtrToBefound = glade_xml_get_widget (gxml, "entry5");
+	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry5"));
 	if (!gxneur_config_write_str("keyboard_properties", gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)), FALSE))
 		arg_keyboard_properties = NULL;
-	add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
+	//add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 
-	GtkWidget *window = glade_xml_get_widget (gxml, "window2");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 	gtk_widget_destroy(window);
 }
 
-void xneur_dontsave_preference(GladeXML *gxml)
+void xneur_dontsave_preference(GtkBuilder* builder)
 {
-	GtkWidget *window = glade_xml_get_widget (gxml, "window2");
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 	gtk_widget_destroy(window);
 }
 

@@ -3,7 +3,7 @@ AC_CONFIG_SRCDIR(configure.ac)
 AM_INIT_AUTOMAKE
 
 AC_PREREQ(2.59)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADER(config.h)
 
 AC_CONFIG_MACRO_DIR(m4)
 
@@ -11,7 +11,7 @@ AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
 AC_LANG_C
-AM_PROG_CC_C_O
+AC_PROG_CC_C_O
 AC_PROG_MAKE_SET
 
 AC_HEADER_STDC
@@ -73,10 +73,6 @@ AC_DEFINE(PACKAGE_GCONF_DIR, "/apps/" PACKAGE, [Define GConf directory for setti
 
 AC_DEFINE(KB_PROP_COMMAND, "/usr/bin/gnome-control-center region layouts", [Define keyboard properties command])
 
-PKG_CHECK_MODULES(GLADE, [libglade-2.0 >= 2.6.0])
-AC_SUBST(GLADE_CFLAGS)
-AC_SUBST(GLADE_LIBS)
-
 #PKG_CHECK_MODULES(GCONF, [gconf-2.0 >= 2.0])
 AC_ARG_WITH(gconf, [  --without-gconf	Compile without GConf support])
 if test "x$with_gconf" != "xno"; then
@@ -92,7 +88,7 @@ AM_GNU_GETTEXT([external])
 DEFAULT_CFLAGS="-Wall -Wextra -Werror -g0 -fPIC -std=gnu99"
 AC_SUBST(DEFAULT_CFLAGS)
 
-AC_OUTPUT([Makefile gxneur.desktop src/Makefile pixmaps/Makefile glade/Makefile po/Makefile.in])
+AC_OUTPUT([Makefile gxneur.desktop src/Makefile pixmaps/Makefile ui/Makefile po/Makefile.in])
 
 cat << EOF
 

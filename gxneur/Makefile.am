@@ -4,7 +4,7 @@ SUBDIRS =			\
 	src			\
 	pixmaps			\
 	po			\
-	glade
+	ui
 
 AUTOMAKE_OPTIONS =		\
 	1.9			\

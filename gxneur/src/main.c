@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 #endif
 
-	gtk_set_locale();
+	setlocale(LC_ALL, "");
 	gtk_init(&argc, &argv);
 	
 	static struct option longopts[] =
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 				printf("\n");
 				printf(_("  -D, --delay=<seconds>                Seconds to wait before starting xneur\n"));
 				printf(_("  -E, --rendering-engine=<engine>      Rendering engine to use (Built-in, StatusIcon, AppIndicator. Default is %s.)\n"), DEFAULT_RENDERING_ENGINE);
-				printf(_("  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text. Default is %s.)\n"), DEFAULT_SHOW_IN_THE_TRAY);
+				printf(_("  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text, Directory). Default is %s.)\n"), DEFAULT_SHOW_IN_THE_TRAY);
 				printf(_("      --keyboard-properties=<command>  Command to run on \"Keyboard Properties\" menu item. Default is %s.\n"), KB_PROP_COMMAND);
 				printf(_("  -e  --store                          Save settings from the command line to the storage and exit\n"));
 				printf(_("      --disable-settings-storage       Disable reading and saving gxneur settings to the persistent storage\n"));

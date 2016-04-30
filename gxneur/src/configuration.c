@@ -109,7 +109,6 @@ int gxneur_config_read_str(const char* key, gchar** value)
 	}
 
 	g_free(k);
-	
 	return result;
 }
 

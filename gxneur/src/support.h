@@ -48,13 +48,13 @@
 #endif
 
 /* Use this function to set the directory containing installed pixmaps. */
-void        add_pixmap_directory       (const gchar     *directory);
+//void        add_pixmap_directory       (const gchar     *directory);
 
-gchar*		find_pixmap_file           (const gchar     *filename);
+//gchar*		find_pixmap_file           (const gchar     *filename);
 
 /* This is used to create the pixmaps used in the interface. */
-GtkWidget*  create_pixmap              (GtkWidget       *widget,
-                                        const gchar     *filename);
+//GtkWidget*  create_pixmap              (GtkWidget       *widget,
+//                                        const gchar     *filename);
 
 /* This is used to create the pixbufs used in the interface. */
-GdkPixbuf*  create_pixbuf              (const gchar     *filename);
+//GdkPixbuf*  create_pixbuf              (const gchar     *filename);

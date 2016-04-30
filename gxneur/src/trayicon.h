@@ -34,13 +34,13 @@ struct _tray_icon
 	// App Indicator part
 	AppIndicator *app_indicator;
 #endif
-	
+	 
 	// Tray part
 	GtkTrayIcon *tray_icon;
 	GtkTooltips *tooltip;
 	GtkWidget *image;
 	GtkWidget *evbox;
-	
+	 
 	// Status Icon part
 	GtkStatusIcon *status_icon;
 

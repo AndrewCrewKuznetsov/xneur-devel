@@ -40,6 +40,7 @@
 
 extern const char* arg_show_in_the_tray;
 extern const char* arg_rendering_engine;
+extern const char* arg_icons_directory;
 
 extern struct _xneur_config *xconfig;
 
@@ -276,6 +277,30 @@ static const char *get_tray_icon_name (char *name)
 		return icon_name;
 	}
 
+	if (strcasecmp(show_in_the_tray, "Directory") == 0)
+	{
+		gchar *string_value = NULL;
+		gxneur_config_read_str("icons_directory", &string_value);
+		if (string_value != NULL)
+		{
+			icon_name = g_strdup_printf ("%s%s%s.png", string_value,
+                                         G_DIR_SEPARATOR_S, name);
+			printf("Icons '%s'\n",icon_name);
+  			if (g_file_test (icon_name, G_FILE_TEST_EXISTS))
+				return icon_name;
+			icon_name = g_strdup_printf ("%s%s%s.png", string_value,
+                                         G_DIR_SEPARATOR_S, full_name);
+			if (g_file_test (icon_name, G_FILE_TEST_EXISTS))
+				return icon_name;
+		}
+		if (string_value != NULL)
+ 			g_free (string_value); 
+		icon_name = PACKAGE;
+		return icon_name;
+	}
+	
+	//return "/home/crew/develop/xneur-devel/gxneur/pixmaps/all pixmaps/switcher/gxneur.png";
+	
 	GtkIconTheme * theme = gtk_icon_theme_get_default( );
 
 	// if the tray's icon is a 48x48 file, use it;
@@ -388,7 +413,10 @@ gboolean clock_check(gpointer dummy)
 		}
 		else
 		{
-			tray->image = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+			if ((strcasecmp(show_in_the_tray, "Directory") != 0))
+				tray->image = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+			else
+				tray->image = gtk_image_new_from_file(icon_name);
 		}
 		gtk_container_add(GTK_CONTAINER(tray->evbox), tray->image);
 		gtk_widget_show_all(GTK_WIDGET(tray->tray_icon));
@@ -411,7 +439,10 @@ gboolean clock_check(gpointer dummy)
 			}
 			else
 			{
-				gtk_status_icon_set_from_icon_name(tray->status_icon, icon_name);
+				if ((strcasecmp(show_in_the_tray, "Directory") != 0))
+					gtk_status_icon_set_from_icon_name(tray->status_icon, icon_name);
+				else
+					gtk_status_icon_set_from_file(tray->status_icon, icon_name);
 			}
 
 			gtk_status_icon_set_tooltip(tray->status_icon, hint);

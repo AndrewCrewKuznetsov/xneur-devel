@@ -1,11 +1,10 @@
 # translation of gxneur.po to русский
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the gxneur package.
 #
 # Andrew Crew Kuznetsov <andrewcrew@rambler.ru >, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: gxneur 0.9.4\n"
+"Project-Id-Version: gxneur 0.18.0\n"
 "Report-Msgid-Bugs-To: web@softodrom.ru\n"
 "POT-Creation-Date: 2009-04-16 14:23+0400\n"
 "PO-Revision-Date: 2009-05-27 14:23+0400\n"
@@ -174,23 +173,23 @@ msgstr "заканчивается"
 msgid "coincides"
 msgstr "совпадает"
 
-#: glade/abbr_add.glade:8
+#: ui/abbr_add.ui:8
 msgid "Add Abbreviation..."
 msgstr "Добавить Сокращение..."
 
-#: glade/abbr_add.glade:72
+#: ui/abbr_add.ui:72
 msgid "Abbreviation:"
 msgstr "Сокращение:"
 
-#: glade/abbr_add.glade:101
+#: ui/abbr_add.ui:101
 msgid "Expansion text:"
 msgstr "Полный Текст:"
 
-#: glade/about.glade:8
+#: ui/about.ui:8
 msgid "gXNeur About..."
 msgstr "О gXNeur..."
 
-#: glade/about.glade:19
+#: ui/about.ui:19
 msgid ""
 "\n"
 "\t\t<b>X Neural Switcher for Gnome</b>\t\t\n"
@@ -208,320 +207,364 @@ msgstr ""
 "Андрей Crew Кузнецов\n"
 "Николай Янкин"
 
-#: glade/action_add.glade:8
+#: ui/action_add.ui:8
 msgid "Add user action..."
 msgstr "Добавить пользовательское действие..."
 
-#: glade/action_add.glade:73
+#: ui/action_add.ui:73
 msgid "Action name:"
 msgstr "Название действия:"
 
-#: glade/action_add.glade:102
+#: ui/action_add.ui:102
 msgid "Key bind:"
 msgstr "Комбинация клавиш:"
 
-#: glade/action_add.glade:132
+#: ui/action_add.ui:132
 msgid "User action:"
 msgstr "Пользовательское действие:"
 
-#: glade/app_add.glade:8
+#: ui/app_add.ui:8
 msgid "Add application..."
 msgstr "Добавить приложение..."
 
-#: glade/app_add.glade:72
+#: ui/app_add.ui:72
 msgid "Application name"
 msgstr "Имя приложения"
 
-#: glade/app_add.glade:98
+#: ui/app_add.ui:98
 msgid "Get application name..."
 msgstr "Получить имя приложения..."
 
-#: glade/choose_file.glade:8
+#: ui/choose_file.ui:8
 msgid "Choose File..."
 msgstr "Выбор Файла..."
 
-#: glade/config.glade:8
+#: ui/config.ui:47
+msgid "0"
+msgstr "0"
+
+#: ui/config.ui:50
+msgid "1"
+msgstr "1"
+
+#: ui/config.ui:53
+msgid "2"
+msgstr "2"
+
+#: ui/config.ui:56
+msgid "3"
+msgstr "3"
+
+#: ui/config.ui:67
+msgid "None"
+msgstr "Отсутствует"
+
+#: ui/config.ui:70
+msgid "Error"
+msgstr "Ошибки"
+
+#: ui/config.ui:73
+msgid "Warning"
+msgstr "Предупреждения"
+
+#: ui/config.ui:76
+msgid "Log"
+msgstr "Лог"
+
+#: ui/config.ui:79
+msgid "Debug"
+msgstr "Отладка"
+
+#: ui/config.ui:82
+msgid "Trace"
+msgstr "Трассировка"
+
+#: ui/config.ui:93
+msgid "Show flag"
+msgstr "Показывать флаг"
+
+#: ui/config.ui:96
+msgid "Show text"
+msgstr "Показывать текст"
+
+#: ui/config.ui:99
+msgid "Show programm icon"
+msgstr "Показывать значок программы"
+
+#: ui/config.ui:102
+msgid "Show icons from directory"
+msgstr "Показывать значки из каталога"
+
+#: ui/config.ui:109
 msgid "XNeur Settings"
 msgstr "Настройки XNeur"
 
-#: glade/config.glade:43
+#: ui/config.ui:144
 msgid "Use manual switching mode"
 msgstr "Включить ручной режим переключения"
 
-#: glade/config.glade:59
+#: ui/config.ui:161
 msgid "Enable auto-learning mode"
 msgstr "Включить режим самообучения"
 
-#: glade/config.glade:75
+#: ui/config.ui:178
 msgid "Keep selection after changing selected text"
 msgstr "Сохранять выделение после изменения выделенного текста"
 
-#: glade/config.glade:91
+#: ui/config.ui:195
 msgid "Rotate layout after changing selected text"
 msgstr "Переключать раскладку после изменения выделенного текста"
 
-#: glade/config.glade:113
+#: ui/config.ui:218
 msgid "Check language on input process"
 msgstr "Проверять язык при вводе"
 
-#: glade/config.glade:129
+#: ui/config.ui:235
 msgid "Check similar words"
 msgstr "Проверять похожие слова"
 
-#: glade/config.glade:149
+#: ui/config.ui:256
 msgid "Main"
 msgstr "Основное"
 
-#: glade/config.glade:162
+#: ui/config.ui:268
 msgid "Correct aCCIDENTAL caps"
 msgstr "Исправление сЛУЧАЙНОГО CapsLock"
 
-#: glade/config.glade:178
+#: ui/config.ui:285
 msgid "Disable CapsLock use"
 msgstr "Отключение кнопки CapsLock"
 
-#: glade/config.glade:194
+#: ui/config.ui:302
 msgid "Correct TWo INitial caps"
 msgstr "Исправление двух ПРописных букв"
 
-#: glade/config.glade:210
+#: ui/config.ui:319
 msgid "Correct spaces with punctuation"
 msgstr "Исправление пробелов со знаками пунктуации"
 
-#: glade/config.glade:226
+#: ui/config.ui:336
 msgid "Correct small letter to capital letter after dot"
 msgstr "Исправление строчной буквы на прописную после точки"
 
-#: glade/config.glade:242
+#: ui/config.ui:353
 msgid "Correct two space with a comma and a space"
 msgstr "Исправление двух пробелов на запятую и пробел"
 
-#: glade/config.glade:258
+#: ui/config.ui:370
 msgid "Correct two minus with a dash"
 msgstr "Исправление двух минусов на тире"
 
-#: glade/config.glade:274
+#: ui/config.ui:387
 msgid "Correct dash with a emdash"
 msgstr "Исправление тире на длинное тире"
 
-#: glade/config.glade:290
+#: ui/config.ui:404
 msgid "Correct (c) with a copyright sign"
 msgstr "Исправление (с) на знак копирайта"
 
-#: glade/config.glade:306
+#: ui/config.ui:421
 msgid "Correct (tm) with a trademark sign"
 msgstr "Исправление (tm) на знак торговой марки"
 
-#: glade/config.glade:322
+#: ui/config.ui:438
 msgid "Correct (r) with a registered sign"
 msgstr "Исправление (r) на знак регистрации"
 
-#: glade/config.glade:338
+#: ui/config.ui:455
 msgid "Correct three points with a ellipsis sign"
 msgstr "Исправление трех точек на знак многоточия"
 
-#: glade/config.glade:354
+#: ui/config.ui:472
 msgid "Correct misprint"
 msgstr "Исправление опечаток"
 
-#: glade/config.glade:377
+#: ui/config.ui:496
 msgid "Typographics"
 msgstr "Типографика"
 
-#: glade/config.glade:401
+#: ui/config.ui:516
 msgid "<b>General</b>"
 msgstr "<b>Общее</b>"
 
-#: glade/config.glade:460 glade/list.glade:8
+#: ui/config.ui:575 ui/list.ui:8
 msgid "Rules change..."
 msgstr "Правила переключения..."
 
-#: glade/config.glade:502
+#: ui/config.ui:616
 msgid "Initial layout number:"
 msgstr "Номер раскладки по умолчанию "
 
-#: glade/config.glade:514
-msgid ""
-"0\n"
-"1\n"
-"2\n"
-"3"
-msgstr ""
-"0\n"
-"1\n"
-"2\n"
-"3"
-
-#: glade/config.glade:545
+#: ui/config.ui:663
 msgid "Remember keyboard layout for each application instance"
 msgstr "Запоминать раскладку отдельно для каждой копии приложения"
 
-#: glade/config.glade:650
+#: ui/config.ui:771
 msgid "Exceptions (One keyboard layout for all application instances)"
 msgstr "Исключения (одна раскладка для всех копий приложения)"
 
-#: glade/config.glade:683
+#: ui/config.ui:798
 msgid "<b>Layouts</b>"
 msgstr "<b>Раскладки</b>"
 
-#: glade/config.glade:903
+#: ui/config.ui:1016
 msgid "<b>Hotkeys</b>"
 msgstr "<b>Комбинации клавиш</b>"
 
-#: glade/config.glade:929
+#: ui/config.ui:1041
 msgid "Enable autocompletion"
 msgstr "Включить автодополнение"
 
-#: glade/config.glade:945
+#: ui/config.ui:1058
 msgid "Add space after autocompletion"
 msgstr "Добавлять пробел после автодополнения"
 
-#: glade/config.glade:1061
+#: ui/config.ui:1176
 msgid "Disable the autocompletion for these applications"
 msgstr "Отключить автодополнение для этих приложений"
 
-#: glade/config.glade:1100
+#: ui/config.ui:1210
 msgid "<b>Autocompletion</b>"
 msgstr "<b>Автодополнение</b>"
 
-#: glade/config.glade:1214
+#: ui/config.ui:1325
 msgid "Ignore these applications"
 msgstr "Не обрабатывать эти приложения"
 
-#: glade/config.glade:1318
+#: ui/config.ui:1428
 msgid "Force automatic mode for these applications"
 msgstr "Принудительный автоматический режим для этих приложений"
 
-#: glade/config.glade:1422
+#: ui/config.ui:1531
 msgid "Force manual mode for these applications"
 msgstr "Принудительный ручной режим для этих приложений"
 
-#: glade/config.glade:1455
+#: ui/config.ui:1558
 msgid "<b>Applications</b>"
 msgstr "<b>Приложения</b>"
 
-#: glade/config.glade:1490
+#: ui/config.ui:1592
 msgid "Enable sounds"
 msgstr "Проигрывать звуки"
 
-#: glade/config.glade:1513
+#: ui/config.ui:1615
 msgid "Sound volume"
 msgstr "Уровень громкости "
 
-#: glade/config.glade:1618
+#: ui/config.ui:1721
 msgid "Sounds"
 msgstr "Звуки"
 
-#: glade/config.glade:1636
+#: ui/config.ui:1738
 msgid "Show OSD"
 msgstr "Показывать OSD"
 
-#: glade/config.glade:1659
+#: ui/config.ui:1762
 msgid "OSD Font"
 msgstr "Шрифт OSD"
 
-#: glade/config.glade:1697
+#: ui/config.ui:1797
 msgid "Use command <b>xfontsel -print</b> to get new font."
 msgstr ""
 "Используйте команду <b>xfontsel -print</b> для получения нового шрифта."
 
-#: glade/config.glade:1752
+#: ui/config.ui:1855
 msgid "OSD"
 msgstr "OSD"
 
-#: glade/config.glade:1771
+#: ui/config.ui:1873
 msgid "Show popup messages"
 msgstr "Показывать всплывающие сообщения"
 
-#: glade/config.glade:1794
+#: ui/config.ui:1896
 msgid "Popup expiration interval (in milliseconds)"
 msgstr "Время показа всплывающего сообщения (в миллисекундах)"
 
-#: glade/config.glade:1876
+#: ui/config.ui:1978
 msgid "Popup messages"
 msgstr "Всплывающие сообщения"
 
-#: glade/config.glade:1903
+#: ui/config.ui:2001
 msgid "<b>Notifications</b>"
 msgstr "<b>Уведомления</b>"
 
-#: glade/config.glade:1929
+#: ui/config.ui:2026
 msgid "Ignore keyboard layout for abbreviations"
 msgstr "Игнорировать раскладку для сокращений"
 
-#: glade/config.glade:2024
+#: ui/config.ui:2123
 msgid "<b>Abbreviations</b>"
 msgstr "<b>Сокращения</b>"
 
-#: glade/config.glade:2050
+#: ui/config.ui:2148
 msgid "Enable keyboard logging"
 msgstr "Включить сохранение набираемого текста в файл журнала"
 
-#: glade/config.glade:2097
+#: ui/config.ui:2193
 msgid "Send log via port"
 msgstr "Отправить журнал через порт"
 
-#: glade/config.glade:2130
+#: ui/config.ui:2224
 msgid "Send log via host (name or IP)"
 msgstr "Отправить журнал через сервер (адрес или IP)"
 
-#: glade/config.glade:2163
+#: ui/config.ui:2255
 msgid "Send log to e-mail"
 msgstr "Отправить журнал на e-mail"
 
-#: glade/config.glade:2199
+#: ui/config.ui:2292
 msgid "Log file size in bytes"
 msgstr "Размер журнала в байтах"
 
-#: glade/config.glade:2210
+#: ui/config.ui:2304
 msgid "View log..."
 msgstr "Посмотреть журнал..."
 
-#: glade/config.glade:2249
+#: ui/config.ui:2340
 msgid "<b>Log</b>"
 msgstr "<b>Журнал</b>"
 
-#: glade/config.glade:2290
+#: ui/config.ui:2380
 msgid "Backspace"
 msgstr "Backspace"
 
-#: glade/config.glade:2306
+#: ui/config.ui:2397
 msgid "Left arrow"
 msgstr "Стрелка влево"
 
-#: glade/config.glade:2322
+#: ui/config.ui:2414
 msgid "Right arrow"
 msgstr "Стрелка вправо"
 
-#: glade/config.glade:2338
+#: ui/config.ui:2431
 msgid "Up arrow"
 msgstr "Стрелка вверх"
 
-#: glade/config.glade:2354
+#: ui/config.ui:2448
 msgid "Down arrow"
 msgstr "Стрелка вниз"
 
-#: glade/config.glade:2370
+#: ui/config.ui:2465
 msgid "Delete"
 msgstr "Delete"
 
-#: glade/config.glade:2386
+#: ui/config.ui:2482
 msgid "Enter"
 msgstr "Ввод (Enter)"
 
-#: glade/config.glade:2402
+#: ui/config.ui:2499
 msgid "Tab"
 msgstr "Табуляция (Tab)"
 
-#: glade/config.glade:2418
+#: ui/config.ui:2516
 msgid "You changed layout"
 msgstr "Вы переключили раскладку"
 
-#: glade/config.glade:2434
+#: ui/config.ui:2533
 msgid "Application in full screen mode"
 msgstr "Приложение в полноэкранном режиме"
 
-#: glade/config.glade:2465
+#: ui/config.ui:2564
 msgid ""
 "This will help avoid switching layout when editing parts previously "
 "introduced word."
@@ -529,42 +572,42 @@ msgstr ""
 "Это поможет избежать переключений раскладки при редактировании частей ранее "
 "введенного слова"
 
-#: glade/config.glade:2494
+#: ui/config.ui:2594
 msgid "Don't switch layout if before input where pressed"
 msgstr "Не переключать раскладку, если перед вводом были нажаты"
 
-#: glade/config.glade:2525
+#: ui/config.ui:2622
 msgid "Flush internal buffer on Escape"
 msgstr "Сбрасывать внутренний буфер при нажатии Escape"
 
-#: glade/config.glade:2541
+#: ui/config.ui:2639
 msgid "Flush internal buffer on Enter or Tab"
 msgstr "Сбрасывать внутренний буфер при нажатии Enter или Tab"
 
-#: glade/config.glade:2560
+#: ui/config.ui:2659
 msgid "Compatibility with the completion"
 msgstr "Совместимость с автодополнением"
 
-#: glade/config.glade:2582
+#: ui/config.ui:2682
 msgid "Additional"
 msgstr "Дополнительно"
 
-#: glade/config.glade:2613
+#: ui/config.ui:2710
 msgid "Monitor the input"
 msgstr "Следить за вводом"
 
-#: glade/config.glade:2632
+#: ui/config.ui:2729
 msgid ""
 "Disabling this option will add any application to the list of excluded "
 "applications."
 msgstr ""
 "Выключение этой опции добавит ВСЕ приложения в список исключенных приложений."
 
-#: glade/config.glade:2642
+#: ui/config.ui:2740
 msgid "Monitor the mouse"
 msgstr "Следить за мышью"
 
-#: glade/config.glade:2661
+#: ui/config.ui:2759
 msgid ""
 "Disabling this option will disable mouse tracking. Reset buffer when "
 "clicking the mouse will not."
@@ -572,116 +615,96 @@ msgstr ""
 "Выключение этой опции выключит слежение за мышью. Сброса буфера при клике "
 "мышью не будет."
 
-#: glade/config.glade:2677
+#: ui/config.ui:2776
 msgid "Tracking input"
 msgstr "Слежение за вводом"
 
-#: glade/config.glade:2704
+#: ui/config.ui:2800
 msgid "<b>Troubleshooting</b>"
 msgstr "<b>Устранение проблем</b>"
 
-#: glade/config.glade:2739
+#: ui/config.ui:2845
 msgid "Log verbosity level"
 msgstr "Уровень подробности выводимых сообщений"
 
-#: glade/config.glade:2752
-msgid ""
-"None\n"
-"Error\n"
-"Warning\n"
-"Log\n"
-"Debug\n"
-"Trace"
-msgstr ""
-"Отсутствует\n"
-"Ошибки\n"
-"Предупреждения\n"
-"Лог\n"
-"Отладка\n"
-"Трассировка"
-
-#: glade/config.glade:2818
+#: ui/config.ui:2931
 msgid "Delay before sending events (in milliseconds)"
 msgstr "Задержка перед отправкой событий (в миллисекундах)"
 
-#: glade/config.glade:2940
+#: ui/config.ui:3053
 msgid "Delay before sending events in these applications"
 msgstr "Задерживать отправку событий в этих приложениях"
 
-#: glade/config.glade:3045
+#: ui/config.ui:3157
 msgid "Dont send event KeyRelease in these applications"
 msgstr "Не отправлять событие KeyRelease для этих приложений"
 
-#: glade/config.glade:3073
+#: ui/config.ui:3182
 msgid "<b>Advanced</b>"
 msgstr "<b>Специальное</b>"
 
-#: glade/config.glade:3140
+#: ui/config.ui:3249
 msgid "<b>Plugins</b>"
 msgstr "<b>Модули</b>"
 
-#: glade/config.glade:3181
+#: ui/config.ui:3289
 msgid "Autostartup"
 msgstr "Запускать автоматически при старте системы"
 
-#: glade/config.glade:3206
+#: ui/config.ui:3314
 msgid "Delay before startup"
 msgstr "Задержка перед запуском"
 
-#: glade/config.glade:3249
+#: ui/config.ui:3356
 msgid "Startup"
 msgstr "Параметры запуска"
 
-#: glade/config.glade:3282
-msgid ""
-"Show flag\n"
-"Show text\n"
-"Show icon"
-msgstr ""
-"Показывать флаг\n"
-"Показывать текст\n"
-"Показывать значок"
+#: ui/config.ui:3412
+msgid "Icons directory"
+msgstr "Каталог значков"
 
-#: glade/config.glade:3296
-msgid ""
-"Used for rendering built-in engine\n"
-"Used for rendering Status Icon engine\n"
-"Used for rendering App Indicator engine"
-msgstr ""
-"Использовать для отрисовки значка встроенный движок\n"
-"Использовать для отрисовки значка движок значков статуса\n"
-"Использовать для отрисовки значка движок индикаторов приложений"
-
-#: glade/config.glade:3319
+#: ui/config.ui:3508
 msgid "Set the extension to move the icon in the shell area of the Gnome 3."
 msgstr ""
 "Установить расширение для перемещения иконки в область оболочки Gnome 3."
 
-#: glade/config.glade:3334
+#: ui/config.ui:3524
 msgid "Gnome 3 Shell"
 msgstr "Оболочка Gnome 3"
 
-#: glade/config.glade:3360
+#: ui/config.ui:3543
 msgid "UI"
 msgstr "Внешний вид"
 
-#: glade/config.glade:3397
+#: ui/config.ui:3578
 msgid "Keyboard properties command"
 msgstr "Команда запуска параметров клавиатуры"
 
-#: glade/config.glade:3485
+#: ui/config.ui:3663
 msgid "System"
 msgstr "Системное"
 
-#: glade/config.glade:3518
+#: ui/config.ui:3691
 msgid "<b>Properties</b>"
 msgstr "<b>Параметры</b>"
 
-#: glade/rule_add.glade:8
+#: ui/config.ui:3762
+msgid "Used for rendering built-in engine"
+msgstr "Использовать для отрисовки значка встроенный движок"
+
+#: ui/config.ui:3765
+msgid "Used for rendering Status Icon engine"
+msgstr "Использовать для отрисовки значка движок значков статуса"
+
+#: ui/config.ui:3768
+msgid "Used for rendering App Indicator engine"
+msgstr "Использовать для отрисовки значка движок индикаторов приложений"
+
+#: ui/rule_add.ui:8
 msgid "Add your rule change..."
 msgstr "Добавить свое правило переключения..."
 
-#: glade/rule_add.glade:73
+#: ui/rule_add.ui:73
 msgid ""
 "The new rule change to that language.\n"
 "Enter a combination of letters and set the condition for its treatment:"
@@ -689,7 +712,7 @@ msgstr ""
 "Новое правило переключения для данного языка.\n"
 "Введите буквосочетание и задайте условие его обработки:"
 
-#: glade/rule_add.glade:104
+#: ui/rule_add.ui:104
 msgid ""
 "NOTE: Special characters [] \\ ^ $. |? * + () {} must be preceded by a \\ "
 "(backslash)."
@@ -697,27 +720,27 @@ msgstr ""
 "ЗАМЕЧАНИЕ: Специальные символы [ ] \\ ^ $ . | ? * + ( ) { } должны "
 "предваряться символом \\ (обратная косая черта)."
 
-#: glade/rule_add.glade:134
+#: ui/rule_add.ui:134
 msgid "Typed on the keyboard word must:"
 msgstr "Набираемое на клавиатуре слово должно:"
 
-#: glade/rule_add.glade:160
+#: ui/rule_add.ui:160
 msgid "contain that sequence of letters"
 msgstr "содержать данное сочетание букв"
 
-#: glade/rule_add.glade:176
+#: ui/rule_add.ui:176
 msgid "start with these letters"
 msgstr "начинаться с данных букв"
 
-#: glade/rule_add.glade:192
+#: ui/rule_add.ui:192
 msgid "to end these letters"
 msgstr "заканчиваться данными буквами"
 
-#: glade/rule_add.glade:208
+#: ui/rule_add.ui:208
 msgid "coincide with the combination of letters"
 msgstr "совпадать с данным сочетанием букв"
 
-#: glade/rule_add.glade:247
+#: ui/rule_add.ui:244
 msgid "More:"
 msgstr "Дополнительно:"
 
@@ -875,8 +898,7 @@ msgstr "Раскладка"
 msgid "Excluded"
 msgstr "Не используется"
 
-#: src/misc.c:778 src/misc.c:854 src/misc.c:963 src/misc.c:1017
-#: src/misc.c:1071
+#: src/misc.c:778 src/misc.c:854 src/misc.c:963 src/misc.c:1017 src/misc.c:1071
 msgid "Action"
 msgstr "Действие"
 
@@ -977,6 +999,52 @@ msgstr "X Neural Switcher остановлен ("
 msgid "X Neural Switcher"
 msgstr "X Neural Switcher"
 
+#~ msgid ""
+#~ "0\n"
+#~ "1\n"
+#~ "2\n"
+#~ "3"
+#~ msgstr ""
+#~ "0\n"
+#~ "1\n"
+#~ "2\n"
+#~ "3"
+
+#~ msgid ""
+#~ "None\n"
+#~ "Error\n"
+#~ "Warning\n"
+#~ "Log\n"
+#~ "Debug\n"
+#~ "Trace"
+#~ msgstr ""
+#~ "Отсутствует\n"
+#~ "Ошибки\n"
+#~ "Предупреждения\n"
+#~ "Лог\n"
+#~ "Отладка\n"
+#~ "Трассировка"
+
+#~ msgid ""
+#~ "Show flag\n"
+#~ "Show text\n"
+#~ "Show icon\n"
+#~ "Show icon from directory"
+#~ msgstr ""
+#~ "Показывать флаг\n"
+#~ "Показывать текст\n"
+#~ "Показывать значок\n"
+#~ "Показывать значок из каталога"
+
+#~ msgid ""
+#~ "Used for rendering built-in engine\n"
+#~ "Used for rendering Status Icon engine\n"
+#~ "Used for rendering App Indicator engine"
+#~ msgstr ""
+#~ "Использовать для отрисовки значка встроенный движок\n"
+#~ "Использовать для отрисовки значка движок значков статуса\n"
+#~ "Использовать для отрисовки значка движок индикаторов приложений"
+
 #~ msgid "Don't process words on Enter or Tab"
 #~ msgstr "Не проверять слово при нажатии Enter или Tab"
 
@@ -985,9 +1053,6 @@ msgstr "X Neural Switcher"
 
 #~ msgid "Auto-Correction"
 #~ msgstr "Автопереключение"
-
-#~ msgid "Show icon on the panel indicators"
-#~ msgstr "Показывать значек в панели индикаторов"
 
 #~ msgid "Show text on the tray"
 #~ msgstr "Показывать текст в системном лотке"
