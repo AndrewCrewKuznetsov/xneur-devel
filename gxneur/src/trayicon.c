@@ -292,6 +292,10 @@ static const char *get_tray_icon_name (char *name)
                                          G_DIR_SEPARATOR_S, full_name);
 			if (g_file_test (icon_name, G_FILE_TEST_EXISTS))
 				return icon_name;
+			icon_name = g_strdup_printf ("%s%s%s.png", string_value,
+                                         G_DIR_SEPARATOR_S, PACKAGE);
+			if (g_file_test (icon_name, G_FILE_TEST_EXISTS))
+				return icon_name;
 		}
 		if (string_value != NULL)
  			g_free (string_value); 

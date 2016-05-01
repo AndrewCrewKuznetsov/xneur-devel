@@ -1009,13 +1009,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/frmsettings.ui" line="1666"/>
         <location filename="../src/ui_frmsettings.h" line="1626"/>
         <source>Delay before sending events in these applications:</source>
-        <translation type="unfinished"></translation>
+        <translation>Задержка перед отправкой событий для этих приложений:</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1707"/>
         <location filename="../src/ui_frmsettings.h" line="1629"/>
         <source>Don&apos;t send event KeyRelease in these applications:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не отправлять событие KeyRelease для этих приложений:</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.ui" line="1752"/>
@@ -1250,7 +1250,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/frmsettings.cpp" line="499"/>
         <source>Excluded</source>
-        <translation>Включено</translation>
+        <translation>Исключено</translation>
     </message>
     <message>
         <location filename="../src/frmsettings.cpp" line="564"/>
