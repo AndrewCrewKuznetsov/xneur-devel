@@ -30,6 +30,7 @@ if test "x$found_z" != "xno"; then
 fi
 
 PKG_CHECK_MODULES(X11, [x11 >= 1.1], found_x11="yes", found_x11="no")
+PKG_CHECK_MODULES(Xi, [xi])
 if test "x$found_x11" = "xno"; then
 	AC_PATH_XTRA
 
