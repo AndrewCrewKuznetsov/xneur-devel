@@ -37,10 +37,10 @@ int isXkbLayoutSymbol(char *symbol)
 }
 void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 {
-    int inSymbol = 0;
+	int inSymbol = 0;
 	
-    char *curSymbol = (char *) malloc (sizeof(char));
-    char *curVariant = (char *) malloc (sizeof(char));
+	char *curSymbol = (char *) malloc (sizeof(char));
+	char *curVariant = (char *) malloc (sizeof(char));
 	curSymbol[0] = '\0';
 	curVariant[0] = '\0';
 	
@@ -129,8 +129,8 @@ char *get_active_kbd_symbol(Display *dpy)
 
 	XkbDescRec desc[1];
 	memset(desc, 0, sizeof(desc));
-    desc->device_spec = XkbUseCoreKbd;
-    XkbGetControls(dpy, XkbGroupsWrapMask, desc);
+	desc->device_spec = XkbUseCoreKbd;
+	XkbGetControls(dpy, XkbGroupsWrapMask, desc);
 	XkbGetNames(dpy, XkbGroupNamesMask, desc);
 	XkbGetNames(dpy, XkbSymbolsNameMask, desc);
 	
@@ -146,7 +146,7 @@ char *get_active_kbd_symbol(Display *dpy)
 		free(xkb_names[i].variant);
 	}
 	XkbFreeControls(desc, XkbGroupsWrapMask, True);
-    XkbFreeNames(desc, XkbSymbolsNameMask, True);
+	XkbFreeNames(desc, XkbSymbolsNameMask, True);
 	XkbFreeNames(desc, XkbGroupNamesMask, True);
 	return symbol;
 }
@@ -166,18 +166,18 @@ int get_kbd_group_count(Display *dpy)
 	if (dpy == NULL)
 		return -1;
 
-    XkbDescRec desc[1];
-    int gc;
-    memset(desc, 0, sizeof(desc));
-    desc->device_spec = XkbUseCoreKbd;
-    XkbGetControls(dpy, XkbGroupsWrapMask, desc);
-    XkbGetNames(dpy, XkbGroupNamesMask, desc);
+	XkbDescRec desc[1];
+	int gc;
+	memset(desc, 0, sizeof(desc));
+	desc->device_spec = XkbUseCoreKbd;
+	XkbGetControls(dpy, XkbGroupsWrapMask, desc);
+	XkbGetNames(dpy, XkbGroupNamesMask, desc);
 	XkbGetNames(dpy, XkbSymbolsNameMask, desc);
 	gc = desc->ctrls->num_groups;
-    XkbFreeControls(desc, XkbGroupsWrapMask, True);
-    XkbFreeNames(desc, XkbGroupNamesMask, True);
+	XkbFreeControls(desc, XkbGroupsWrapMask, True);
+	XkbFreeNames(desc, XkbGroupNamesMask, True);
 
-    return gc;
+	return gc;
 }
 
 int set_next_kbd_group(Display *dpy)

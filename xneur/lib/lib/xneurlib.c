@@ -19,6 +19,7 @@
 
 
 #include <X11/XKBlib.h>
+#include <X11/extensions/XInput2.h>
 
 #include <string.h>
 #include <stdlib.h>

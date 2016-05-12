@@ -98,6 +98,7 @@ static Window find_window_with_atom(Window window, Atom atom)
 
 void set_event_mask(Window window, int event_mask)
 {
+	//if (event_mask){};
 	XSelectInput(main_window->display, window, event_mask);
 }
 
@@ -123,24 +124,55 @@ void set_mask_to_window(Window window, int event_mask)
 	XFree(children);
 }
 
-void grab_button(int is_grab)
+void grab_button(Window window, int is_grab)
 {
-	Window rw = RootWindow(main_window->display, DefaultScreen(main_window->display));
 	int status;
-	if (is_grab)
+    int xi_opcode, event, error;
+
+    if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
 	{
-		status = XGrabButton(main_window->display, Button1, AnyModifier, rw, FALSE, ButtonPressMask|ButtonReleaseMask, GrabModeSync, GrabModeAsync, None, None);
-		XSync (main_window->display, FALSE);
-	}
-	else
-		status = XUngrabButton(main_window->display, AnyButton, AnyModifier, rw);
+		log_message(WARNING, _("X Input extension not available."));
+		if (is_grab)
+		{
+			status = XGrabButton(main_window->display, Button1, AnyModifier, DefaultRootWindow(main_window->display), FALSE, ButtonPressMask|ButtonReleaseMask, GrabModeSync, GrabModeAsync, None, None);
+			XSync (main_window->display, FALSE);
+		}
+		else
+			status = XUngrabButton(main_window->display, AnyButton, AnyModifier, DefaultRootWindow(main_window->display));
 		
-	if (status == BadCursor)
-		log_message(ERROR, _("Failed to %s mouse with error BadCursor"), grab_ungrab[is_grab]);
-	else if (status == BadValue)
-		log_message(ERROR, _("Failed to %s mouse with error BadValue"), grab_ungrab[is_grab]);
-	else if (status == BadWindow)
-		log_message(ERROR, _("Failed to %s mouse with error BadWindow"), grab_ungrab[is_grab]);
+		if (status == BadCursor)
+			log_message(ERROR, _("Failed to %s mouse with error BadCursor"), grab_ungrab[is_grab]);
+		else if (status == BadValue)
+			log_message(ERROR, _("Failed to %s mouse with error BadValue"), grab_ungrab[is_grab]);
+		else if (status == BadWindow)
+			log_message(ERROR, _("Failed to %s mouse with error BadWindow"), grab_ungrab[is_grab]);
+
+		return;
+    }
+	
+	XIEventMask mask;
+
+    XSelectInput(main_window->display, window, ExposureMask);
+    mask.deviceid = XIAllDevices;
+    mask.mask_len = XIMaskLen(XI_RawMotion);
+    mask.mask = calloc(mask.mask_len, sizeof(char));
+    //XISetMask(mask.mask, XI_Enter);
+    //XISetMask(mask.mask, XI_Leave);
+    XISetMask(mask.mask, XI_ButtonPress);
+    XISetMask(mask.mask, XI_ButtonRelease);
+    //XISetMask(mask.mask, XI_KeyPress);
+    //XISetMask(mask.mask, XI_KeyRelease);
+
+    XISelectEvents(main_window->display, window, &mask, 1);
+
+    /*mask.deviceid = XIAllDevices;
+    memset(mask.mask, 0, mask.mask_len);
+    XISetMask(mask.mask, XI_RawMotion);
+
+    XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);*/
+
+    free(mask.mask);
+	
 }
 
 void grab_key(Window window, KeyCode kc, int is_grab)

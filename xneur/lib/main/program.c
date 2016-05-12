@@ -549,7 +549,49 @@ static void program_process_input(struct _program *p)
 			}
 			default:
 			{
-				log_message(DEBUG, _("Uncatched event with type %d (see X11/X.h for details)"), type);
+				int xi_opcode, event, error;
+				if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
+				{
+					log_message(WARNING, _("X Input extension not available."));
+					log_message(DEBUG, _("Uncatched event with type %d (see X11/X.h for details)"), type);
+					break;
+				}
+				
+				XGenericEventCookie *cookie = &p->event->event.xcookie;
+
+				if (cookie->type != GenericEvent ||
+					cookie->extension != xi_opcode ||
+					!XGetEventData(main_window->display, cookie))
+					break;
+
+				//printf("EVENT TYPE %d\n", cookie->evtype);
+				XIDeviceEvent* xi_event = cookie->data;
+				switch (xi_event->evtype) {
+				case XI_ButtonPress:
+				{
+					// Clear buffer only when clicked left button
+					if (xi_event->detail == 1)
+					{
+						p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
+						p->correction_buffer->clear(p->correction_buffer);
+						p->correction_action = ACTION_NONE;
+						if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+						{
+							p->update(p);
+						}
+						log_message(TRACE, _("Received XI_ButtonPress (event type %d, subtype %d)"), type, xi_event->evtype);
+					}
+					break;
+				}
+				case XI_ButtonRelease:
+				{
+					if (xi_event->detail == 1)
+					{
+						log_message(TRACE, _("Received XI_ButtonRelease (event type %d, subtype %d)"), type, xi_event->evtype);
+					}
+					break;
+				}
+				}
 				break;
 			}
 		}

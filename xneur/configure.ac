@@ -55,7 +55,7 @@ if test "x$found_x11" = "xno"; then
 #		exit 1
 #	fi
 #	X11_LIBS="$X_LIBS -lX11 $LIBXTST $LIBXI"
-	X11_LIBS="$X_LIBS -lX11"
+	X11_LIBS="$X_LIBS -lX11 -lXi"
 
 	AC_SUBST(X11_CFLAGS)
 	AC_SUBST(X11_LIBS)
@@ -77,7 +77,7 @@ else
 #		exit 1
 #	fi
 #	X11_LIBS="$X_LIBS -lX11 $LIBXTST $LIBXI"
-	X11_LIBS="$X_LIBS -lX11"
+	X11_LIBS="$X_LIBS -lX11 -lXi"
 	AC_SUBST(X11_LIBS)
 fi
 

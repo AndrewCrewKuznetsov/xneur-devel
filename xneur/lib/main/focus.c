@@ -237,7 +237,7 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' OFF"), p->owner_window, owner_window_name);
 		
 		// Event unmasking
-		grab_button(FALSE);
+		grab_button(p->owner_window, FALSE);
 		
 		// Ungrabbing special key (Enter, Tab and other)
 		grab_spec_keys(p->owner_window, FALSE);
@@ -255,13 +255,13 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 		if (p->last_focus != FOCUS_EXCLUDED)
 		{
 			if (xconfig->tracking_mouse)
-			  grab_button(TRUE);
+			  grab_button(p->parent_window, TRUE);
 			grab_spec_keys(p->owner_window, TRUE);
 			set_event_mask(p->owner_window, INPUT_HANDLE_MASK | FOCUS_CHANGE_MASK | EVENT_KEY_MASK);
 		}
 		else
 		{
-			grab_button(FALSE);
+			grab_button(p->owner_window, FALSE);
 			grab_spec_keys(p->owner_window, FALSE);
 			set_event_mask(p->owner_window, FOCUS_CHANGE_MASK);
 		}
