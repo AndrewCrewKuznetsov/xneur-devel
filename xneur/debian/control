@@ -2,7 +2,7 @@ Source: xneur
 Section: x11
 Priority: optional
 Maintainer: Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
-Build-Depends: debhelper (>= 6.0.7), cdbs, libx11-dev, libxtst-dev, libpcre3-dev, pkg-config, libaspell-dev, libgstreamer1.0-dev | libgstreamer0.10-dev, libxosd-dev, libnotify-dev | libnotify4-dev, libenchant-dev
+Build-Depends: debhelper (>= 6.0.7), cdbs, libx11-dev, libxi-dev, libxtst-dev, libpcre3-dev, pkg-config, libaspell-dev, libgstreamer1.0-dev | libgstreamer0.10-dev, libxosd-dev, libnotify-dev | libnotify4-dev, libenchant-dev
 Standards-Version: 3.8.4
 Homepage: http://xneur.ru
 
