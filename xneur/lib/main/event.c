@@ -164,8 +164,9 @@ static KeySym event_get_cur_keysym(struct _event *p)
 {
 	//return XLookupKeysym(&p->event.xkey, 0);
 	
-	/*KeySym ks;
-    int nbytes = 0;
+	KeySym ks;
+
+	/*int nbytes = 0;
     char str[256+1];
 	XKeyEvent *e = (XKeyEvent *) &p->event;
     nbytes = XLookupString (e, str, 256, &ks, NULL);
@@ -173,9 +174,10 @@ static KeySym event_get_cur_keysym(struct _event *p)
 	return ks;*/
 
 	XKeyEvent *e = (XKeyEvent *) &p->event;
-	//int group = get_curr_keyboard_group();
-	//log_message (ERROR, "Curr group %d", group);
-	return XkbKeycodeToKeysym(main_window->display, e->keycode, 0/*group*/, 0);
+	ks = XkbKeycodeToKeysym(main_window->display, e->keycode, main_window->keymap->latin_group, 0);
+	if (ks == NoSymbol) 
+		ks = XkbKeycodeToKeysym(main_window->display, e->keycode, 0, 0);
+	return ks;
 }
 
 static int event_get_cur_modifiers(struct _event *p)

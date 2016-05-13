@@ -204,10 +204,10 @@ int get_keycode_mod(int group)
 
 static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySym *lower, KeySym *upper)
 {
+	*lower = NoSymbol;
+	*upper = NoSymbol;
 	if (keyname == NULL)
 	{
-		*lower = NoSymbol;
-		*upper = NoSymbol;
 		return;
 	}
 
@@ -217,7 +217,9 @@ static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySy
 
 	for (int i = p->min_keycode; i <= p->max_keycode; i++)
 	{
-		for (int j = 0; j < 2; j++)
+		int max = p->keysyms_per_keycode - 1;
+
+		for (int j = 0; j <= max; j++)
 		{
 			if (p->keymap[j] == NoSymbol)
 				continue;

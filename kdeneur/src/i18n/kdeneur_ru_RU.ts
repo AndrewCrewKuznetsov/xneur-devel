@@ -800,10 +800,6 @@ p, li { white-space: pre-wrap; }
         <translation>Задержка перед отправкой событий (в миллисекундах)</translation>
     </message>
     <message>
-        <source>Dont send KeyRelease even</source>
-        <translation type="obsolete">Не отправлять событие KeyRelease</translation>
-    </message>
-    <message>
         <location filename="../frmsettings.ui" line="1614"/>
         <source>Log verbosity level</source>
         <translation>Уровень подробности выводимых сообщений</translation>
@@ -834,7 +830,7 @@ p, li { white-space: pre-wrap; }
         <translation>Трассировка</translation>
     </message>
     <message>
-        <location filename="../frmsettings.ui" line="1663"/>
+        <location filename="../frmsettings.ui" line="1707"/>        
         <source>Don&apos;t send event KeyRelease in these applications:</source>
         <translation>Не отправлять событие KeyRelease для этих приложений:</translation>
     </message>
@@ -1051,7 +1047,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../frmsettings.cpp" line="495"/>
         <source>Excluded</source>
-        <translation>Включено</translation>
+        <translation>Исключено</translation>
     </message>
     <message>
         <location filename="../frmsettings.cpp" line="556"/>

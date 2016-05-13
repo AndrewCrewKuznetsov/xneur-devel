@@ -36,6 +36,7 @@ struct _bind_table
 {
 	KeySym key_sym;
 	KeySym key_sym_shift;
+	KeyCode key_code;
 	int modifier_mask;
 };
 

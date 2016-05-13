@@ -2,13 +2,13 @@ Source: kdeneur
 Section: x11
 Priority: optional
 Maintainer: Andrew Crew Kuznetsov <andrewcrew@rambler.ru>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, pkg-config, kdelibs5-dev, libxneur-dev (>= 0.15.0), libtool, docbook-to-man
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, pkg-config, kdelibs5-dev, libxneur-dev (>= 0.18.0), libtool, docbook-to-man
 Standards-Version: 3.8.4
 Homepage: http://xneur.ru
 
 Package: kdeneur
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, xneur (>= 0.16.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}, xneur (>= 0.18.0)
 Description: KDE frontend for xneur keyboard layout switcher. 
  .
  XNeur is an in-place converter of text typed in with a wrong keyboard layout.

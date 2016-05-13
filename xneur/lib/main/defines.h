@@ -25,7 +25,7 @@
 #define EVENT_PRESS_MASK	KeyPressMask
 #define EVENT_RELEASE_MASK	KeyReleaseMask
 #define FOCUS_CHANGE_MASK   FocusChangeMask|LeaveWindowMask|EnterWindowMask
-#define BUTTON_HANDLE_MASK	ButtonPressMask|ButtonReleaseMask
+//#define BUTTON_HANDLE_MASK	ButtonPressMask|ButtonReleaseMask
 
 static const int groups[4] = {0x00000000, 0x00002000, 0x00004000, 0x00006000};
 

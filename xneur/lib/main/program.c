@@ -583,15 +583,8 @@ static void program_process_input(struct _program *p)
 					}
 					break;
 				}
-				case XI_ButtonRelease:
-				{
-					if (xi_event->detail == 1)
-					{
-						log_message(TRACE, _("Received XI_ButtonRelease (event type %d, subtype %d)"), type, xi_event->evtype);
-					}
-					break;
 				}
-				}
+				XFreeEventData(main_window->display, cookie);
 				break;
 			}
 		}

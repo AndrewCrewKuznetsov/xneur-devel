@@ -151,25 +151,16 @@ void grab_button(Window window, int is_grab)
     }
 	
 	XIEventMask mask;
+	mask.deviceid = XIAllDevices;
+	mask.mask_len = XIMaskLen(XI_ButtonPress);
+	mask.mask = calloc(mask.mask_len, sizeof(char));
+	if (is_grab)
+	{
 
-    XSelectInput(main_window->display, window, ExposureMask);
-    mask.deviceid = XIAllDevices;
-    mask.mask_len = XIMaskLen(XI_RawMotion);
-    mask.mask = calloc(mask.mask_len, sizeof(char));
-    //XISetMask(mask.mask, XI_Enter);
-    //XISetMask(mask.mask, XI_Leave);
-    XISetMask(mask.mask, XI_ButtonPress);
-    XISetMask(mask.mask, XI_ButtonRelease);
-    //XISetMask(mask.mask, XI_KeyPress);
-    //XISetMask(mask.mask, XI_KeyRelease);
+		XISetMask(mask.mask, XI_ButtonPress);
+	}
 
     XISelectEvents(main_window->display, window, &mask, 1);
-
-    /*mask.deviceid = XIAllDevices;
-    memset(mask.mask, 0, mask.mask_len);
-    XISetMask(mask.mask, XI_RawMotion);
-
-    XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);*/
 
     free(mask.mask);
 	
