@@ -127,14 +127,16 @@ void set_mask_to_window(Window window, int event_mask)
 void grab_button(Window window, int is_grab)
 {
 	int status;
-    int xi_opcode, event, error;
+	if (window) {};
+    // Закоментировано, т.к. в KDE такой перехват вызывает блок системного меню и системных кнопок окна
+	//int xi_opcode, event, error;
 
-    if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
-	{
-		log_message(WARNING, _("X Input extension not available."));
+    //if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
+	//{
+	//	log_message(WARNING, _("X Input extension not available."));
 		if (is_grab)
 		{
-			status = XGrabButton(main_window->display, Button1, AnyModifier, DefaultRootWindow(main_window->display), FALSE, ButtonPressMask|ButtonReleaseMask, GrabModeSync, GrabModeAsync, None, None);
+			status = XGrabButton(main_window->display, Button1, AnyModifier, DefaultRootWindow(main_window->display), FALSE, ButtonPressMask/*|ButtonReleaseMask*/, GrabModeSync, GrabModeAsync, None, None);
 			XSync (main_window->display, FALSE);
 		}
 		else
@@ -148,22 +150,19 @@ void grab_button(Window window, int is_grab)
 			log_message(ERROR, _("Failed to %s mouse with error BadWindow"), grab_ungrab[is_grab]);
 
 		return;
-    }
+    //}
 	
-	XIEventMask mask;
-	mask.deviceid = XIAllDevices;
-	mask.mask_len = XIMaskLen(XI_ButtonPress);
-	mask.mask = calloc(mask.mask_len, sizeof(char));
-	if (is_grab)
-	{
+	//XIEventMask mask;
+	//mask.deviceid = XIAllDevices;
+	//mask.mask_len = XIMaskLen(XI_ButtonPress);
+	//mask.mask = calloc(mask.mask_len, sizeof(char));
+	//if (is_grab)
+	//{
+	//	XISetMask(mask.mask, XI_ButtonPress);
+	//}^
+    //XISelectEvents(main_window->display, window, &mask, 1);
 
-		XISetMask(mask.mask, XI_ButtonPress);
-	}
-
-    XISelectEvents(main_window->display, window, &mask, 1);
-
-    free(mask.mask);
-	
+    //free(mask.mask);	
 }
 
 void grab_key(Window window, KeyCode kc, int is_grab)
