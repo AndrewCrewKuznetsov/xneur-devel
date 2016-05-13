@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'frmsettings.ui'
 **
-** Created: Thu Oct 17 12:29:17 2013
-**      by: Qt User Interface Compiler version 4.8.4
+** Created by: Qt User Interface Compiler version 4.8.7
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -228,10 +227,16 @@ public:
     TabBar *tabAdvanced;
     QVBoxLayout *verticalLayout_18;
     QGridLayout *gridLayout_16;
-    QLabel *lblDelay;
-    QSpinBox *tabAdvanced_spbDelay;
     QLabel *lblLogLevel;
     QComboBox *tabAdvanced_cmbLogLevel;
+    QSpinBox *tabAdvanced_spbDelay;
+    QLabel *lblDelay;
+    QLabel *label;
+    QListWidget *tabAdvanced_tabDelayList;
+    QHBoxLayout *horizontalLayout_15;
+    QSpacerItem *horizontalSpacer_11;
+    QPushButton *tabAdvanced_cmdAddDelay;
+    QPushButton *tabAdvanced_cmdRemoveDelay;
     QLabel *lblKeyRelease;
     QListWidget *tabAdvanced_tabAppList;
     QHBoxLayout *horizontalLayout_14;
@@ -1212,18 +1217,7 @@ public:
         verticalLayout_18->setObjectName(QString::fromUtf8("verticalLayout_18"));
         gridLayout_16 = new QGridLayout();
         gridLayout_16->setObjectName(QString::fromUtf8("gridLayout_16"));
-        lblDelay = new QLabel(tabAdvanced);
-        lblDelay->setObjectName(QString::fromUtf8("lblDelay"));
-
-        gridLayout_16->addWidget(lblDelay, 0, 0, 1, 1);
-
-        tabAdvanced_spbDelay = new QSpinBox(tabAdvanced);
-        tabAdvanced_spbDelay->setObjectName(QString::fromUtf8("tabAdvanced_spbDelay"));
-        tabAdvanced_spbDelay->setMaximumSize(QSize(191, 25));
-        tabAdvanced_spbDelay->setMaximum(50);
-
-        gridLayout_16->addWidget(tabAdvanced_spbDelay, 0, 1, 1, 1);
-
+        gridLayout_16->setVerticalSpacing(6);
         lblLogLevel = new QLabel(tabAdvanced);
         lblLogLevel->setObjectName(QString::fromUtf8("lblLogLevel"));
 
@@ -1235,8 +1229,49 @@ public:
 
         gridLayout_16->addWidget(tabAdvanced_cmbLogLevel, 1, 1, 1, 1);
 
+        tabAdvanced_spbDelay = new QSpinBox(tabAdvanced);
+        tabAdvanced_spbDelay->setObjectName(QString::fromUtf8("tabAdvanced_spbDelay"));
+        tabAdvanced_spbDelay->setMaximumSize(QSize(191, 25));
+        tabAdvanced_spbDelay->setMaximum(50);
+
+        gridLayout_16->addWidget(tabAdvanced_spbDelay, 2, 1, 1, 1);
+
+        lblDelay = new QLabel(tabAdvanced);
+        lblDelay->setObjectName(QString::fromUtf8("lblDelay"));
+
+        gridLayout_16->addWidget(lblDelay, 2, 0, 1, 1);
+
 
         verticalLayout_18->addLayout(gridLayout_16);
+
+        label = new QLabel(tabAdvanced);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        verticalLayout_18->addWidget(label);
+
+        tabAdvanced_tabDelayList = new QListWidget(tabAdvanced);
+        tabAdvanced_tabDelayList->setObjectName(QString::fromUtf8("tabAdvanced_tabDelayList"));
+
+        verticalLayout_18->addWidget(tabAdvanced_tabDelayList);
+
+        horizontalLayout_15 = new QHBoxLayout();
+        horizontalLayout_15->setObjectName(QString::fromUtf8("horizontalLayout_15"));
+        horizontalSpacer_11 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_15->addItem(horizontalSpacer_11);
+
+        tabAdvanced_cmdAddDelay = new QPushButton(tabAdvanced);
+        tabAdvanced_cmdAddDelay->setObjectName(QString::fromUtf8("tabAdvanced_cmdAddDelay"));
+
+        horizontalLayout_15->addWidget(tabAdvanced_cmdAddDelay);
+
+        tabAdvanced_cmdRemoveDelay = new QPushButton(tabAdvanced);
+        tabAdvanced_cmdRemoveDelay->setObjectName(QString::fromUtf8("tabAdvanced_cmdRemoveDelay"));
+
+        horizontalLayout_15->addWidget(tabAdvanced_cmdRemoveDelay);
+
+
+        verticalLayout_18->addLayout(horizontalLayout_15);
 
         lblKeyRelease = new QLabel(tabAdvanced);
         lblKeyRelease->setObjectName(QString::fromUtf8("lblKeyRelease"));
@@ -1577,7 +1612,6 @@ public:
         tabTroubleshooting_chkMonitorMouse->setText(QApplication::translate("frmSettings", "Monitor the mouse", 0, QApplication::UnicodeUTF8));
         lblProperties_3->setText(QApplication::translate("frmSettings", "Disabling this option will disable mouse tracking. Reset buffer when clicking the mouse will not.", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabTroubleshooting), QApplication::translate("frmSettings", "Troubleshooting", 0, QApplication::UnicodeUTF8));
-        lblDelay->setText(QApplication::translate("frmSettings", "Delay before sending events (in milliseconds)", 0, QApplication::UnicodeUTF8));
         lblLogLevel->setText(QApplication::translate("frmSettings", "Log verbosity level", 0, QApplication::UnicodeUTF8));
         tabAdvanced_cmbLogLevel->clear();
         tabAdvanced_cmbLogLevel->insertItems(0, QStringList()
@@ -1588,6 +1622,10 @@ public:
          << QApplication::translate("frmSettings", "Debug", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("frmSettings", "Trace", 0, QApplication::UnicodeUTF8)
         );
+        lblDelay->setText(QApplication::translate("frmSettings", "Delay before sending events (in milliseconds)", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("frmSettings", "Delay before sending events in these applications:", 0, QApplication::UnicodeUTF8));
+        tabAdvanced_cmdAddDelay->setText(QApplication::translate("frmSettings", "Add", 0, QApplication::UnicodeUTF8));
+        tabAdvanced_cmdRemoveDelay->setText(QApplication::translate("frmSettings", "Remove", 0, QApplication::UnicodeUTF8));
         lblKeyRelease->setText(QApplication::translate("frmSettings", "Don't send event KeyRelease in these applications:", 0, QApplication::UnicodeUTF8));
         tabAdvanced_cmdAddApp->setText(QApplication::translate("frmSettings", "Add", 0, QApplication::UnicodeUTF8));
         tabAdvanced_cmdRemoveApp->setText(QApplication::translate("frmSettings", "Remove", 0, QApplication::UnicodeUTF8));
