@@ -769,11 +769,11 @@ msgid ""
 "StatusIcon, AppIndicator. Default is %s.)\n"
 msgstr ""
 
-#: src/main.c:131
+#: src/main.c:131 src/main.c:142
 #, c-format
 msgid ""
-"  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text. "
-"Default is %s.)\n"
+"  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text, "
+"Directory). Default is %s.)\n"
 msgstr ""
 
 #: src/main.c:132

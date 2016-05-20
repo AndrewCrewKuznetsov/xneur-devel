@@ -794,14 +794,14 @@ msgstr ""
 "  -E, --rendering-engine=<движок>      Движок, используемый для отрисовки "
 "значка (Built-in, StatusIcon, AppIndicator. По умолчанию %s.)\n"
 
-#: src/main.c:131
+#: src/main.c:131 src/main.c:142
 #, c-format
 msgid ""
-"  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text. "
-"Default is %s.)\n"
+"  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text, "
+"Directory). Default is %s.)\n"
 msgstr ""
-"  -S, --show=<режим>                    Режим отображения иконки (Icon, "
-"Flag, Text. По умолчанию %s.)\n"
+"  -S, --show=<режим>                   Режим отображения иконки (Icon, "
+"Flag, Text, Directory. По умолчанию %s.)\n"
 
 #: src/main.c:132
 #, c-format
