@@ -491,14 +491,20 @@ static void program_process_input(struct _program *p)
 				}
 				log_message(TRACE, _("Received MappingNotify (event type %d)"), type);
 
+				p->buffer->uninit(p->buffer);
+				p->correction_buffer->uninit(p->correction_buffer);
+				
 				main_window->uninit_keymap(main_window);
 				
 				xneur_handle_destroy(xconfig->handle);
 				xconfig->handle = xneur_handle_create();
 				
 				main_window->init_keymap(main_window);
+				p->buffer = buffer_init(xconfig->handle, main_window->keymap);
 				p->buffer->handle = xconfig->handle;
 				p->buffer->keymap = main_window->keymap;
+				
+				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
 				p->correction_buffer->handle = xconfig->handle;
 				p->correction_buffer->keymap = main_window->keymap;
 				p->correction_action = ACTION_NONE;
@@ -1823,7 +1829,10 @@ static void program_check_ellipsis(struct _program *p)
 	if ((text[text_len-1] != '.') || 
 		(text[text_len-2] != '.') ||
 		(text[text_len-3] != '.')) 
+	{
+		free(text);
 		return;
+	}
 	
 	log_message (DEBUG, _("Find three points, correction with a ellipsis sign..."));
 
@@ -1838,6 +1847,7 @@ static void program_check_ellipsis(struct _program *p)
 	//p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 	
 	p->correction_action = CORRECTION_ELLIPSIS;
+	free(text);
 }
 
 static void program_check_space_before_punctuation(struct _program *p)
@@ -3073,7 +3083,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			
 			p->buffer->rotate_layout(p->buffer);
 
-			show_notify(NOTIFY_MANUAL_PREVIEW_CHANGE_WORD, p->buffer->get_utf_string(p->buffer));
+			char *string = p->buffer->get_utf_string(p->buffer);
+			show_notify(NOTIFY_MANUAL_PREVIEW_CHANGE_WORD, string);
+			if (string != NULL)
+				free(string);
 			p->buffer->unset_offset(p->buffer, offset);
 			
 			break;

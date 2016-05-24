@@ -157,6 +157,13 @@ static void xneur_load_config(void)
 	}
 	log_message(LOG, _("Total %d keyboard layouts detected"), xconfig->handle->total_languages);
 
+	if (xconfig->handle->total_languages < 2)
+	{
+		log_message(ERROR, _("For correct operation of the program in the system should be set 2 or more keyboard layouts!"));
+		xconfig->uninit(xconfig);
+		exit(EXIT_FAILURE);
+	}
+	
 	log_message(LOG, _("Default keyboard group for all new windows set to %d"), xconfig->default_group);
 	log_message(LOG, _("Manual mode set to %s"), _(xconfig->get_bool_name(xconfig->manual_mode)));
 	log_message(LOG, _("Education mode set to %s"), _(xconfig->get_bool_name(xconfig->educate)));

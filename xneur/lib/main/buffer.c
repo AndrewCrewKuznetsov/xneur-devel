@@ -231,7 +231,8 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		last_log_time = 0;
 		char *app_name = get_wm_class_name(window);
 		fprintf(stream, "</ul>\n<br><font color=\"#FF0000\"><b>%s <font size=\"2\">[%s]</font></font></b><br><ul>\n", app_name, buffer);
-		free(app_name);
+		if (app_name != NULL)
+			free(app_name);
 	}
 
 	if (difftime(curtime, last_log_time) > 300)
@@ -561,6 +562,7 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		{
 			utf_string = tmp;
 			strcat(utf_string, symbol);
+			//free(tmp);
 		}
 	}
 

@@ -104,6 +104,8 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 		XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 		XFlush(main_window->display);
 		log_message(TRACE, _("The event KeyRelease is not sent to the window (ID %d) with name '%s'"), p->owner_window, app_name);
+		if (app_name != NULL)
+			free(app_name);
 		return;
 	}
 
@@ -122,6 +124,8 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 	XFlush(main_window->display);
 	//XTestGrabControl (main_window->display, False);
+	if (app_name != NULL)
+			free(app_name);
 }
 
 static void event_send_backspaces(struct _event *p, int count)
