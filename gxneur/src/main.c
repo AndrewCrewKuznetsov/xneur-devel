@@ -123,7 +123,6 @@ int main(int argc, char *argv[])
 			{
 				printf(_("\nThis option under construction. Sorry.\n"));
 				return EXIT_SUCCESS;
-				break;
 			}
 			case 'e':
 			{

@@ -62,9 +62,13 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 					symbolList[curLayout].symbol = (char *)strdup(curSymbol);
 					symbolList[curLayout].variant = (char *)strdup(curVariant);
 					curLayout++;
-                }
-				curSymbol = (char *) realloc (curSymbol, sizeof(char));
-				curVariant = (char *) realloc (curVariant, sizeof(char));
+				}
+				if (curSymbol != NULL)
+					free(curSymbol);
+				curSymbol = (char *) malloc (sizeof(char));
+				if (curVariant != NULL)
+					free(curVariant);
+				curVariant = (char *) malloc (sizeof(char));
 				curSymbol[0] = '\0';
 				curVariant[0] = '\0';
 			} 
@@ -76,9 +80,13 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 		else if (inSymbol && (isalpha(ch) || ch == '_')) 
 		{
 			int len = strlen(curSymbol);
-			curSymbol = (char *) realloc (curSymbol, sizeof(char)*(len+2));
-			curSymbol[len] = ch;
-			curSymbol[len+1] = '\0';
+			char *tmpSymbol = (char *) realloc (curSymbol, sizeof(char)*(len+2));
+			if (tmpSymbol != NULL)
+			{
+				curSymbol = tmpSymbol;
+				curSymbol[len] = ch;
+				curSymbol[len+1] = '\0';
+			}
 		} 
 		else if (inSymbol && ch == '(') 
 		{
@@ -92,9 +100,13 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 				else
 				{
 					int len = strlen(curVariant);
-					curVariant = (char *) realloc (curVariant, sizeof(char)*(len+2));
-					curVariant[len] = ch;
-					curVariant[len+1] = '\0';
+					char *tmpVariant = (char *) realloc (curVariant, sizeof(char)*(len+2));
+					if (tmpVariant != NULL)
+					{
+						curVariant= tmpVariant;
+						curVariant[len] = ch;
+						curVariant[len+1] = '\0';
+					}
 				}
 			}
 		} 
@@ -108,8 +120,13 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 					symbolList[curLayout].variant = (char *)strdup(curVariant);
 					curLayout++;
 				}
-				curSymbol = (char *) realloc (curSymbol, sizeof(char));
-				curVariant = (char *) realloc (curVariant, sizeof(char));
+				
+				if (curSymbol != NULL)
+					free(curSymbol);
+				curSymbol = (char *) malloc (sizeof(char));
+				if (curVariant != NULL)
+					free(curVariant);
+				curVariant = (char *) malloc (sizeof(char));				
 				curSymbol[0] = '\0';
 				curVariant[0] = '\0';
 				inSymbol = 0;

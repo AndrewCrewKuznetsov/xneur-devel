@@ -149,7 +149,7 @@ void error_msg(const char *msg, ...)
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);	
 	
-	free(buffer);
+	g_free(buffer);
 	va_end(ap);
 }
 
@@ -249,8 +249,8 @@ void xneur_get_logfile()
 	strcat(command, " 2> /dev/stdout");
 
 	FILE *fp = popen(command, "r");
-	free(log_home_path);
-	free(command);
+	g_free(log_home_path);
+	g_free(command);
 	if (fp == NULL)
 		return;
 
@@ -871,7 +871,7 @@ void xneur_preference(void)
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_hotkey));
 	gtk_widget_show(treeview);
 
-	hotkey_names[0] = hotkey_names[0];
+	//hotkey_names[0] = hotkey_names[0];
 	for (int i = 0; i < MAX_HOTKEYS; i++)
 	{
 		GtkTreeIter iter;
@@ -927,7 +927,7 @@ void xneur_preference(void)
 												0, replacement,
 												1, string, 
 												-1);
-		free(replacement);
+		g_free(replacement);
 	}
 
 	cell = gtk_cell_renderer_text_new();
@@ -1091,7 +1091,7 @@ void xneur_preference(void)
 												1, text,
 												2, xconfig->actions[action].command,
 												-1);
-		free(text);
+		g_free(text);
 	}
 
 	cell = gtk_cell_renderer_text_new();
@@ -1310,7 +1310,7 @@ void xneur_preference(void)
 			char * plugin_file = malloc(sizeof(char)*len);
 			snprintf(plugin_file, len, "%s/%s", XNEUR_PLUGIN_DIR, ep->d_name);
 			void *module = dlopen(plugin_file, RTLD_NOW);
-			free(plugin_file);
+			g_free(plugin_file);
 			if(!module)
 			{
 				ep = readdir (dp);
@@ -1864,8 +1864,8 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 
 		if (text == NULL)
 		{
-			free(text_home_path);
-			free(text_path);
+			g_free(text_home_path);
+			g_free(text_path);
 			return;
 		}
 	
@@ -1957,9 +1957,9 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 		widget = GTK_WIDGET(gtk_builder_get_object (builder, "cancelbutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (on_cancelbutton_clicked), ud);
 	
-		free(text);
-		free(text_home_path);
-		free(text_path);
+		g_free(text);
+		g_free(text_home_path);
+		g_free(text_path);
 	}
 }	
 
@@ -2086,7 +2086,7 @@ gboolean save_abbreviation(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *
 
 	g_free(abbreviation);
 	g_free(full_text);
-	free(ptr);
+	g_free(ptr);
 
 	return FALSE;
 }
@@ -2174,7 +2174,7 @@ gboolean save_sound(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, g
 	
 	int i = atoi(gtk_tree_path_to_string(path));
 	if (xconfig->sounds[i].file != NULL)
-		free(xconfig->sounds[i].file);
+		g_free(xconfig->sounds[i].file);
 	
 	if (file_path != NULL)
 	{
@@ -2197,7 +2197,7 @@ gboolean save_osd(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpo
 	
 	int i = atoi(gtk_tree_path_to_string(path));
 	if (xconfig->osds[i].file != NULL)
-		free(xconfig->osds[i].file);
+		g_free(xconfig->osds[i].file);
 	
 	if (string != NULL)
 	{
@@ -2220,7 +2220,7 @@ gboolean save_popup(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, g
 	
 	int i = atoi(gtk_tree_path_to_string(path));
 	if (xconfig->popups[i].file != NULL)
-		free(xconfig->popups[i].file);
+		g_free(xconfig->popups[i].file);
 	
 	if (string != NULL)
 	{
@@ -2323,14 +2323,12 @@ void xneur_save_preference(GtkBuilder* builder)
 
 	// Log send to e-mail
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
-	if (xconfig->mail_keyboard_log != NULL)
-	    free(xconfig->mail_keyboard_log);
+    g_free(xconfig->mail_keyboard_log);
 	xconfig->mail_keyboard_log = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 	
 	// Log send via host
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry4"));
-	if (xconfig->host_keyboard_log != NULL)
-	    free(xconfig->host_keyboard_log);
+    g_free(xconfig->host_keyboard_log);
 	xconfig->host_keyboard_log = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Log port
@@ -2416,8 +2414,7 @@ void xneur_save_preference(GtkBuilder* builder)
 	xconfig->popup_expire_timeout = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 	
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
-	if (xconfig->osd_font != NULL)
-		free(xconfig->osd_font);
+	g_free(xconfig->osd_font);
 	xconfig->osd_font = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Troubleshooting
@@ -2649,7 +2646,7 @@ char* xneur_get_file_content(const char *path)
 	char *content = (char *) malloc((file_len + 2) * sizeof(char)); // + '\n' + '\0'
 	if (fread(content, 1, file_len, stream) != file_len)
 	{
-		free(content);
+		g_free(content);
 		fclose(stream);
 		return NULL;
 	}

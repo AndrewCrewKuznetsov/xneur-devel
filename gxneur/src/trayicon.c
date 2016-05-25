@@ -68,7 +68,7 @@ static void exec_user_action(char *cmd)
 	strcat(command, " 2> /dev/stdout");
 
 	FILE *fp = popen(command, "r");
-	free(command);
+	g_free(command);
 	if (fp == NULL)
 		return;
 
@@ -334,7 +334,7 @@ gboolean clock_check(gpointer dummy)
 		xneur_old_pid = 1;
 	snprintf(ps_command, 1024, "ps -p %d | grep xneur", xneur_old_pid);
 	FILE *fp = popen(ps_command, "r");
-	free (ps_command);
+	g_free (ps_command);
 	if (fp != NULL)
 	{
 		char buffer[NAME_MAX];
@@ -412,8 +412,7 @@ gboolean clock_check(gpointer dummy)
 				layout_name[i] = toupper(layout_name[i]); 
 			tray->image = gtk_label_new ((const gchar *)layout_name);
 			gtk_label_set_justify (GTK_LABEL(tray->image), GTK_JUSTIFY_CENTER);
-			if (layout_name != NULL)
-				free(layout_name);
+			g_free(layout_name);
 		}
 		else
 		{
@@ -435,8 +434,7 @@ gboolean clock_check(gpointer dummy)
 				for (unsigned int i=0; i < strlen(layout_name); i++)
 					layout_name[i] = toupper(layout_name[i]);
 				GdkPixbuf *pb = text_to_gtk_pixbuf (layout_name);
-				if (layout_name != NULL)
-					free(layout_name);
+				g_free(layout_name);
 				pb = gdk_pixbuf_add_alpha(pb, TRUE, 255, 255, 255);
 				gtk_status_icon_set_from_pixbuf(tray->status_icon, pb);
 				g_object_unref(pb);
@@ -464,8 +462,7 @@ gboolean clock_check(gpointer dummy)
 			for (unsigned int i=0; i < strlen(layout_name); i++)
 				layout_name[i] = toupper(layout_name[i]);
 			app_indicator_set_label (tray->app_indicator, layout_name, layout_name);
-			if (layout_name != NULL)
-				free(layout_name);
+			g_free(layout_name);
 			app_indicator_set_icon_full (tray->app_indicator, "", "");
 #endif
 		}
@@ -649,14 +646,14 @@ void create_tray_icon (void)
 					layout_name[i] = toupper(layout_name[i]); 
 				tray->image = gtk_label_new ((const gchar *)layout_name);
 				gtk_label_set_justify (GTK_LABEL(tray->image), GTK_JUSTIFY_CENTER);
-				free(layout_name);
+				g_free(layout_name);
 			}
 			else
 			{
 				char *layout_name = get_active_kbd_symbol (dpy);
 				tray->image = gtk_image_new_from_icon_name(layout_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
 				//tray->image = gtk_image_new_from_icon_name(tray->images[kbd_gr], GTK_ICON_SIZE_LARGE_TOOLBAR);
-				free(layout_name);
+				g_free(layout_name);
 			}
 			gtk_container_add(GTK_CONTAINER(tray->evbox), tray->image);
 			gtk_container_add(GTK_CONTAINER(tray->tray_icon), tray->evbox);
@@ -691,7 +688,7 @@ void create_tray_icon (void)
 				layout_name[i] = toupper(layout_name[i]);
 
 			GdkPixbuf *pb = text_to_gtk_pixbuf (layout_name);
-			free(layout_name);
+			g_free(layout_name);
 			pb = gdk_pixbuf_add_alpha(pb, TRUE, 255, 255, 255);
 			gtk_status_icon_set_from_pixbuf(tray->status_icon, pb);
 			g_object_unref(pb);
@@ -701,7 +698,7 @@ void create_tray_icon (void)
 			char *layout_name = get_active_kbd_symbol (dpy);
 			//gtk_status_icon_set_from_icon_name(tray->status_icon, tray->images[kbd_gr]);
 			gtk_status_icon_set_from_icon_name(tray->status_icon, layout_name);
-			free(layout_name);
+			g_free(layout_name);
 		}
 	}
 	
