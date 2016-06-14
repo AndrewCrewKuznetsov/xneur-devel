@@ -125,7 +125,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	XFlush(main_window->display);
 	//XTestGrabControl (main_window->display, False);
 	if (app_name != NULL)
-			free(app_name);
+		free(app_name);
 }
 
 static void event_send_backspaces(struct _event *p, int count)

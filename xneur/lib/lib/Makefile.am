@@ -11,7 +11,7 @@ libxneur_la_SOURCES =		\
 	xneur.h		
 
 libxneur_la_CFLAGS = -I@top_srcdir@/lib/misc -I@top_srcdir@/lib/main -I@top_srcdir@/lib/ai -I@top_srcdir@/lib/config -I@top_srcdir@/lib/notify  @DEFAULT_CFLAGS@ @X11_CFLAGS@ @ASPELL_CFLAGS@ @ENCHANT_CFLAGS@
-libxneur_la_LDFLAGS = -version-info 18:0:0 @ASPELL_LIBS@ @ENCHANT_LIBS@ @ADDITIONAL_LIBS@
+libxneur_la_LDFLAGS = -version-info 19:0:0 @ASPELL_LIBS@ @ENCHANT_LIBS@ @ADDITIONAL_LIBS@
 libxneur_la_LIBADD = ../misc/libxnmisc.la ../main/libxnmain.la ../ai/libxnai.la ../notify/libxnnotify.la
 
 EXTRA_DIST = $(config_DATA)

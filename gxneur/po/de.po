@@ -285,9 +285,8 @@ msgid "Show flag"
 msgstr ""
 
 #: ui/config.ui:96
-#, fuzzy
 msgid "Show text"
-msgstr "OSD-Text"
+msgstr ""
 
 #: ui/config.ui:99
 msgid "Show programm icon"
