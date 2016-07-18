@@ -232,6 +232,14 @@ static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus
 static void focus_update_grab_events(struct _focus *p, int mode)
 {
 	char *owner_window_name = get_wm_class_name(p->owner_window);
+
+	if (mode) {};
+	if (xconfig->tracking_mouse)
+		grab_button(p->parent_window, TRUE);
+	grab_spec_keys(p->owner_window, TRUE);
+	set_event_mask(p->owner_window, INPUT_HANDLE_MASK | FOCUS_CHANGE_MASK | EVENT_KEY_MASK);
+
+	/*
 	if (mode == LISTEN_DONTGRAB_INPUT)
 	{
 		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' OFF"), p->owner_window, owner_window_name);
@@ -243,7 +251,6 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 		grab_spec_keys(p->owner_window, FALSE);
 
 		set_mask_to_window(p->owner_window, FOCUS_CHANGE_MASK);
-		//set_event_mask(p->owner_window, None);
 	}
 	else
 	{
@@ -266,7 +273,8 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 			set_event_mask(p->owner_window, FOCUS_CHANGE_MASK);
 		}
 	}
-
+	*/
+	
 	p->last_parent_window = p->parent_window;
 	
 	if (owner_window_name != NULL)

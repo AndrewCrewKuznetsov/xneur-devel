@@ -345,13 +345,13 @@ static void program_process_input(struct _program *p)
 				}
 
 				log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), XKeysymToString(p->event->get_cur_keysym(p->event)), type);
-				
+
 				// Save received event
 				p->event->default_event = p->event->event;
 
 				// Processing received event
 				p->on_key_action(p, type);
-		
+
 				// Resend special key back to window
 				if (p->event->default_event.xkey.keycode != 0)
 				{
@@ -893,6 +893,9 @@ static void program_perform_user_action(struct _program *p, int action)
 
 static void program_perform_auto_action(struct _program *p, int action)
 {
+	if (p->focus->last_focus == FOCUS_EXCLUDED)
+		return;
+	
 	struct _buffer *string = p->buffer;
 	switch (action)
 	{
