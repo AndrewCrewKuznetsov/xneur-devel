@@ -232,10 +232,16 @@ static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus
 static void focus_update_grab_events(struct _focus *p, int mode)
 {
 	char *owner_window_name = get_wm_class_name(p->owner_window);
-
-	if (mode) {};
-	if (xconfig->tracking_mouse)
-		grab_button(p->parent_window, TRUE);
+	
+	if (mode == LISTEN_DONTGRAB_INPUT)
+	{
+		grab_button(p->parent_window, FALSE);
+	}
+	else
+	{
+		if (xconfig->tracking_mouse)
+			grab_button(p->parent_window, TRUE);
+	}
 	grab_spec_keys(p->owner_window, TRUE);
 	set_event_mask(p->owner_window, INPUT_HANDLE_MASK | FOCUS_CHANGE_MASK | EVENT_KEY_MASK);
 

@@ -169,9 +169,9 @@ static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 		case XK_Tab:
 			return KLB_TAB;
 		case XK_space:
+		case XK_minus:
 		/*case XK_equal:
 		case XK_plus:
-		case XK_minus:
 		case XK_slash:
 		case XK_bar:
 		case XK_backslash:
@@ -1038,7 +1038,7 @@ static void program_perform_auto_action(struct _program *p, int action)
 			
 			p->add_word_to_pattern(p, get_curr_keyboard_group());
 
-			if (action == KLB_SPACE)
+			if (sym == ' ')
 			{
 				p->check_two_space(p);
 			}
