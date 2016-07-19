@@ -212,6 +212,13 @@ static void xneur_load_config(void)
 	log_message(LOG, _("Tracking input mode set to %s"), _(xconfig->get_bool_name(xconfig->tracking_input)));
 	log_message(LOG, _("Tracking mouse mode set to %s"), _(xconfig->get_bool_name(xconfig->tracking_mouse)));
 	log_message(LOG, _("Delay before sendind events to application set to (in milliseconds) %d"), xconfig->send_delay);
+
+	// Delimeters
+	log_message(LOG, _("Word Delimeters:"));
+	for (int i = 0; i < xconfig->delimeters_count; i++)
+	{
+		log_message(LOG, "    %s (0x%x)", XKeysymToString(xconfig->delimeters[i]), xconfig->delimeters[i]);
+	}
 }
 
 static void xneur_set_lock(void)
@@ -285,7 +292,7 @@ static void xneur_reload(int status)
 {
 	if (status){}
 
-	log_message(LOG, _("Caught SIGHUP, reloading configuration file"));
+	log_message(LOG, _("Caught SIGHUP/SIGCONT, reloading configuration file"));
 	show_notify(NOTIFY_XNEUR_RELOAD, NULL);
 	
 	sound_uninit();
@@ -415,7 +422,7 @@ static void xneur_trap(int sig, sg_handler handler)
 
 	if (sigaction(sig, &sa, NULL) == -1)
 	{
-		log_message(ERROR, _("Can't trap signal"));
+		log_message(ERROR, _("Can't trap signal %d"), sig);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -432,6 +439,8 @@ int main(int argc, char *argv[])
 	xneur_trap(SIGINT, xneur_terminate);
 	xneur_trap(SIGHUP, xneur_reload);
 	xneur_trap(SIGCHLD, xneur_zombie);
+	xneur_trap(SIGTSTP, xneur_terminate);
+	xneur_trap(SIGCONT, xneur_reload);
 	
 	xneur_get_options(argc, argv);
 	
