@@ -51,7 +51,7 @@ int is_upper_non_alpha_cyr(char symbol)
 	return FALSE;
 }
 
-int get_last_word_offset(const char *string, int string_len)
+/*int get_last_word_offset(const char *string, int string_len)
 {
 	int len = string_len;
 	while (len != 0 && (isspace(string[len - 1]) || (string[len - 1] == '-')))
@@ -75,7 +75,7 @@ char* get_last_word(char *string)
 		return NULL;
 
 	return string + offset;
-}
+}*/
 
 int trim_word(char *word, int len)
 {

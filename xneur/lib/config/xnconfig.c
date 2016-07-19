@@ -21,6 +21,8 @@
 #  include "config.h"
 #endif
 
+#define XK_PUBLISHING
+#include <X11/keysym.h>
 #include <X11/XKBlib.h>
 
 #include <stdlib.h>
@@ -70,7 +72,7 @@ static const char *option_names[] = 	{
 						"PopupExpireTimeout", "CorrectTwoSpaceWithCommaAndSpace","CorrectTwoMinusWithDash",
 						"CorrectCWithCopyright", "CorrectTMWithTrademark", "CorrectRWithRegistered",
 						"CorrectDashWithEmDash","CorrectThreePointsWithEllipsis", "CorrectMisprint", "CheckSimilarWords",
-						"TroubleshootTab", "DelaySendingEventApp" 
+						"TroubleshootTab", "DelaySendingEventApp", "Delimeter" 
 					};
 static const char *action_names[] =	{
 						"ChangeWord", "TranslitWord", "ChangecaseWord", "PreviewChangeWord",
@@ -991,6 +993,35 @@ static void parse_line(struct _xneur_config *p, char *line)
 			p->delay_send_key_apps->add(p->delay_send_key_apps, full_string);
 			break;
 		}
+		case 68: // Get Delimeters
+		{
+			KeySym symbol = XStringToKeysym(full_string);
+			if ((symbol != NoSymbol) &&
+			    (symbol != XK_BackSpace) &&
+			    (symbol != XK_Pause) &&
+			    (symbol != XK_Escape) &&
+			    (symbol != XK_Sys_Req) &&
+			    (symbol != XK_Delete) &&
+			    (symbol != XK_Return) &&
+			    (symbol != XK_Tab)) 
+			{
+				int is_double = FALSE;
+				for (int i = 0; i < p->delimeters_count; i++)
+				{
+					if (p->delimeters[i] == symbol)
+						is_double = TRUE;
+				}
+				if (!is_double) 
+				{
+					p->delimeters = (KeySym *) realloc(p->delimeters, sizeof(KeySym) * (p->delimeters_count + 1));
+					p->delimeters_string = (char *) realloc(p->delimeters_string, sizeof(char) * (p->delimeters_count + 2));
+
+					p->delimeters[p->delimeters_count] = symbol;
+					p->delimeters_count++;
+				}
+			}
+			break;
+		}
 	}
 	free(full_string);
 }
@@ -1226,6 +1257,14 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "#LogLevel Trace\n");
 	fprintf(stream, "LogLevel %s\n\n", p->get_log_level_name(p));
 
+	fprintf(stream, "# Word Delimeters\n");
+	fprintf(stream, "#Delimeter space\n");
+	for (int i = 0; i < p->delimeters_count; i++)
+	{
+		fprintf(stream, "Delimeter %s\n", XKeysymToString(p->delimeters[i]));
+	}
+	fprintf(stream, "\n");
+	
 	fprintf(stream, "# Define unused languages\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#ExcludeLanguage de\n");
@@ -1654,6 +1693,13 @@ static void xneur_config_uninit(struct _xneur_config *p)
 {
 	free_structures(p);
 
+	if (p->delimeters != NULL)
+		free(p->delimeters);
+	if (p->delimeters_string != NULL)
+		free(p->delimeters_string);
+	
+	p->delimeters_count = 0;
+	
 	free(p->hotkeys);
 	free(p->sounds);
 	free(p->osds);
@@ -1678,7 +1724,13 @@ struct _xneur_config* xneur_config_init(void)
 
 	//char *a = "ghbdtn";
 	//xneur_get_layout(p->handle, a);
-	
+
+	p->delimeters = (KeySym *) malloc(sizeof(KeySym));
+	p->delimeters_string = (char *) malloc(sizeof(char));
+	p->delimeters[p->delimeters_count] = XK_space;
+	p->delimeters_string[p->delimeters_count] = '\0';
+	p->delimeters_count++;
+
 	p->hotkeys = (struct _xneur_hotkey *) malloc(MAX_HOTKEYS * sizeof(struct _xneur_hotkey));
 	bzero(p->hotkeys, MAX_HOTKEYS * sizeof(struct _xneur_hotkey));
 

@@ -267,7 +267,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 	int lang = 0;
 	for (lang = 0; lang < handle->total_languages; lang++)
 	{
-		char *word = strdup(get_last_word(p->i18n_content[lang].content));
+		char *word = strdup(p->get_last_word(p, p->i18n_content[lang].content));
 		del_final_numeric_char(word);
 		
 		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded)
@@ -279,7 +279,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 			continue;
 		}
 
-		int word_len = strlen(get_last_word(p->content));
+		int word_len = strlen(p->get_last_word(p, p->content));
 		
 		if ((word_len > 250) || (word_len < 2))
 		{
@@ -401,7 +401,7 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
 	log_message(DEBUG, _("Processing word:"));
 	for (int i = 0; i < handle->total_languages; i++)
 	{
-		word[i] = strdup(get_last_word(p->i18n_content[i].content));
+		word[i] = strdup(p->get_last_word(p, p->i18n_content[i].content));
 		word_base[i] = word[i];
 		del_final_numeric_char(word[i]);
 
@@ -413,14 +413,14 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
 		}
 		word[i] = word[i] + offset;
 		
-		word_unchanged[i] = strdup(get_last_word(p->i18n_content[i].content_unchanged));
+		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
 		word_unchanged_base[i] = word_unchanged[i];
 		word_unchanged[i] = word_unchanged[i] + offset;
 		del_final_numeric_char(word_unchanged[i]);
 		
 		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
 
-		sym_len[i] = p->i18n_content[i].symbol_len + get_last_word_offset(p->content, strlen(p->content));
+		sym_len[i] = p->i18n_content[i].symbol_len + p->get_last_word_offset(p, p->content, strlen(p->content));
 	}
 
 	log_message(DEBUG, _("Start word processing..."));
@@ -442,7 +442,7 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
 	
 	// If not found in dictionary, try to find in proto
 	int len = strlen(p->content);
-	int offset = get_last_word_offset(p->content, len);
+	int offset = p->get_last_word_offset(p, p->content, len);
 	if (lang == NO_LANGUAGE)
 		lang = get_proto_lang(handle, word, sym_len, len, offset, cur_lang, PROTO_LEN);
 
@@ -476,7 +476,7 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 	log_message(DEBUG, _("Processing word:"));
 	for (int i = 0; i < handle->total_languages; i++)
 	{
-		word[i] = strdup(get_last_word(p->i18n_content[i].content));
+		word[i] = strdup(p->get_last_word(p, p->i18n_content[i].content));
 		word_base[i] = word[i];
 		del_final_numeric_char(word[i]);
 
@@ -488,14 +488,14 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 		}
 		word[i] = word[i] + offset;
 		
-		word_unchanged[i] = strdup(get_last_word(p->i18n_content[i].content_unchanged));
+		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
 		word_unchanged_base[i] = word_unchanged[i];
 		word_unchanged[i] = word_unchanged[i] + offset;
 		del_final_numeric_char(word_unchanged[i]);
 		
 		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
 
-		sym_len[i] = p->i18n_content[i].symbol_len + get_last_word_offset(p->content, strlen(p->content));
+		sym_len[i] = p->i18n_content[i].symbol_len + p->get_last_word_offset(p, p->content, strlen(p->content));
 	}
 
 	log_message(DEBUG, _("Start word processing..."));
@@ -521,7 +521,7 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 	
 	// If not found in dictionary, try to find in proto
 	int len = strlen(p->content);
-	int offset = get_last_word_offset(p->content, len);
+	int offset = p->get_last_word_offset(p, p->content, len);
 	if (lang == NO_LANGUAGE)
 		lang = get_proto_lang(handle, word, sym_len, len, offset, cur_lang, PROTO_LEN);
 

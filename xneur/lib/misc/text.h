@@ -21,8 +21,8 @@
 #define _TEXT_H_
 
 int   is_upper_non_alpha_cyr(char symbol);
-int   get_last_word_offset(const char *string, int string_len);
-char* get_last_word(char *string);
+//int   get_last_word_offset(const char *string, int string_len);
+//char* get_last_word(char *string);
 int   trim_word(char *word, int len);
 void  lower_word_inplace(char *word);
 char* lower_word(const char *word, int len);

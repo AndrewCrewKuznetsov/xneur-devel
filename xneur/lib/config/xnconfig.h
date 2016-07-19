@@ -33,6 +33,8 @@
 #define MAX_HOTKEYS			24
 
 #include <sys/types.h>	
+#define XK_PUBLISHING
+#include <X11/XKBlib.h>
 #include "xneur.h"
 
 enum _flag_action
@@ -207,6 +209,10 @@ struct _xneur_config
 
 	int   actions_count;				// Count of actions
 
+	KeySym *delimeters;
+	char *delimeters_string;
+	int delimeters_count;
+	
 	int   manual_mode;				// Enable manual processing mode
 	int   log_level;				// Maximum level of log messages to print
 	int   send_delay;				// Delay before send event (in milliseconds)

@@ -168,9 +168,9 @@ static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 			return KLB_ENTER;
 		case XK_Tab:
 			return KLB_TAB;
-		case XK_space:
+		/*case XK_space:
 		case XK_minus:
-		/*case XK_equal:
+		case XK_equal:
 		case XK_plus:
 		case XK_slash:
 		case XK_bar:
@@ -189,7 +189,14 @@ static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 		case XK_8:
 		case XK_9:
 		case XK_0:*/
-			return KLB_SPACE;
+		default:
+		{
+			for (int i=0; i < xconfig->delimeters_count; i++)
+			{
+				if (xconfig->delimeters[i] == key)
+					return KLB_SPACE;
+			}
+		}
 	}
 
 	/*if (modifier_mask & Mod1Mask || modifier_mask & Mod4Mask)
@@ -1409,7 +1416,7 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			char *utf_string = p->buffer->get_utf_string(p->buffer);
 
 			// Check last word to acronym list
-			char *word = get_last_word(utf_string);
+			char *word = p->buffer->get_last_word(p->buffer, utf_string);
 			if (!word)
 			{
 				free(utf_string);
@@ -1454,7 +1461,7 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 				// Replace Abbreviation
 				log_message(DEBUG, _("Found Abbreviation '%s' '%s'. Replacing to '%s'."), replacement, word, string);
 
-				int backspaces_count = strlen(get_last_word(p->buffer->content));
+				int backspaces_count = strlen(p->buffer->get_last_word(p->buffer, p->buffer->content));
 				if (p->last_action == ACTION_AUTOCOMPLETION)
 					backspaces_count++; 
 				p->event->send_backspaces(p->event, backspaces_count);
@@ -1501,7 +1508,7 @@ static int program_check_lang_last_word(struct _program *p)
 	if (p->app_forced_mode != FORCE_MODE_AUTO && xconfig->manual_mode)
 		return FALSE;
 
-	const char *word = get_last_word(p->buffer->content);
+	const char *word = p->buffer->get_last_word(p->buffer, p->buffer->content);
 	if (!word)
 		return FALSE;
 
@@ -1566,7 +1573,7 @@ static int program_check_lang_last_syllable(struct _program *p)
 	if (p->app_forced_mode != FORCE_MODE_AUTO && xconfig->manual_mode)
 		return FALSE;
 
-	const char *word = get_last_word(p->buffer->content);
+	const char *word = p->buffer->get_last_word(p->buffer, p->buffer->content);
 	if (!word)
 		return FALSE;
 
@@ -1608,7 +1615,7 @@ static void program_check_caps_last_word(struct _program *p)
 	if (!xconfig->correct_incidental_caps)
 		return;
 	
-	int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+	int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 	if (!(p->buffer->keycode_modifiers[offset] & LockMask) || !(p->buffer->keycode_modifiers[offset] & ShiftMask))
 		return;
@@ -1637,7 +1644,7 @@ static void program_check_tcl_last_word(struct _program *p)
 	if (!xconfig->correct_two_capital_letter)
 		return;
 
-	int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+	int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 	if (!isalpha(p->buffer->content[offset]))
 		return;
@@ -1682,7 +1689,7 @@ static void program_check_two_space(struct _program *p)
 	if (p->buffer->content[p->buffer->cur_pos-1] != ' ')
 		return;
 
-	char *word = strdup(get_last_word(p->buffer->i18n_content[get_curr_keyboard_group()].content_unchanged));
+	char *word = strdup(p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[get_curr_keyboard_group()].content_unchanged));
 	if (word == NULL)
 		return;
 
@@ -2131,7 +2138,7 @@ static void program_check_pattern(struct _program *p)
 	if (p->app_autocompletion_mode == AUTOCOMPLETION_EXCLUDED)
 		return;
 	
-	char *tmp = get_last_word(p->buffer->content);
+	char *tmp = p->buffer->get_last_word(p->buffer, p->buffer->content);
 	if (tmp == NULL)
 		return;
 	
@@ -2139,7 +2146,7 @@ static void program_check_pattern(struct _program *p)
 		return;
 
 	int lang = get_curr_keyboard_group();
-	tmp = get_last_word(p->buffer->i18n_content[lang].content);
+	tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content);
 
 	char *word = strdup(tmp);
 
@@ -2224,7 +2231,7 @@ static void program_rotate_pattern(struct _program *p)
 	if (p->last_action != ACTION_AUTOCOMPLETION)
 		return;
 	
-	char *tmp = get_last_word(p->buffer->content);
+	char *tmp = p->buffer->get_last_word(p->buffer, p->buffer->content);
 	if (tmp == NULL)
 		return;
 	
@@ -2232,7 +2239,7 @@ static void program_rotate_pattern(struct _program *p)
 		return;
 
 	int lang = get_curr_keyboard_group();
-	tmp = get_last_word(p->buffer->i18n_content[lang].content);
+	tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content);
 
 	char *word = strdup(tmp);
 
@@ -2312,7 +2319,7 @@ static void program_check_misprint(struct _program *p)
 	if (xconfig->handle->languages[lang].disable_auto_detection || xconfig->handle->languages[lang].excluded)
 		return;
 
-	char *word = strdup(get_last_word(p->buffer->i18n_content[lang].content_unchanged));
+	char *word = strdup(p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content_unchanged));
 	
 	del_final_numeric_char(word);
 
@@ -2467,7 +2474,7 @@ static void program_check_misprint(struct _program *p)
 ;
 		p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 		
-		int backspaces_count = p->buffer->cur_pos - get_last_word_offset (p->buffer->content, p->buffer->cur_pos) - offset;
+		int backspaces_count = p->buffer->cur_pos - p->buffer->get_last_word_offset (p->buffer, p->buffer->content, p->buffer->cur_pos) - offset;
 		p->event->send_backspaces(p->event, backspaces_count);
 
 		if (p->last_action == ACTION_AUTOCOMPLETION)
@@ -2552,7 +2559,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		{
 			if (p->correction_action == CORRECTION_NONE) 
 			{
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2566,10 +2573,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			}
 			else if (p->correction_action == CORRECTION_INCIDENTAL_CAPS)
 			{
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 				
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2591,7 +2598,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		{
 			if (p->correction_action == CORRECTION_NONE) 
 			{
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2605,10 +2612,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			}
 			else if (p->correction_action == CORRECTION_TWO_CAPITAL_LETTER)
 			{
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 				
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2700,7 +2707,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			{
 				p->event->send_backspaces(p->event, 2);
 				
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 				
 				KeyCode kc = 0;
@@ -2762,10 +2769,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			{
 				p->event->send_spaces(p->event, 2);
 				
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2819,10 +2826,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			{
 				p->event->send_spaces(p->event, 3);
 				
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2876,10 +2883,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			{
 				p->event->send_spaces(p->event, 2);
 
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2934,10 +2941,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			{
 				p->event->send_spaces(p->event, 2);
 				
-				p->buffer->set_content(p->buffer, get_last_word(p->correction_buffer->content));
+				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
 
-				int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+				int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
@@ -2954,7 +2961,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_TO_LAYOUT_0:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -2974,7 +2981,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_TO_LAYOUT_1:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -2994,7 +3001,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_TO_LAYOUT_2:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3014,7 +3021,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_TO_LAYOUT_3:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3034,10 +3041,10 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_TRANSLIT:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 			p->buffer->set_offset(p->buffer, offset);
 			int curr_lang = get_curr_keyboard_group();
-			char *text = strdup(get_last_word(p->buffer->i18n_content[curr_lang].content));
+			char *text = strdup(p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[curr_lang].content));
 			p->buffer->unset_offset(p->buffer, offset);
 
 			convert_text_to_translit(&text);
@@ -3057,7 +3064,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_CHANGECASE:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3079,7 +3086,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_WORD_PREVIEW_CHANGE:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3096,7 +3103,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_SYLL_TO_LAYOUT_0:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3114,7 +3121,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_SYLL_TO_LAYOUT_1:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3132,7 +3139,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_SYLL_TO_LAYOUT_2:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3150,7 +3157,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_SYLL_TO_LAYOUT_3:
 		{
-			int offset = get_last_word_offset(p->buffer->content, p->buffer->cur_pos);
+			int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
@@ -3213,7 +3220,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		{
 			if (p->correction_action == CORRECTION_MISPRINT) 
 			{
-				int backspaces_count = p->buffer->cur_pos - get_last_word_offset (p->correction_buffer->content, p->correction_buffer->cur_pos);
+				int backspaces_count = p->buffer->cur_pos - p->correction_buffer->get_last_word_offset(p->correction_buffer, p->correction_buffer->content, p->correction_buffer->cur_pos);
 				int offset = p->buffer->cur_pos - p->correction_buffer->cur_pos;
 				
 				p->buffer->set_content(p->buffer, p->correction_buffer->content);
@@ -3242,7 +3249,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 
 static void program_add_word_to_dict(struct _program *p, int new_lang)
 {
-	char *tmp = get_last_word(p->buffer->content);
+	char *tmp = p->buffer->get_last_word(p->buffer, p->buffer->content);
 	if (tmp == NULL)
 		return;
 
@@ -3251,7 +3258,7 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 	{
 		if (lang != new_lang)
 		{
-			tmp = get_last_word(p->buffer->i18n_content[lang].content);
+			tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content);
 
 			char *curr_word = strdup(tmp);
 	
@@ -3291,7 +3298,7 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 	
 	struct _list_char *new_temp_dictionary = xconfig->handle->languages[new_lang].temp_dictionary;
 
-	tmp = get_last_word(p->buffer->i18n_content[new_lang].content);
+	tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[new_lang].content);
 
 	char *new_word = strdup(tmp);
 
@@ -3333,7 +3340,7 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 	{
 		if (lang != new_lang)
 		{
-			tmp = get_last_word(p->buffer->i18n_content[lang].content);
+			tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content);
 
 			char *curr_word = strdup(tmp);
 	
@@ -3398,14 +3405,14 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 	//if (!xconfig->autocompletion)
 	//	return;
 
-	char *tmp = get_last_word(p->buffer->content);
+	char *tmp = p->buffer->get_last_word(p->buffer, p->buffer->content);
 	if (tmp == NULL)
 		return;
 
 	if (strlen(tmp) < MIN_PATTERN_LEN)
 		return;
 	
-	tmp = get_last_word(p->buffer->i18n_content[new_lang].content);
+	tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[new_lang].content);
 
 	char *new_word = strdup(tmp);
 
@@ -3435,7 +3442,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 		if (i == new_lang)
 			continue;
 		
-		tmp = get_last_word(p->buffer->i18n_content[i].content);
+		tmp = p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[i].content);
 		char *old_word = strdup(tmp);
 
 		len = trim_word(old_word, strlen(tmp));

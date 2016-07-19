@@ -64,6 +64,8 @@ struct _buffer
 	char*(*get_utf_string_on_kbd_group) (struct _buffer *p, int group);
 	void (*set_offset) (struct _buffer *p, int offset);
 	void (*unset_offset) (struct _buffer *p, int offset);
+	char*(*get_last_word) (struct _buffer *p, char *string);
+	int (*get_last_word_offset) (struct _buffer *p, const char *string, int string_len);
 	void (*uninit) (struct _buffer *p);
 };
 

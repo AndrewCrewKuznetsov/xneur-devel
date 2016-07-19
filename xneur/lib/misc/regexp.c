@@ -35,7 +35,7 @@ int check_regexp_match(const char *str, const char *pattern)
 	const char *error;
 	int erroffset;
 	
-	log_message(DEBUG, "Processing word '%s' against regular expression '%s'", str, pattern);
+	//log_message(DEBUG, "Processing word '%s' against regular expression '%s'", str, pattern);
 	
 	const unsigned char *tables = pcre_maketables();
 	pcre *re = pcre_compile(pattern, options, &error, &erroffset, tables);

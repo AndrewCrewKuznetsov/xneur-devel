@@ -624,6 +624,75 @@ static void buffer_unset_offset(struct _buffer *p, int offset)
 	p->cur_pos		+= offset;
 }
 
+int buffer_get_last_word_offset(struct _buffer *p, const char *string, int string_len)
+{
+	// Initial delimeters string concatenation
+	if (strlen(xconfig->delimeters_string) == 0) 
+	{
+		for (int i = 0; i < xconfig->delimeters_count; i++)
+		{
+			char *symbol = p->keymap->keycode_to_symbol(p->keymap, XKeysymToKeycode(p->keymap->display, xconfig->delimeters[i]), -1, 0); 
+			if (strlen(symbol) == 1)
+				strcat(xconfig->delimeters_string, symbol);
+		}
+		//log_message (DEBUG,"'%s'", xconfig->delimeters_string);
+	}
+	// End of initial delimeters string concatenation
+	
+	int len = string_len;
+	while (len != 0 && ((isspace(string[len - 1]) || (strchr(xconfig->delimeters_string, string[len - 1]) != NULL))))
+		len--;
+
+	/*int is_delim;
+	do 
+	{	
+		log_message (DEBUG, "code 0x%x", p->keycode[len - 1]);
+		is_delim = FALSE;
+		for (int i = 0; i < xconfig->delimeters_count; i++)
+		{			
+			if (xconfig->delimeters[i] == p->keycode[len - 1])
+			{
+				is_delim = TRUE;
+			}
+		}
+		if (is_delim)
+			len--;
+	} while ((len != 0) && (is_delim));*/
+	
+	if (len == 0)
+		return string_len;
+
+	while (len != 0 && !isspace(string[len - 1]) && (strchr(xconfig->delimeters_string, string[len - 1]) == NULL))
+		len--;
+
+	/*int is_symbol;
+	do 
+	{
+		is_symbol = TRUE;
+		for (int i = 0; i < xconfig->delimeters_count; i++)
+		{
+			if (xconfig->delimeters[i] == p->keycode[len - 1])
+				is_symbol = FALSE;
+		}
+		if (is_symbol)
+			len--;		
+	} while ((len != 0) && (is_symbol));
+	log_message (DEBUG, "len2 %d", len);*/
+	
+	return len;
+}
+
+char* buffer_get_last_word(struct _buffer *p, char *string)
+{
+	int len = strlen(string);
+
+	int offset = buffer_get_last_word_offset(p, string, len);
+	if (offset == -1)
+		return NULL;
+
+	return string + offset;
+}
+
 static void buffer_uninit(struct _buffer *p)
 {
 	free(p->keycode_modifiers);
@@ -691,6 +760,8 @@ struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap
 	p->get_utf_string_on_kbd_group	= buffer_get_utf_string_on_kbd_group;
 	p->set_offset		= buffer_set_offset;
 	p->unset_offset		= buffer_unset_offset;
+	p->get_last_word	= buffer_get_last_word;
+	p->get_last_word_offset	= buffer_get_last_word_offset;
 	p->uninit		= buffer_uninit;
 
 	return p;
