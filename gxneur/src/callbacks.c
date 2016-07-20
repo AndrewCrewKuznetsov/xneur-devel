@@ -321,8 +321,10 @@ static gboolean save_regexp(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter 
 	fputs("\n", stream);
 
 	// end write
-	g_free(letters);
-	g_free(condition);
+	if (letters != NULL)
+		g_free(letters);
+	if (condition != NULL)
+		g_free(condition);
 
 	return FALSE;
 }
@@ -343,7 +345,8 @@ void on_okbutton_clicked(GtkButton *button, gpointer user_data)
 	
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->x, "dialog1"));
 	gtk_widget_destroy(window);
-	g_free(user_data);
+	if (user_data!= NULL)
+		g_free(user_data);
 }
 
 void on_cancelbutton_clicked(GtkButton *button, gpointer user_data)
@@ -352,7 +355,8 @@ void on_cancelbutton_clicked(GtkButton *button, gpointer user_data)
 
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->x, "dialog1"));
 	gtk_widget_destroy(window);
-	g_free(user_data);
+	if (user_data != NULL)
+		g_free(user_data);
 }
 
 // Parse keyboard binds
@@ -367,9 +371,12 @@ gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer user
 
 	gtk_entry_set_text(GTK_ENTRY(widget), mkey);
 
-	g_free(mkey);
-	g_free(keycode);
-	g_free(modifiers);
+	if (mkey != NULL)
+		g_free(mkey);
+	if (keycode != NULL)
+		g_free(keycode);
+	if (modifiers != NULL)
+		g_free(modifiers);
 		
 	return FALSE;
 }

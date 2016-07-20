@@ -79,7 +79,8 @@ int gxneur_config_read_int(const char* key, int* value)
 		gconf_value_free(gcValue);
 	}
 
-	g_free(k);
+	if (k != NULL)
+		g_free(k);
 	
 	return result;
 }
@@ -102,13 +103,17 @@ int gxneur_config_read_str(const char* key, gchar** value)
 	if(gcValue != NULL) 
 	{
 		if(gcValue->type == GCONF_VALUE_STRING)
-			g_free(*value),
+		{
+			if (*value != NULL)
+				g_free(*value);
 			*value = g_strdup(gconf_value_get_string(gcValue));
-			result = 0;
+		}
+		result = 0;
 		gconf_value_free(gcValue);
 	}
 
-	g_free(k);
+	if (k != NULL)
+		g_free(k);
 	return result;
 }
 
@@ -131,7 +136,8 @@ int gxneur_config_write_int(const char* key, int value, gboolean send_notify)
 	else if (send_notify)
 		gconf_client_notify(gconfClient(), k);
 
-	g_free(k);
+	if (k != NULL)
+		g_free(k);
 
 	return result;
 }
@@ -155,7 +161,8 @@ int gxneur_config_write_str(const char* key, const char* value, gboolean send_no
 	else if (send_notify)
 		gconf_client_notify(gconfClient(), k);
 
-	g_free(k);
+	if (k != NULL)
+		g_free(k);
 
 	return result;
 }
@@ -203,7 +210,8 @@ int gxneur_config_add_notify(const char* key, gxneur_config_notify_callback call
                           NULL,
                           NULL);
 
-	g_free(k);
+	if (k != NULL)
+		g_free(k);
 
 	return 0;
 }
