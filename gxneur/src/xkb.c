@@ -159,8 +159,10 @@ char *get_active_kbd_symbol(Display *dpy)
 	
 	for (int i = 0; i < desc->ctrls->num_groups; i++)
 	{
-		free(xkb_names[i].symbol);
-		free(xkb_names[i].variant);
+		if (xkb_names[i].symbol != NULL)
+			free(xkb_names[i].symbol);
+		if (xkb_names[i].variant != NULL)
+			free(xkb_names[i].variant);
 	}
 	XkbFreeControls(desc, XkbGroupsWrapMask, True);
 	XkbFreeNames(desc, XkbSymbolsNameMask, True);
