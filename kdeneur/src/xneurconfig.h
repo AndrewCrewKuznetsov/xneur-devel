@@ -1,6 +1,9 @@
 #ifndef XNEURCONFIG_H
 #define XNEURCONFIG_H
 
+#include <qdatastream.h>
+#include <qmetatype.h>
+
 #include <QString>
 #include <QProcess>
 #include <QObject>

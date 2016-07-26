@@ -1,3 +1,15 @@
+#include <qdatastream.h>
+#include <qmetatype.h>
+
+#include <QString>
+#include <QProcess>
+#include <QObject>
+#include <QDebug>
+#include <QHash>
+#include <QDir>
+#include <QLibrary>
+#include <qwindowdefs.h>
+
 extern "C"
 {
     #include <unistd.h>
@@ -7,6 +19,7 @@ extern "C"
 }
 
 #include "xneurconfig.h"
+
 #define MAX_LANGUAGES 4
 #define TOTAL_MODIFER 4
 #define LANGUAGES_DIR "languages"
