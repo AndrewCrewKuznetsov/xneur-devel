@@ -587,7 +587,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 			if (p->osds[osd].file == NULL)
 				p->osds[osd].enabled = FALSE;
 
-			if (tmp ! = NULL)
+			if (tmp != NULL)
 				free(tmp);
 
 			break;
@@ -644,7 +644,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 			if (p->popups[popup].file == NULL)
 				p->popups[popup].enabled = FALSE;
 
-			if (tmp ! = NULL)
+			if (tmp != NULL)
 				free(tmp);
 			
 			break;
