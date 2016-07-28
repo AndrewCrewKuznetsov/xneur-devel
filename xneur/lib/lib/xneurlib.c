@@ -116,7 +116,8 @@ struct _xneur_handle *xneur_handle_create (void)
 
 	if (!(kbd_desc_ptr = XkbAllocKeyboard()))
 	{
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 	
@@ -137,7 +138,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 
@@ -152,7 +154,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 
@@ -161,7 +164,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 	Window rw = RootWindow(display, DefaultScreen(display));
@@ -181,7 +185,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 	
@@ -197,7 +202,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 	
@@ -211,7 +217,8 @@ struct _xneur_handle *xneur_handle_create (void)
 		{
 			XCloseDisplay(display);
 			XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-			free(handle);
+			if (handle != NULL)
+				free(handle);
 			return NULL;
 		}
 
@@ -228,7 +235,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 	//log_message(ERROR, "%s", 
@@ -271,7 +279,8 @@ struct _xneur_handle *xneur_handle_create (void)
 	
 	if (handle->total_languages == 0)
 	{
-		free(handle);
+		if (handle != NULL)
+			free(handle);
 		return NULL;
 	}
 #ifdef WITH_ASPELL
@@ -391,7 +400,8 @@ struct _xneur_handle *xneur_handle_create (void)
 				if (enchant_broker_dict_exists(handle->enchant_broker, dict_name) == FALSE)
 				{
 					handle->has_enchant_checker[lang] = 0;
-					free(dict_name);
+					if (dict_name != NULL)
+						free(dict_name);
 					continue;
 				}
 			}
@@ -399,8 +409,9 @@ struct _xneur_handle *xneur_handle_create (void)
 			//printf("   [!] Loaded dict %s\n", dict_name);
 			handle->enchant_dicts[lang] = enchant_broker_request_dict (handle->enchant_broker, dict_name);
 			handle->has_enchant_checker[lang] = 1;
-			
-			free(dict_name);
+
+			if (dict_name != NULL)
+				free(dict_name);
 		}
 		else
 		{
@@ -470,17 +481,22 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 		
 #ifdef WITH_ASPELL
 	delete_aspell_config(handle->spell_config);
-	free(handle->spell_checkers);
-	free(handle->has_spell_checker);
+	if (handle->spell_checkers != NULL)
+		free(handle->spell_checkers);
+	if (handle->has_spell_checker != NULL)
+		free(handle->has_spell_checker);
 #endif
 	
 #ifdef WITH_ENCHANT
 	enchant_broker_free (handle->enchant_broker);
-	free(handle->enchant_dicts);
-	free(handle->has_enchant_checker);
+	if (handle->enchant_dicts != NULL)
+		free(handle->enchant_dicts);
+	if (handle->has_enchant_checker != NULL)
+		free(handle->has_enchant_checker);
 #endif
 	
-	free(handle);
+	if (handle != NULL)
+		free(handle);
 }
 
 int xneur_get_layout (struct _xneur_handle *handle, char *word)

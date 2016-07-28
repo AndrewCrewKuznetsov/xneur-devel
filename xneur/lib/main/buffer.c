@@ -203,8 +203,10 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		stream = fopen(file_path_name, "a");
 		if (stream == NULL)
 		{
-			free(file_path_name);
-			free(buffer);
+			if (file_path_name != NULL)
+				free(file_path_name);
+			if (buffer != NULL)
+				free(buffer);
 			return;
 		}
 		fprintf(stream, "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"><title>X Neural Switcher Log</title></head><body>\n");
@@ -213,10 +215,12 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 	fclose (stream);
 	
 	stream = fopen(file_path_name, "r+");
-	free(file_path_name);
+	if (file_path_name != NULL)
+		free(file_path_name);
 	if (stream == NULL)
 	{
-		free(buffer);
+		if (buffer != NULL)
+			free(buffer);
 		return;
 	}
 
@@ -242,7 +246,8 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		strftime(buffer, 256, "%X", loctime);
 		fprintf(stream, "</ul><ul>\n<font color=\"#0000FF\" size=\"2\">(%s): </font>", buffer);
 	}
-	free(buffer);
+	if (buffer != NULL)
+		free(buffer);
 	
 	for (int i = 0; i < p->cur_pos; i++)
 	{
@@ -268,8 +273,9 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 			fprintf(stream, "&nbsp;");
 		else	
 			fprintf(stream, "%s", symbol);
-		
-		free(symbol);
+
+		if (symbol != NULL)
+			free(symbol);
 	}
 
 	fprintf(stream, "\n</body></html>\n");
@@ -348,8 +354,10 @@ static void buffer_set_i18n_content(struct _buffer *p)
 			p->i18n_content[i].symbol_len_unchanged = (int *) realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
 			p->i18n_content[i].symbol_len_unchanged[k] = strlen(symbol_unchanged);
 
-			free(symbol);
-			free(symbol_unchanged);
+			if (symbol != NULL)
+				free(symbol);
+			if (symbol_unchanged != NULL)
+				free(symbol_unchanged);
 		}
 	}
 }
@@ -379,7 +387,8 @@ static void buffer_set_content(struct _buffer *p, const char *new_content)
 	}
 
 	memcpy(p->content, content, p->cur_pos);
-	free(content);
+	if (p->content != NULL)
+		free(content);
 
 	p->keymap->convert_text_to_ascii(p->keymap, p->content, p->keycode, p->keycode_modifiers);
 
@@ -390,10 +399,14 @@ static void buffer_set_content(struct _buffer *p, const char *new_content)
 	{
 		for (int i = 0; i < p->handle->total_languages; i++)
 		{
-			free(p->i18n_content[i].content);
-			free(p->i18n_content[i].symbol_len);
-			free(p->i18n_content[i].content_unchanged);
-			free(p->i18n_content[i].symbol_len_unchanged);
+			if (p->i18n_content[i].content != NULL)
+				free(p->i18n_content[i].content);
+			if (p->i18n_content[i].symbol_len != NULL)
+				free(p->i18n_content[i].symbol_len);
+			if (p->i18n_content[i].content_unchanged != NULL)
+				free(p->i18n_content[i].content_unchanged);
+			if (p->i18n_content[i].symbol_len_unchanged != NULL)
+				free(p->i18n_content[i].symbol_len_unchanged);
 		}
 		return;
 	}
@@ -436,8 +449,9 @@ static void buffer_change_case(struct _buffer *p)
 		else
 			p->keycode_modifiers[i] = (p->keycode_modifiers[i] | ShiftMask);
 	}
-	
-	free(symbol);
+
+	if (symbol != NULL)
+		free(symbol);
 	XCloseDisplay(display);
 }
 
@@ -504,8 +518,10 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 		p->i18n_content[i].symbol_len_unchanged = (int *) realloc(p->i18n_content[i].symbol_len_unchanged, (p->cur_pos + 1) * sizeof(int));
 		p->i18n_content[i].symbol_len_unchanged[p->cur_pos] = strlen(symbol_unchanged);
 
-		free(symbol);
-		free(symbol_unchanged);
+		if (symbol != NULL)
+			free(symbol);
+		if (symbol_unchanged != NULL)
+			free(symbol_unchanged);
 	}
 
 	p->cur_pos++;
@@ -566,7 +582,8 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		}
 	}
 
-	free(symbol);
+	if (symbol != NULL)
+		free(symbol);
 	XCloseDisplay(display);
 	
 	return utf_string;
@@ -593,7 +610,8 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 				utf_string = tmp;
 				strcat(utf_string, symbol);	
 			}
-			free(symbol);
+			if (symbol != NULL)
+				free(symbol);
 		}
 	}
 	
@@ -695,19 +713,27 @@ char* buffer_get_last_word(struct _buffer *p, char *string)
 
 static void buffer_uninit(struct _buffer *p)
 {
-	free(p->keycode_modifiers);
-	free(p->keycode);
-	free(p->content);
+	if (p->keycode_modifiers != NULL)
+		free(p->keycode_modifiers);
+	if (p->keycode != NULL)
+		free(p->keycode);
+	if (p->content != NULL)
+		free(p->content);
 
 	for (int i = 0; i < p->handle->total_languages; i++)
 	{
-		free(p->i18n_content[i].content);
-		free(p->i18n_content[i].symbol_len);
-		free(p->i18n_content[i].content_unchanged);
-		free(p->i18n_content[i].symbol_len_unchanged);
+		if (p->i18n_content[i].content != NULL)
+			free(p->i18n_content[i].content);
+		if (p->i18n_content[i].symbol_len != NULL)
+			free(p->i18n_content[i].symbol_len);
+		if (p->i18n_content[i].content_unchanged != NULL)
+			free(p->i18n_content[i].content_unchanged);
+		if (p->i18n_content[i].symbol_len_unchanged != NULL)
+			free(p->i18n_content[i].symbol_len_unchanged);
 	}
 
-	free(p->i18n_content);
+	if (p->i18n_content != NULL)
+		free(p->i18n_content);
 	free(p);
 
 	log_message(DEBUG, _("String is freed"));
