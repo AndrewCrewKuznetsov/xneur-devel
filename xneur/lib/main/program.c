@@ -269,8 +269,10 @@ static void program_layout_update(struct _program *p)
 		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layouts, BY_PLAIN))
 			continue;
 
-		free(text_to_find);
-		free(window_layouts);
+		if (text_to_find != NULL)
+			free(text_to_find);
+		if (window_layouts != NULL)
+			free(window_layouts);
 
 		//XkbLockGroup(main_window->display, XkbUseCoreKbd, lang);
 		set_keyboard_group(lang);
@@ -278,8 +280,10 @@ static void program_layout_update(struct _program *p)
 		return;
 	}
 
-	free(text_to_find);
-	free(window_layouts);
+	if (text_to_find != NULL)
+		free(text_to_find);
+	if (window_layouts != NULL)
+		free(window_layouts);
 
 	log_message(DEBUG, _("Store default layout group to %d"), xconfig->default_group);
 }
@@ -688,7 +692,8 @@ static void program_process_selection_notify(struct _program *p)
 		convert_text_to_translit(&event_text);
 
 	p->buffer->set_content(p->buffer, event_text);
-	free(event_text);
+	if (event_text != NULL)
+		free(event_text);
 
 	switch (p->action_mode)
 	{
@@ -1407,7 +1412,8 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			p->correction_buffer->clear(p->correction_buffer);
 			
 			p->event->default_event.xkey.keycode = 0;
-			free (date);
+			if (date != NULL)
+				free (date);
 			break;
 		}
 		case ACTION_REPLACE_ABBREVIATION: // User needs to replace acronym
@@ -1419,7 +1425,8 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			char *word = p->buffer->get_last_word(p->buffer, utf_string);
 			if (!word)
 			{
-				free(utf_string);
+				if (utf_string != NULL)
+					free(utf_string);
 				return FALSE;
 			}
 
@@ -1430,7 +1437,8 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 
 				if (string == NULL)
 				{
-					free(replacement);
+					if (replacement != NULL)
+						free(replacement);
 					continue;
 				}
 
@@ -1439,20 +1447,25 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 					KeyCode *dummy_kc = malloc(strlen(replacement) * sizeof(KeyCode));
 					int *dummy_kc_mod = malloc(strlen(replacement) * sizeof(int));
 					main_window->keymap->convert_text_to_ascii(main_window->keymap, replacement, dummy_kc, dummy_kc_mod);
-					free(dummy_kc);
-					free(dummy_kc_mod);
+					if (dummy_kc != NULL)
+						free(dummy_kc);
+					if (dummy_kc_mod != NULL)
+						free(dummy_kc_mod);
 					
 					dummy_kc = malloc(strlen(word) * sizeof(KeyCode));
 					dummy_kc_mod = malloc(strlen(word) * sizeof(int));
 					main_window->keymap->convert_text_to_ascii(main_window->keymap, word, dummy_kc, dummy_kc_mod);
 
-					free(dummy_kc);
-					free(dummy_kc_mod);
+					if (dummy_kc != NULL)
+						free(dummy_kc);
+					if (dummy_kc_mod != NULL)
+						free(dummy_kc_mod);
 				}
 
 				if (strcmp(replacement, word) != 0)
 				{
-					free(replacement);
+					if (replacement != NULL)
+						free(replacement);
 					continue;
 				}
 
@@ -1478,12 +1491,15 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 				//Incapsulate to p->event->clear_code() or smth else
 				p->event->default_event.xkey.keycode = 0;
 
-				free(replacement);
-				free(utf_string);
+				if (replacement != NULL)
+					free(replacement);
+				if (utf_string != NULL)
+					free(utf_string);
 				return TRUE;
 			}
 
-			free(utf_string);
+			if (utf_string != NULL)
+				free(utf_string);
 			return FALSE;
 		}
 	}
@@ -1702,13 +1718,15 @@ static void program_check_two_space(struct _program *p)
 	pos = pos - 1;
 	if (ispunct(word[pos]) || isspace(word[pos]))
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 
 	log_message (DEBUG, _("Find two space, correction with a comma and a space..."));
 
-	free(word);
+	if (word != NULL)
+		free(word);
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
@@ -1840,7 +1858,8 @@ static void program_check_ellipsis(struct _program *p)
 		(text[text_len-2] != '.') ||
 		(text[text_len-3] != '.')) 
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
@@ -1857,7 +1876,8 @@ static void program_check_ellipsis(struct _program *p)
 	//p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 	
 	p->correction_action = CORRECTION_ELLIPSIS;
-	free(text);
+	if (text != NULL)
+		free(text);
 }
 
 static void program_check_space_before_punctuation(struct _program *p)
@@ -1871,7 +1891,8 @@ static void program_check_space_before_punctuation(struct _program *p)
 
 	if (p->buffer->cur_pos < 3)
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
@@ -1879,13 +1900,15 @@ static void program_check_space_before_punctuation(struct _program *p)
 	if (text[text_len - 1] != '.' && text[text_len - 1] != ',' && text[text_len - 1] != '!' && 
 	    text[text_len - 1] != '?' && text[text_len - 1] != ';' && text[text_len - 1] != ':')
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
 	if (text[text_len - 2] != ' ')
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
@@ -1905,7 +1928,8 @@ static void program_check_space_before_punctuation(struct _program *p)
 	int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 	p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
 
-	free(text);
+	if (text != NULL)
+		free(text);
 }
 
 static void program_check_space_with_bracket(struct _program *p)
@@ -1919,21 +1943,24 @@ static void program_check_space_with_bracket(struct _program *p)
 
 	if (p->buffer->cur_pos < 3)
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
 	int text_len = strlen(text);
 	if (text[text_len - 1] != '(' && text[text_len - 1] != ')')
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
 	if (((text[text_len - 1] == '(') && (text[text_len - 2] == ' ' || text[text_len - 2] == ':' || text[text_len - 2] == ';' || text[text_len - 2] == '-' || text[text_len - 2] == '\r' || text[text_len - 2] == '\n' || text[text_len - 2] == '\t' || isdigit(text[text_len - 2]))) ||
 	    ((text[text_len - 1] == ')' && text[text_len - 2] != ' ' )))
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
@@ -1973,7 +2000,8 @@ static void program_check_space_with_bracket(struct _program *p)
 		p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 	}
 
-	free(text);
+	if (text != NULL)
+		free(text);
 }
 
 static void program_check_brackets_with_symbols(struct _program *p)
@@ -1988,7 +2016,8 @@ static void program_check_brackets_with_symbols(struct _program *p)
 	int text_len = strlen(text);
 	if (text_len < 2)
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
@@ -1998,7 +2027,8 @@ static void program_check_brackets_with_symbols(struct _program *p)
 		//log_message(ERROR, "%c %d", text[text_len], text_len);
 		if (ispunct(sym))
 		{
-			free(text);
+			if (text != NULL)
+				free(text);
 			return;
 		}
 		log_message(DEBUG, _("Find no spaces after right bracket, correction..."));
@@ -2019,7 +2049,8 @@ static void program_check_brackets_with_symbols(struct _program *p)
 
 	if (text[text_len - 2] != ' ')
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
 	
@@ -2033,7 +2064,8 @@ static void program_check_brackets_with_symbols(struct _program *p)
 	
 	if (pos < 0 || text[pos] != '(')
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 	    return;
 	}
 	    
@@ -2052,7 +2084,8 @@ static void program_check_brackets_with_symbols(struct _program *p)
 	int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 	p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 
-	free(text);
+	if (text != NULL)
+		free(text);
 }
 
 static void program_check_capital_letter_after_dot(struct _program *p)
@@ -2094,11 +2127,13 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 		case ',':
 		case '.':
 		{
-			free (symbol);
+			if (symbol != NULL)
+				free (symbol);
 			return;
 		}
 	}
-	free (symbol);
+	if (symbol != NULL)
+		free (symbol);
 	
 	char *text = strdup(p->buffer->content);
 	if (text == NULL)
@@ -2107,10 +2142,12 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 	int offset = strlen(text) - 1;
 	if ((text[offset] != ' ') && (text[offset] != 13) && (text[offset] != 9))
 	{
-		free(text);
+		if (text != NULL)
+			free(text);
 		return;
 	}
-	free (text);
+	if (text != NULL)
+		free (text);
 
 	text = p->buffer->get_utf_string_on_kbd_group(p->buffer, get_curr_keyboard_group());
 
@@ -2126,8 +2163,8 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 		p->event->event.xkey.state = p->event->event.xkey.state | ShiftMask;
 		p->event->default_event.xkey.state = p->event->default_event.xkey.state | ShiftMask;
 	}
-	
-	free(text);
+	if (text != NULL)
+		free(text);
 }
 
 static void program_check_pattern(struct _program *p)
@@ -2153,7 +2190,8 @@ static void program_check_pattern(struct _program *p)
 	int len = trim_word(word, strlen(tmp));
 	if (len == 0)
 	{
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 
@@ -2182,7 +2220,8 @@ static void program_check_pattern(struct _program *p)
 	if (pattern_data == NULL)
 	{
 		p->last_action = ACTION_NONE;
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 	
@@ -2198,7 +2237,8 @@ static void program_check_pattern(struct _program *p)
 	{
 		tmp_buffer->uninit(tmp_buffer);
 		p->last_action = ACTION_NONE;
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 
@@ -2216,8 +2256,9 @@ static void program_check_pattern(struct _program *p)
 
 	p->last_action = ACTION_AUTOCOMPLETION;
 	p->last_pattern_id = 0;
-	
-	free (word);
+
+	if (word != NULL)
+		free (word);
 }
 
 static void program_rotate_pattern(struct _program *p)
@@ -2246,14 +2287,16 @@ static void program_rotate_pattern(struct _program *p)
 	int len = trim_word(word, strlen(tmp));
 	if (len == 0)
 	{
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 
 	struct _list_char* list_alike = xconfig->handle->languages[lang].pattern->alike(xconfig->handle->languages[lang].pattern, word);
 	if (list_alike == NULL)
 	{
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 	
@@ -2266,7 +2309,8 @@ static void program_rotate_pattern(struct _program *p)
 	{
 		list_alike->uninit(list_alike);
 		list_alike  =  NULL;
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 
@@ -2287,7 +2331,8 @@ static void program_rotate_pattern(struct _program *p)
 		list_alike->uninit(list_alike);
 		tmp_buffer->uninit(tmp_buffer);
 		p->last_action = ACTION_NONE;
-		free (word);
+		if (word != NULL)
+			free (word);
 		return;
 	}
 
@@ -2304,7 +2349,8 @@ static void program_rotate_pattern(struct _program *p)
 	p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 	p->last_action = ACTION_AUTOCOMPLETION;
-	free (word);
+	if (word != NULL)
+		free (word);
 		
 	list_alike->uninit(list_alike);
 	list_alike  =  NULL;
@@ -2328,13 +2374,15 @@ static void program_check_misprint(struct _program *p)
 
 	if ((strlen(word) > 250) || (strlen(word) < 4))
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 	
 	if (xconfig->handle->languages[lang].dictionary->exist(xconfig->handle->languages[lang].dictionary, word, BY_REGEXP))
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 	
@@ -2355,19 +2403,22 @@ static void program_check_misprint(struct _program *p)
 
 	if (!xconfig->handle->has_enchant_checker[lang])
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 
 	if (strlen(word+offset) <= 0)
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 	
 	if (!enchant_dict_check(xconfig->handle->enchant_dicts[lang], word+offset, strlen(word+offset)))
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 
@@ -2407,18 +2458,21 @@ static void program_check_misprint(struct _program *p)
 #ifdef WITH_ASPELL
 	if (!xconfig->handle->has_spell_checker[lang])
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 	if (aspell_speller_check(xconfig->handle->spell_checkers[lang], word+offset, strlen(word+offset)))
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 	const AspellWordList *suggestions = aspell_speller_suggest (xconfig->handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
 	if (! suggestions)
 	{
-		free(word);
+		if (word != NULL)
+			free(word);
 		return;
 	}
 
@@ -2456,7 +2510,7 @@ static void program_check_misprint(struct _program *p)
 			possible_word = first_sugg;
 		else
 			if (first_sugg != NULL)
-			free(first_sugg);
+				free(first_sugg);
 	}	
 
 
@@ -2519,14 +2573,17 @@ static void program_check_misprint(struct _program *p)
 		char *notify_text = (char *) malloc(notify_text_len * sizeof(char));
 		snprintf(notify_text , notify_text_len, _("Correction '%s' to '%s'"), word+offset, possible_word);			
 		show_notify(NOTIFY_CORR_MISPRINT, notify_text);
-		free(notify_text);
+		if (notify_text != NULL)
+			free(notify_text);
 
 		p->correction_action = CORRECTION_MISPRINT;
 		//p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 
-		free(possible_word);
+		if (possible_word != NULL)
+			free(possible_word);
 	}
-	free(word);
+	if (word != NULL)
+		free(word);
 }
 
 static void program_send_string_silent(struct _program *p, int send_backspaces)
@@ -3050,7 +3107,8 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			convert_text_to_translit(&text);
 			p->buffer->set_content(p->buffer, text);
 
-			free(text);
+			if (text != NULL)
+				free(text);
 
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
@@ -3266,14 +3324,16 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 			int len = trim_word(curr_word, strlen(tmp));
 			if (len == 0)
 			{
-				free(curr_word);
+				if (curr_word != NULL)
+					free(curr_word);
 				continue;
 			}
 
 			del_final_numeric_char(curr_word);
 			if (strlen(curr_word) == 0)
 			{
-				free(curr_word);
+				if (curr_word != NULL)
+					free(curr_word);
 				continue;
 			}
 
@@ -3290,9 +3350,11 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 				char *word_to_dict = malloc((strlen(curr_word+offset) + 7) * sizeof(char));
 				sprintf(word_to_dict, "%s%s%s", "(?i)^", curr_word+offset, "$");
 				curr_temp_dictionary->rem(curr_temp_dictionary, word_to_dict);
-				free(word_to_dict);
+				if (word_to_dict != NULL)
+					free(word_to_dict);
 			}
-			free(curr_word);
+			if (curr_word != NULL)
+				free(curr_word);
 		}
 	}
 	
@@ -3305,14 +3367,16 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 	int new_len = trim_word(new_word, strlen(tmp));
 	if (new_len == 0)
 	{
-		free(new_word);
+		if (new_word != NULL)
+			free(new_word);
 		return;
 	}
 
 	del_final_numeric_char(new_word);
 	if (strlen(new_word) == 0)
 	{
-		free(new_word);
+		if (new_word != NULL)
+			free(new_word);
 		return;
 	}
 
@@ -3331,8 +3395,10 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 		{
 			new_temp_dictionary->add(new_temp_dictionary, word_to_dict);
 		}
-		free(word_to_dict);
-		free(new_word);
+		if (word_to_dict != NULL)
+			free(word_to_dict);
+		if (new_word != NULL)
+			free(new_word);
 		return;
 	}
 
@@ -3348,14 +3414,16 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 			int len = trim_word(curr_word, strlen(tmp));
 			if (len == 0)
 			{
-				free(curr_word);
+				if (curr_word != NULL)
+					free(curr_word);
 				continue;
 			}
 
 			del_final_numeric_char(curr_word);
 			if (strlen(curr_word) == 0)
 			{
-				free(curr_word);
+				if (curr_word != NULL)
+					free(curr_word);
 				continue;
 			}
 
@@ -3374,9 +3442,11 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 				sprintf(word_to_dict, "%s%s%s", "(?i)^", curr_word+offset, "$");
 				curr_dictionary->rem(curr_dictionary, word_to_dict);
 				xconfig->save_dict(xconfig, lang);
-				free(word_to_dict);
+				if (word_to_dict != NULL)
+					free(word_to_dict);
 			}
-			free(curr_word);
+			if (curr_word != NULL)
+				free(curr_word);
 		}
 	}
 	
@@ -3391,12 +3461,14 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 			new_dictionary->add(new_dictionary, word_to_dict);
 		}
 		xconfig->save_dict(xconfig, new_lang);
-		free(word_to_dict);
+		if (word_to_dict != NULL)
+			free(word_to_dict);
 	}
 
 	p->add_word_to_pattern(p, new_lang);
-		
-	free(new_word);
+
+	if (new_word != NULL)
+		free(new_word);
 }
 
 static void program_add_word_to_pattern(struct _program *p, int new_lang)
@@ -3419,14 +3491,16 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 	int len = trim_word(new_word, strlen(tmp));
 	if (len == 0)
 	{
-		free(new_word);
+		if (new_word != NULL)
+			free(new_word);
 		return;
 	}
 
 	del_final_numeric_char(new_word);
 	if (strlen(new_word) == 0)
 	{
-		free(new_word);
+		if (new_word != NULL)
+			free(new_word);
 		return;
 	}
 
@@ -3448,7 +3522,8 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 		len = trim_word(old_word, strlen(tmp));
 		if (len == 0)
 		{
-			free (old_word);
+			if (old_word != NULL)
+				free (old_word);
 			continue;
 		}
 		unsigned int offset = 0;
@@ -3465,7 +3540,8 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 			old_pattern->rem(old_pattern, old_word+offset);
 			xconfig->save_pattern(xconfig, i);
 		}
-		free (old_word);
+		if (old_word != NULL)
+			free (old_word);
 	}
 
 #ifdef WITH_ASPELL
@@ -3473,7 +3549,8 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 	{
 		if (!aspell_speller_check(xconfig->handle->spell_checkers[new_lang], new_word+offset, strlen(new_word)))
 		{
-			free(new_word);
+			if (new_word != NULL)
+				free(new_word);
 			return;
 		}
 	}
@@ -3484,13 +3561,15 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 	{
 		if (strlen(new_word+offset) <= 0)
 		{
-			free(new_word);
+			if (new_word != NULL)
+				free(new_word);
 			return;
 		}
 		
 		if (enchant_dict_check(xconfig->handle->enchant_dicts[new_lang], new_word+offset, strlen(new_word+offset)))
 		{
-			free(new_word);
+			if (new_word != NULL)
+				free(new_word);
 			return;
 		}
 	}
@@ -3504,7 +3583,8 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 		xconfig->save_pattern(xconfig, new_lang);
 	}
 
-	free(new_word);
+	if (new_word != NULL)
+		free(new_word);
 }
 
 static void program_uninit(struct _program *p)
@@ -3516,8 +3596,9 @@ static void program_uninit(struct _program *p)
 	p->plugin->uninit(p->plugin);
 
 	main_window->uninit(main_window);
-	
-	free(p);
+
+	if (p != NULL)
+		free(p);
 
 	log_message(DEBUG, _("Program is freed"));
 }
@@ -3531,7 +3612,8 @@ struct _program* program_init(void)
 
 	if (!main_window->create(main_window) || !main_window->init_keymap(main_window))
 	{
-		free(p);
+		if (p != NULL)
+			free(p);
 		return NULL;
 	}
 	
