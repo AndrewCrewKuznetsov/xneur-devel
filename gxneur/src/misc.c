@@ -98,7 +98,7 @@ static GtkWidget *tmp_widget	= NULL;
 const char *conditions_names[]				= {"contains", "begins", "ends", "coincides"};
 
 static const char *modifier_names[]			= {"Shift", "Control", "Alt", "Super"};
-static const char *all_modifiers[]			= {"Control", "Shift", "Alt", "Super", "Control_R", "Shift_R", "Alt_R", "Super_R", "Control_L", "Shift_L", "Alt_L", "Super_L"};
+//static const char *all_modifiers[]			= {"Control", "Shift", "Alt", "Super", "Control_R", "Shift_R", "Alt_R", "Super_R", "Control_L", "Shift_L", "Alt_L", "Super_L"};
 
 static const char *notify_names[]			=   {
 										"Xneur started", "Xneur reloaded", "Xneur stopped",
@@ -130,7 +130,7 @@ static const char *hotkey_names[]			=   {
 static const int total_notify_names = sizeof(notify_names) / sizeof(notify_names[0]);
 
 static const int total_modifiers			= sizeof(modifier_names) / sizeof(modifier_names[0]); 
-static const int total_all_modifiers			= sizeof(all_modifiers) / sizeof(all_modifiers[0]);
+//static const int total_all_modifiers			= sizeof(all_modifiers) / sizeof(all_modifiers[0]);
 
 void error_msg(const char *msg, ...)
 {

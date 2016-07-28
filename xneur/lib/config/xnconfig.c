@@ -165,7 +165,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 
 	if (param == NULL)
 	{
-		free(full_string);
+		if (full_string != NULL)
+			free(full_string);
 		log_message(WARNING, _("Param mismatch for option %s"), option);
 		return;
 	}
@@ -418,7 +419,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 		{
 			char *replaced_string = escaped_sym_to_real_sym(full_string);
 			p->abbreviations->add(p->abbreviations, replaced_string);
-			free(replaced_string);
+			if (replaced_string != NULL)
+				free(replaced_string);
 			break;
 		}
 		case 22: // Ignore keyboard layout for abbreviations
@@ -516,7 +518,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 						cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
 						if (cmd == NULL)
 						{
-							free(p->actions[p->actions_count].command);
+							if (p->actions[p->actions_count].command != NULL)
+								free(p->actions[p->actions_count].command);
 							p->actions[p->actions_count].command = NULL;
 							break;
 						}
@@ -583,8 +586,9 @@ static void parse_line(struct _xneur_config *p, char *line)
 			}
 			if (p->osds[osd].file == NULL)
 				p->osds[osd].enabled = FALSE;
-			
-			free(tmp);
+
+			if (tmp ! = NULL)
+				free(tmp);
 
 			break;
 		}
@@ -640,7 +644,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 			if (p->popups[popup].file == NULL)
 				p->popups[popup].enabled = FALSE;
 
-			free(tmp);
+			if (tmp ! = NULL)
+				free(tmp);
 			
 			break;
 		}
@@ -1023,7 +1028,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 			break;
 		}
 	}
-	free(full_string);
+	if (full_string != NULL)
+		free(full_string);
 }
 
 static int parse_config_file(struct _xneur_config *p, const char *dir_name, const char *file_name)
@@ -1120,7 +1126,8 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 	if (process_id == 0)
 	{
 	    remove(lock_file_path_name);
-		free(lock_file_path_name);
+		if (lock_file_path_name != NULL)
+			free(lock_file_path_name);
 		p->pid = process_id;
 		return process_id;
 	}     
@@ -1131,11 +1138,13 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 	if (stream == NULL)
 	{
 		log_message(ERROR, _("Can't create lock file %s"), lock_file_path_name);
-		free(lock_file_path_name);
+		if (lock_file_path_name != NULL)
+			free(lock_file_path_name);
 		return -1;
 	}
 
-	free(lock_file_path_name);
+	if (lock_file_path_name != NULL)
+		free(lock_file_path_name);
 	
 	fprintf(stream, "%d", process_id);
 	fclose (stream);
@@ -1165,7 +1174,8 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 	log_message(LOG, _("Get lock file %s"), config_file_path_name);
 	
 	char *pid_str = get_file_content(config_file_path_name);
-	free(config_file_path_name);
+	if (config_file_path_name != NULL)
+		free(config_file_path_name);
 	if (pid_str == NULL)
 		return -1;
 
@@ -1178,7 +1188,8 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 	char *ps_command = (char *) malloc(1024 * sizeof(char));
 	snprintf(ps_command, 1024, "ps -p %d | grep xneur", process_id);
 	FILE *fp = popen(ps_command, "r");
-	free (ps_command);
+	if (ps_command != NULL)
+		free (ps_command);
 	if (fp != NULL)
 	{
 		char buffer[1024];
@@ -1238,11 +1249,13 @@ static int xneur_config_save(struct _xneur_config *p)
 	if (stream == NULL)
 	{
 		log_message(ERROR, _("Can't create file %s"), config_file_path_name);
-		free(config_file_path_name);
+		if (config_file_path_name != NULL)
+			free(config_file_path_name);
 		return FALSE;
 	}
 
-	free(config_file_path_name);
+	if (config_file_path_name != NULL)
+		free(config_file_path_name);
 
 	fprintf(stream, "# It's a X Neural Switcher configuration file by XNeur\n# All values writted XNeur\n\n");
 	
@@ -1633,13 +1646,17 @@ static int xneur_config_replace(struct _xneur_config *p)
 	{
 		log_message(ERROR, _("Can't move file!"), config_backup_file_path_name);
 
-		free(config_file_path_name);
-		free(config_backup_file_path_name);
+		if (config_file_path_name != NULL)
+			free(config_file_path_name);
+		if (config_backup_file_path_name != NULL)
+			free(config_backup_file_path_name);
 		return FALSE;
 	}
 
-	free(config_file_path_name);
-	free(config_backup_file_path_name);
+	if (config_file_path_name != NULL)
+		free(config_file_path_name);
+	if (config_backup_file_path_name != NULL)
+		free(config_backup_file_path_name);
 
 	return p->load(p);
 }
@@ -1655,7 +1672,8 @@ static void xneur_config_save_dict(struct _xneur_config *p, int lang)
 	char *lang_dir = (char *) malloc(path_len * sizeof(char));
 	snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, p->handle->languages[lang].dir);
 	save_list(p->handle->languages[lang].dictionary, lang_dir, DICT_NAME);
-	free (lang_dir);
+	if (lang_dir != NULL)
+		free (lang_dir);
 }
 
 static void xneur_config_save_pattern(struct _xneur_config *p, int lang)
@@ -1669,7 +1687,8 @@ static void xneur_config_save_pattern(struct _xneur_config *p, int lang)
 	char *lang_dir = (char *) malloc(path_len * sizeof(char));
 	snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, p->handle->languages[lang].dir);
 	save_list(p->handle->languages[lang].pattern, lang_dir, PATTERN_NAME);
-	free(lang_dir);
+	if (lang_dir != NULL)
+		free(lang_dir);
 }
 
 static char* xneur_config_get_lang_dir(struct _xneur_config *p, int lang)
@@ -1699,18 +1718,25 @@ static void xneur_config_uninit(struct _xneur_config *p)
 		free(p->delimeters_string);
 	
 	p->delimeters_count = 0;
-	
-	free(p->hotkeys);
-	free(p->sounds);
-	free(p->osds);
-	free(p->popups);
 
-	free(p->mail_keyboard_log);
-	free(p->host_keyboard_log);
+	if (p->hotkeys != NULL)
+		free(p->hotkeys);
+	if (p->sounds != NULL)    
+		free(p->sounds);
+	if (p->osds != NULL) 
+		free(p->osds);
+	if (p->popups != NULL) 
+		free(p->popups);
+
+	if (p->mail_keyboard_log != NULL) 
+		free(p->mail_keyboard_log);
+	if (p->host_keyboard_log != NULL) 
+		free(p->host_keyboard_log);
 
 	xneur_handle_destroy(p->handle);
-	
-	free(p);
+
+	if (p != NULL)
+		free(p);
 }
 
 struct _xneur_config* xneur_config_init(void)
