@@ -232,7 +232,7 @@ static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus
 static void focus_update_grab_events(struct _focus *p, int mode)
 {
 	char *owner_window_name = get_wm_class_name(p->owner_window);
-	
+
 	if (mode == LISTEN_DONTGRAB_INPUT)
 	{
 		grab_button(p->parent_window, FALSE);

@@ -191,13 +191,13 @@ void grab_modifier_keys(Window window, int is_grab)
 
 		for (j = 0; j < modmap->max_keypermod; j++) 
 		{
-			// Dirty hack for using Shift /*and Ctrl*/ on xneur
-			if ((i == 0)/* || (i == 2)*/)
+			// Dirty hack for using Caps /*and Ctrl*/ on xneur
+			if ((i == 1) /*|| (i == 2)*/)
 			{
 				k++;
 				continue;
 			}
-			
+
 			if (modmap->modifiermap[k]) 
 			{
 				/*
@@ -208,8 +208,8 @@ void grab_modifier_keys(Window window, int is_grab)
 				&keysyms_per_keycode_return);
 				log_message (ERROR, "Modifiers List:");
 				log_message (ERROR, "%d %d %s", i, j, XKeysymToString(keysym[0]));
-				XFree(keysym);
-				*/
+				XFree(keysym);*/
+			
 
 				if (is_grab)
 					XGrabKey(main_window->display, modmap->modifiermap[k], AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
@@ -242,6 +242,8 @@ void grab_spec_keys(Window window, int is_grab)
 		XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
 		// ...without ModKeys.
 		grab_modifier_keys(window, FALSE);
+		grab_manual_action();
+		grab_user_action();
 	}
 	else
 	{
@@ -249,10 +251,10 @@ void grab_spec_keys(Window window, int is_grab)
 		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
 		// ... and with hotkeys
 		XUngrabKey(main_window->display, AnyKey, AnyModifier, DefaultRootWindow (main_window->display));
-		grab_manual_action();
-		grab_user_action();
 		// ...without ModKeys.
 		grab_modifier_keys(DefaultRootWindow (main_window->display), FALSE);
+		grab_manual_action();
+		grab_user_action();
 	}
 }
 

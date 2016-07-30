@@ -97,7 +97,22 @@ struct _window *main_window;
 
 int last_event_type = 0;
 
+int lock_mask = 0;
+int is_lock = 0;
+
 // Private
+static void toggle_lock(int mask, int state)
+{
+	int xkb_opcode, xkb_event, xkb_error;
+	int xkb_lmaj = XkbMajorVersion;
+	int xkb_lmin = XkbMinorVersion;
+	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
+	{
+		/*int status = */XkbLockModifiers (main_window->display, XkbUseCoreKbd, mask, state);
+		//log_message(TRACE, _("Set lock state: %d %d, status: %d"), mask, state, status);
+	}
+}
+
 static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 {
 	if 	(((key == XK_BackSpace) && (xconfig->troubleshoot_backspace)) || 
@@ -629,11 +644,7 @@ static void program_change_incidental_caps(struct _program *p)
 	if (!get_key_state(XK_Caps_Lock))
 		return;
 
-	int xkb_opcode, xkb_event, xkb_error;
-	int xkb_lmaj = XkbMajorVersion;
-	int xkb_lmin = XkbMinorVersion;
-	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
-		XkbLockModifiers(main_window->display, XkbUseCoreKbd, LockMask, 0);
+	toggle_lock(LockMask, 0);
 }
 
 static void program_unchange_incidental_caps(struct _program *p)
@@ -645,14 +656,7 @@ static void program_unchange_incidental_caps(struct _program *p)
 	if (get_key_state(XK_Caps_Lock))
 		return;
 
-	int xkb_opcode, xkb_event, xkb_error;
-	int xkb_lmaj = XkbMajorVersion;
-	int xkb_lmin = XkbMinorVersion;
-	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
-	{
-		const int CapsLock = 2;//, NumLock = 16, ScrollLock = 1;
-		XkbLockModifiers(main_window->display, XkbUseCoreKbd, LockMask, CapsLock);
-	}
+	toggle_lock (LockMask, 1);
 }
 
 static void program_change_two_capital_letter(struct _program *p)
@@ -798,14 +802,17 @@ static void program_on_key_action(struct _program *p, int type)
 		
 		p->user_action = get_user_action(key, modifier_mask);
 		p->manual_action = get_manual_action(key, modifier_mask);
-
 		// If blocked events then processing stop 
 		if ((p->user_action >= 0) || (p->manual_action != ACTION_NONE) || (xconfig->block_events)) 
 		{
+			is_lock = TRUE;
+			lock_mask = modifier_mask;
 			p->event->default_event.xkey.keycode = 0;
 			return;
 		}
 
+		is_lock = FALSE;
+		
 		p->plugin->key_press(p->plugin, key, modifier_mask);
 
 		int auto_action = get_auto_action(p, key, modifier_mask);
@@ -844,9 +851,17 @@ static void program_on_key_action(struct _program *p, int type)
 
 	if (type == KeyRelease)
 	{	
+		// Restore locks state to state before keyboard action.
+		if (is_lock)
+		{
+			//log_message(ERROR, "	Set Caps to %d", (lock_mask & main_window->keymap->capslock_mask)?1:0);
+			toggle_lock (main_window->keymap->capslock_mask, (lock_mask & main_window->keymap->capslock_mask)?1:0);
+			//log_message(ERROR, "	Set Num to %d", (lock_mask & main_window->keymap->numlock_mask)?1:0);
+			toggle_lock (main_window->keymap->numlock_mask, (lock_mask & main_window->keymap->numlock_mask)?1:0);
+			//log_message(ERROR, "	Set Scroll to %d", (lock_mask & main_window->keymap->scrolllock_mask)?1:0);
+			toggle_lock (main_window->keymap->scrolllock_mask, (lock_mask & main_window->keymap->scrolllock_mask)?1:0);
+		}
 		
-		int modifier_mask = p->event->get_cur_modifiers(p->event);
-			
 		// If blocked events then processing stop 
 		if (xconfig->block_events)
 		{
@@ -877,13 +892,16 @@ static void program_on_key_action(struct _program *p, int type)
 			if (p->perform_manual_action(p, p->manual_action))
 			{
 				p->manual_action = ACTION_NONE;
+				p->event->default_event.xkey.keycode = 0;
 				return;
 			}
+
+			p->event->default_event.xkey.keycode = 0;
 			
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-			p->event->send_xkey(p->event, XKeysymToKeycode(main_window->display, key), modifier_mask);
-			p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
-		}
+			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
+			//p->event->send_xkey(p->event, XKeysymToKeycode(main_window->display, key), modifier_mask);
+			//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
+		}	
 	}
 }
 
@@ -913,23 +931,15 @@ static void program_perform_auto_action(struct _program *p, int action)
 	{
 		case KLB_NO_ACTION:
 		{
+			if (xconfig->disable_capslock && get_key_state(XK_Caps_Lock))
+				toggle_lock(LockMask, 0);
+		
 			if (xconfig->flush_buffer_when_press_escape) 
 				if (p->event->get_cur_keysym(p->event) == XK_Escape)
 				{
 					p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 					p->correction_buffer->clear(p->correction_buffer);
 				}
-			if (xconfig->disable_capslock)
-			{
-				if (!get_key_state(XK_Caps_Lock))
-					return;
-				
-				int xkb_opcode, xkb_event, xkb_error;
-				int xkb_lmaj = XkbMajorVersion;
-				int xkb_lmin = XkbMinorVersion;
-				if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
-					XkbLockModifiers (main_window->display, XkbUseCoreKbd, LockMask, 0);
-			}
 			return;
 		}
 		case KLB_CLEAR:
@@ -1630,7 +1640,7 @@ static void program_check_caps_last_word(struct _program *p)
 {
 	if (!xconfig->correct_incidental_caps)
 		return;
-	
+
 	int offset = p->buffer->get_last_word_offset(p->buffer, p->buffer->content, p->buffer->cur_pos);
 
 	if (!(p->buffer->keycode_modifiers[offset] & LockMask) || !(p->buffer->keycode_modifiers[offset] & ShiftMask))

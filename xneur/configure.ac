@@ -82,6 +82,7 @@ else
 	AC_SUBST(X11_LIBS)
 fi
 
+#ADDITIONAL_LIBS="-lpthread -ldl -lXtst -lXext"
 ADDITIONAL_LIBS="-lpthread -ldl"
 AC_SUBST(ADDITIONAL_LIBS)
 
