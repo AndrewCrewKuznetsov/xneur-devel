@@ -52,7 +52,7 @@ struct _program
 	
 	void (*layout_update) (struct _program *p);
 	void (*update) (struct _program *p);
-	void (*on_key_action) (struct _program *p, int type);
+	void (*on_key_action) (struct _program *p, int type, KeySym key, int modifier);
 	void (*process_input) (struct _program *p);
 	int  (*perform_manual_action) (struct _program *p, enum _hotkey_action action);
 	void (*perform_auto_action) (struct _program *p, int action);

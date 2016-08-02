@@ -280,7 +280,6 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 		}
 	}
 	*/
-	
 	p->last_parent_window = p->parent_window;
 	
 	if (owner_window_name != NULL)

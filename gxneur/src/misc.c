@@ -545,6 +545,8 @@ void xneur_kb_preference(void)
 
 void xneur_preference(void)
 {
+	xconfig->kill(xconfig);
+	
 	GError* error = NULL;
 	GtkBuilder* builder = gtk_builder_new ();
 	if (!gtk_builder_add_from_file (builder, UI_FILE_CONFIG, &error))
@@ -2653,13 +2655,14 @@ void xneur_save_preference(GtkBuilder* builder)
 		arg_keyboard_properties = NULL;
 	//add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
-
+	xneur_start_stop ();
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 	gtk_widget_destroy(window);
 }
 
 void xneur_dontsave_preference(GtkBuilder* builder)
 {
+	xneur_start_stop ();
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 	gtk_widget_destroy(window);
 }

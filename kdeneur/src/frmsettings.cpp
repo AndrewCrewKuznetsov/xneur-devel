@@ -203,7 +203,7 @@ void kXneurApp::frmSettings::readSettingsKdeNeur()
 
 void kXneurApp::frmSettings::readSettingsNeur()
 {
-
+    cfgNeur->xneurStop();
     //tab General
     ui->chkGenMain_ManualSwitch->setChecked(cfgNeur->gen_main_get_manual_switch());
     ui->chkGenMain_AutoLearning->setChecked(cfgNeur->gen_main_get_auto_learning());
@@ -285,11 +285,13 @@ void kXneurApp::frmSettings::Clicked(QAbstractButton *button)
       done(QDialog::Accepted);
       saveSettingsNeur();
       config->sync();
+      cfgNeur->xneurStart();
       this->close();
   }
   else
   {
       done(QDialog::Rejected);
+      cfgNeur->xneurStart();
       this->close();
   }
 }

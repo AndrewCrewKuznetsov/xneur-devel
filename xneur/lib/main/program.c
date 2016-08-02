@@ -97,8 +97,7 @@ struct _window *main_window;
 
 int last_event_type = 0;
 
-int lock_mask = 0;
-int is_lock = 0;
+int xi_mask = 0;
 
 // Private
 static void toggle_lock(int mask, int state)
@@ -370,13 +369,16 @@ static void program_process_input(struct _program *p)
 					XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
 				}
 
+				if (IsModifierKey(p->event->get_cur_keysym(p->event)))
+					break;
+				
 				log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), XKeysymToString(p->event->get_cur_keysym(p->event)), type);
 
 				// Save received event
 				p->event->default_event = p->event->event;
 
 				// Processing received event
-				p->on_key_action(p, type);
+				p->on_key_action(p, type, p->event->get_cur_keysym(p->event), p->event->get_cur_modifiers(p->event));
 
 				// Resend special key back to window
 				if (p->event->default_event.xkey.keycode != 0)
@@ -395,6 +397,9 @@ static void program_process_input(struct _program *p)
 				{
 					XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
 				}
+
+				if (IsModifierKey(p->event->get_cur_keysym(p->event)))
+					break;
 				
 				log_message(TRACE, _("Received KeyRelease '%s' (event type %d)"), XKeysymToString(p->event->get_cur_keysym(p->event)), type);
 
@@ -402,7 +407,7 @@ static void program_process_input(struct _program *p)
 				p->event->default_event = p->event->event;
 
 				// Processing received event
-				p->on_key_action(p, type);
+				p->on_key_action(p, type, p->event->get_cur_keysym(p->event), p->event->get_cur_modifiers(p->event));
 
 				// Resend special key back to window
 				if (p->event->default_event.xkey.keycode != 0)
@@ -596,25 +601,136 @@ static void program_process_input(struct _program *p)
 					!XGetEventData(main_window->display, cookie))
 					break;
 
-				//printf("EVENT TYPE %d\n", cookie->evtype);
 				XIDeviceEvent* xi_event = cookie->data;
-				switch (xi_event->evtype) {
-				case XI_ButtonPress:
+				switch (xi_event->evtype) 
 				{
-					// Clear buffer only when clicked left button
-					if (xi_event->detail == 1)
+					case XI_ButtonPress:
 					{
-						p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-						p->correction_buffer->clear(p->correction_buffer);
-						p->correction_action = ACTION_NONE;
-						if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+						// Clear buffer only when clicked left button
+						if (xi_event->detail == 1)
 						{
-							p->update(p);
+							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
+							p->correction_buffer->clear(p->correction_buffer);
+							p->correction_action = ACTION_NONE;
+							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+							{
+								p->update(p);
+							}
+							log_message(TRACE, _("Received XI_ButtonPress (event type %d, subtype %d)"), type, xi_event->evtype);
 						}
-						log_message(TRACE, _("Received XI_ButtonPress (event type %d, subtype %d)"), type, xi_event->evtype);
+						break;
 					}
-					break;
-				}
+					case XI_KeyPress:
+					{
+						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
+						//int mask = 0;
+						
+						/*Window wDummy;
+						int iDummy;
+						unsigned int state;
+						XQueryPointer(main_window->display, DefaultRootWindow(main_window->display), &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, &state);
+
+						int mask = 0;
+						
+						if (state & ShiftMask)  // Shift
+							mask += (1 << 0); // 1
+						if (state & LockMask)   // CapsLock
+							mask += (1 << 1); // 2
+						if (state & ControlMask)// Control
+							mask += (1 << 2); // 4
+						if (state & Mod1Mask)   // Alt
+							mask += (1 << 3); // 8
+						if (state & Mod2Mask)   // NumLock
+							mask += (1 << 4); // 16
+						if (state & Mod3Mask)
+							mask += (1 << 5); // 32
+						if (state & Mod4Mask)   // Super (Win)
+							mask += (1 << 6); // 64
+						if (state & Mod5Mask)   // ISO_Level3_Shift
+							mask += (1 << 7); // 128*/
+
+						if (key_sym == XK_Shift_L || key_sym == XK_Shift_R)
+							xi_mask += (1 << 0);
+						if (key_sym == XK_Caps_Lock)
+							xi_mask += (1 << 1);
+						if (key_sym == XK_Control_L || key_sym == XK_Control_R)
+							xi_mask += (1 << 2);
+						if (key_sym == XK_Alt_L || key_sym == XK_Alt_R)
+							xi_mask += (1 << 3);
+						if (key_sym == XK_Meta_L || key_sym == XK_Meta_R)
+							xi_mask += (1 << 4);
+						if (key_sym == XK_Num_Lock)
+							xi_mask += (1 << 5);
+						if (key_sym == XK_Super_L || key_sym == XK_Super_R)
+							xi_mask += (1 << 6);
+						if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
+							xi_mask += (1 << 7);
+						
+						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
+						            XKeysymToString(key_sym),
+						            xi_mask,
+						            type);
+							
+						// Processing received event
+						p->on_key_action(p, KeyPress, XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0), xi_mask);
+
+						break;			
+					}
+					case XI_KeyRelease:
+					{
+						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
+						           					
+						/*Window wDummy;
+						int iDummy;
+						unsigned int state;
+						XQueryPointer(main_window->display, p->focus->owner_window, &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, &state);
+
+						int mask = 0;
+						
+						if (state & ShiftMask)  // Shift
+							mask += (1 << 0); // 1
+						if (state & LockMask)   // CapsLock
+							mask += (1 << 1); // 2
+						if (state & ControlMask)// Control
+							mask += (1 << 2); // 4
+						if (state & Mod1Mask)   // Alt
+							mask += (1 << 3); // 8
+						if (state & Mod2Mask)   // NumLock
+							mask += (1 << 4); // 16
+						if (state & Mod3Mask)
+							mask += (1 << 5); // 32
+						if (state & Mod4Mask)   // Super (Win)
+							mask += (1 << 6); // 64
+						if (state & Mod5Mask)   // ISO_Level3_Shift
+							mask += (1 << 7); // 128*/
+
+						if (key_sym == XK_Shift_L || key_sym == XK_Shift_R)
+							xi_mask -= (1 << 0);
+						if (key_sym == XK_Caps_Lock)
+							xi_mask -= (1 << 1);
+						if (key_sym == XK_Control_L || key_sym == XK_Control_R)
+							xi_mask -= (1 << 2);
+						if (key_sym == XK_Alt_L || key_sym == XK_Alt_R)
+							xi_mask -= (1 << 3);
+						if (key_sym == XK_Meta_L || key_sym == XK_Meta_R)
+							xi_mask -= (1 << 4);
+						if (key_sym == XK_Num_Lock)
+							xi_mask -= (1 << 5);
+						if (key_sym == XK_Super_L || key_sym == XK_Super_R)
+							xi_mask -= (1 << 6);
+						if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
+							xi_mask -= (1 << 7);
+						
+						log_message(TRACE, _("Received KeyRelease '%s' (event type %d)"), 
+						            XKeysymToString(key_sym),
+									xi_mask,
+						            type);
+
+						// Processing received event
+						p->on_key_action(p, KeyRelease, XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0), xi_mask);
+
+						break;			
+					}
 				}
 				XFreeEventData(main_window->display, cookie);
 				break;
@@ -792,26 +908,18 @@ static void program_process_selection_notify(struct _program *p)
 }
 
 
-static void program_on_key_action(struct _program *p, int type)
+static void program_on_key_action(struct _program *p, int type, KeySym key, int modifier_mask)
 {
-	KeySym key = p->event->get_cur_keysym(p->event);
-	// Delete language modifier mask
-	int modifier_mask = p->event->get_cur_modifiers(p->event);
 	if (type == KeyPress)
 	{	
-		
 		p->user_action = get_user_action(key, modifier_mask);
 		p->manual_action = get_manual_action(key, modifier_mask);
 		// If blocked events then processing stop 
 		if ((p->user_action >= 0) || (p->manual_action != ACTION_NONE) || (xconfig->block_events)) 
 		{
-			is_lock = TRUE;
-			lock_mask = modifier_mask;
 			p->event->default_event.xkey.keycode = 0;
 			return;
 		}
-
-		is_lock = FALSE;
 		
 		p->plugin->key_press(p->plugin, key, modifier_mask);
 
@@ -851,17 +959,8 @@ static void program_on_key_action(struct _program *p, int type)
 
 	if (type == KeyRelease)
 	{	
-		// Restore locks state to state before keyboard action.
-		if (is_lock)
-		{
-			//log_message(ERROR, "	Set Caps to %d", (lock_mask & main_window->keymap->capslock_mask)?1:0);
-			toggle_lock (main_window->keymap->capslock_mask, (lock_mask & main_window->keymap->capslock_mask)?1:0);
-			//log_message(ERROR, "	Set Num to %d", (lock_mask & main_window->keymap->numlock_mask)?1:0);
-			toggle_lock (main_window->keymap->numlock_mask, (lock_mask & main_window->keymap->numlock_mask)?1:0);
-			//log_message(ERROR, "	Set Scroll to %d", (lock_mask & main_window->keymap->scrolllock_mask)?1:0);
-			toggle_lock (main_window->keymap->scrolllock_mask, (lock_mask & main_window->keymap->scrolllock_mask)?1:0);
-		}
-		
+		p->user_action = get_user_action(key, modifier_mask);
+				
 		// If blocked events then processing stop 
 		if (xconfig->block_events)
 		{

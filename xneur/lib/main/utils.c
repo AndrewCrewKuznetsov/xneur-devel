@@ -159,7 +159,7 @@ void grab_button(Window window, int is_grab)
 	//if (is_grab)
 	//{
 	//	XISetMask(mask.mask, XI_ButtonPress);
-	//}^
+	//}
     //XISelectEvents(main_window->display, window, &mask, 1);
 
     //free(mask.mask);	
@@ -191,12 +191,12 @@ void grab_modifier_keys(Window window, int is_grab)
 
 		for (j = 0; j < modmap->max_keypermod; j++) 
 		{
-			// Dirty hack for using Caps /*and Ctrl*/ on xneur
-			if ((i == 1) /*|| (i == 2)*/)
+			// Dirty hack for using Caps on xneur
+			/*if (i == 1)
 			{
 				k++;
 				continue;
-			}
+			}*/
 
 			if (modmap->modifiermap[k]) 
 			{
@@ -242,8 +242,26 @@ void grab_spec_keys(Window window, int is_grab)
 		XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
 		// ...without ModKeys.
 		grab_modifier_keys(window, FALSE);
-		grab_manual_action();
-		grab_user_action();
+
+		int xi_opcode, event, error;
+
+		if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
+		{
+			log_message(WARNING, _("X Input extension not available."));
+		}
+		XIEventMask mask;
+		mask.deviceid = XIAllMasterDevices;
+		mask.mask_len = XIMaskLen(XI_ButtonPress);
+		mask.mask = calloc(mask.mask_len, sizeof(char));
+		XISetMask(mask.mask, XI_KeyPress);
+		XISetMask(mask.mask, XI_KeyRelease);
+	    XISelectEvents(main_window->display, window, &mask, 1);
+		free(mask.mask);
+		
+		//grab_manual_action(DefaultRootWindow (main_window->display)); 
+		//grab_user_action(DefaultRootWindow (main_window->display));
+		grab_manual_action(window); 
+		grab_user_action(window);
 	}
 	else
 	{
@@ -251,10 +269,12 @@ void grab_spec_keys(Window window, int is_grab)
 		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
 		// ... and with hotkeys
 		XUngrabKey(main_window->display, AnyKey, AnyModifier, DefaultRootWindow (main_window->display));
+
 		// ...without ModKeys.
 		grab_modifier_keys(DefaultRootWindow (main_window->display), FALSE);
-		grab_manual_action();
-		grab_user_action();
+		
+		grab_manual_action(DefaultRootWindow (main_window->display));
+		grab_user_action(DefaultRootWindow (main_window->display));
 	}
 }
 
