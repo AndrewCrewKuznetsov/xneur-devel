@@ -48,7 +48,6 @@ struct _focus
 	int  (*get_focus_status) (struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode);
 	int  (*get_focused_window) (struct _focus *p);
 	void (*update_grab_events) (struct _focus *p, int mode);
-	void (*update_events) (struct _focus *p, int mode);
 	void (*uninit) (struct _focus *p);
 };
 

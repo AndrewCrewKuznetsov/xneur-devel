@@ -41,26 +41,6 @@ extern struct _window *main_window;
 const char *verbose_forced_mode[]	= {"Default", "Manual", "Automatic"};
 const char *verbose_focus_status[]	= {"Processed", "Changed Focus", "Unchanged Focus", "Excluded"};
 
-/*static void grab_mouse_button (Window current_window, int grab)
-{
-	if (current_window == None)
-		return;
-
-	grab_button(current_window, grab);
-
-	unsigned int children_count;
-	Window root_window, parent_window;
-	Window *children_return;
-
-	int is_same_screen = XQueryTree(main_window->display, current_window, &root_window, &parent_window, &children_return, &children_count);
-	if (!is_same_screen)
-		return;
-
-	for (unsigned int i = 0; i < children_count; i++)
-		grab_mouse_button (children_return[i], grab);
-
-	XFree(children_return);
-}*/
 
 // Private
 int focus_get_focused_window(struct _focus *p)
@@ -83,7 +63,6 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 		
 	// Clear masking on unfocused window
 	p->update_grab_events(p, LISTEN_DONTGRAB_INPUT);
-	p->update_events(p, LISTEN_DONTGRAB_INPUT);
 
 	Window new_window;
 	int show_message = TRUE;
@@ -236,15 +215,15 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 	if (mode == LISTEN_DONTGRAB_INPUT)
 	{
 		grab_button(p->parent_window, FALSE);
+		grab_all_keys(p->owner_window, FALSE);
 	}
 	else
 	{
 		if (xconfig->tracking_mouse)
 			grab_button(p->parent_window, TRUE);
+		grab_all_keys(p->owner_window, TRUE);
 	}
-	grab_spec_keys(p->owner_window, TRUE);
-	set_event_mask(p->owner_window, INPUT_HANDLE_MASK | FOCUS_CHANGE_MASK | EVENT_KEY_MASK);
-
+	
 	/*
 	if (mode == LISTEN_DONTGRAB_INPUT)
 	{
@@ -252,60 +231,32 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 		
 		// Event unmasking
 		grab_button(p->owner_window, FALSE);
-		
-		// Ungrabbing special key (Enter, Tab and other)
-		grab_spec_keys(p->owner_window, FALSE);
-
-		set_mask_to_window(p->owner_window, FOCUS_CHANGE_MASK);
+		grab_all_keys(p->owner_window, FALSE);
 	}
 	else
 	{
 		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' ON"), p->owner_window, owner_window_name);
 		
 		// Event masking
-		
-		// Grabbing special key (Enter, Tab and other)
+		// Grabbing key and button
 		if (p->last_focus != FOCUS_EXCLUDED)
 		{
 			if (xconfig->tracking_mouse)
 			  grab_button(p->parent_window, TRUE);
-			grab_spec_keys(p->owner_window, TRUE);
-			set_event_mask(p->owner_window, INPUT_HANDLE_MASK | FOCUS_CHANGE_MASK | EVENT_KEY_MASK);
+			grab_all_keys(p->owner_window, TRUE);
 		}
 		else
 		{
 			grab_button(p->owner_window, FALSE);
-			grab_spec_keys(p->owner_window, FALSE);
-			set_event_mask(p->owner_window, FOCUS_CHANGE_MASK);
+			grab_all_keys(p->owner_window, FALSE);
 		}
 	}
 	*/
+	
 	p->last_parent_window = p->parent_window;
 	
 	if (owner_window_name != NULL)
 		free(owner_window_name);
-}
-
-static void focus_update_events(struct _focus *p, int mode)
-{
-	
-	if (mode == LISTEN_DONTGRAB_INPUT)
-	{
-		set_event_mask(p->owner_window, None);
-	}
-	else
-	{
-		if (p->last_focus != FOCUS_EXCLUDED)
-		{
-			set_event_mask(p->owner_window, INPUT_HANDLE_MASK | FOCUS_CHANGE_MASK | EVENT_KEY_MASK);
-		}
-		else
-		{
-			set_event_mask(p->owner_window, FOCUS_CHANGE_MASK);
-		}
-	}
-
-	p->last_parent_window = p->parent_window;
 }
 
 static void focus_uninit(struct _focus *p)
@@ -324,7 +275,6 @@ struct _focus* focus_init(void)
 	p->get_focus_status	= focus_get_focus_status;
 	p->get_focused_window = focus_get_focused_window;
 	p->update_grab_events	= focus_update_grab_events;
-	p->update_events	= focus_update_events;
 	p->uninit		= focus_uninit;
 
 	return p;

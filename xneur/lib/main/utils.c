@@ -96,34 +96,6 @@ static Window find_window_with_atom(Window window, Atom atom)
 	return None;
 }
 
-void set_event_mask(Window window, int event_mask)
-{
-	//if (event_mask){};
-	XSelectInput(main_window->display, window, event_mask);
-}
-
-void set_mask_to_window(Window window, int event_mask)
-{
-	if (window == None)
-		return;
-	
-	set_event_mask(window, event_mask);
-	
-	unsigned int children_count;
-	Window root, parent;
-	Window *children;
-	
-	int is_same_screen = XQueryTree(main_window->display, window, &root, &parent, &children, &children_count);
-	if (!is_same_screen)
-		return;
-	
-	unsigned int i;
-	for (i = 0; i < children_count; i++)
-		set_mask_to_window(children[i], event_mask);
-	
-	XFree(children);
-}
-
 void grab_button(Window window, int is_grab)
 {
 	int status;
@@ -165,20 +137,6 @@ void grab_button(Window window, int is_grab)
     //free(mask.mask);	
 }
 
-void grab_key(Window window, KeyCode kc, int is_grab)
-{
-	int status;
-	if (is_grab)
-		status = XGrabKey(main_window->display, kc, AnyModifier, window, TRUE, GrabModeAsync, GrabModeAsync);
-	else
-		status = XUngrabKey(main_window->display, kc, AnyModifier, window);
-
-	if (status == BadValue)
-		log_message(ERROR, _("Failed to %s keyboard with error BadValue"), grab_ungrab[is_grab]);
-	else if (status == BadWindow)
-		log_message(ERROR, _("Failed to %s keyboard with error BadWindow"), grab_ungrab[is_grab]);
-}
-
 void grab_modifier_keys(Window window, int is_grab)
 {
 	int i, k = 0;
@@ -191,13 +149,6 @@ void grab_modifier_keys(Window window, int is_grab)
 
 		for (j = 0; j < modmap->max_keypermod; j++) 
 		{
-			// Dirty hack for using Caps on xneur
-			/*if (i == 1)
-			{
-				k++;
-				continue;
-			}*/
-
 			if (modmap->modifiermap[k]) 
 			{
 				/*
@@ -209,7 +160,6 @@ void grab_modifier_keys(Window window, int is_grab)
 				log_message (ERROR, "Modifiers List:");
 				log_message (ERROR, "%d %d %s", i, j, XKeysymToString(keysym[0]));
 				XFree(keysym);*/
-			
 
 				if (is_grab)
 					XGrabKey(main_window->display, modmap->modifiermap[k], AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
@@ -232,7 +182,7 @@ void grab_modifier_keys(Window window, int is_grab)
 	return;
 }
 	
-void grab_spec_keys(Window window, int is_grab)
+void grab_all_keys(Window window, int is_grab)
 {
 	if (is_grab)
 	{
@@ -241,55 +191,38 @@ void grab_spec_keys(Window window, int is_grab)
 		// Grab all keys...
 		XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
 		// ...without ModKeys.
-		grab_modifier_keys(window, FALSE);
-
-		int xi_opcode, event, error;
-
-		if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
-		{
-			log_message(WARNING, _("X Input extension not available."));
-		}
-		XIEventMask mask;
-		mask.deviceid = XIAllMasterDevices;
-		mask.mask_len = XIMaskLen(XI_ButtonPress);
-		mask.mask = calloc(mask.mask_len, sizeof(char));
-		XISetMask(mask.mask, XI_KeyPress);
-		XISetMask(mask.mask, XI_KeyRelease);
-	    XISelectEvents(main_window->display, window, &mask, 1);
-		free(mask.mask);
-		
-		//grab_manual_action(DefaultRootWindow (main_window->display)); 
-		//grab_user_action(DefaultRootWindow (main_window->display));
-		grab_manual_action(window); 
-		grab_user_action(window);
+		grab_modifier_keys(window, FALSE);	
 	}
 	else
 	{
 		// Ungrab all keys in app window...
-		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
-		// ... and with hotkeys
-		XUngrabKey(main_window->display, AnyKey, AnyModifier, DefaultRootWindow (main_window->display));
-
-		// ...without ModKeys.
-		grab_modifier_keys(DefaultRootWindow (main_window->display), FALSE);
-		
-		grab_manual_action(DefaultRootWindow (main_window->display));
-		grab_user_action(DefaultRootWindow (main_window->display));
+		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);	
 	}
-}
 
-void grab_keyboard(Window window, int is_grab)
-{
-	int status;
-	if (is_grab)
-		status = XGrabKeyboard(main_window->display, window, FALSE, GrabModeAsync, GrabModeAsync, CurrentTime);
-	else
-		status = XUngrabKeyboard(main_window->display, CurrentTime);
+	int xi_opcode, event, error;
+	if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
+	{
+		log_message(WARNING, _("X Input extension not available."));
+	}
+	
+	XIEventMask mask;
+	mask.deviceid = XIAllMasterDevices;
+	mask.mask_len = XIMaskLen(XI_KeyPress);
+	mask.mask = calloc(mask.mask_len, sizeof(char));
+	XISetMask(mask.mask, XI_KeyPress);
+	XISetMask(mask.mask, XI_KeyRelease);
+	XISetMask(mask.mask, XI_FocusIn);
+	XISetMask(mask.mask, XI_FocusOut);
+	XISetMask(mask.mask, XI_Enter);
+	XISetMask(mask.mask, XI_Leave);
+	XISelectEvents(main_window->display, window, &mask, 1);
+	XISelectEvents(main_window->display, DefaultRootWindow (main_window->display), &mask, 1);
+	free(mask.mask);
 
-	if (status == BadValue)
-		log_message(ERROR, _("Failed to %s keyboard with error BadValue"), grab_ungrab[is_grab]);
-	else if (status == BadWindow)
-		log_message(ERROR, _("Failed to %s keyboard with error BadWindow"), grab_ungrab[is_grab]);
+	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
+	
+	grab_manual_action(window); 
+	grab_user_action(window);
 }
 
 unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size) 

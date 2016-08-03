@@ -97,8 +97,6 @@ struct _window *main_window;
 
 int last_event_type = 0;
 
-int xi_mask = 0;
-
 // Private
 static void toggle_lock(int mask, int state)
 {
@@ -306,19 +304,15 @@ static void program_update(struct _program *p)
 {
 	p->last_window = p->focus->owner_window;
 
-	int status = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
-	p->event->set_owner_window(p->event, p->focus->owner_window);
-
-	int listen_mode = LISTEN_GRAB_INPUT;
-	if (p->app_focus_mode == FOCUS_EXCLUDED)
-		listen_mode = LISTEN_DONTGRAB_INPUT;
-
-	p->focus->update_events(p->focus, listen_mode);
-	p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
 	
+	int status = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
 	if (status == FOCUS_UNCHANGED)
 		return;
+	
+	p->event->set_owner_window(p->event, p->focus->owner_window);
 
+	p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+	
 	p->layout_update(p);
 
 	p->buffer->save_and_clear(p->buffer, p->last_window);
@@ -336,6 +330,11 @@ static void program_process_input(struct _program *p)
 {
 	p->update(p);
 
+	int xi_opcode, event, error;
+	if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
+	{
+			log_message(WARNING, _("X Input extension not available."));
+	}
 	while (1)
 	{
 		int type = p->event->get_next_event(p->event);
@@ -345,7 +344,6 @@ static void program_process_input(struct _program *p)
 		{
 			if (xconfig->troubleshoot_switch)
 			{
-				//log_message (ERROR, "KBD_SWITCH") ;
 				p->changed_manual = MANUAL_FLAG_SET;
 			}		
 		}
@@ -360,88 +358,6 @@ static void program_process_input(struct _program *p)
 				//XClientMessageEvent *cme = (XClientMessageEvent *) &(p->event->event);
 				//log_message(LOG, _("Exitting from main cycle"));
 				//return;
-				break;
-			}
-			case KeyPress:
-			{
-				if (xconfig->block_events)
-				{
-					XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
-				}
-
-				if (IsModifierKey(p->event->get_cur_keysym(p->event)))
-					break;
-				
-				log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), XKeysymToString(p->event->get_cur_keysym(p->event)), type);
-
-				// Save received event
-				p->event->default_event = p->event->event;
-
-				// Processing received event
-				p->on_key_action(p, type, p->event->get_cur_keysym(p->event), p->event->get_cur_modifiers(p->event));
-
-				// Resend special key back to window
-				if (p->event->default_event.xkey.keycode != 0)
-				{
-					p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-					p->event->event = p->event->default_event;
-					p->event->send_next_event(p->event);
-					p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
-				}
-					
-				break;
-			}
-			case KeyRelease:
-			{
-				if (xconfig->block_events)
-				{
-					XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
-				}
-
-				if (IsModifierKey(p->event->get_cur_keysym(p->event)))
-					break;
-				
-				log_message(TRACE, _("Received KeyRelease '%s' (event type %d)"), XKeysymToString(p->event->get_cur_keysym(p->event)), type);
-
-				// Save received event
-				p->event->default_event = p->event->event;
-
-				// Processing received event
-				p->on_key_action(p, type, p->event->get_cur_keysym(p->event), p->event->get_cur_modifiers(p->event));
-
-				// Resend special key back to window
-				if (p->event->default_event.xkey.keycode != 0)
-				{		
-					p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-					p->event->event = p->event->default_event;
-					p->event->send_next_event(p->event);
-					p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
-				}
-				break;
-			}
-			case FocusIn:
-			case LeaveNotify:
-			case EnterNotify:
-			{
-				if (type == FocusIn)
-				{
-					if (p->focus->owner_window != p->event->event.xfocus.window)
-						log_message(TRACE, _("Received FocusIn on window %d (event type %d)"), p->event->event.xfocus.window, type);
-				}
-				//else if (type == LeaveNotify)
-				//	log_message(TRACE, _("Received LeaveNotify (event type %d)"), type);
-				//else if (type == EnterNotify)
-				//	log_message(TRACE, _("Received EnterNotify (event type %d)"), type);
-				
-				break;
-			}
-			case FocusOut:
-			{
-				if (p->focus->owner_window != p->event->event.xfocus.window)
-					log_message(TRACE, _("Received FocusOut on window %d (event type %d)"), p->event->event.xfocus.window, type);
-
-				p->update(p);
-				
 				break;
 			}
 			case SelectionNotify:
@@ -584,26 +500,143 @@ static void program_process_input(struct _program *p)
 				log_message(TRACE, _("Received MotionNotify (event type %d)"), type);
 				break;
 			}
+			case FocusIn:
+			case LeaveNotify:
+			case EnterNotify:
+			{
+				if (((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+				    && (type == FocusIn))
+				{
+					log_message(TRACE, _("Received FocusIn on window %d (event type %d)"), p->event->event.xfocus.window, type);
+				}
+				break;
+			}
+			case FocusOut:
+			{
+				if (((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+				    && (type == FocusOut))
+				{
+					log_message(TRACE, _("Received FocusOut on window %d (event type %d)"), p->event->event.xfocus.window, type);
+					p->update(p);
+				}	
+				break;
+			}
 			default:
 			{
-				int xi_opcode, event, error;
-				if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
-				{
-					log_message(WARNING, _("X Input extension not available."));
-					log_message(DEBUG, _("Uncatched event with type %d (see X11/X.h for details)"), type);
-					break;
-				}
+				Window wDummy;
+				int iDummy;
+				unsigned int mask;
 				
 				XGenericEventCookie *cookie = &p->event->event.xcookie;
 
 				if (cookie->type != GenericEvent ||
 					cookie->extension != xi_opcode ||
 					!XGetEventData(main_window->display, cookie))
-					break;
+				{
+					if (type == KeyPress)
+					{
+						if (xconfig->block_events)
+						{
+							XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
+						}
+						
+						KeySym key_sym = p->event->get_cur_keysym(p->event);
 
+						XQueryPointer(main_window->display, 
+						              (Window)p->focus->owner_window, 
+						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, 
+						              &mask);
+						mask = mask & (~get_languages_mask ());
+						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
+							        XKeysymToString(key_sym),
+							        type);
+						//log_message(TRACE, _("    Mask %d"), mask);
+
+						// Save received event
+						p->event->default_event = p->event->event;
+						// Processing received event
+						p->on_key_action(p, KeyPress, key_sym, mask);
+						// Resend special key back to window
+						if (p->event->default_event.xkey.keycode != 0)
+						{
+							p->event->event = p->event->default_event;
+							p->event->send_next_event(p->event);
+						}
+					}
+					else if (type == KeyRelease)
+					{
+						if (xconfig->block_events)
+						{
+							XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
+						}
+						
+						KeySym key_sym = p->event->get_cur_keysym(p->event);
+								       					
+						XQueryPointer(main_window->display, 
+						              (Window)p->focus->owner_window, 
+						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, 
+						              &mask);
+						mask = mask & (~get_languages_mask ());
+						log_message(TRACE, _("Received KeyRelease '%s' (event type %d)"), 
+							        XKeysymToString(key_sym),
+							        type);
+						//log_message(TRACE, _("    Mask %d"), mask);
+						
+						// Save received event
+						p->event->default_event = p->event->event;
+						// Processing received event
+						p->on_key_action(p, KeyRelease, key_sym, mask);
+						// Resend special key back to window
+						if (p->event->default_event.xkey.keycode != 0)
+						{
+							p->event->event = p->event->default_event;
+							p->event->send_next_event(p->event);
+						}		
+					}
+					break;
+				}
+				
 				XIDeviceEvent* xi_event = cookie->data;
 				switch (xi_event->evtype) 
 				{
+					case XI_KeyPress:
+					{
+						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
+
+						XQueryPointer(main_window->display, 
+						              (Window)p->focus->owner_window, 
+						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, 
+						              &mask);
+						mask = mask & (~get_languages_mask ());
+						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
+						            XKeysymToString(key_sym),
+						            type);
+						//log_message(TRACE, _("    Mask %d"), mask);
+
+						// Processing received event
+						p->on_key_action(p, KeyPress, key_sym, mask);
+
+						break;			
+					}
+					case XI_KeyRelease:
+					{				
+						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
+       											
+						XQueryPointer(main_window->display, 
+						              (Window)p->focus->owner_window, 
+						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, 
+						              &mask);
+						mask = mask & (~get_languages_mask ());
+						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
+						            XKeysymToString(key_sym),
+						            type);
+						//log_message(TRACE, _("    Mask %d"), mask);
+
+						// Processing received event
+						p->on_key_action(p, KeyRelease, key_sym, mask);
+
+						break;			
+					}
 					case XI_ButtonPress:
 					{
 						// Clear buffer only when clicked left button
@@ -620,117 +653,6 @@ static void program_process_input(struct _program *p)
 						}
 						break;
 					}
-					case XI_KeyPress:
-					{
-						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-						//int mask = 0;
-						
-						/*Window wDummy;
-						int iDummy;
-						unsigned int state;
-						XQueryPointer(main_window->display, DefaultRootWindow(main_window->display), &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, &state);
-
-						int mask = 0;
-						
-						if (state & ShiftMask)  // Shift
-							mask += (1 << 0); // 1
-						if (state & LockMask)   // CapsLock
-							mask += (1 << 1); // 2
-						if (state & ControlMask)// Control
-							mask += (1 << 2); // 4
-						if (state & Mod1Mask)   // Alt
-							mask += (1 << 3); // 8
-						if (state & Mod2Mask)   // NumLock
-							mask += (1 << 4); // 16
-						if (state & Mod3Mask)
-							mask += (1 << 5); // 32
-						if (state & Mod4Mask)   // Super (Win)
-							mask += (1 << 6); // 64
-						if (state & Mod5Mask)   // ISO_Level3_Shift
-							mask += (1 << 7); // 128*/
-
-						if (key_sym == XK_Shift_L || key_sym == XK_Shift_R)
-							xi_mask += (1 << 0);
-						if (key_sym == XK_Caps_Lock)
-							xi_mask += (1 << 1);
-						if (key_sym == XK_Control_L || key_sym == XK_Control_R)
-							xi_mask += (1 << 2);
-						if (key_sym == XK_Alt_L || key_sym == XK_Alt_R)
-							xi_mask += (1 << 3);
-						if (key_sym == XK_Meta_L || key_sym == XK_Meta_R)
-							xi_mask += (1 << 4);
-						if (key_sym == XK_Num_Lock)
-							xi_mask += (1 << 5);
-						if (key_sym == XK_Super_L || key_sym == XK_Super_R)
-							xi_mask += (1 << 6);
-						if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
-							xi_mask += (1 << 7);
-						
-						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
-						            XKeysymToString(key_sym),
-						            xi_mask,
-						            type);
-							
-						// Processing received event
-						p->on_key_action(p, KeyPress, XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0), xi_mask);
-
-						break;			
-					}
-					case XI_KeyRelease:
-					{
-						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-						           					
-						/*Window wDummy;
-						int iDummy;
-						unsigned int state;
-						XQueryPointer(main_window->display, p->focus->owner_window, &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, &state);
-
-						int mask = 0;
-						
-						if (state & ShiftMask)  // Shift
-							mask += (1 << 0); // 1
-						if (state & LockMask)   // CapsLock
-							mask += (1 << 1); // 2
-						if (state & ControlMask)// Control
-							mask += (1 << 2); // 4
-						if (state & Mod1Mask)   // Alt
-							mask += (1 << 3); // 8
-						if (state & Mod2Mask)   // NumLock
-							mask += (1 << 4); // 16
-						if (state & Mod3Mask)
-							mask += (1 << 5); // 32
-						if (state & Mod4Mask)   // Super (Win)
-							mask += (1 << 6); // 64
-						if (state & Mod5Mask)   // ISO_Level3_Shift
-							mask += (1 << 7); // 128*/
-
-						if (key_sym == XK_Shift_L || key_sym == XK_Shift_R)
-							xi_mask -= (1 << 0);
-						if (key_sym == XK_Caps_Lock)
-							xi_mask -= (1 << 1);
-						if (key_sym == XK_Control_L || key_sym == XK_Control_R)
-							xi_mask -= (1 << 2);
-						if (key_sym == XK_Alt_L || key_sym == XK_Alt_R)
-							xi_mask -= (1 << 3);
-						if (key_sym == XK_Meta_L || key_sym == XK_Meta_R)
-							xi_mask -= (1 << 4);
-						if (key_sym == XK_Num_Lock)
-							xi_mask -= (1 << 5);
-						if (key_sym == XK_Super_L || key_sym == XK_Super_R)
-							xi_mask -= (1 << 6);
-						if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
-							xi_mask -= (1 << 7);
-						
-						log_message(TRACE, _("Received KeyRelease '%s' (event type %d)"), 
-						            XKeysymToString(key_sym),
-									xi_mask,
-						            type);
-
-						// Processing received event
-						p->on_key_action(p, KeyRelease, XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0), xi_mask);
-
-						break;			
-					}
 				}
 				XFreeEventData(main_window->display, cookie);
 				break;
@@ -744,7 +666,6 @@ static void program_change_lang(struct _program *p, int new_lang)
 {
 	log_message(DEBUG, _("Changing language from %s to %s"), xconfig->handle->languages[get_curr_keyboard_group()].name, xconfig->handle->languages[new_lang].name);
 	p->buffer->set_lang_mask(p->buffer, new_lang);
-	//XkbLockGroup(main_window->display, XkbUseCoreKbd, new_lang);
 	set_keyboard_group(new_lang);
 	p->last_layout = new_lang;
 }
@@ -886,9 +807,6 @@ static void program_process_selection_notify(struct _program *p)
 		}
 	}
 
-	// Disable receiving events
-	p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-	
 	// Selection
 	if ((p->action_mode != ACTION_PREVIEW_CHANGE_SELECTED) && (p->action_mode != ACTION_PREVIEW_CHANGE_CLIPBOARD))
 		p->change_word(p, CHANGE_SELECTION);
@@ -900,9 +818,6 @@ static void program_process_selection_notify(struct _program *p)
 	}
 
 	p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-	
-	// Unblock keyboard
-	p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 	p->action_mode = ACTION_NONE;
 }
@@ -996,10 +911,6 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 			}
 
 			p->event->default_event.xkey.keycode = 0;
-			
-			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-			//p->event->send_xkey(p->event, XKeysymToKeycode(main_window->display, key), modifier_mask);
-			//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 		}	
 	}
 }
@@ -1051,14 +962,8 @@ static void program_perform_auto_action(struct _program *p, int action)
 		{
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 			{
-				// Block events of keyboard (push to event queue)
-				p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-				
 				p->event->send_backspaces(p->event, 1);
 				p->last_action = ACTION_NONE;
-				
-				// Restore events mask
-				p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 			}
 			
 			string->del_symbol(string);
@@ -1082,7 +987,6 @@ static void program_perform_auto_action(struct _program *p, int action)
 			if (p->changed_manual == MANUAL_FLAG_NEED_FLUSH)
 			{
 				p->changed_manual = MANUAL_FLAG_UNSET;
-				//p->correction_action = CORRECTION_NONE;
 			}
 			
 			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
@@ -1096,9 +1000,7 @@ static void program_perform_auto_action(struct _program *p, int action)
 				int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 				p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
 				p->correction_buffer->add_symbol(p->correction_buffer, sym, p->event->event.xkey.keycode, modifier_mask);
-				// Block events of keyboard (push to event queue)
-				p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
+				
 				// Correct space before punctuation
 			    p->check_space_before_punctuation(p);
 
@@ -1110,9 +1012,6 @@ static void program_perform_auto_action(struct _program *p, int action)
 				if (!xconfig->check_lang_on_process)
 				{
 					p->check_pattern(p);
-					
-					// Unblock keyboard
-					p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 					return;
 				}
 
@@ -1134,15 +1033,12 @@ static void program_perform_auto_action(struct _program *p, int action)
 				p->last_action = ACTION_NONE;
 				
 				p->check_pattern(p);
-				
-				// Unblock keyboard
-				p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
-				
+
 				return;
 			}
 			
 			// Block events of keyboard (push to event queue)
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
+			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 			// Check two capital letter
 			p->check_tcl_last_word(p);
@@ -1186,12 +1082,6 @@ static void program_perform_auto_action(struct _program *p, int action)
 			p->event->send_next_event(p->event);
 			p->event->default_event.xkey.keycode = 0;
 				
-			// Unblock keyboard
-			p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
-			
-			//if (action == KLB_ENTER && xconfig->flush_buffer_when_press_enter)
-			//	p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-
 			p->last_action = ACTION_NONE;
 
 			if (p->changed_manual == MANUAL_FLAG_SET)
@@ -1283,8 +1173,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			if ((xconfig->educate) && (action == ACTION_CHANGE_WORD) && (p->correction_action == CORRECTION_NONE))
 				p->add_word_to_dict(p, next_lang);
 
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 			int change_action = ACTION_NONE;
 			
 			if (action == ACTION_CHANGE_WORD)
@@ -1357,13 +1245,10 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			show_notify(NOTIFY_MANUAL_CHANGE_WORD, NULL);
 			p->event->default_event.xkey.keycode = 0;
 			
-			p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
-
 			break;
 		}
 		case ACTION_ENABLE_LAYOUT_0:
 		{
-			//XkbLockGroup(main_window->display, XkbUseCoreKbd, 0);
 			set_keyboard_group(0);
 			
 			p->event->default_event.xkey.keycode = 0;
@@ -1372,7 +1257,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 		}
 		case ACTION_ENABLE_LAYOUT_1:
 		{
-			//XkbLockGroup(main_window->display, XkbUseCoreKbd, 1);
 			set_keyboard_group(1);
 			
 			p->event->default_event.xkey.keycode = 0;
@@ -1381,7 +1265,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 		}
 		case ACTION_ENABLE_LAYOUT_2:
 		{
-			//XkbLockGroup(main_window->display, XkbUseCoreKbd, 2);
 			set_keyboard_group(2);
 			
 			p->event->default_event.xkey.keycode = 0;
@@ -1390,7 +1273,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 		}
 		case ACTION_ENABLE_LAYOUT_3:
 		{
-			//XkbLockGroup(main_window->display, XkbUseCoreKbd, 3);
 			set_keyboard_group(3);
 			
 			p->event->default_event.xkey.keycode = 0;
@@ -1413,10 +1295,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 		{
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 			{	
-				//p->check_pattern(p, FALSE);
-
-				// Block events of keyboard (push to event queue)
-				p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 				p->event->send_xkey(p->event, XKeysymToKeycode(main_window->display, XK_Right), p->event->event.xkey.state);
 				if (xconfig->add_space_after_autocompletion)
 					p->event->send_xkey(p->event, XKeysymToKeycode(main_window->display, XK_space), p->event->event.xkey.state);
@@ -1425,17 +1303,10 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 				p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 				p->correction_buffer->clear(p->correction_buffer);
 				  
-				// Unblock keyboard
-				p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 				break;
 			}
 			
-			// Block events of keyboard (push to event queue)
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-			
 			p->event->send_xkey(p->event, p->event->event.xkey.keycode, p->event->event.xkey.state);
-			// Unblock keyboard
-			p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 			
 			p->event->event = p->event->default_event;
 			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
@@ -1450,23 +1321,10 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			{	
 				p->rotate_pattern(p);
 
-				// Block events of keyboard (push to event queue)
-				//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
-				//p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-				//p->correction_buffer->clear(p->correction_buffer);
-				  
-				// Unblock keyboard
-				//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 				break;
 			}
 			
-			// Block events of keyboard (push to event queue)
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-			
 			p->event->send_xkey(p->event, p->event->event.xkey.keycode, p->event->event.xkey.state);
-			// Unblock keyboard
-			p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 			
 			p->event->event = p->event->default_event;
 			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
@@ -1484,12 +1342,10 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			xconfig->block_events = !xconfig->block_events;
 			if (xconfig->block_events)
 			{
-				//grab_keyboard(p->focus->owner_window, TRUE);
 				show_notify(NOTIFY_BLOCK_EVENTS, NULL);
 			}
 			else
 			{
-				//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 				show_notify(NOTIFY_UNBLOCK_EVENTS, NULL);
 			}
 			log_message (DEBUG, _("Now keyboard and mouse block status is %s"), _(xconfig->get_bool_name(xconfig->block_events)));
@@ -1506,16 +1362,12 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			char *date = malloc(256 * sizeof(char));
 			strftime(date, 256, "%x", loctime);
 			
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 			// Insert Date 
 			log_message(DEBUG, _("Insert date '%s'."), date);
 
 			p->buffer->set_content(p->buffer, date);
 
 			p->change_word(p, CHANGE_INS_DATE);
-
-			p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 			p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 			p->correction_buffer->clear(p->correction_buffer);
@@ -1578,8 +1430,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 					continue;
 				}
 
-				p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 				// Replace Abbreviation
 				log_message(DEBUG, _("Found Abbreviation '%s' '%s'. Replacing to '%s'."), replacement, word, string);
 
@@ -1590,8 +1440,6 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 				p->buffer->set_content(p->buffer, string);
 
 				p->change_word(p, CHANGE_ABBREVIATION);
-
-				p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 				show_notify(NOTIFY_REPLACE_ABBREVIATION, NULL);
 				p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
@@ -1658,13 +1506,11 @@ static int program_check_lang_last_word(struct _program *p)
 	if (new_lang == NO_LANGUAGE)
 	{
 		log_message(DEBUG, _("No language found to change to"));
-		//get_suggest(p, cur_lang); 
 		return FALSE;
 	}
 
 	if (new_lang == cur_lang)
 	{
-		//get_suggest(p, cur_lang);
 		return FALSE;
 	}
 	
@@ -1683,7 +1529,6 @@ static int program_check_lang_last_word(struct _program *p)
 
 	p->last_layout = new_lang;
 
-	//get_suggest(p, new_lang);
 	return TRUE;
 }
 
@@ -1982,8 +1827,6 @@ static void program_check_ellipsis(struct _program *p)
 	p->change_word(p, CHANGE_ELLIPSIS);
 	show_notify(NOTIFY_CORR_ELLIPSIS, NULL);
 
-	//p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
-	
 	p->correction_action = CORRECTION_ELLIPSIS;
 	if (text != NULL)
 		free(text);
@@ -2336,8 +2179,6 @@ static void program_check_pattern(struct _program *p)
 	
 	log_message (DEBUG, _("Recognition word '%s' from text '%s' (layout %d), autocompletation..."), pattern_data->string, word, get_curr_keyboard_group());
 	
-	p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 	
 	tmp_buffer->set_content(tmp_buffer, pattern_data->string + strlen(word)*sizeof(char));
@@ -2360,8 +2201,6 @@ static void program_check_pattern(struct _program *p)
 	p->event->default_event.xkey.keycode = 0;
 	
 	tmp_buffer->uninit(tmp_buffer);
-
-	p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 	p->last_action = ACTION_AUTOCOMPLETION;
 	p->last_pattern_id = 0;
@@ -2429,8 +2268,6 @@ static void program_rotate_pattern(struct _program *p)
 	
     log_message (DEBUG, _("Next autocompletion word '%s' from text '%s' (layout %d), rotate autocompletation..."), list_alike->data[p->last_pattern_id].string, word, get_curr_keyboard_group());
 	
-	p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 	
 	tmp_buffer->set_content(tmp_buffer, list_alike->data[p->last_pattern_id].string + strlen(word)*sizeof(char));
@@ -2454,8 +2291,6 @@ static void program_rotate_pattern(struct _program *p)
 	p->event->default_event.xkey.keycode = 0;
 	
 	tmp_buffer->uninit(tmp_buffer);
-
-	p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 	p->last_action = ACTION_AUTOCOMPLETION;
 	if (word != NULL)
@@ -2631,7 +2466,7 @@ static void program_check_misprint(struct _program *p)
 		if (p->correction_action != CORRECTION_NONE)
 			p->correction_action = CORRECTION_NONE;
 		
-		p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
+		//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 		log_message (DEBUG, _("Found a misprint , correction '%s' to '%s'..."), word+offset, possible_word);
 ;
@@ -2676,7 +2511,7 @@ static void program_check_misprint(struct _program *p)
 		p->send_string_silent(p, 0);	
 		p->buffer->unset_offset(p->buffer, new_offset);
 		
-		p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
+		//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 		int notify_text_len = strlen(_("Correction '%s' to '%s'")) + strlen(word+offset) + 1 + possible_word_len;
 		char *notify_text = (char *) malloc(notify_text_len * sizeof(char));
@@ -3348,7 +3183,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		case CHANGE_STRING_TO_LAYOUT_0:
 		{
 			p->change_lang(p, 0);
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
+			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
 			p->send_string_silent(p, p->buffer->cur_pos);
 			break;
@@ -3356,7 +3191,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		case CHANGE_STRING_TO_LAYOUT_1:
 		{
 			p->change_lang(p, 1);
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
+			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
 			p->send_string_silent(p, p->buffer->cur_pos);
 			break;
@@ -3364,7 +3199,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		case CHANGE_STRING_TO_LAYOUT_2:
 		{
 			p->change_lang(p, 2);
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
+			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
 			p->send_string_silent(p, p->buffer->cur_pos);
 			break;
@@ -3372,7 +3207,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		case CHANGE_STRING_TO_LAYOUT_3:
 		{
 			p->change_lang(p, 3);
-			p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
+			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
 			p->send_string_silent(p, p->buffer->cur_pos);
 			break;

@@ -294,8 +294,6 @@ int get_user_action(KeySym key_sym, int mask)
 			mask += (1 << 7);
 	}
 	
-	
-
 	for (int action = 0; action < xconfig->actions_count; action++)
 	{
 		//log_message (ERROR, "U%d---%d %d", action, ubtable[action].key_code, kc);
