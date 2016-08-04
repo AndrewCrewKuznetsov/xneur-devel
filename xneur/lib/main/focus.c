@@ -62,7 +62,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	char *new_app_name = NULL;
 		
 	// Clear masking on unfocused window
-	p->update_grab_events(p, LISTEN_DONTGRAB_INPUT);
+	//p->update_grab_events(p, LISTEN_DONTGRAB_INPUT);
 
 	Window new_window;
 	int show_message = TRUE;
@@ -212,7 +212,7 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 {
 	char *owner_window_name = get_wm_class_name(p->owner_window);
 
-	if (mode == LISTEN_DONTGRAB_INPUT)
+	if ((mode == LISTEN_DONTGRAB_INPUT) || (p->last_focus == FOCUS_EXCLUDED))
 	{
 		grab_button(p->parent_window, FALSE);
 		grab_all_keys(p->owner_window, FALSE);

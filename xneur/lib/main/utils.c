@@ -190,28 +190,28 @@ void grab_all_keys(Window window, int is_grab)
 		XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
 		// ...without ModKeys.
 		grab_modifier_keys(window, FALSE);	
+		
+		XIEventMask mask;
+		mask.deviceid = XIAllMasterDevices;
+		mask.mask_len = XIMaskLen(XI_KeyPress);
+		mask.mask = calloc(mask.mask_len, sizeof(char));
+		XISetMask(mask.mask, XI_KeyPress);
+		XISetMask(mask.mask, XI_KeyRelease);
+		XISetMask(mask.mask, XI_FocusIn);
+		XISetMask(mask.mask, XI_FocusOut);
+		XISetMask(mask.mask, XI_Enter);
+		XISetMask(mask.mask, XI_Leave);
+		XISelectEvents(main_window->display, window, &mask, 1);
+		free(mask.mask);
+
+		grab_manual_action(window); 
+		grab_user_action(window);
 	}
 	else
 	{
 		// Ungrab all keys in app window...
 		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
 	}
-
-	XIEventMask mask;
-	mask.deviceid = XIAllMasterDevices;
-	mask.mask_len = XIMaskLen(XI_KeyPress);
-	mask.mask = calloc(mask.mask_len, sizeof(char));
-	XISetMask(mask.mask, XI_KeyPress);
-	XISetMask(mask.mask, XI_KeyRelease);
-	XISetMask(mask.mask, XI_FocusIn);
-	XISetMask(mask.mask, XI_FocusOut);
-	XISetMask(mask.mask, XI_Enter);
-	XISetMask(mask.mask, XI_Leave);
-	XISelectEvents(main_window->display, window, &mask, 1);
-	free(mask.mask);
-
-	grab_manual_action(window); 
-	grab_user_action(window);
 	
 	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
 }
