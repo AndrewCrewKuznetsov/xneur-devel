@@ -1164,10 +1164,20 @@ msgstr "Установлена группа раскладки по умолча
 msgid "Received KeyPress '%s' (event type %d)"
 msgstr "Получено KeyPress '%s' (тип события %d)"
 
+#: lib/main/program.c:375 lib/main/program.c:669
+#, c-format
+msgid "Received XI_KeyPress '%s' (event type %d)"
+msgstr "Получено XI_KeyPress '%s' (тип события %d)"
+
 #: lib/main/program.c:404 lib/main/program.c:724
 #, c-format
 msgid "Received KeyRelease '%s' (event type %d)"
 msgstr "Получено KeyRelease '%s' (тип события %d)"
+
+#: lib/main/program.c:404 lib/main/program.c:724
+#, c-format
+msgid "Received XI_KeyRelease '%s' (event type %d)"
+msgstr "Получено XI_KeyRelease '%s' (тип события %d)"
 
 #: lib/main/program.c:429
 #, c-format

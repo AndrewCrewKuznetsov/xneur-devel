@@ -100,11 +100,13 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 	event.xkey.state |= state;
 
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
-
+	symbol[0] = NULLSYM;
+	
 	int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
 		
 	if (nbytes <= 0)
 	{
+		log_message (TRACE, "Symbol at KeyCode %d not found on default locale.", kc);
 		struct _list_char *locales = list_char_init();
 		locales->add(locales, "C");
 		locales->add(locales, "POSIX");
@@ -130,6 +132,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 		{
 			if (setlocale(LC_ALL, locales->data[i].string) != NULL)
 			{
+				log_message (TRACE, "Check symbol at KeyCode %d on locale %c!", kc, locales->data[i].string);
 				event.xkey.root		= RootWindow(p->display, DefaultScreen(p->display));
 				event.xkey.display  = p->display;
 				nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
@@ -140,6 +143,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 				{
 					symbol[nbytes] = NULLSYM;
 					locales->uninit(locales);
+					log_message (TRACE, "Found symbol '%s' at KeyCode %d on locale %c!", symbol, kc, locales->data[i].string);
 					return symbol;
 				}
 			}
@@ -154,8 +158,11 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 		
 	}
 	else
+	{
 		symbol[nbytes] = NULLSYM;
-
+		log_message (TRACE, "Found symbol '%s' at KeyCode %d on default locale!", symbol, kc);
+	}
+	
 	return symbol;
 }
 
@@ -172,7 +179,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	}
 
 	/* Miss. */
-
+	log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
 	symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
 	if (!symbol)
 		return symbol;

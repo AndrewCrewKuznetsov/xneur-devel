@@ -1088,9 +1088,19 @@ msgstr ""
 msgid "Received KeyPress '%s' (event type %d)"
 msgstr ""
 
+#: lib/main/program.c:375 lib/main/program.c:669
+#, c-format
+msgid "Received XI_KeyPress '%s' (event type %d)"
+msgstr ""
+
 #: lib/main/program.c:404 lib/main/program.c:724
 #, c-format
 msgid "Received KeyRelease '%s' (event type %d)"
+msgstr ""
+
+#: lib/main/program.c:404 lib/main/program.c:724
+#, c-format
+msgid "Received XI_KeyRelease '%s' (event type %d)"
 msgstr ""
 
 #: lib/main/program.c:429

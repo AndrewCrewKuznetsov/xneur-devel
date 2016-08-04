@@ -605,14 +605,15 @@ static void program_process_input(struct _program *p)
 				{
 					case XI_KeyPress:
 					{
-						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-
+						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
+						if (key_sym == NoSymbol) 
+							key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
 						XQueryPointer(main_window->display, 
 						              (Window)p->focus->owner_window, 
 						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, 
 						              &mask);
 						mask = mask & (~get_languages_mask ());
-						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
+						log_message(TRACE, _("Received XI_KeyPress '%s' (event type %d)"), 
 						            XKeysymToString(key_sym),
 						            type);
 						//log_message(TRACE, _("    Mask %d"), mask);
@@ -624,14 +625,15 @@ static void program_process_input(struct _program *p)
 					}
 					case XI_KeyRelease:
 					{				
-						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-       											
+						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
+						if (key_sym == NoSymbol) 
+							key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);						
 						XQueryPointer(main_window->display, 
 						              (Window)p->focus->owner_window, 
 						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy, 
 						              &mask);
 						mask = mask & (~get_languages_mask ());
-						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"), 
+						log_message(TRACE, _("Received XI_KeyPress '%s' (event type %d)"), 
 						            XKeysymToString(key_sym),
 						            type);
 						//log_message(TRACE, _("    Mask %d"), mask);
