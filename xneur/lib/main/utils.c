@@ -186,8 +186,6 @@ void grab_all_keys(Window window, int is_grab)
 {
 	if (is_grab)
 	{
-		// Ungrab hotkeys in root window
-		XUngrabKey(main_window->display, AnyKey, AnyModifier, DefaultRootWindow (main_window->display));
 		// Grab all keys...
 		XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
 		// ...without ModKeys.
@@ -196,15 +194,9 @@ void grab_all_keys(Window window, int is_grab)
 	else
 	{
 		// Ungrab all keys in app window...
-		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);	
+		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
 	}
 
-	int xi_opcode, event, error;
-	if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
-	{
-		log_message(WARNING, _("X Input extension not available."));
-	}
-	
 	XIEventMask mask;
 	mask.deviceid = XIAllMasterDevices;
 	mask.mask_len = XIMaskLen(XI_KeyPress);
@@ -216,13 +208,12 @@ void grab_all_keys(Window window, int is_grab)
 	XISetMask(mask.mask, XI_Enter);
 	XISetMask(mask.mask, XI_Leave);
 	XISelectEvents(main_window->display, window, &mask, 1);
-	XISelectEvents(main_window->display, DefaultRootWindow (main_window->display), &mask, 1);
 	free(mask.mask);
 
-	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
-	
 	grab_manual_action(window); 
 	grab_user_action(window);
+	
+	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
 }
 
 unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size) 

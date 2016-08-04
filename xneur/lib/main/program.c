@@ -303,15 +303,19 @@ static void program_layout_update(struct _program *p)
 static void program_update(struct _program *p)
 {
 	p->last_window = p->focus->owner_window;
-
 	
 	int status = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
+
 	if (status == FOCUS_UNCHANGED)
 		return;
 	
 	p->event->set_owner_window(p->event, p->focus->owner_window);
 
-	p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+	int listen_mode = LISTEN_GRAB_INPUT;
+	if (p->app_focus_mode == FOCUS_EXCLUDED)
+		listen_mode = LISTEN_DONTGRAB_INPUT;
+	
+	p->focus->update_grab_events(p->focus, listen_mode);
 	
 	p->layout_update(p);
 
