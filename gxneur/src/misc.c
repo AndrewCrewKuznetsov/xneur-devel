@@ -545,8 +545,6 @@ void xneur_kb_preference(void)
 
 void xneur_preference(void)
 {
-	xconfig->kill(xconfig);
-	
 	GError* error = NULL;
 	GtkBuilder* builder = gtk_builder_new ();
 	if (!gtk_builder_add_from_file (builder, UI_FILE_CONFIG, &error))
@@ -1495,7 +1493,6 @@ void xneur_preference(void)
 	// Button Cancel
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button4"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_dontsave_preference), builder);
-
 }
 
 void xneur_add_exclude_app(void)
@@ -1689,8 +1686,8 @@ void xneur_edit_user_action(GtkWidget *treeview)
 		gtk_entry_set_text(GTK_ENTRY(widget), user_action);
 		
 		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
-		g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), builder);
-		g_signal_connect ((gpointer) widget, "key-release-event", G_CALLBACK (on_key_release_event), builder);
+		g_signal_connect ((gpointer) widget, "key_press_event", G_CALLBACK (on_key_press_event), builder);
+		g_signal_connect ((gpointer) widget, "key_release_event", G_CALLBACK (on_key_release_event), builder);
 		gtk_entry_set_text(GTK_ENTRY(widget), key_bind);
 
 		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
@@ -2655,14 +2652,12 @@ void xneur_save_preference(GtkBuilder* builder)
 		arg_keyboard_properties = NULL;
 	//add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
-	xneur_start_stop ();
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 	gtk_widget_destroy(window);
 }
 
 void xneur_dontsave_preference(GtkBuilder* builder)
 {
-	xneur_start_stop ();
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "window2"));
 	gtk_widget_destroy(window);
 }

@@ -734,7 +734,8 @@ static void buffer_uninit(struct _buffer *p)
 
 	if (p->i18n_content != NULL)
 		free(p->i18n_content);
-	free(p);
+	if (p != NULL)
+		free(p);
 
 	log_message(DEBUG, _("String is freed"));
 }

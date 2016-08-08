@@ -320,7 +320,9 @@ void bind_user_actions(void)
 
 void unbind_user_actions(void)
 {
-	free(ubtable);
+	if (ubtable != NULL)
+		free(ubtable);
+	ubtable = NULL;
 }
 
 void grab_manual_action(Window window)

@@ -117,7 +117,13 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	//{
 		if (xconfig->excluded_apps->exist(xconfig->excluded_apps, new_app_name, BY_PLAIN))
 			*focus_status = FOCUS_EXCLUDED;
-		
+
+		if (strcmp("Gxneur", new_app_name) == 0)
+			*focus_status = FOCUS_EXCLUDED;
+
+		if (strcmp("Kdeneur", new_app_name) == 0)
+			*focus_status = FOCUS_EXCLUDED;
+	
 		if (xconfig->auto_apps->exist(xconfig->auto_apps, new_app_name, BY_PLAIN))
 			*forced_mode = FORCE_MODE_AUTO;
 		else if (xconfig->manual_apps->exist(xconfig->manual_apps, new_app_name, BY_PLAIN))
@@ -261,7 +267,8 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 
 static void focus_uninit(struct _focus *p)
 {
-	free(p);
+	if (p != NULL)
+		free(p);
 
 	log_message(DEBUG, _("Focus is freed"));
 }

@@ -246,7 +246,8 @@ static void event_send_next_event(struct _event *p)
 
 static void event_uninit(struct _event *p)
 {
-	free(p);
+	if (p != NULL)
+		free(p);
 
 	log_message(DEBUG, _("Event is freed"));
 }
