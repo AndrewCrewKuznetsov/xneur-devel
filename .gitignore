@@ -1,2 +1,5 @@
 # Temporary files
 *~
+
+# Temporary merge files
+*.orig
