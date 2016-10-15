@@ -15,3 +15,7 @@ Makefile.in
 # Auxillary folders
 .libs
 .deps
+
+# Compiled object files
+*.o
+*.lo
