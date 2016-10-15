@@ -19,6 +19,8 @@ Makefile.in
 # Compiled object files
 *.o
 *.lo
+*.a
+*.la
 
 # autom4te cache
 autom4te.cache
