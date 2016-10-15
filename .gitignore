@@ -3,3 +3,7 @@
 
 # Temporary merge files
 *.orig
+
+# Shared libraries
+*.so
+*.so.*
