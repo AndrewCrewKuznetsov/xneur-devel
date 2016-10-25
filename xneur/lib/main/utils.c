@@ -43,8 +43,6 @@ const KeySym mod_keys[] =	{
 					XK_Mode_switch, XK_ISO_Level3_Shift, XK_Menu, XK_ISO_Prev_Group, XK_ISO_Next_Group
 				};
 
-static const int total_mod_keys = sizeof(mod_keys) / sizeof(mod_keys[0]);
-
 extern struct _xneur_config *xconfig;
 extern struct _window *main_window;
 
