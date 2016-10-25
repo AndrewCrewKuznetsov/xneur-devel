@@ -77,11 +77,16 @@ else
 
 # Note: I am using gnupg-agent for comfortable work
 
-# begin update for basic releases
-dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
+# begin update for basic releases 
+dch -b --force-distribution --distribution "yakkety" -v "${NEW_VER}-0yakkety" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
@@ -106,6 +111,8 @@ debuild -S -sd
 # end update for other releases
 
 cd ..
+echo "Download to Launchpad Yakkety..."
+dput ppa gxneur_${NEW_VER}-0yakkety_source.changes | cat
 echo "Download to Launchpad Xenial..."
 dput ppa gxneur_${NEW_VER}-0xenial_source.changes | cat
 echo "Download to Launchpad Wily..."
