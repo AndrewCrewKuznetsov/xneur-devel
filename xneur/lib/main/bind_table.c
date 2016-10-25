@@ -65,12 +65,12 @@ static struct _bind_table btable[MAX_HOTKEYS] =	{
 						};
 
 static const char *normal_action_names[] =	{
-										"Correct/Undo correction", "Transliterate", "Change case", "Preview correction", 
-										"Correct last line", 
+										"Correct/Undo correction", "Transliterate", "Change case", "Preview correction",
+										"Correct last line",
 										"Correct selected text", "Transliterate selected text", "Change case of selected text", "Preview correction of selected text",
 	                                    "Correct clipboard text", "Transliterate clipboard text", "Change case of clipboard text", "Preview correction of clipboard text",
 										"Switch to layout 1", "Switch to layout 2", "Switch to layout 3", "Switch to layout 4",
-		                                "Rotate layouts", "Rotate layouts back", "Expand abbreviations", "Autocompletion confirmation", 
+		                                "Rotate layouts", "Rotate layouts back", "Expand abbreviations", "Autocompletion confirmation",
 										"Rotate Autocompletion", "Block/Unblock keyboard and mouse events", "Insert date"
 						};
 
@@ -95,7 +95,7 @@ static char* hotkeys_concat_bind(int action)
 	}
 
 	strcat(text, xconfig->hotkeys[action].key);
-	
+
 	return text;
 }
 
@@ -115,12 +115,13 @@ static char* user_hotkeys_concat_bind(int action)
 	}
 
 	strcat(text, xconfig->actions[action].hotkey.key);
-	
+
 	return text;
 }
 
 static void bind_action(enum _hotkey_action action)
 {
+	// Bind standart action to global config
 	btable[action].modifier_mask	= 0;
 	btable[action].key_sym		= 0;
 	btable[action].key_sym_shift	= 0;
@@ -142,7 +143,7 @@ static void bind_action(enum _hotkey_action action)
 	if (modifiers & 0x08)
 		btable[action].modifier_mask = btable[action].modifier_mask + 64;	// Win
 
-	
+
 	KeySym key_sym, key_sym_shift;
 	key_sym = NoSymbol;
 	key_sym_shift = NoSymbol;
@@ -155,14 +156,14 @@ static void bind_action(enum _hotkey_action action)
 	btable[action].key_sym = key_sym;
 	btable[action].key_sym_shift = key_sym_shift;
 	btable[action].key_code = XKeysymToKeycode(main_window->display, key_sym);
-	
+
 	char *key = hotkeys_concat_bind (action);
 	log_message(DEBUG, _("   Action \"%s\" with key \"%s\""), _(normal_action_names[action]), key);
 	//log_message(ERROR, _("      KeySym %d (%d) keycode %d mask %d"), key_sym, key_sym_shift, btable[action].key_code, btable[action].modifier_mask);
 	if ((key_sym == None) || (key_sym_shift == None))
 	{
 		log_message(ERROR, _("      KeySym (or with Shift modifier) is undefined!"));
-	
+
 	}
 	if (key != NULL)
 		free(key);
@@ -174,7 +175,7 @@ static void bind_user_action(int action)
 	ubtable[action].key_sym		= 0;
 	ubtable[action].key_sym_shift	= 0;
 	ubtable[action].key_code		= 0;
-	
+
 	if (xconfig->actions[action].hotkey.key == NULL)
 	{
 		log_message(DEBUG, _("   No key set for action \"%s\""), xconfig->actions[action].name);
@@ -204,14 +205,14 @@ static void bind_user_action(int action)
 	ubtable[action].key_sym = key_sym;
 	ubtable[action].key_sym_shift = key_sym_shift;
 	ubtable[action].key_code = XKeysymToKeycode(main_window->display, key_sym);
-	
+
 	char *key = user_hotkeys_concat_bind (action);
 	log_message(DEBUG, _("   Action \"%s\" with key \"%s\""), xconfig->actions[action].name, key);
 	//log_message(ERROR, _("      KeySym %d (%d) keycode %d"), key_sym, key_sym_shift, ubtable[action].key_code);
 	if ((key_sym == None) || (key_sym_shift == None))
 	{
 		log_message(ERROR, _("      KeySym (or with Shift modifier) is undefined!"), _(normal_action_names[action]), key);
-	
+
 	}
 	if (key != NULL)
 		free(key);
@@ -244,7 +245,7 @@ enum _hotkey_action get_manual_action(KeySym key_sym, int mask)
 		if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
 			mask += (1 << 7);
 	}
-	
+
 	for (enum _hotkey_action action = 0; action < MAX_HOTKEYS; action++)
 	{
 	//log_message (ERROR, "%d---%d %d", action, btable[action].key_code, kc);
@@ -293,7 +294,7 @@ int get_user_action(KeySym key_sym, int mask)
 		if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
 			mask += (1 << 7);
 	}
-	
+
 	for (int action = 0; action < xconfig->actions_count; action++)
 	{
 		//log_message (ERROR, "U%d---%d %d", action, ubtable[action].key_code, kc);
@@ -329,61 +330,7 @@ void grab_manual_action(Window window)
 {
 	for (enum _hotkey_action action = 0; action < MAX_HOTKEYS; action++)
 	{
-		if (btable[action].key_sym == 0)
-			continue;
-		
-		if (IsModifierKey(btable[action].key_sym))
-		{
-		    continue;
-		}
-		
-		XGrabKey(main_window->display, 
-					XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-					btable[action].modifier_mask, 
-						window, 
-		         	FALSE, GrabModeAsync, GrabModeAsync);
-	
-		if (main_window->keymap->numlock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->numlock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
-
-		if (main_window->keymap->capslock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->capslock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
-
-		if (main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
-
-		if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
-
-		if (main_window->keymap->numlock_mask && main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
-
-		if (main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-						DefaultRootWindow (main_window->display), 
-						FALSE, GrabModeAsync, GrabModeAsync);
-
-		if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btable[action].key_sym), 
-						btable[action].modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+		grab_action_common(btable[action],window,DefaultRootWindow (main_window->display));
 	}
 }
 
@@ -391,58 +338,65 @@ void grab_user_action(Window window)
 {
 	for (int action = 0; action < xconfig->actions_count; action++)
 	{
-		if (ubtable[action].key_sym == 0)
-			continue;
+		grab_action_common(ubtable[action],window,window);
+	}
+}
 
-		if (IsModifierKey(ubtable[action].key_sym))
-		    continue;
-		    
-		XGrabKey(main_window->display, 
-					XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-					ubtable[action].modifier_mask, 
-					window, 
-		         	FALSE, GrabModeAsync, GrabModeAsync);
-		
-		if (main_window->keymap->numlock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->numlock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+void grab_action_common(struct _bind_table btaction, Window window, Window strange_window)
+{
+	if (btaction.key_sym == 0)
+		return;
 
-		if (main_window->keymap->capslock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->capslock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+	if (IsModifierKey(btaction.key_sym))
+	    return;
 
-		if (main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+	XGrabKey(main_window->display,
+				XKeysymToKeycode(main_window->display, btaction.key_sym),
+				btaction.modifier_mask,
+				window,
+	         	FALSE, GrabModeAsync, GrabModeAsync);
 
-		if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+	if (main_window->keymap->numlock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->numlock_mask,
+					window,
+					FALSE, GrabModeAsync, GrabModeAsync);
 
-		if (main_window->keymap->numlock_mask && main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+	if (main_window->keymap->capslock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->capslock_mask,
+					window,
+					FALSE, GrabModeAsync, GrabModeAsync);
 
-		if (main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
+	if (main_window->keymap->scrolllock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->scrolllock_mask,
+					window,
+					FALSE, GrabModeAsync, GrabModeAsync);
 
-		if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
-				XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, ubtable[action].key_sym), 
-						ubtable[action].modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-						window, 
-						FALSE, GrabModeAsync, GrabModeAsync);
-	}		
+	if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask,
+					window,
+					FALSE, GrabModeAsync, GrabModeAsync);
+
+	if (main_window->keymap->numlock_mask && main_window->keymap->scrolllock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->scrolllock_mask,
+					window,
+					FALSE, GrabModeAsync, GrabModeAsync);
+
+	if (main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
+					strange_window, // Why only here?!
+//					DefaultRootWindow (main_window->display),
+					FALSE, GrabModeAsync, GrabModeAsync);
+
+	if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
+			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
+					btaction.modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
+					window,
+					FALSE, GrabModeAsync, GrabModeAsync);
+
 }

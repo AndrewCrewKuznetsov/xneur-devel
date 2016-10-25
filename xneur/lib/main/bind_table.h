@@ -22,18 +22,6 @@
 
 #include <X11/XKBlib.h>
 
-void bind_manual_actions(void);
-void bind_user_actions(void);
-void unbind_user_actions(void);
-
-void grab_manual_action(Window window);
-void grab_user_action(Window window);
-
-//void ungrab_modifiers(Window window);
-
-enum _hotkey_action get_manual_action(KeySym key_sym, int mask);
-int get_user_action(KeySym key_sym, int mask);
-
 struct _bind_table
 {
 	KeySym key_sym;
@@ -41,5 +29,20 @@ struct _bind_table
 	KeyCode key_code;
 	int modifier_mask;
 };
+
+void bind_manual_actions(void);
+void bind_user_actions(void);
+void unbind_user_actions(void);
+
+void grab_manual_action(Window window);
+void grab_user_action(Window window);
+
+void grab_action_common(struct _bind_table btaction, Window window, Window strange_window);
+
+//void ungrab_modifiers(Window window);
+
+enum _hotkey_action get_manual_action(KeySym key_sym, int mask);
+int get_user_action(KeySym key_sym, int mask);
+
 
 #endif /* _BIND_TABLE_H_ */

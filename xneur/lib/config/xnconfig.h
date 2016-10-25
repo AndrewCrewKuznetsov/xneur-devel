@@ -32,7 +32,7 @@
 #define MAX_NOTIFIES		38
 #define MAX_HOTKEYS			24
 
-#include <sys/types.h>	
+#include <sys/types.h>
 #define XK_PUBLISHING
 #include <X11/XKBlib.h>
 #include "xneur.h"
@@ -186,7 +186,7 @@ struct _xneur_config
 	char *version;
 
 	pid_t pid;
-	
+
 	void (*get_library_version) (int *major_version, int *minor_version); // This function MUST be first
 
 	struct _list_char *excluded_apps;
@@ -195,7 +195,7 @@ struct _xneur_config
 	struct _list_char *layout_remember_apps;
 	struct _list_char *dont_send_key_release_apps;
 	struct _list_char *delay_send_key_apps;
-	
+
 	struct _list_char *window_layouts;
 	struct _list_char *abbreviations;
 	struct _list_char *plugins;
@@ -212,11 +212,11 @@ struct _xneur_config
 	KeySym *delimeters;
 	char *delimeters_string;
 	int delimeters_count;
-	
+
 	int   manual_mode;				// Enable manual processing mode
 	int   log_level;				// Maximum level of log messages to print
 	int   send_delay;				// Delay before send event (in milliseconds)
-	
+
 	int   default_group;				// Initial keyboard layout for all new applications
 
 	int   play_sounds;				// Play sound samples or not
@@ -229,7 +229,7 @@ struct _xneur_config
 	int   rotate_layout_after_convert;	// Rotate layout after convert selected text
 
 	int   correct_misprint;
-	
+
 	int   correct_incidental_caps;			// Change iNCIDENTAL CapsLock
 	int   correct_two_capital_letter;		// Change two CApital letter
 	int   correct_space_with_punctuation;	// Correct spaces before punctuation
@@ -241,14 +241,14 @@ struct _xneur_config
 	int   correct_tm_with_trademark;
 	int   correct_r_with_registered;
 	int   correct_three_points_with_ellipsis;
-	
+
 	int   flush_buffer_when_press_escape;		// Flush internal buffer when pressed Escape
 	int   flush_buffer_when_press_enter;		// Flush internal buffer when pressed Enter or Tab
 	int   check_lang_on_process;			// Check lang on input process
 	int   disable_capslock;				// Disable CapsLock use
 
 	int   block_events;					// Block all events (keyboard and mouse)
-	
+
 	int   autocompletion;			// Save pattern and mining
 	int   add_space_after_autocompletion;
 	struct _list_char *autocompletion_excluded_apps;
@@ -277,12 +277,12 @@ struct _xneur_config
 	int troubleshoot_full_screen;
 	int troubleshoot_enter;		// Don't correct word when pressed Enter
 	int troubleshoot_tab;		// Don't correct word when pressed Tab
-	
+
 	int compatibility_with_completion;
-		
+
 	int tracking_input;
 	int tracking_mouse;
-		
+
 	char* (*get_home_dict_path) (const char *dir_name, const char *file_name);
 	char* (*get_global_dict_path) (const char *dir_name, const char *file_name);
 	const char* (*get_bool_name) (int option);
