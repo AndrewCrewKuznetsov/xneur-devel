@@ -64,8 +64,8 @@ void generate_protos(void)
 		exit(EXIT_FAILURE);
 	}
 
-	struct _list_char *proto  = list_char_init();
-	struct _list_char *proto3 = list_char_init();
+	struct _list_char *proto  = list_char_init();//-V656
+	struct _list_char *proto3 = list_char_init();//-V656
 
 	char *syll = (char *) malloc((256 + 1) * sizeof(char));
 
@@ -106,9 +106,7 @@ void generate_protos(void)
 				if (isblank(sym_k[0]) || iscntrl(sym_k[0]) || isspace(sym_k[0]) || ispunct(sym_k[0]) || isdigit(sym_k[0]))
 					continue;
 
-				strcpy(syll, sym_i);
-				strcat(syll, sym_j);
-				strcat(syll, sym_k);
+				sprintf(syll, "%s%s%s", sym_i, sym_j, sym_k);
 
 				if (proto3->find(proto3, syll, BY_PLAIN))
 					continue;
@@ -156,9 +154,7 @@ void generate_protos(void)
 				if (isblank(sym_k[0]) || iscntrl(sym_k[0]) || isspace(sym_k[0]) || ispunct(sym_k[0]) || isdigit(sym_k[0]))
 					continue;
 
-				strcpy(syll, sym_i);
-				strcat(syll, sym_j);
-				strcat(syll, sym_k);
+				sprintf(syll, "%s%s%s", sym_i, sym_j, sym_k);
 
 				if (proto3->find(proto3, syll, BY_PLAIN))
 					continue;

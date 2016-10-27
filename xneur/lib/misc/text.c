@@ -158,20 +158,24 @@ char* str_replace(const char *source, const char *search, const char *replace)
 char* real_sym_to_escaped_sym(const char *source)
 {
 	char *dummy = str_replace(source, "\\", "\\\\");
-	source = strdup(dummy);
 	if (dummy != NULL)
+	{
+		source = strdup(dummy);
 		free(dummy);
-
+	}
+	
 	dummy = str_replace(source, "\t", "\\t");
 	if ((void*)source != NULL)
 		free((void*)source);
-	source = strdup(dummy);
 	if (dummy != NULL)
+	{
+		source = strdup(dummy);
 		free(dummy);
-
+	}
+	
 	dummy = str_replace(source, "\n", "\\n");
-	if ((void*)source != NULL)
-		free((void*)source);
+	//if ((void*)source != NULL)
+	//	free((void*)source);
 
 	return dummy;
 }
@@ -181,22 +185,26 @@ char* escaped_sym_to_real_sym(const char *source)
 	// Replace escaped-symbols
 	char escape[] = {'\n', NULLSYM};
 	char *dummy = str_replace(source, "\\n", escape);
-	source = strdup(dummy);
 	if (dummy != NULL)
+	{
+		source = strdup(dummy);
 		free(dummy);
+	}
 
 	escape[0] = '\t';
 	dummy = str_replace(source, "\\t", escape);
 	if ((void*)source != NULL)
 		free((void*)source);
-	source = strdup(dummy);
 	if (dummy != NULL)
+	{
+		source = strdup(dummy);
 		free(dummy);
-
+	}
+	
 	escape[0] = '\\';
 	dummy = str_replace(source, "\\\\", escape);
-	if ((void*)source != NULL)
-		free((void*)source);
+	//if ((void*)source != NULL)
+	//	free((void*)source);
 
 	return dummy;
 }

@@ -31,6 +31,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 
 #include "xnconfig.h"
 #include "xnconfig_files.h"
@@ -60,11 +61,20 @@ time_t last_log_time = 0;
 
 // Private
 static void set_new_size(struct _buffer *p, int new_size)
-{
+{	
+	char *tmp_char = (char *) realloc(p->content, new_size * sizeof(char));
+	if (tmp_char == NULL)
+		return;
+	p->content = tmp_char;
+	KeyCode *tmp_kc = (KeyCode *) realloc(p->keycode, new_size * sizeof(KeyCode));
+	if (tmp_kc == NULL)
+		return;
+	p->keycode = tmp_kc;
+	int *tmp_int = (int *) realloc(p->keycode_modifiers, new_size * sizeof(int));
+	if (tmp_int == NULL)
+		return;
+	p->keycode_modifiers = tmp_int;
 	p->cur_size		= new_size;
-	p->content		= (char *) realloc(p->content, p->cur_size * sizeof(char));
-	p->keycode		= (KeyCode *) realloc(p->keycode, p->cur_size * sizeof(KeyCode));
-	p->keycode_modifiers	= (int *) realloc(p->keycode_modifiers, p->cur_size * sizeof(int));
 }
 
 static void buffer_set_lang_mask(struct _buffer *p, int lang)
@@ -102,18 +112,38 @@ static void buffer_mail_and_archive(char *file_path_name)
 		return;
 	
 	char *date = malloc(256 * sizeof(char));
+	if (date == NULL)
+		return;
 	char *time = malloc(256 * sizeof(char));
+	if (time == NULL)
+	{
+		free(date);
+		return;
+	}
 	strftime(date, 256, "%x", loctime);
 	strftime(time, 256, "%X", loctime);
 	
 	int len = strlen(file_path_name) + strlen(date) + strlen(time) + 4;
 	char *arch_file_path_name = malloc(len * sizeof (char));
+	if (arch_file_path_name == NULL)
+	{
+		free(date);
+		free(time);
+		return;
+	}
 	snprintf(arch_file_path_name, len, "%s %s %s", file_path_name, date, time);
 		
 	if (rename(file_path_name, arch_file_path_name) == 0)
 	{
 		// Compress the file
 		char *gz_arch_file_path_name = malloc(len+3 * sizeof (char));
+		if (gz_arch_file_path_name == NULL)
+		{
+			free(date);
+			free(time);
+			free(arch_file_path_name);
+			return;
+		}
 		snprintf(gz_arch_file_path_name, len+3, "%s%s", arch_file_path_name, ".gz");
 	
 		FILE *source = fopen(arch_file_path_name, "r");
@@ -134,20 +164,19 @@ static void buffer_mail_and_archive(char *file_path_name)
 		send_mail_with_attach(gz_arch_file_path_name, xconfig->host_keyboard_log, xconfig->port_keyboard_log, xconfig->mail_keyboard_log);
 		log_message(DEBUG, _("Sended log to e-mail %s via %s:%d host"), xconfig->mail_keyboard_log, xconfig->host_keyboard_log, xconfig->port_keyboard_log);
 
-		if (gz_arch_file_path_name != NULL) 
-			free(gz_arch_file_path_name);
+		free(gz_arch_file_path_name);
 	}
 	else
 		log_message (ERROR, _("Error rename file \"%s\" to \"%s\""), file_path_name, arch_file_path_name);
 
-	if (arch_file_path_name != NULL)
-		free(arch_file_path_name);
+
+		
 	if (file_path_name != NULL)
 		free(file_path_name);
-	if (time != NULL)
-		free(time);
-	if (date != NULL)
-		free(date);
+	
+	free(time);
+	free(date);
+	free(arch_file_path_name);
 }
 
 static void buffer_save(struct _buffer *p, char *file_name, Window window)
@@ -171,13 +200,17 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		return;
 	
 	char *file_path_name = get_home_file_path_name(NULL, file_name);
-
+	if (file_path_name == NULL)
+		return;
+	
 	time_t curtime = time(NULL);
 	struct tm *loctime = localtime(&curtime);
 	if (loctime == NULL)
 		return;
 	
 	char *buffer = malloc(256 * sizeof(char));
+	if (buffer == NULL)
+		return;
 	
 	// Check file size
 	struct stat sb;
@@ -203,28 +236,24 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		stream = fopen(file_path_name, "a");
 		if (stream == NULL)
 		{
-			if (file_path_name != NULL)
-				free(file_path_name);
-			if (buffer != NULL)
-				free(buffer);
+			free(file_path_name);
+			free(buffer);
 			return;
 		}
 		fprintf(stream, "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"><title>X Neural Switcher Log</title></head><body>\n");
-		fprintf(stream, "<ul></body></html>\n");
+		fprintf(stream, "<ul></ul></body></html>\n");
 	}
 	fclose (stream);
 	
 	stream = fopen(file_path_name, "r+");
-	if (file_path_name != NULL)
-		free(file_path_name);
+	free(file_path_name);
 	if (stream == NULL)
 	{
-		if (buffer != NULL)
-			free(buffer);
+		free(buffer);
 		return;
 	}
 
-	fseek(stream, -15, SEEK_END);
+	fseek(stream, -20, SEEK_END);
 
 	bzero(buffer, 256 * sizeof(char));
 	strftime(buffer, 256, "%x", loctime);
@@ -295,9 +324,13 @@ static void buffer_clear(struct _buffer *p)
 
 	for (int i=0; i<p->handle->total_languages; i++)
 	{
-		p->i18n_content[i].content = realloc(p->i18n_content[i].content, sizeof(char));
+		char *tmp = realloc(p->i18n_content[i].content, sizeof(char));
+		if (tmp != NULL)
+			p->i18n_content[i].content = tmp;
 		p->i18n_content[i].content[0] = NULLSYM;
-		p->i18n_content[i].content_unchanged = realloc(p->i18n_content[i].content_unchanged, sizeof(char));
+		tmp = realloc(p->i18n_content[i].content_unchanged, sizeof(char));
+		if (tmp != NULL)
+			p->i18n_content[i].content_unchanged = tmp;
 		p->i18n_content[i].content_unchanged[0] = NULLSYM;
 	}
 }
@@ -341,76 +374,62 @@ static void buffer_set_i18n_content(struct _buffer *p)
 			char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, p->keycode[k], i, modifier);
 			if (symbol_unchanged == NULL)
 				continue;
-			
-			p->i18n_content[i].content = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
+
+			char *tmp = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
+			assert(tmp != NULL);
+			p->i18n_content[i].content = tmp;
 			p->i18n_content[i].content = strcat(p->i18n_content[i].content, symbol);
 
-			p->i18n_content[i].content_unchanged = (char *) realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + strlen(symbol_unchanged) + 1) * sizeof(char));
+			tmp = (char *) realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + strlen(symbol_unchanged) + 1) * sizeof(char));
+			assert(tmp != NULL);
+			p->i18n_content[i].content_unchanged = tmp;
 			p->i18n_content[i].content_unchanged = strcat(p->i18n_content[i].content_unchanged, symbol_unchanged);
 
-			p->i18n_content[i].symbol_len = (int *) realloc(p->i18n_content[i].symbol_len, (k + 1) * sizeof(int));
+			tmp = (char *)realloc(p->i18n_content[i].symbol_len, (k + 1) * sizeof(int));
+			assert(tmp != NULL);
+			p->i18n_content[i].symbol_len = (int *) tmp;
 			p->i18n_content[i].symbol_len[k] = strlen(symbol);
 
-			p->i18n_content[i].symbol_len_unchanged = (int *) realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
+			tmp = (char *)realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
+			assert(tmp != NULL);
+			p->i18n_content[i].symbol_len_unchanged = (int *)tmp; 
 			p->i18n_content[i].symbol_len_unchanged[k] = strlen(symbol_unchanged);
 
-			if (symbol != NULL)
-				free(symbol);
-			if (symbol_unchanged != NULL)
-				free(symbol_unchanged);
+			free(symbol);
+			free(symbol_unchanged);
 		}
 	}
 }
 
 static void buffer_set_content(struct _buffer *p, const char *new_content)
 {
+	if (new_content == NULL)
+		return;
+	char *content = strdup(new_content);
+	if (content == NULL)
+		return;
+	
 	p->clear(p);
-	char *content = NULL;
-	content = strdup(new_content);
+	
 	p->cur_pos = strlen(content);
 	if (p->cur_pos >= p->cur_size)
 		set_new_size(p, p->cur_pos + 1);
 
-	if (p->content == NULL || p->keycode == NULL || p->keycode_modifiers == NULL)
-	{
-		if (content != NULL)
-			free(content);
-		return;
-	}
-	
 	p->content[p->cur_pos] = NULLSYM;
 	if (!p->cur_pos)
 	{
-		if (p->content != NULL)
-			free(content);
+		free(content);
 		return;
 	}
 
 	memcpy(p->content, content, p->cur_pos);
-	if (p->content != NULL)
-		free(content);
+	free(content);
 
 	p->keymap->convert_text_to_ascii(p->keymap, p->content, p->keycode, p->keycode_modifiers);
 
 	p->cur_pos = strlen(p->content);
 	set_new_size(p, p->cur_pos + 1);
 
-	if (p->content == NULL || p->keycode == NULL || p->keycode_modifiers == NULL)
-	{
-		for (int i = 0; i < p->handle->total_languages; i++)
-		{
-			if (p->i18n_content[i].content != NULL)
-				free(p->i18n_content[i].content);
-			if (p->i18n_content[i].symbol_len != NULL)
-				free(p->i18n_content[i].symbol_len);
-			if (p->i18n_content[i].content_unchanged != NULL)
-				free(p->i18n_content[i].content_unchanged);
-			if (p->i18n_content[i].symbol_len_unchanged != NULL)
-				free(p->i18n_content[i].symbol_len_unchanged);
-		}
-		return;
-	}
-	
 	buffer_set_i18n_content(p);
 }
 
@@ -438,12 +457,14 @@ static void buffer_change_case(struct _buffer *p)
 		int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
 		if (nbytes <= 0)
 			continue;
-
+		if (symbol == NULL)
+			continue;
+		
 		symbol[nbytes] = NULLSYM;	
 
 		if (ispunct(symbol[0]) || isdigit(symbol[0]))
 			continue;
-
+		
 		if (p->keycode_modifiers[i] & ShiftMask)
 			p->keycode_modifiers[i] = (p->keycode_modifiers[i] & ~ShiftMask);
 		else
@@ -506,22 +527,28 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 			continue;
 
 		//log_message (ERROR, _("'%c' - '%c' - '%c'"), sym, symbol, symbol_unchanged);
-		p->i18n_content[i].content = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
+		char *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
+		assert(tmp != NULL);
+		p->i18n_content[i].content = tmp;
 		p->i18n_content[i].content = strcat(p->i18n_content[i].content, symbol);
 
-		p->i18n_content[i].content_unchanged = (char *) realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + strlen(symbol_unchanged) + 1) * sizeof(char));
+		tmp = realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + strlen(symbol_unchanged) + 1) * sizeof(char));
+		assert(tmp != NULL);
+		p->i18n_content[i].content_unchanged = tmp;
 		p->i18n_content[i].content_unchanged = strcat(p->i18n_content[i].content_unchanged, symbol_unchanged);
 
-		p->i18n_content[i].symbol_len = (int *) realloc(p->i18n_content[i].symbol_len, (p->cur_pos + 1) * sizeof(int));
+		tmp = realloc(p->i18n_content[i].symbol_len, (p->cur_pos + 1) * sizeof(int));
+		assert(tmp != NULL);
+		p->i18n_content[i].symbol_len = (int *)tmp;
 		p->i18n_content[i].symbol_len[p->cur_pos] = strlen(symbol);
 
-		p->i18n_content[i].symbol_len_unchanged = (int *) realloc(p->i18n_content[i].symbol_len_unchanged, (p->cur_pos + 1) * sizeof(int));
+		tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (p->cur_pos + 1) * sizeof(int));
+		assert(tmp != NULL);
+		p->i18n_content[i].symbol_len_unchanged = (int *)tmp; 
 		p->i18n_content[i].symbol_len_unchanged[p->cur_pos] = strlen(symbol_unchanged);
 
-		if (symbol != NULL)
-			free(symbol);
-		if (symbol_unchanged != NULL)
-			free(symbol_unchanged);
+		free(symbol);
+		free(symbol_unchanged);
 	}
 
 	p->cur_pos++;
@@ -570,7 +597,9 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
 		if (nbytes <= 0)
 			continue;
-
+		if (symbol == NULL)
+			continue;
+		
 		symbol[nbytes] = NULLSYM;
 
 		char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + nbytes + 1);
@@ -713,6 +742,9 @@ char* buffer_get_last_word(struct _buffer *p, char *string)
 
 static void buffer_uninit(struct _buffer *p)
 {
+	if (p == NULL)
+		return;
+	
 	if (p->keycode_modifiers != NULL)
 		free(p->keycode_modifiers);
 	if (p->keycode != NULL)
@@ -720,20 +752,22 @@ static void buffer_uninit(struct _buffer *p)
 	if (p->content != NULL)
 		free(p->content);
 
-	for (int i = 0; i < p->handle->total_languages; i++)
-	{
-		if (p->i18n_content[i].content != NULL)
-			free(p->i18n_content[i].content);
-		if (p->i18n_content[i].symbol_len != NULL)
-			free(p->i18n_content[i].symbol_len);
-		if (p->i18n_content[i].content_unchanged != NULL)
-			free(p->i18n_content[i].content_unchanged);
-		if (p->i18n_content[i].symbol_len_unchanged != NULL)
-			free(p->i18n_content[i].symbol_len_unchanged);
-	}
-
 	if (p->i18n_content != NULL)
+	{
+		for (int i = 0; i < p->handle->total_languages; i++)
+		{
+			if (p->i18n_content[i].content != NULL)
+				free(p->i18n_content[i].content);
+			if (p->i18n_content[i].symbol_len != NULL)
+				free(p->i18n_content[i].symbol_len);
+			if (p->i18n_content[i].content_unchanged != NULL)
+				free(p->i18n_content[i].content_unchanged);
+			if (p->i18n_content[i].symbol_len_unchanged != NULL)
+				free(p->i18n_content[i].symbol_len_unchanged);
+		}
+
 		free(p->i18n_content);
+	}
 	if (p != NULL)
 		free(p);
 

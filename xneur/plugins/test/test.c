@@ -46,7 +46,7 @@ int on_xneur_start(void)
 
 int on_xneur_reload(void)
 {
-	printf("[PLG] Plugin receive xneur stop\n");
+	printf("[PLG] Plugin receive xneur reload\n");
 	return (0);
 }
 

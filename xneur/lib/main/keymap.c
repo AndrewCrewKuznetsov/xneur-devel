@@ -60,13 +60,13 @@ static const int state_masks[]		= {0x00, 0x01, 0x80, 0x10}; // None, NumLock, Al
 
 static int locale_create(void)
 {
-	if (setlocale(LC_ALL, "") == NULL)
+	char *locale = (char *)setlocale(LC_ALL, "");
+	if (locale == NULL)
 	{
 		log_message(ERROR, _("Couldn't set default locale"));
 		return FALSE;
 	}
-
-	char *locale = setlocale(LC_ALL, "");
+	
 	if (locale == NULL || (strstr(locale, "UTF") == NULL && strstr(locale, "utf") == NULL) )
 		log_message(WARNING, _("Your default locale is not UTF-8"));
 
@@ -106,7 +106,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 		
 	if (nbytes <= 0)
 	{
-		log_message (TRACE, "Symbol at KeyCode %d not found on default locale.", kc);
+		//log_message (TRACE, "Symbol at KeyCode %d not found on default locale.", kc);
 		struct _list_char *locales = list_char_init();
 		locales->add(locales, "C");
 		locales->add(locales, "POSIX");
@@ -132,7 +132,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 		{
 			if (setlocale(LC_ALL, locales->data[i].string) != NULL)
 			{
-				log_message (TRACE, "Check symbol at KeyCode %d on locale %c!", kc, locales->data[i].string);
+				//log_message (TRACE, "Check symbol at KeyCode %d on locale %c!", kc, locales->data[i].string);
 				event.xkey.root		= RootWindow(p->display, DefaultScreen(p->display));
 				event.xkey.display  = p->display;
 				nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
@@ -143,7 +143,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 				{
 					symbol[nbytes] = NULLSYM;
 					locales->uninit(locales);
-					log_message (TRACE, "Found symbol '%s' at KeyCode %d on locale %c!", symbol, kc, locales->data[i].string);
+					//log_message (TRACE, "Found symbol '%s' at KeyCode %d on locale %c!", symbol, kc, locales->data[i].string);
 					return symbol;
 				}
 			}
@@ -160,7 +160,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 	else
 	{
 		symbol[nbytes] = NULLSYM;
-		log_message (TRACE, "Found symbol '%s' at KeyCode %d on default locale!", symbol, kc);
+		//log_message (TRACE, "Found symbol '%s' at KeyCode %d on default locale!", symbol, kc);
 	}
 	
 	return symbol;
@@ -179,7 +179,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	}
 
 	/* Miss. */
-	log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
+	//log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
 	symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
 	if (!symbol)
 		return symbol;
@@ -396,13 +396,18 @@ static char keymap_get_ascii(struct _keymap *p, const char *sym, int* preferred_
 	int preferred_lang_result = _preferred_lang;
 	char ascii = keymap_get_ascii_real(p, sym, &preferred_lang_result, kc, modifier, &sym_size);
 	if (!ascii)
-		return ascii;
-
+	{
+		return ascii; // Return empty
+	}
+	
 	p->symbol_to_keycode_cache_pos = (p->symbol_to_keycode_cache_pos + 1) % symbol_to_keycode_cache_size;
 
 	pr = p->symbol_to_keycode_cache + p->symbol_to_keycode_cache_pos;
 
-	pr->symbol = realloc(pr->symbol, sym_size + 1);
+	char *tmp = realloc(pr->symbol, sym_size + 1);
+	if (tmp == NULL)
+		return ascii; // Return symbol, but cache not update
+	pr->symbol = tmp; 
 	memcpy(pr->symbol, sym, sym_size);
 	pr->symbol[sym_size] = 0;
 	pr->symbol_size = sym_size;

@@ -77,7 +77,7 @@ void osd_show(int notify, char *command)
 	osd_text[0] = NULLSYM;
 	if (xconfig->osds[notify].file != NULL) 
 	{
-		char *tmp = realloc(osd_text, (strlen(osd_text) + strlen(xconfig->osds[notify].file)) * sizeof(char));
+		char *tmp = realloc(osd_text, (strlen(osd_text) + strlen(xconfig->osds[notify].file) + 1) * sizeof(char));
 		if (tmp != NULL)
 		{
 			osd_text = tmp;

@@ -140,7 +140,12 @@ void grab_modifier_keys(Window window, int is_grab)
 	int i, k = 0;
 
 	XModifierKeymap *modmap = XGetModifierMapping (main_window->display);
-		
+	if (modmap == NULL)
+	{
+		log_message(ERROR, _("XGetModifierMapping return NULL. Grabbing modifiers key not changed."));
+		return;
+	}
+	
 	for (i = 0; i < 8; i++) 
 	{
 		int j;
@@ -227,7 +232,7 @@ unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, 
                               FALSE, AnyPropertyType, &actual_type,
                               &actual_format, &_nitems, &bytes_after,
                               &prop);
-	if ((status == BadWindow) || (status != Success)) 
+	if (status != Success) 
 		return NULL;
 
 	

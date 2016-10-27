@@ -41,6 +41,7 @@
 
 #define PROTO_LEN	2
 #define BIG_PROTO_LEN	3
+#define LEVENSHTEIN_LEN	3
 
 static int get_dictionary_lang(struct _xneur_handle *handle, char **word)
 {
@@ -260,7 +261,7 @@ static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_l
 
 static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 {
-	int min_levenshtein = 3;
+	int min_levenshtein = LEVENSHTEIN_LEN;
 	char *possible_words = NULL;
 	int possible_lang = NO_LANGUAGE;
 	
@@ -268,14 +269,16 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 	for (lang = 0; lang < handle->total_languages; lang++)
 	{
 		char *word = strdup(p->get_last_word(p, p->i18n_content[lang].content));
+		if (word == NULL)
+			continue;
+		
 		del_final_numeric_char(word);
 		
 		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded)
 		{
 			if (possible_words != NULL)
 				free (possible_words);
-			if (word != NULL)
-				free(word);
+			free(word);
 			continue;
 		}
 
@@ -285,8 +288,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 		{
 			if (possible_words != NULL)
 				free (possible_words);
-			if (word != NULL)
-				free(word);
+			free(word);
 			continue;
 		}
 
@@ -356,7 +358,6 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 		int i = 0;
 		while ((sugg_word = aspell_string_enumeration_next (elements)) != NULL)
 		{
-			
 			int tmp_levenshtein = levenshtein(word+offset, sugg_word);
 			if (tmp_levenshtein < min_levenshtein)
 			{

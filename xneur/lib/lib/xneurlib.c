@@ -111,7 +111,9 @@ static long get_next_property_value (unsigned char **pointer, long *length, int 
 struct _xneur_handle *xneur_handle_create (void)
 {
 	struct _xneur_handle *handle = (struct _xneur_handle *) malloc(sizeof(struct _xneur_handle));;
-
+	if (handle == NULL)
+		return NULL;
+	
 	XkbDescPtr kbd_desc_ptr;
 
 	if (!(kbd_desc_ptr = XkbAllocKeyboard()))
@@ -254,13 +256,19 @@ struct _xneur_handle *xneur_handle_create (void)
 		//log_message (ERROR, "%s", group_name);
 		char *short_name = strsep(&prop_value, ",");
 		//log_message (ERROR, "%s", short_name);
-		
-		handle->languages = (struct _xneur_language *) realloc(handle->languages, (handle->total_languages + 1) * sizeof(struct _xneur_language));
+
+		void *tmp = realloc(handle->languages, (handle->total_languages + 1) * sizeof(struct _xneur_language));
+		if (tmp == NULL)
+			continue;
+		handle->languages = (struct _xneur_language *) tmp;
 		bzero(&(handle->languages[handle->total_languages]), sizeof(struct _xneur_language));
 
 		handle->languages[handle->total_languages].name	= strdup(group_name);
 		handle->languages[handle->total_languages].dir	= strdup(short_name);
-		handle->languages[handle->total_languages].dir	= (char *) realloc (handle->languages[handle->total_languages].dir, sizeof(char) * 3); // 'xx' + '\0'
+		tmp = realloc (handle->languages[handle->total_languages].dir, sizeof(char) * 3); // 'xx' + '\0'
+		if (tmp == NULL)
+			continue;
+		handle->languages[handle->total_languages].dir	= (char *)tmp;
 		handle->languages[handle->total_languages].dir[2] = NULLSYM;
 		handle->languages[handle->total_languages].group	= group;
 		handle->languages[handle->total_languages].excluded	= FALSE;
@@ -279,8 +287,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	
 	if (handle->total_languages == 0)
 	{
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 #ifdef WITH_ASPELL
@@ -384,8 +391,9 @@ struct _xneur_handle *xneur_handle_create (void)
 		if (j != names_len)
 		{
 			handle->enchant_dicts[lang] = NULL;
-			char *dict_name = NULL;
-			dict_name = malloc (2 * strlen(spell_names[j]) + 2);
+			char *dict_name = malloc (2 * strlen(spell_names[j]) + 2);
+			if (dict_name == NULL)
+				continue;
 			dict_name[0] = NULLSYM;
 			strcat(dict_name, spell_names[j]);
 			strcat(dict_name, "_");
@@ -454,6 +462,9 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 		if ((handle->enchant_dicts[lang] != NULL) && (handle->has_enchant_checker[lang]))
 			enchant_broker_free_dict (handle->enchant_broker, handle->enchant_dicts[lang]);
 #endif
+
+		if (handle->languages == NULL)
+			continue;
 		
 		if (handle->languages[lang].temp_dictionary != NULL)
 			handle->languages[lang].temp_dictionary->uninit(handle->languages[lang].temp_dictionary);
@@ -476,8 +487,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 			free(handle->languages[lang].dir);
 	}
 	handle->total_languages = 0;
-	if (handle->languages != NULL)
-		free(handle->languages);
+	free(handle->languages);
 		
 #ifdef WITH_ASPELL
 	delete_aspell_config(handle->spell_config);
@@ -495,8 +505,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 		free(handle->has_enchant_checker);
 #endif
 	
-	if (handle != NULL)
-		free(handle);
+	free(handle);
 }
 
 int xneur_get_layout (struct _xneur_handle *handle, char *word)

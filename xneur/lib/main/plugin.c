@@ -38,10 +38,15 @@ extern struct _xneur_config *xconfig;
 
 void plugin_add(struct _plugin *p, char* plugin_name)
 {
-	p->plugin = (struct _plugin_functions *) realloc(p->plugin, (p->plugin_count + 1) * sizeof(struct _plugin_functions));
+	void *tmp = realloc(p->plugin, (p->plugin_count + 1) * sizeof(struct _plugin_functions));
+	if (tmp == NULL)
+		return;
+	p->plugin = (struct _plugin_functions *)tmp;
 
 	size_t len = strlen(XNEUR_PLUGIN_DIR) + strlen(plugin_name) + 2;
 	char * plugin_file = malloc(sizeof(char)*len);
+	if (plugin_file == NULL)
+		return;
 	snprintf(plugin_file, len, "%s/%s", XNEUR_PLUGIN_DIR, plugin_name);
 	p->plugin[p->plugin_count].module = dlopen(plugin_file, RTLD_NOW);
 

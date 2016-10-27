@@ -485,7 +485,10 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 27: // User actions
 		{
-			p->actions = (struct _xneur_action *) realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
+			void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
+			if (tmp == NULL)
+				break;
+			p->actions = (struct _xneur_action *)tmp;
 			bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
 
 			while (TRUE)
@@ -499,8 +502,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 				int index = get_option_index(modifier_names, param);
 				if (index == -1)
 				{
-					if (param != NULL)
-						p->actions[p->actions_count].hotkey.key = strdup(param);
+					p->actions[p->actions_count].hotkey.key = strdup(param);
 					if (line != NULL)
 					{
 						char *cmd = strstr(line, USR_CMD_START);
@@ -569,6 +571,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 			}
 			
 			char *tmp = strdup(line);
+			if (tmp == NULL) 
+				break;
 			char *param1 = get_word(&line);
 
 			if (strlen(param1) != 0)
@@ -626,6 +630,8 @@ static void parse_line(struct _xneur_config *p, char *line)
 			}
 			
 			char *tmp = strdup(line);
+			if (tmp == NULL) 
+				break;
 			char *param1 = get_word(&line);
 
 			if (strlen(param1) != 0)
@@ -1018,8 +1024,14 @@ static void parse_line(struct _xneur_config *p, char *line)
 				}
 				if (!is_double) 
 				{
-					p->delimeters = (KeySym *) realloc(p->delimeters, sizeof(KeySym) * (p->delimeters_count + 1));
-					p->delimeters_string = (char *) realloc(p->delimeters_string, sizeof(char) * (p->delimeters_count + 2));
+					void *tmp = realloc(p->delimeters, sizeof(KeySym) * (p->delimeters_count + 1));
+					if (tmp == NULL) 
+						break;
+					p->delimeters = (KeySym *)tmp;
+					tmp = realloc(p->delimeters_string, sizeof(char) * (p->delimeters_count + 2));
+					if (tmp == NULL) 
+						break;
+					p->delimeters_string = (char *)tmp;
 
 					p->delimeters[p->delimeters_count] = symbol;
 					p->delimeters_count++;
@@ -1082,14 +1094,17 @@ static void free_structures(struct _xneur_config *p)
 			free(p->popups[notify].file);
 	}
 
-	for (int action = 0; action < p->actions_count; action++)
+	if (p->actions != NULL)
 	{
-		if (p->actions[action].hotkey.key != NULL)
-			free(p->actions[action].hotkey.key);
-		if (p->actions[action].name != NULL)
-			free(p->actions[action].name);
-		if (p->actions[action].command != NULL)
-			free(p->actions[action].command);
+		for (int action = 0; action < p->actions_count; action++)
+		{
+			if (p->actions[action].hotkey.key != NULL)
+				free(p->actions[action].hotkey.key);
+			if (p->actions[action].name != NULL)
+				free(p->actions[action].name);
+			if (p->actions[action].command != NULL)
+				free(p->actions[action].command);
+		}
 	}
 
 	bzero(p->hotkeys, MAX_HOTKEYS * sizeof(struct _xneur_hotkey));
@@ -1122,12 +1137,13 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 {
 	// Set lock file to ~/.xneur/.cache/lock
 	char *lock_file_path_name = get_home_file_path_name(CACHEDIR, LOCK_NAME);
-
+	if (lock_file_path_name == NULL)
+		return -1;
+	
 	if (process_id == 0)
 	{
 	    remove(lock_file_path_name);
-		if (lock_file_path_name != NULL)
-			free(lock_file_path_name);
+		free(lock_file_path_name);
 		p->pid = process_id;
 		return process_id;
 	}     
@@ -1138,13 +1154,11 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 	if (stream == NULL)
 	{
 		log_message(ERROR, _("Can't create lock file %s"), lock_file_path_name);
-		if (lock_file_path_name != NULL)
-			free(lock_file_path_name);
+		free(lock_file_path_name);
 		return -1;
 	}
 
-	if (lock_file_path_name != NULL)
-		free(lock_file_path_name);
+	free(lock_file_path_name);
 	
 	fprintf(stream, "%d", process_id);
 	fclose (stream);
@@ -1186,6 +1200,8 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 		return -1;
 
 	char *ps_command = (char *) malloc(1024 * sizeof(char));
+	if (ps_command == NULL)
+		return -1;
 	snprintf(ps_command, 1024, "ps -p %d | grep xneur", process_id);
 	FILE *fp = popen(ps_command, "r");
 	if (ps_command != NULL)
@@ -1242,7 +1258,9 @@ static void xneur_config_clear(struct _xneur_config *p)
 static int xneur_config_save(struct _xneur_config *p)
 {
  	char *config_file_path_name = get_home_file_path_name(NULL, CONFIG_NAME);
-
+	if (config_file_path_name == NULL)
+		return FALSE;
+	
 	log_message(LOG, _("Saving main config to %s"), config_file_path_name);
 
 	FILE *stream = fopen(config_file_path_name, "w");
@@ -1635,9 +1653,13 @@ static int xneur_config_save(struct _xneur_config *p)
 
 static int xneur_config_replace(struct _xneur_config *p)
 {
-	char *config_file_path_name		= get_file_path_name(NULL, CONFIG_NAME);
-	char *config_backup_file_path_name	= get_file_path_name(NULL, CONFIG_BCK_NAME);
-
+	char *config_file_path_name = get_file_path_name(NULL, CONFIG_NAME);
+	if (config_file_path_name == NULL)
+		return FALSE;
+	char *config_backup_file_path_name = get_file_path_name(NULL, CONFIG_BCK_NAME);
+	if (config_backup_file_path_name == NULL)
+		return FALSE;
+	
 	log_message(LOG, _("Moving config file from %s to %s"), config_file_path_name, config_backup_file_path_name);
 
 	remove(config_backup_file_path_name);
@@ -1646,17 +1668,13 @@ static int xneur_config_replace(struct _xneur_config *p)
 	{
 		log_message(ERROR, _("Can't move file!"), config_backup_file_path_name);
 
-		if (config_file_path_name != NULL)
-			free(config_file_path_name);
-		if (config_backup_file_path_name != NULL)
-			free(config_backup_file_path_name);
+		free(config_file_path_name);
+		free(config_backup_file_path_name);
 		return FALSE;
 	}
 
-	if (config_file_path_name != NULL)
-		free(config_file_path_name);
-	if (config_backup_file_path_name != NULL)
-		free(config_backup_file_path_name);
+	free(config_file_path_name);
+	free(config_backup_file_path_name);
 
 	return p->load(p);
 }
@@ -1710,6 +1728,9 @@ static const char* xneur_config_get_log_level_name(struct _xneur_config *p)
 
 static void xneur_config_uninit(struct _xneur_config *p)
 {
+	if (p == NULL)
+		return;
+	
 	free_structures(p);
 
 	if (p->delimeters != NULL)
@@ -1735,8 +1756,7 @@ static void xneur_config_uninit(struct _xneur_config *p)
 
 	xneur_handle_destroy(p->handle);
 
-	if (p != NULL)
-		free(p);
+	free(p);
 }
 
 struct _xneur_config* xneur_config_init(void)

@@ -46,7 +46,9 @@ static void rem_by_id(struct _list_char *list, int id)
 		memmove(list->data + id, list->data + id + 1, (list->data_count - id - 1) * sizeof(struct _list_char_data));
 
 	list->data_count--;
-	list->data = (struct _list_char_data *) realloc(list->data, list->data_count * sizeof(struct _list_char_data));
+	struct _list_char_data *tmp = realloc(list->data, list->data_count * sizeof(struct _list_char_data));
+	if (tmp != NULL) 
+		list->data = tmp;
 }
 
 static int get_add_id(struct _list_char *list, const char *string)
@@ -121,6 +123,8 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 		}
 
 		char *full_str = malloc(len * sizeof(char));
+		if (full_str == NULL)
+			return -1;
 		full_str[0] = '\0';
 
 		for (int i = 0; i < list->data_count - 1; i++)
@@ -137,27 +141,30 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 
 		if (check_regexp_match(string, full_str))
 		{
-			if (full_str != NULL)
-				free(full_str);
+			free(full_str);
 			return 1;
 		}
 
-		if (full_str != NULL)
-			free(full_str);
+		free(full_str);
 	}
 
 	return -1;
 }
 
 static struct _list_char_data* add_last(struct _list_char *list, const char *string)
-{
+{	
 	list->data_count++;
-	list->data = (struct _list_char_data *) realloc(list->data, list->data_count * sizeof(struct _list_char_data));
+	struct _list_char_data *tmp = (struct _list_char_data *)realloc(list->data, list->data_count * sizeof(struct _list_char_data));
+	if (tmp == NULL)
+	{
+		list->data_count--;
+		log_message (ERROR, _("Function realloc return NULL."));
+		return NULL;
+	}
 
+	list->data = tmp;
 	struct _list_char_data *data = &list->data[list->data_count - 1];
-
 	data->string = strdup(string);
-
 	return data;
 }
 
@@ -165,17 +172,19 @@ struct _list_char_data* list_char_add(struct _list_char *list, const char *strin
 {
 	int id = get_add_id(list, string);
 
-	list->data = (struct _list_char_data *) realloc(list->data, (list->data_count + 1) * sizeof(struct _list_char_data));
-
+	struct _list_char_data *tmp = realloc(list->data, (list->data_count + 1) * sizeof(struct _list_char_data)); 
+	if (tmp == NULL)
+	{
+		log_message (ERROR, _("Function realloc return NULL."));
+		return NULL;
+	}
+	
+	list->data = (struct _list_char_data *)tmp;
 	if (id != list->data_count)
 		memmove(list->data + id + 1, list->data + id, (list->data_count - id) * sizeof(struct _list_char_data));
-
 	list->data_count++;
-
 	struct _list_char_data *data = &list->data[id];
-
 	data->string = strdup(string);
-
 	return data;
 }
 
@@ -384,7 +393,6 @@ void list_char_uninit(struct _list_char *list)
 
 	free(list->data);
 	free(list);
-	list = NULL;
 }
 
 struct _list_char* list_char_init(void)
