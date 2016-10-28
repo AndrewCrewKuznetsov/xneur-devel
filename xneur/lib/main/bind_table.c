@@ -258,6 +258,23 @@ enum _hotkey_action get_manual_action(KeySym key_sym, int mask)
 			return action;
 		}
 	}
+
+	// New action storage - all together
+	for (int action = 0; action < xconfig->actions_count; action++)
+	{
+	        //log_message (ERROR, "U%d---%d %d", action, ubtable[action].key_code, kc);
+	        //if (ubtable[action].key_sym != key_sym && ubtable[action].key_sym_shift != key_sym)
+	        //      continue;
+	        enum _hotkey_action standard_action = xconfig->actions[action].standard_action;
+	        if (standard_action == ACTION_NONE)
+	                continue;
+	        if (ubtable[action].key_code != kc)
+	                continue;
+	        if (ubtable[action].modifier_mask == mask)
+	        {
+	                return standard_action;
+	        }
+	}
 	return ACTION_NONE;
 }
 
