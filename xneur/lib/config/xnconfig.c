@@ -259,7 +259,18 @@ static void parse_line(struct _xneur_config *p, char *line)
 				break;
 			}
 
-			parse_hotkey(&line,&(p->hotkeys[action]));
+			if (p->hotkeys[action].key == NULL)
+			{
+			        parse_hotkey(&line, &(p->hotkeys[action]));
+			}
+			else
+			{
+			        log_message(WARNING, _("More than one hotkey specified for action '%s'"),param);
+			        struct _xneur_action * new_action = one_more_user_action(p);
+			        parse_hotkey(&line, &(new_action->hotkey));
+			        new_action->standard_action = action;
+			        new_action->name = strdup(param);
+			}
 
 			break;
 		}
