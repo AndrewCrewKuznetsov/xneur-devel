@@ -146,6 +146,7 @@ static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
 		return NULL;
 	p->actions = (struct _xneur_action *)tmp;
 	bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+	p->actions_count++;
 	return &(p->actions[p->actions_count - 1]);
 }
 
@@ -495,7 +496,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 27: // User actions
 		{
-			one_more_user_action(p);
+			struct _xneur_action * new_action = one_more_user_action(p);
 			while (TRUE)
 			{
 				if (param == NULL)
@@ -507,44 +508,43 @@ static void parse_line(struct _xneur_config *p, char *line)
 				int index = get_option_index(modifier_names, param);
 				if (index == -1)
 				{
-					p->actions[p->actions_count].hotkey.key = strdup(param);
+					new_action->hotkey.key = strdup(param);
 					if (line != NULL)
 					{
 						char *cmd = strstr(line, USR_CMD_START);
 						if (cmd == NULL)
 						{
-							p->actions[p->actions_count].name = NULL;
-							p->actions[p->actions_count].command = strdup(line);
+							new_action->name = NULL;
+							new_action->command = strdup(line);
 							break;
 						}
 						int len = strlen(line) - strlen(cmd);
-						p->actions[p->actions_count].name = strdup(line);
-						p->actions[p->actions_count].name[len - 1] = NULLSYM;
+						new_action->name = strdup(line);
+						new_action->name[len - 1] = NULLSYM;
 
-						p->actions[p->actions_count].command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
+						new_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
 						cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
 						if (cmd == NULL)
 						{
-							if (p->actions[p->actions_count].command != NULL)
-								free(p->actions[p->actions_count].command);
-							p->actions[p->actions_count].command = NULL;
+							if (new_action->command != NULL)
+								free(new_action->command);
+							new_action->command = NULL;
 							break;
 						}
-						len = strlen(p->actions[p->actions_count].command) - strlen(cmd);
-						p->actions[p->actions_count].command[len] = NULLSYM;
+						len = strlen(new_action->command) - strlen(cmd);
+						new_action->command[len] = NULLSYM;
 
-						//log_message (ERROR, "\"%s\" \"%s\"", p->actions[p->actions_count].name, p->actions[p->actions_count].command);
+						//log_message (ERROR, "\"%s\" \"%s\"", new_action->name, new_action->command);
 
 					}
 					break;
 				}
 
-				p->actions[p->actions_count].hotkey.modifiers |= (1 << index);
+				new_action->hotkey.modifiers |= (1 << index);
 
 				param = get_word(&line);
 			}
 
-			p->actions_count++;
 			break;
 		}
 		case 28: // Show OSD
