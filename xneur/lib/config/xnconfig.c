@@ -61,22 +61,22 @@ static const char *option_names[] = 	{
 						"LogSave", "ReplaceAbbreviation",
 						"ReplaceAbbreviationIgnoreLayout", "CorrectIncidentalCaps", "CorrectTwoCapitalLetter",
 						"FlushBufferWhenPressEnter", "TroubleshootEnter", "AddAction",
-						"ShowOSD", "AddOSD", "FontOSD", "ShowPopup", "AddPopup", 
+						"ShowOSD", "AddOSD", "FontOSD", "ShowPopup", "AddPopup",
 	                    "CorrectSpaceWithPunctuation", "AddSpaceAfterAutocompletion", "LoadModule",
 						"LogSize", "LogMail", "LogHostIP", "SoundVolumePercent",
 						"TroubleshootBackspace", "TroubleshootLeftArrow", "TroubleshootRightArrow",
-						"TroubleshootUpArrow", "TroubleshootDownArrow", "TroubleshootDelete", 
+						"TroubleshootUpArrow", "TroubleshootDownArrow", "TroubleshootDelete",
 						"TroubleshootSwitch", "TroubleshootFullScreen",
 						"SetDontSendKeyReleaseApp", "LogPort", "RotateLayoutAfterChangeSelectedMode", "CorrectCapitalLetterAfterDot",
 						"FlushBufferWhenPressEscape", "CompatibilityWithCompletion", "TrackingInput", "TrackingMouse",
 						"PopupExpireTimeout", "CorrectTwoSpaceWithCommaAndSpace","CorrectTwoMinusWithDash",
 						"CorrectCWithCopyright", "CorrectTMWithTrademark", "CorrectRWithRegistered",
 						"CorrectDashWithEmDash","CorrectThreePointsWithEllipsis", "CorrectMisprint", "CheckSimilarWords",
-						"TroubleshootTab", "DelaySendingEventApp", "Delimeter" 
+						"TroubleshootTab", "DelaySendingEventApp", "Delimeter"
 					};
 static const char *action_names[] =	{
 						"ChangeWord", "TranslitWord", "ChangecaseWord", "PreviewChangeWord",
-						"ChangeString", 
+						"ChangeString",
 						"ChangeSelected", "TranslitSelected", "ChangecaseSelected", "PreviewChangeSelected",
 						"ChangeClipboard", "TranslitClipboard", "ChangecaseClipboard", "PreviewChangeClipboard",
 						"EnableLayout1", "EnableLayout2", "EnableLayout3", "EnableLayout4",
@@ -91,8 +91,8 @@ static const char *notify_names[] =	{
 						"ChangeString",
 						"ChangeSelected", "TranslitSelected", "ChangecaseSelected", "PreviewChangeSelected",
 						"ChangeClipboard", "TranslitClipboard", "ChangecaseClipboard",  "PreviewChangeClipboard",
-						"ReplaceAbbreviation", "CorrectIncidentalCaps", "CorrectTwoCapitalLetter", 
-						"CorrectTwoSpaceWithCommaAndSpace", "CorrectTwoMinusWithDash", "CorrectCWithCopyright", 
+						"ReplaceAbbreviation", "CorrectIncidentalCaps", "CorrectTwoCapitalLetter",
+						"CorrectTwoSpaceWithCommaAndSpace", "CorrectTwoMinusWithDash", "CorrectCWithCopyright",
 						"CorrectTMWithTrademark", "CorrectRWithRegistered", "CorrectThreePointsWithEllipsis",
 						"CorrectMisprint",
 						"ExecuteUserAction","BlockKeyboardAndMouseEvents", "UnblockKeyboardAndMouseEvents"
@@ -140,6 +140,66 @@ static int xneur_config_get_status(char *str)
 	return -1;
 }
 
+static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
+	void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
+	if (tmp == NULL)
+		return NULL;
+	p->actions = (struct _xneur_action *)tmp;
+	bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+	p->actions_count++;
+	return &(p->actions[p->actions_count - 1]);
+}
+
+static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
+{
+	log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
+
+	hotkey->key = NULL;
+	while (TRUE)
+	{
+		char *oldline = NULL;
+		if (*line)
+		{
+			oldline = strdup(*line);
+		}
+		char *modifier = get_word(line);
+		if (modifier == NULL)
+			break;
+
+		if (modifier[0] == '\0')
+			continue;
+
+		int index = get_option_index(modifier_names, modifier);
+
+		// It seems that original function could parse "Alt t" as well as "t Alt"
+		// Now I need to unify user and standard actions
+		// So, by the name of backward compatibility (hotkey->key == NULL) check is added below:
+		if (index != -1)
+		{
+			// The word is really modifier
+			hotkey->modifiers |= (1 << index);
+			log_message(DEBUG, _("Adding modifier: '%s'"),modifier);
+			free(oldline);
+		}
+		else if (hotkey->key == NULL)
+		{
+			// The word is not modifier, it is a key and it is first non-modifier word
+			hotkey->key = strdup(modifier);
+			log_message(DEBUG, _("Key set to: '%s'"),modifier);
+			free(oldline);
+		}
+		else
+		{
+			// The word is not modified and key is already been readed
+			*line = oldline;
+			if (oldline)
+				log_message(DEBUG, _("Restoring old line: '%s'"),oldline);
+			return;
+		}
+	}
+}
+
+
 static void parse_line(struct _xneur_config *p, char *line)
 {
 	if (line[0] == '#')
@@ -159,7 +219,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 		log_message(WARNING, _("Param mismatch for option %s"), option);
 		return;
 	}
-	
+
 	char *full_string = strdup(line);
 	char *param = get_word(&line);
 
@@ -199,21 +259,17 @@ static void parse_line(struct _xneur_config *p, char *line)
 				break;
 			}
 
-			p->hotkeys[action].key = NULL;
-			while (TRUE)
+			if (p->hotkeys[action].key == NULL)
 			{
-				char *modifier = get_word(&line);
-				if (modifier == NULL)
-					break;
-
-				if (modifier[0] == '\0')
-					continue;
-
-				int index = get_option_index(modifier_names, modifier);
-				if (index == -1)
-					p->hotkeys[action].key = strdup(modifier);
-				else
-					p->hotkeys[action].modifiers |= (1 << index);
+			        parse_hotkey(&line, &(p->hotkeys[action]));
+			}
+			else
+			{
+			        log_message(WARNING, _("More than one hotkey specified for action '%s'"),param);
+			        struct _xneur_action * new_action = one_more_user_action(p);
+			        parse_hotkey(&line, &(new_action->hotkey));
+			        new_action->standard_action = action;
+			        new_action->name = strdup(param);
 			}
 
 			break;
@@ -355,7 +411,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 
 			if (line == NULL)
 				break;
-			
+
 			char *param1 = get_word(&line);
 			char *param2 = get_word(&line);
 
@@ -485,61 +541,37 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 27: // User actions
 		{
-			void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
-			if (tmp == NULL)
-				break;
-			p->actions = (struct _xneur_action *)tmp;
-			bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+			struct _xneur_action * new_action = one_more_user_action(p);
+			char *whole_string = full_string;
+			parse_hotkey(&whole_string,&(new_action->hotkey));
+			line = whole_string;
 
-			while (TRUE)
+			if (line != NULL)
 			{
-				if (param == NULL)
-					break;
-
-				if (param[0] == '\0')
-					continue;
-
-				int index = get_option_index(modifier_names, param);
-				if (index == -1)
+				char *cmd = strstr(line, USR_CMD_START);
+				if (cmd == NULL)
 				{
-					p->actions[p->actions_count].hotkey.key = strdup(param);
-					if (line != NULL)
-					{
-						char *cmd = strstr(line, USR_CMD_START);
-						if (cmd == NULL)
-						{
-							p->actions[p->actions_count].name = NULL;
-							p->actions[p->actions_count].command = strdup(line);
-							break;
-						}
-						int len = strlen(line) - strlen(cmd);
-						p->actions[p->actions_count].name = strdup(line);
-						p->actions[p->actions_count].name[len - 1] = NULLSYM;
-
-						p->actions[p->actions_count].command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
-						cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
-						if (cmd == NULL)
-						{
-							if (p->actions[p->actions_count].command != NULL)
-								free(p->actions[p->actions_count].command);
-							p->actions[p->actions_count].command = NULL;
-							break;
-						}
-						len = strlen(p->actions[p->actions_count].command) - strlen(cmd);
-						p->actions[p->actions_count].command[len] = NULLSYM;
-
-						//log_message (ERROR, "\"%s\" \"%s\"", p->actions[p->actions_count].name, p->actions[p->actions_count].command);
-						
-					}
+					new_action->name = NULL;
+					new_action->command = strdup(line);
 					break;
 				}
+				int len = strlen(line) - strlen(cmd);
+				new_action->name = strdup(line);
+				new_action->name[len - 1] = NULLSYM;
 
-				p->actions[p->actions_count].hotkey.modifiers |= (1 << index);
-
-				param = get_word(&line);
+				new_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
+				cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
+				if (cmd == NULL)
+				{
+					if (new_action->command != NULL)
+						free(new_action->command);
+					new_action->command = NULL;
+					break;
+				}
+				len = strlen(new_action->command) - strlen(cmd);
+				new_action->command[len] = NULLSYM;
 			}
 
-			p->actions_count++;
 			break;
 		}
 		case 28: // Show OSD
@@ -569,9 +601,9 @@ static void parse_line(struct _xneur_config *p, char *line)
 				p->osds[osd].enabled = FALSE;
 				break;
 			}
-			
+
 			char *tmp = strdup(line);
-			if (tmp == NULL) 
+			if (tmp == NULL)
 				break;
 			char *param1 = get_word(&line);
 
@@ -628,9 +660,9 @@ static void parse_line(struct _xneur_config *p, char *line)
 				p->popups[popup].enabled = FALSE;
 				break;
 			}
-			
+
 			char *tmp = strdup(line);
-			if (tmp == NULL) 
+			if (tmp == NULL)
 				break;
 			char *param1 = get_word(&line);
 
@@ -652,7 +684,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 
 			if (tmp != NULL)
 				free(tmp);
-			
+
 			break;
 		}
 		case 33:
@@ -673,18 +705,18 @@ static void parse_line(struct _xneur_config *p, char *line)
 			p->add_space_after_autocompletion = index;
 			break;
 		}
-		case 35: // Add plugin 
+		case 35: // Add plugin
 		{
 			p->plugins->add(p->plugins, full_string);
 			break;
 		}
 		case 36: // Log Size
 		{
-			if (param != NULL) 
+			if (param != NULL)
 			  p->size_keyboard_log = atoi (param);
 			break;
 		}
-		case 37: // Log E-Mail 
+		case 37: // Log E-Mail
 		{
 			p->mail_keyboard_log = strdup (param);
 			break;
@@ -1014,7 +1046,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 			    (symbol != XK_Sys_Req) &&
 			    (symbol != XK_Delete) &&
 			    (symbol != XK_Return) &&
-			    (symbol != XK_Tab)) 
+			    (symbol != XK_Tab))
 			{
 				int is_double = FALSE;
 				for (int i = 0; i < p->delimeters_count; i++)
@@ -1022,14 +1054,14 @@ static void parse_line(struct _xneur_config *p, char *line)
 					if (p->delimeters[i] == symbol)
 						is_double = TRUE;
 				}
-				if (!is_double) 
+				if (!is_double)
 				{
 					void *tmp = realloc(p->delimeters, sizeof(KeySym) * (p->delimeters_count + 1));
-					if (tmp == NULL) 
+					if (tmp == NULL)
 						break;
 					p->delimeters = (KeySym *)tmp;
 					tmp = realloc(p->delimeters_string, sizeof(char) * (p->delimeters_count + 2));
-					if (tmp == NULL) 
+					if (tmp == NULL)
 						break;
 					p->delimeters_string = (char *)tmp;
 
@@ -1054,10 +1086,10 @@ static int parse_config_file(struct _xneur_config *p, const char *dir_name, cons
 	}
 
 	for (int i = 0; i < list->data_count; i++)
-	{	
+	{
 		parse_line(p, list->data[i].string);
 	}
-	
+
 	list->uninit(list);
 	return TRUE;
 }
@@ -1072,10 +1104,10 @@ static void free_structures(struct _xneur_config *p)
 	p->autocompletion_excluded_apps->uninit(p->autocompletion_excluded_apps);
 	p->dont_send_key_release_apps->uninit(p->dont_send_key_release_apps);
 	p->delay_send_key_apps->uninit(p->delay_send_key_apps);
-	
+
 	p->abbreviations->uninit(p->abbreviations);
 	p->plugins->uninit(p->plugins);
-	
+
 	for (int hotkey = 0; hotkey < MAX_HOTKEYS; hotkey++)
 	{
 		if (p->hotkeys[hotkey].key != NULL)
@@ -1139,15 +1171,15 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 	char *lock_file_path_name = get_home_file_path_name(CACHEDIR, LOCK_NAME);
 	if (lock_file_path_name == NULL)
 		return -1;
-	
+
 	if (process_id == 0)
 	{
 	    remove(lock_file_path_name);
 		free(lock_file_path_name);
 		p->pid = process_id;
 		return process_id;
-	}     
-	
+	}
+
 	log_message(LOG, _("Saving lock file to %s (pid %d)"), lock_file_path_name, process_id);
 
 	FILE *stream = fopen(lock_file_path_name, "w");
@@ -1159,7 +1191,7 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 	}
 
 	free(lock_file_path_name);
-	
+
 	fprintf(stream, "%d", process_id);
 	fclose (stream);
 	p->pid = process_id;
@@ -1186,7 +1218,7 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 	char *config_file_path_name = get_home_file_path_name(CACHEDIR, LOCK_NAME);
 
 	log_message(LOG, _("Get lock file %s"), config_file_path_name);
-	
+
 	char *pid_str = get_file_content(config_file_path_name);
 	if (config_file_path_name != NULL)
 		free(config_file_path_name);
@@ -1217,7 +1249,7 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 		}
 		pclose(fp);
 	}
-	
+
 	return -1;
 }
 
@@ -1244,12 +1276,12 @@ static void xneur_config_clear(struct _xneur_config *p)
 	p->layout_remember_apps		= list_char_init();
 	p->dont_send_key_release_apps	= list_char_init();
 	p->delay_send_key_apps	= list_char_init();
-	
+
 	p->excluded_apps		= list_char_init();
 	p->autocompletion_excluded_apps	= list_char_init();
 	p->abbreviations		= list_char_init();
 	p->plugins				= list_char_init();
-	
+
 	p->version	= NULL;
 	p->osd_font	= NULL;
 	p->actions	= NULL;
@@ -1260,7 +1292,7 @@ static int xneur_config_save(struct _xneur_config *p)
  	char *config_file_path_name = get_home_file_path_name(NULL, CONFIG_NAME);
 	if (config_file_path_name == NULL)
 		return FALSE;
-	
+
 	log_message(LOG, _("Saving main config to %s"), config_file_path_name);
 
 	FILE *stream = fopen(config_file_path_name, "w");
@@ -1276,7 +1308,7 @@ static int xneur_config_save(struct _xneur_config *p)
 		free(config_file_path_name);
 
 	fprintf(stream, "# It's a X Neural Switcher configuration file by XNeur\n# All values writted XNeur\n\n");
-	
+
 	fprintf(stream, "# Config version\nVersion %s\n\n", VERSION);
 	fprintf(stream, "# Work in manual mode\nManualMode %s\n\n", p->get_bool_name(p->manual_mode));
 
@@ -1295,7 +1327,7 @@ static int xneur_config_save(struct _xneur_config *p)
 		fprintf(stream, "Delimeter %s\n", XKeysymToString(p->delimeters[i]));
 	}
 	fprintf(stream, "\n");
-	
+
 	fprintf(stream, "# Define unused languages\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#ExcludeLanguage de\n");
@@ -1391,7 +1423,7 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#SoundVolumePercent 10\n");
 	fprintf(stream, "SoundVolumePercent %d\n\n", p->volume_percent);
-	    
+
 	fprintf(stream, "# Binds sounds for some actions\n");
 	for (int sound = 0; sound < MAX_NOTIFIES; sound++)
 	{
@@ -1411,7 +1443,7 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#CheckSimilarWords No\n");
 	fprintf(stream, "CheckSimilarWords %s\n\n", p->get_bool_name(p->check_similar_words));
-	
+
 	fprintf(stream, "# This option enable or disable layout remember for each window\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#LayoutRememberMode No\n");
@@ -1442,10 +1474,10 @@ static int xneur_config_save(struct _xneur_config *p)
 	for (int i = 0; i < p->delay_send_key_apps->data_count; i++)
 		fprintf(stream, "DelaySendingEventApp %s\n", p->delay_send_key_apps->data[i].string);
 	fprintf(stream, "\n");
-	
+
 	fprintf(stream, "# This option define delay before sendind events to application (in milliseconds between 0 to 50).\n");
 	fprintf(stream, "SendDelay %d\n\n", p->send_delay);
-	
+
 	fprintf(stream, "# This option enable or disable logging keyboard\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#LogSave No\n");
@@ -1473,7 +1505,7 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#LogPort 25\n");
 	fprintf(stream, "LogPort %d\n\n", p->port_keyboard_log);
-	
+
 	fprintf(stream, "# This option enable or disable correction of iNCIDENTAL CapsLock\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#CorrectIncidentalCaps Yes\n");
@@ -1528,12 +1560,12 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#CorrectMisprint Yes\n");
 	fprintf(stream, "CorrectMisprint %s\n\n", p->get_bool_name(p->correct_misprint));
-	
+
 	fprintf(stream, "# This option enable or disable flushing internal buffer when pressed Escape\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#FlushBufferWhenPressEscape Yes\n");
 	fprintf(stream, "FlushBufferWhenPressEscape %s\n\n", p->get_bool_name(p->flush_buffer_when_press_escape));
-	
+
 	fprintf(stream, "# This option enable or disable flushing internal buffer when pressed Enter or Tab\n");
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#FlushBufferWhenPressEnter Yes\n");
@@ -1630,7 +1662,7 @@ static int xneur_config_save(struct _xneur_config *p)
 	for (int i = 0; i < p->dont_send_key_release_apps->data_count; i++)
 		fprintf(stream, "SetDontSendKeyReleaseApp %s\n", p->dont_send_key_release_apps->data[i].string);
 	fprintf(stream, "\n");
-	
+
 	fprintf(stream, "# Work-arround for compatibility with the completion\nCompatibilityWithCompletion %s\n\n", p->get_bool_name(p->compatibility_with_completion));
 
 	fprintf(stream, "# Disabling this option will add any application to the list of excluded applications.\nTrackingInput %s\n\n", p->get_bool_name(p->tracking_input));
@@ -1643,7 +1675,7 @@ static int xneur_config_save(struct _xneur_config *p)
 	for (int plugins = 0; plugins < p->plugins->data_count; plugins++)
 		fprintf(stream, "LoadModule %s\n", p->plugins->data[plugins].string);
 	fprintf(stream, "\n");
-	        
+
 	fprintf(stream, "# That's all\n");
 
 	fclose(stream);
@@ -1659,7 +1691,7 @@ static int xneur_config_replace(struct _xneur_config *p)
 	char *config_backup_file_path_name = get_file_path_name(NULL, CONFIG_BCK_NAME);
 	if (config_backup_file_path_name == NULL)
 		return FALSE;
-	
+
 	log_message(LOG, _("Moving config file from %s to %s"), config_file_path_name, config_backup_file_path_name);
 
 	remove(config_backup_file_path_name);
@@ -1730,28 +1762,28 @@ static void xneur_config_uninit(struct _xneur_config *p)
 {
 	if (p == NULL)
 		return;
-	
+
 	free_structures(p);
 
 	if (p->delimeters != NULL)
 		free(p->delimeters);
 	if (p->delimeters_string != NULL)
 		free(p->delimeters_string);
-	
+
 	p->delimeters_count = 0;
 
 	if (p->hotkeys != NULL)
 		free(p->hotkeys);
-	if (p->sounds != NULL)    
+	if (p->sounds != NULL)
 		free(p->sounds);
-	if (p->osds != NULL) 
+	if (p->osds != NULL)
 		free(p->osds);
-	if (p->popups != NULL) 
+	if (p->popups != NULL)
 		free(p->popups);
 
-	if (p->mail_keyboard_log != NULL) 
+	if (p->mail_keyboard_log != NULL)
 		free(p->mail_keyboard_log);
-	if (p->host_keyboard_log != NULL) 
+	if (p->host_keyboard_log != NULL)
 		free(p->host_keyboard_log);
 
 	xneur_handle_destroy(p->handle);
@@ -1765,7 +1797,7 @@ struct _xneur_config* xneur_config_init(void)
 	bzero(p, sizeof(struct _xneur_config));
 
 	p->pid = -1;
-	
+
 	p->handle = xneur_handle_create();
 
 	//char *a = "ghbdtn";
@@ -1792,7 +1824,7 @@ struct _xneur_config* xneur_config_init(void)
 	p->mail_keyboard_log = NULL;
 	p->host_keyboard_log = NULL;
 	p->port_keyboard_log = 25;
-	
+
 	p->log_level			= LOG;
 	p->excluded_apps		= list_char_init();
 	p->auto_apps			= list_char_init();
@@ -1800,26 +1832,26 @@ struct _xneur_config* xneur_config_init(void)
 	p->layout_remember_apps		= list_char_init();
 	p->dont_send_key_release_apps = list_char_init();
 	p->delay_send_key_apps	= list_char_init();
-	
+
 	p->window_layouts		= list_char_init();
 	p->abbreviations		= list_char_init();
 	p->autocompletion_excluded_apps	= list_char_init();
 	p->plugins		= list_char_init();
 
 	p->check_similar_words = TRUE;
-	
-	p->troubleshoot_backspace = FALSE; 
-	p->troubleshoot_left_arrow = FALSE; 
+
+	p->troubleshoot_backspace = FALSE;
+	p->troubleshoot_left_arrow = FALSE;
 	p->troubleshoot_right_arrow = FALSE;
 	p->troubleshoot_up_arrow = FALSE;
 	p->troubleshoot_down_arrow = FALSE;
 	p->troubleshoot_delete = FALSE;
 	p->troubleshoot_switch = TRUE;
 	p->troubleshoot_full_screen = TRUE;
-	
+
 	p->tracking_input = TRUE;
 	p->tracking_mouse = TRUE;
-	
+
 	p->popup_expire_timeout = 1000;
 
 	// Function mapping
