@@ -150,41 +150,60 @@ static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
 	return &(p->actions[p->actions_count - 1]);
 }
 
-
 static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 {
+	//log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
+
 	hotkey->key = NULL;
 	while (TRUE)
 	{
-		 char *oldline = *line;
-		 char *modifier = get_word(line);
-		 if (modifier == NULL)
-			  break;
+		char *oldline = NULL;
+		if (*line)
+		{
+			//log_message(DEBUG, "*line: '%s'", *line);
+			oldline = strdup(*line);
+		}
+		char *modifier = get_word(line);
+/*
+		if (*line)
+			log_message(DEBUG, "*line: '%s'", *line);
+		if (oldline)
+			log_message(DEBUG, "oldline: '%s'", oldline);
+*/
+		if (modifier == NULL)
+			break;
 
-		 if (modifier[0] == '\0')
-			  continue;
+		if (modifier[0] == '\0')
+			continue;
 
-		 int index = get_option_index(modifier_names, modifier);
+		int index = get_option_index(modifier_names, modifier);
 
-		 // It seems that original function could parse "Alt t" as well as "t Alt"
-		 // Now I need to unify user and standard actions
-		 // So, by the name of backward compatibility (hotkey->key == NULL) check is added below:
-		 if (index != -1)
-		 {
-			  // The word is really modifier
-			  hotkey->modifiers |= (1 << index);
-		 }
-		 else if (hotkey->key == NULL)
-		 {
-			  // The word is not modifier, it is a key and it is first non-modifier word
-			  hotkey->key = strdup(modifier);
-		 }
-		 else
-		 {
-			  // The word is not modified and key is already been readed
-			  *line = oldline;
-			  return;
-		 }
+		// It seems that original function could parse "Alt t" as well as "t Alt"
+		// Now I need to unify user and standard actions
+		// So, by the name of backward compatibility (hotkey->key == NULL) check is added below:
+		if (index != -1)
+		{
+			// The word is really modifier
+			hotkey->modifiers |= (1 << index);
+			//log_message(DEBUG, _("Adding modifier: '%s'"),modifier);
+			free(oldline);
+		}
+		else if (hotkey->key == NULL)
+		{
+			// The word is not modifier, it is a key and it is first non-modifier word
+			hotkey->key = strdup(modifier);
+			//log_message(DEBUG, _("Key set to: '%s'"),modifier);
+			free(oldline);
+		}
+		else
+		{
+			// The word is not modified and key is already been readed
+			//free(*line);
+			*line = oldline;
+			//if (oldline)
+				//log_message(DEBUG, _("Restoring old line: '%s'"),oldline);
+			return;
+		}
 	}
 }
 
