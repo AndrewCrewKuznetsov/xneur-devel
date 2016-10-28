@@ -263,7 +263,6 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 	fclose (stream);
 	
 	
-	
 	stream = fopen(file_path_name, "r+");
 	free(file_path_name);
 	if (stream == NULL)
