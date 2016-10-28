@@ -151,6 +151,44 @@ static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
 }
 
 
+static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
+{
+	hotkey->key = NULL;
+	while (TRUE)
+	{
+		 char *oldline = *line;
+		 char *modifier = get_word(line);
+		 if (modifier == NULL)
+			  break;
+
+		 if (modifier[0] == '\0')
+			  continue;
+
+		 int index = get_option_index(modifier_names, modifier);
+
+		 // It seems that original function could parse "Alt t" as well as "t Alt"
+		 // Now I need to unify user and standard actions
+		 // So, by the name of backward compatibility (hotkey->key == NULL) check is added below:
+		 if (index != -1)
+		 {
+			  // The word is really modifier
+			  hotkey->modifiers |= (1 << index);
+		 }
+		 else if (hotkey->key == NULL)
+		 {
+			  // The word is not modifier, it is a key and it is first non-modifier word
+			  hotkey->key = strdup(modifier);
+		 }
+		 else
+		 {
+			  // The word is not modified and key is already been readed
+			  *line = oldline;
+			  return;
+		 }
+	}
+}
+
+
 static void parse_line(struct _xneur_config *p, char *line)
 {
 	if (line[0] == '#')
@@ -210,22 +248,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 				break;
 			}
 
-			p->hotkeys[action].key = NULL;
-			while (TRUE)
-			{
-				char *modifier = get_word(&line);
-				if (modifier == NULL)
-					break;
-
-				if (modifier[0] == '\0')
-					continue;
-
-				int index = get_option_index(modifier_names, modifier);
-				if (index == -1)
-					p->hotkeys[action].key = strdup(modifier);
-				else
-					p->hotkeys[action].modifiers |= (1 << index);
-			}
+			parse_hotkey(&line,&(p->hotkeys[action]));
 
 			break;
 		}
