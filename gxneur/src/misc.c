@@ -2095,12 +2095,17 @@ gboolean save_abbreviation(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *
 
 	gchar *abbreviation;
 	gchar *full_text;
+	gchar *ptr = NULL;
 	gtk_tree_model_get(GTK_TREE_MODEL(store_abbreviation), iter, 0, &abbreviation, 1, &full_text, -1);
 
-	int ptr_len = strlen(abbreviation) + strlen(full_text) + 2;
-	gchar *ptr = malloc(ptr_len* sizeof(gchar));
-	snprintf(ptr, ptr_len, "%s %s", abbreviation, full_text);
-	xconfig->abbreviations->add(xconfig->abbreviations, ptr);
+	if (abbreviation != NULL && full_text != NULL)
+	{
+		int ptr_len = strlen(abbreviation) + strlen(full_text) + 2;
+		ptr = malloc(ptr_len* sizeof(gchar));
+
+		snprintf(ptr, ptr_len, "%s %s", abbreviation, full_text);
+		xconfig->abbreviations->add(xconfig->abbreviations, ptr);
+	}
 
 	if (abbreviation != NULL)
 		g_free(abbreviation);
@@ -2313,7 +2318,7 @@ void xneur_save_preference(GtkBuilder* builder)
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_hotkey), save_action, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_autocompletion_exclude_app), save_autocompletion_exclude_app, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_plugin), save_plugin, NULL);
-	
+
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton7"));
 	xconfig->manual_mode = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	

@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "types.h"
 #include "list_char.h"
@@ -80,10 +81,6 @@ char* get_file_content(const char *file_name)
 
 char* get_file_path_name(const char *dir_name, const char *file_name)
 {
-	char *home = getenv("HOME");
-	if (home == NULL)
-		return NULL;
-	
 #define SEARCH_IN(DIRECTORY) \
 	if (dir_name == NULL)\
 		snprintf(path_file, max_path_len, "%s/%s", DIRECTORY, file_name);\
@@ -107,15 +104,14 @@ char* get_file_path_name(const char *dir_name, const char *file_name)
 
 	// Search conf in ~/.xneur
 	if (dir_name == NULL)
-		snprintf(path_file, max_path_len, "%s/%s/%s", home, HOME_CONF_DIR, file_name);
+		snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, file_name);
 	else
-		snprintf(path_file, max_path_len, "%s/%s/%s/%s", home, HOME_CONF_DIR, dir_name, file_name);
+		snprintf(path_file, max_path_len, "%s/%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_name, file_name);
 
 	FILE *stream = fopen(path_file, "r");
 	if (stream != NULL)
 	{
 		fclose(stream);
-		free(home);
 		return path_file;
 	}
 
@@ -125,53 +121,45 @@ char* get_file_path_name(const char *dir_name, const char *file_name)
 
 	// Returning default in ~/.xneur
 	if (dir_name == NULL)
-		snprintf(path_file, max_path_len, "%s/%s/%s", home, HOME_CONF_DIR, file_name);
+		snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, file_name);
 	else
-		snprintf(path_file, max_path_len, "%s/%s/%s/%s", home, HOME_CONF_DIR, dir_name, file_name);
+		snprintf(path_file, max_path_len, "%s/%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_name, file_name);
 
-	free(home);
 	return path_file;
 }
 
 char* get_home_file_path_name(const char *dir_name, const char *file_name)
 {
+	mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 	int max_path_len = get_max_path_len();
-
-	char *home = getenv("HOME");
-	if (home == NULL)
-		return NULL;
-	
 	char *path_file = (char *) malloc((max_path_len + 1) * sizeof(char));
 
 	if (dir_name == NULL)
 	{
-		snprintf(path_file, max_path_len, "%s/%s", home, HOME_CONF_DIR);
-		if (mkdir(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)== -1)
+		snprintf(path_file, max_path_len, "%s/%s", getenv("HOME"), HOME_CONF_DIR);
+		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 		{
 			free(path_file);
-			free(home);
 			return NULL;
 		}
-		snprintf(path_file, max_path_len, "%s/%s/%s", home, HOME_CONF_DIR, file_name);
+		snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, file_name);
 	}
 	else
 	{
-		snprintf(path_file, max_path_len, "%s/%s", home, HOME_CONF_DIR);
-		if (mkdir(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)== -1)
+		snprintf(path_file, max_path_len, "%s/%s", getenv("HOME"), HOME_CONF_DIR);
+		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 		{
 			free(path_file);
-			free(home);
 			return NULL;
 		}
 		char *dir = strdup(dir_name);
 		char *dir_part = strsep(&dir, DIR_SEPARATOR);
-		snprintf(path_file, max_path_len, "%s/%s/%s", home, HOME_CONF_DIR, dir_part);
-		if (mkdir(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)== -1)
+		snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_part);
+		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 		{
 			free(path_file);
 			free(dir_part);
 			free(dir);
-			free(home);
 			return NULL;
 		}
 		while (dir != NULL)
@@ -179,20 +167,19 @@ char* get_home_file_path_name(const char *dir_name, const char *file_name)
 			path_file = strcat(path_file, DIR_SEPARATOR); 
 			char *dir_part = strsep(&dir, DIR_SEPARATOR);
 			path_file = strcat(path_file, dir_part);
-			if (mkdir(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) == -1)
+			if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 			{
 				free(path_file);
 				free(dir_part);
 				free(dir);
-				free(home);
 				return NULL;
 			}
 		}
 		free(dir_part);
 		
-		if (mkdir(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) == -1)
+		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 			return NULL;
-		snprintf(path_file, max_path_len, "%s/%s/%s/%s", home, HOME_CONF_DIR, dir_name, file_name);
+		snprintf(path_file, max_path_len, "%s/%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_name, file_name);
 	}
 	return path_file;
 }
@@ -200,9 +187,7 @@ char* get_home_file_path_name(const char *dir_name, const char *file_name)
 struct _list_char* load_list(const char *dir_name, const char *file_name, int sort_flag)
 {
 	struct _list_char *list = list_char_init();
-	
 	char *file_path_name = get_file_path_name(dir_name, file_name);
-
 	char *content = get_file_content(file_path_name);
 	if (content == NULL)
 	{

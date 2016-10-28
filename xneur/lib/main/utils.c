@@ -202,7 +202,7 @@ void grab_all_keys(Window window, int is_grab)
 						XIMaskLen(XI_FocusOut)+
 						XIMaskLen(XI_Enter)+
 						XIMaskLen(XI_Leave);
-		mask.mask = calloc(mask.mask_len, sizeof(char));
+		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
 		XISetMask(mask.mask, XI_KeyPress);
 		XISetMask(mask.mask, XI_KeyRelease);
 		XISetMask(mask.mask, XI_FocusIn);

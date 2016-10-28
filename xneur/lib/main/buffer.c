@@ -327,8 +327,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		else	
 			fprintf(stream, "%s", symbol);
 
-		if (symbol != NULL)
-			free(symbol);
+		free(symbol);
 	}
 
 	fprintf(stream, "\n</body></html>\n");
@@ -397,8 +396,11 @@ static void buffer_set_i18n_content(struct _buffer *p)
 			
 			char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, p->keycode[k], i, modifier);
 			if (symbol_unchanged == NULL)
+			{
+				free(symbol);
 				continue;
-
+			}
+			
 			char *tmp = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
 			assert(tmp != NULL);
 			p->i18n_content[i].content = tmp;
@@ -548,7 +550,10 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 
 		char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, keycode, i, modifier);
 		if (symbol_unchanged == NULL)
+		{
+			free(symbol);
 			continue;
+		}
 
 		//log_message (ERROR, _("'%c' - '%c' - '%c'"), sym, symbol, symbol_unchanged);
 		char *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
@@ -655,7 +660,7 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 			state = state & (~keyboard_groups[j]);
 		}
 		char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[i], group, state);
-		if (symbol)
+		if (symbol != NULL)
 		{
 			char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + strlen(symbol) + 1);
 			if (tmp != NULL)
@@ -663,8 +668,7 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 				utf_string = tmp;
 				strcat(utf_string, symbol);	
 			}
-			if (symbol != NULL)
-				free(symbol);
+			free(symbol);
 		}
 	}
 	
@@ -705,6 +709,7 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 			char *symbol = p->keymap->keycode_to_symbol(p->keymap, XKeysymToKeycode(p->keymap->display, xconfig->delimeters[i]), -1, 0); 
 			if (strlen(symbol) == 1)
 				strcat(xconfig->delimeters_string, symbol);
+			free(symbol);
 		}
 		//log_message (DEBUG,"'%s'", xconfig->delimeters_string);
 	}

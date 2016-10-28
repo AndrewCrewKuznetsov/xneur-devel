@@ -290,6 +290,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
+
 #ifdef WITH_ASPELL
 	// init aspell spellers
 	handle->spell_checkers = (AspellSpeller **) malloc(handle->total_languages * sizeof(AspellSpeller*));
@@ -303,7 +304,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	handle->has_enchant_checker = (int *) malloc(handle->total_languages * sizeof(int));
 	handle->enchant_broker = enchant_broker_init ();
 #endif
-	
+
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
 		int path_len = strlen(LANGUAGEDIR) + strlen(handle->languages[lang].dir) + 2;
@@ -336,7 +337,6 @@ struct _xneur_handle *xneur_handle_create (void)
 
 		if (lang_dir != NULL)
 			free(lang_dir);
-
 	}
 
 #ifdef WITH_ASPELL
@@ -443,7 +443,8 @@ struct _xneur_handle *xneur_handle_create (void)
 #endif
 			);
 	}
-	return handle;
+
+	return handle;	
 }
 
 void xneur_handle_destroy (struct _xneur_handle *handle)
@@ -506,6 +507,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 #endif
 	
 	free(handle);
+
 }
 
 int xneur_get_layout (struct _xneur_handle *handle, char *word)

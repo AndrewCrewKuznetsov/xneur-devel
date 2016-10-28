@@ -412,9 +412,11 @@ static void parse_line(struct _xneur_config *p, char *line)
 		case 21: // Get Words for Replacing
 		{
 			char *replaced_string = escaped_sym_to_real_sym(full_string);
-			p->abbreviations->add(p->abbreviations, replaced_string);
 			if (replaced_string != NULL)
+			{
+				p->abbreviations->add(p->abbreviations, replaced_string);
 				free(replaced_string);
+			}
 			break;
 		}
 		case 22: // Ignore keyboard layout for abbreviations
@@ -1065,9 +1067,9 @@ static void free_structures(struct _xneur_config *p)
 	p->excluded_apps->uninit(p->excluded_apps);
 	p->autocompletion_excluded_apps->uninit(p->autocompletion_excluded_apps);
 	p->dont_send_key_release_apps->uninit(p->dont_send_key_release_apps);
-	p->delay_send_key_apps->uninit(p->delay_send_key_apps);
-	
+	p->delay_send_key_apps->uninit(p->delay_send_key_apps);	
 	p->abbreviations->uninit(p->abbreviations);
+	
 	p->plugins->uninit(p->plugins);
 	
 	for (int hotkey = 0; hotkey < MAX_HOTKEYS; hotkey++)
@@ -1378,6 +1380,7 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#ReplaceAbbreviation xneur X Neural Switcher\n");
 	for (int words = 0; words < p->abbreviations->data_count; words++)
+		//fprintf(stream, "ReplaceAbbreviation %s\n", real_sym_to_escaped_sym(p->abbreviations->data[words].string));
 	{
 		char *str = real_sym_to_escaped_sym(p->abbreviations->data[words].string);
 		if (str == NULL)
@@ -1746,11 +1749,15 @@ static void xneur_config_uninit(struct _xneur_config *p)
 	
 	free_structures(p);
 
+	free(p->hotkeys);
+	free(p->sounds);
+	free(p->osds);
+	free(p->popups);
+
 	if (p->delimeters != NULL)
 		free(p->delimeters);
 	if (p->delimeters_string != NULL)
 		free(p->delimeters_string);
-	
 	p->delimeters_count = 0;
 
 	if (p->mail_keyboard_log != NULL) 
@@ -1771,9 +1778,6 @@ struct _xneur_config* xneur_config_init(void)
 	p->pid = -1;
 	
 	p->handle = xneur_handle_create();
-
-	//char *a = "ghbdtn";
-	//xneur_get_layout(p->handle, a);
 
 	p->delimeters = (KeySym *) malloc(sizeof(KeySym));
 	p->delimeters_string = (char *) malloc(sizeof(char));
