@@ -172,10 +172,12 @@ char* real_sym_to_escaped_sym(const char *source)
 		source = strdup(dummy);
 		free(dummy);
 	}
-	
+
+	if (source == NULL)
+		return NULL;
 	dummy = str_replace(source, "\n", "\\n");
-	//if ((void*)source != NULL)
-	//	free((void*)source);
+	if ((void*)source != NULL)
+		free((void*)source);
 
 	return dummy;
 }
@@ -203,8 +205,8 @@ char* escaped_sym_to_real_sym(const char *source)
 	
 	escape[0] = '\\';
 	dummy = str_replace(source, "\\\\", escape);
-	//if ((void*)source != NULL)
-	//	free((void*)source);
+	if ((void*)source != NULL)
+		free((void*)source);
 
 	return dummy;
 }

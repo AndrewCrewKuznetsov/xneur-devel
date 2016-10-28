@@ -67,7 +67,7 @@ static int locale_create(void)
 		return FALSE;
 	}
 	
-	if (locale == NULL || (strstr(locale, "UTF") == NULL && strstr(locale, "utf") == NULL) )
+	if ((strstr(locale, "UTF") == NULL) && (strstr(locale, "utf") == NULL))
 		log_message(WARNING, _("Your default locale is not UTF-8"));
 
 	log_message(DEBUG, _("Using locale %s"), locale);
@@ -428,9 +428,9 @@ static char keymap_get_ascii(struct _keymap *p, const char *sym, int* preferred_
 	return pr->ascii;
 }
 
-static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent e)
+static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent *e)
 {
-	XKeyEvent *ke = (XKeyEvent *) &e;
+	XKeyEvent *ke = (XKeyEvent *)e;
 
 	int mod = 0;
 	if (ke->state & ShiftMask)

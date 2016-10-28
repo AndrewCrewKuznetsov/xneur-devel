@@ -196,7 +196,12 @@ void grab_all_keys(Window window, int is_grab)
 		
 		XIEventMask mask;
 		mask.deviceid = XIAllMasterDevices;
-		mask.mask_len = XIMaskLen(XI_KeyPress);
+		mask.mask_len = XIMaskLen(XI_KeyPress)+
+						XIMaskLen(XI_KeyRelease)+
+						XIMaskLen(XI_FocusIn)+
+						XIMaskLen(XI_FocusOut)+
+						XIMaskLen(XI_Enter)+
+						XIMaskLen(XI_Leave);
 		mask.mask = calloc(mask.mask_len, sizeof(char));
 		XISetMask(mask.mask, XI_KeyPress);
 		XISetMask(mask.mask, XI_KeyRelease);

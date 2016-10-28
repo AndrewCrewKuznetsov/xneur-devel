@@ -378,16 +378,16 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 			free(word);
 	}
 	
-	if (possible_words != NULL)
-	{
-		log_message(DEBUG, _("   [+] Found suggest word '%s' in %s dictionary (Levenshtein distance = %d)"),  
-		            possible_words, handle->languages[possible_lang].name, min_levenshtein);
-		free (possible_words); 
-	}
-	else
+	if (possible_words == NULL)
 	{
 		log_message(DEBUG, _("   [-] This word has no suggest for all dictionaries")); 
+		return possible_lang;
+
 	}
+	
+	log_message(DEBUG, _("   [+] Found suggest word '%s' in %s dictionary (Levenshtein distance = %d)"),  
+						possible_words, handle->languages[possible_lang].name, min_levenshtein);
+	free (possible_words); 
 	return possible_lang;
 }
 

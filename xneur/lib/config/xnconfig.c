@@ -233,12 +233,6 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 4: // Add Language
 		{
-			if (param == NULL)
-			{
-				log_message(ERROR, _("Argument number mismatch for ExcludeLanguage option"));
-				break;
-			}
-
 			for (int lang = 0; lang < p->handle->total_languages; lang++)
 			{
 				if (strcmp(p->handle->languages[lang].dir, param) == 0)
@@ -1142,7 +1136,11 @@ static pid_t xneur_config_set_pid(struct _xneur_config *p, pid_t process_id)
 	
 	if (process_id == 0)
 	{
-	    remove(lock_file_path_name);
+	    if (remove(lock_file_path_name) == -1)
+		{
+			free(lock_file_path_name);
+			return -1;
+		}
 		free(lock_file_path_name);
 		p->pid = process_id;
 		return process_id;
@@ -1184,12 +1182,13 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 {
 	// Get lock file from ~/.xneur/.cache/lock
 	char *config_file_path_name = get_home_file_path_name(CACHEDIR, LOCK_NAME);
-
+	if (config_file_path_name == NULL)
+		return -1;
+	
 	log_message(LOG, _("Get lock file %s"), config_file_path_name);
 	
 	char *pid_str = get_file_content(config_file_path_name);
-	if (config_file_path_name != NULL)
-		free(config_file_path_name);
+	free(config_file_path_name);
 	if (pid_str == NULL)
 		return -1;
 
@@ -1379,7 +1378,13 @@ static int xneur_config_save(struct _xneur_config *p)
 	fprintf(stream, "# Example:\n");
 	fprintf(stream, "#ReplaceAbbreviation xneur X Neural Switcher\n");
 	for (int words = 0; words < p->abbreviations->data_count; words++)
-		fprintf(stream, "ReplaceAbbreviation %s\n", real_sym_to_escaped_sym(p->abbreviations->data[words].string));
+	{
+		char *str = real_sym_to_escaped_sym(p->abbreviations->data[words].string);
+		if (str == NULL)
+			continue;
+		fprintf(stream, "ReplaceAbbreviation %s\n", str);
+		free(str);
+	}
 	fprintf(stream, "\n");
 
 	fprintf(stream, "# This option enable or disable sound playing\n");
@@ -1658,16 +1663,24 @@ static int xneur_config_replace(struct _xneur_config *p)
 		return FALSE;
 	char *config_backup_file_path_name = get_file_path_name(NULL, CONFIG_BCK_NAME);
 	if (config_backup_file_path_name == NULL)
+	{
+		free(config_file_path_name);
 		return FALSE;
+	}
 	
 	log_message(LOG, _("Moving config file from %s to %s"), config_file_path_name, config_backup_file_path_name);
-
-	remove(config_backup_file_path_name);
+	
+	if (remove(config_backup_file_path_name) == -1)
+	{
+		log_message(ERROR, _("Can't move file!"), config_backup_file_path_name);
+		free(config_file_path_name);
+		free(config_backup_file_path_name);
+		return FALSE;
+	}
 
 	if (rename(config_file_path_name, config_backup_file_path_name) != 0)
 	{
 		log_message(ERROR, _("Can't move file!"), config_backup_file_path_name);
-
 		free(config_file_path_name);
 		free(config_backup_file_path_name);
 		return FALSE;
@@ -1739,15 +1752,6 @@ static void xneur_config_uninit(struct _xneur_config *p)
 		free(p->delimeters_string);
 	
 	p->delimeters_count = 0;
-
-	if (p->hotkeys != NULL)
-		free(p->hotkeys);
-	if (p->sounds != NULL)    
-		free(p->sounds);
-	if (p->osds != NULL) 
-		free(p->osds);
-	if (p->popups != NULL) 
-		free(p->popups);
 
 	if (p->mail_keyboard_log != NULL) 
 		free(p->mail_keyboard_log);

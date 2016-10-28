@@ -56,8 +56,11 @@ void generate_protos(void)
 	}
 
 	printf("\nSpecified new language group: %d\n", new_lang_group);
-
-	char *text = get_file_content(get_file_path_name(NEW_LANG_DIR, NEW_LANG_TEXT));
+	char *path = get_file_path_name(NEW_LANG_DIR, NEW_LANG_TEXT);
+	if (path == NULL) 
+		return;
+	char *text = get_file_content(path);
+	free(path);
 	if (text == NULL)
 	{
 		printf("New language text file not find! Aborting!\n");
@@ -171,6 +174,14 @@ void generate_protos(void)
 
 	char *proto_file_path = get_file_path_name(NEW_LANG_DIR, "proto");
 	FILE *stream = fopen(proto_file_path, "w");
+	if (stream == NULL)
+	{
+		free(syll);
+		free(proto_file_path);
+		proto->uninit(proto);
+		proto3->uninit(proto3);
+		return;
+	}
 	proto->save(proto, stream);
 	printf("Short proto writed (%d) to %s\n", proto->data_count, proto_file_path);
 	fclose(stream);
@@ -178,6 +189,14 @@ void generate_protos(void)
 
 	char *proto3_file_path = get_file_path_name(NEW_LANG_DIR, "proto3");
 	stream = fopen(proto3_file_path, "w");
+	if (stream == NULL)
+	{
+		free(syll);
+		free(proto3_file_path);
+		proto->uninit(proto);
+		proto3->uninit(proto3);
+		return;
+	}
 	proto3->save(proto3, stream);
 	printf("Big proto writed (%d) to %s\n", proto3->data_count, proto3_file_path);
 	fclose(stream);

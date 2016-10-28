@@ -58,7 +58,7 @@ struct _keymap
 	void  (*get_keysyms_by_string)(struct _keymap *p, char *keyname, KeySym *Lower, KeySym *Upper);
 	char* (*keycode_to_symbol)(struct _keymap *p, KeyCode kc, int group, int state);
 	char  (*get_ascii)(struct _keymap *p, const char *sym, int* preferred_lang, KeyCode *kc, int *modifier, size_t* symbol_len);
-	char  (*get_cur_ascii_char) (struct _keymap *p, XEvent e);
+	char  (*get_cur_ascii_char) (struct _keymap *p, XEvent *e);
 	void  (*convert_text_to_ascii)(struct _keymap *p, char *text, KeyCode *kc, int *kc_mod);
 	void  (*print_keymaps)(struct _keymap *p);
 	char* (*lower_by_keymaps)(struct _keymap *p, int gr, char *text);

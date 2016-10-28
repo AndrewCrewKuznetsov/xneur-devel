@@ -293,14 +293,14 @@ struct _xneur_handle *xneur_handle_create (void)
 #ifdef WITH_ASPELL
 	// init aspell spellers
 	handle->spell_checkers = (AspellSpeller **) malloc(handle->total_languages * sizeof(AspellSpeller*));
-	handle->has_spell_checker = (int *) malloc(handle->total_languages * sizeof(int *));
+	handle->has_spell_checker = (int *) malloc(handle->total_languages * sizeof(int));
 	handle->spell_config = new_aspell_config();
 #endif
 
 #ifdef WITH_ENCHANT
 	// init enchant brocker and dicts
 	handle->enchant_dicts = (EnchantDict **) malloc(handle->total_languages * sizeof(EnchantDict *));
-	handle->has_enchant_checker = (int *) malloc(handle->total_languages * sizeof(int *));
+	handle->has_enchant_checker = (int *) malloc(handle->total_languages * sizeof(int));
 	handle->enchant_broker = enchant_broker_init ();
 #endif
 	

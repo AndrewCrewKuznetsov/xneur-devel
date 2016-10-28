@@ -96,11 +96,22 @@ void encode_base64(FILE *infile, char *base64text)
 	}
 }
 
+static void send_packet(int s, const void *msg, size_t len, int flags)
+{
+	ssize_t count = send(s, msg, len, flags);
+	if (count == -1)
+		log_message (ERROR, _("Lost the package when sending mail."));
+}
+
 void send_mail_with_attach(char *file, char host[], int port, char rcpt[])
 {
-	if (host == NULL || rcpt == NULL || file == NULL)
+	if (host == NULL)
 		return;
-
+	if (rcpt == NULL)
+		return;
+	if (file == NULL)
+		return;
+	
 	int fd, i;
 
 	struct sockaddr_in sock;
@@ -129,14 +140,8 @@ void send_mail_with_attach(char *file, char host[], int port, char rcpt[])
 
 	if (connect(fd, (struct sockaddr *)&sock, sizeof(struct sockaddr)) == -1)
 	{
+		close(fd);
 		log_message(ERROR, _("Unable to connect to %s"), (char *)inet_ntoa(sock.sin_addr));
-		return;
-	}
-
-	struct stat sb;
-	if (stat(file, &sb) != 0 || sb.st_size < 0)
-	{
-		log_message (ERROR, _("Can't get state of file \"%s\""), file);
 		return;
 	}
 	
@@ -144,45 +149,69 @@ void send_mail_with_attach(char *file, char host[], int port, char rcpt[])
 	if (stream == NULL)
 	{
 		log_message (ERROR, _("Can't open to read file \"%s\""), file);
+		close(fd);
 		return;
 	}
 
+	struct stat sb;
+	if (stat(file, &sb) != 0)
+	{
+		close(fd);
+		fclose(stream);
+		log_message (ERROR, _("Can't get state of file \"%s\""), file);
+		return;
+	}
+	
+	if (sb.st_size < 0)
+	{
+		close(fd);
+		fclose(stream);
+		log_message (ERROR, _("Can't get state of file \"%s\""), file);
+		return;
+	}
+	
 	do {
 		file = strstr(file, "/");
+		if (file == NULL)
+		{
+			close(fd);
+			fclose(stream);
+			return;
+		}
 		file++;
 	} while (strstr(file, "/") != NULL);
 	
 	for (i = 0; i < CMDCOUNT; i++)
 	{
-		send(fd, mail[i], strlen(mail[i]), 0);
+		send_packet(fd, mail[i], strlen(mail[i]), 0);
 		if (i == 2)
 		{
-			send(fd, rcpt, strlen(rcpt), 0);
-			send(fd, "\n", sizeof(char), 0);
+			send_packet(fd, rcpt, strlen(rcpt), 0);
+			send_packet(fd, "\n", sizeof(char), 0);
 		}
 		if (i == 3)
 		{
-			send(fd, FROM, strlen(FROM), 0);
-			send(fd, "To: ", 4, 0);
-			send(fd, rcpt, strlen(rcpt), 0);
-			send(fd, "\n", sizeof(char), 0);
-			send(fd, SUBJ, strlen(SUBJ), 0);
-			send(fd, MIME, strlen(MIME), 0);
-			send(fd, CONT_MIX, strlen(CONT_MIX), 0);
-			send(fd, BOUN, strlen(BOUN), 0);
-			send(fd, CONT_TXT, strlen(CONT_TXT), 0);
-			send(fd, TEXT, strlen(TEXT), 0);
-			send(fd, BOUN, strlen(BOUN), 0);
+			send_packet(fd, FROM, strlen(FROM), 0);
+			send_packet(fd, "To: ", 4, 0);
+			send_packet(fd, rcpt, strlen(rcpt), 0);
+			send_packet(fd, "\n", sizeof(char), 0);
+			send_packet(fd, SUBJ, strlen(SUBJ), 0);
+			send_packet(fd, MIME, strlen(MIME), 0);
+			send_packet(fd, CONT_MIX, strlen(CONT_MIX), 0);
+			send_packet(fd, BOUN, strlen(BOUN), 0);
+			send_packet(fd, CONT_TXT, strlen(CONT_TXT), 0);
+			send_packet(fd, TEXT, strlen(TEXT), 0);
+			send_packet(fd, BOUN, strlen(BOUN), 0);
 			char *cont_app = malloc((strlen(CONT_APP)+ 2*strlen(file) + 5) * sizeof(char));
 			sprintf (cont_app, CONT_APP, file, file);
-			send(fd, cont_app, strlen(cont_app), 0);
+			send_packet(fd, cont_app, strlen(cont_app), 0);
 			free(cont_app);
 			char *base64text = malloc((sb.st_size*2) * sizeof(char));
 			encode_base64(stream, base64text);
-			send(fd, base64text, strlen(base64text), 0);
+			send_packet(fd, base64text, strlen(base64text), 0);
 			free(base64text);
 			
-			send(fd, BOUN_END, strlen(BOUN_END), 0);
+			send_packet(fd, BOUN_END, strlen(BOUN_END), 0);
 		}
 	}	
 	
@@ -192,6 +221,13 @@ void send_mail_with_attach(char *file, char host[], int port, char rcpt[])
 	int result = 0;
 	do {
 		result = recv(fd, recvbuf, recvbuflen, 0);
+		if (result < 0)
+		{
+			close(fd);
+			fclose(stream);
+			log_message (ERROR, _("Mail server return Error %d"), result);
+			return;
+		}
 		recvbuf[result] = '\0';
 		/*if ( result > 0 )
 			log_message (DEBUG, "Mail server return answer:\n%s\n", recvbuf, result);
@@ -199,8 +235,6 @@ void send_mail_with_attach(char *file, char host[], int port, char rcpt[])
 			log_message (ERROR, "Connection closed");
 		else
 			log_message (ERROR, "Connection Error %d", result);*/
-		if ( result < 0 )
-			log_message (ERROR, _("Mail server return Error %d"), result);
 	} while( result > 0 );
 	
 	close(fd);

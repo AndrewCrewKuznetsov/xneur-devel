@@ -106,6 +106,9 @@ static void buffer_set_caps_mask(struct _buffer *p)
 
 static void buffer_mail_and_archive(char *file_path_name)
 {
+	if (file_path_name == NULL)
+		return;
+	
 	time_t curtime = time(NULL);
 	struct tm *loctime = localtime(&curtime);
 	if (loctime == NULL)
@@ -156,7 +159,15 @@ static void buffer_mail_and_archive(char *file_path_name)
 			fclose (dest);
 
 		// Remove uncompressed file
-		remove(arch_file_path_name);
+		if (remove(arch_file_path_name) == -1)
+		{
+			free(file_path_name);
+			free(time);
+			free(date);
+			free(arch_file_path_name);
+			free(gz_arch_file_path_name);
+			return;
+		}
 
 		log_message(DEBUG, _("Compressed old log file to %s"), gz_arch_file_path_name);
 
@@ -168,12 +179,8 @@ static void buffer_mail_and_archive(char *file_path_name)
 	}
 	else
 		log_message (ERROR, _("Error rename file \"%s\" to \"%s\""), file_path_name, arch_file_path_name);
-
-
 		
-	if (file_path_name != NULL)
-		free(file_path_name);
-	
+	free(file_path_name);
 	free(time);
 	free(date);
 	free(arch_file_path_name);
@@ -206,28 +213,17 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 	time_t curtime = time(NULL);
 	struct tm *loctime = localtime(&curtime);
 	if (loctime == NULL)
+	{
+		free(file_path_name);
 		return;
+	}
 	
 	char *buffer = malloc(256 * sizeof(char));
 	if (buffer == NULL)
-		return;
-	
-	// Check file size
-	struct stat sb;
-
-	if (stat(file_path_name, &sb) == 0 && sb.st_size > xconfig->size_keyboard_log)
 	{
-		pthread_attr_t mail_and_archive_thread_attr;
-		pthread_attr_init(&mail_and_archive_thread_attr);
-		pthread_attr_setdetachstate(&mail_and_archive_thread_attr, PTHREAD_CREATE_DETACHED);
-
-		pthread_t mail_and_archive_thread;
-		char *thread_file = strdup (file_path_name);
-		pthread_create(&mail_and_archive_thread, &mail_and_archive_thread_attr, (void*) &buffer_mail_and_archive, thread_file);
-
-		pthread_attr_destroy(&mail_and_archive_thread_attr);
+		free(file_path_name);
+		return;
 	}
-	//
 
 	// Check existing log file
 	FILE *stream = fopen(file_path_name, "r");
@@ -243,7 +239,30 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		fprintf(stream, "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"><title>X Neural Switcher Log</title></head><body>\n");
 		fprintf(stream, "<ul></ul></body></html>\n");
 	}
+	else
+	{
+		// Check file size
+		struct stat sb;
+		if (stat(file_path_name, &sb) == 0)
+		{
+			if (sb.st_size > xconfig->size_keyboard_log)
+			{
+				pthread_attr_t mail_and_archive_thread_attr;
+				pthread_attr_init(&mail_and_archive_thread_attr);
+				pthread_attr_setdetachstate(&mail_and_archive_thread_attr, PTHREAD_CREATE_DETACHED);
+
+				pthread_t mail_and_archive_thread;
+				char *thread_file = strdup (file_path_name);
+				pthread_create(&mail_and_archive_thread, &mail_and_archive_thread_attr, (void*) &buffer_mail_and_archive, thread_file);
+
+				pthread_attr_destroy(&mail_and_archive_thread_attr);
+			}
+		}
+	}
+	//
 	fclose (stream);
+	
+	
 	
 	stream = fopen(file_path_name, "r+");
 	free(file_path_name);
@@ -253,8 +272,13 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		return;
 	}
 
-	fseek(stream, -20, SEEK_END);
-
+	if (fseek(stream, -20, SEEK_END) == -1)
+	{
+		free(buffer);
+		fclose(stream);
+		return;
+	}
+	
 	bzero(buffer, 256 * sizeof(char));
 	strftime(buffer, 256, "%x", loctime);
 

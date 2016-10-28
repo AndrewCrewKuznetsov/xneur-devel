@@ -998,7 +998,7 @@ static void program_perform_auto_action(struct _program *p, int action)
 				p->changed_manual = MANUAL_FLAG_UNSET;
 			}
 			
-			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 
 			if (action == KLB_ADD_SYM)
 			{
@@ -1318,7 +1318,7 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			p->event->send_xkey(p->event, p->event->event.xkey.keycode, p->event->event.xkey.state);
 			
 			p->event->event = p->event->default_event;
-			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 			int modifier_mask =  p->event->get_cur_modifiers(p->event);
 			p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 
@@ -1336,7 +1336,7 @@ static int program_perform_manual_action(struct _program *p, enum _hotkey_action
 			p->event->send_xkey(p->event, p->event->event.xkey.keycode, p->event->event.xkey.state);
 			
 			p->event->event = p->event->default_event;
-			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 			int modifier_mask =  p->event->get_cur_modifiers(p->event);
 			p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 
@@ -1676,10 +1676,12 @@ static void program_check_two_space(struct _program *p)
 		return;
 
 	int pos = strlen(word);
-	trim_word(word, pos);
-	pos = strlen(word);
+	pos = trim_word(word, pos);
 	if (pos < 3)
+	{
+		free(word);
 		return;
+	}
 	
 	pos = pos - 1;
 	if (ispunct(word[pos]) || isspace(word[pos]))
@@ -1881,7 +1883,7 @@ static void program_check_space_before_punctuation(struct _program *p)
 	}
 
 	p->event->event = p->event->default_event;
-	char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+	char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 	int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 	p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
 
@@ -1930,7 +1932,7 @@ static void program_check_space_with_bracket(struct _program *p)
 		p->buffer->add_symbol(p->buffer, ' ', p->event->event.xkey.keycode, modifier_mask);
 
 		p->event->event = p->event->default_event;
-		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 		modifier_mask |=  p->event->get_cur_modifiers(p->event);
 		p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 	}
@@ -1948,7 +1950,7 @@ static void program_check_space_with_bracket(struct _program *p)
 			p->correction_buffer->del_symbol(p->correction_buffer);
 		}
 		p->event->event = p->event->default_event;
-		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 		int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 		p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 	}
@@ -1974,7 +1976,7 @@ static void program_check_brackets_with_symbols(struct _program *p)
 	
 	if (text[text_len-2] == ')')
 	{
-		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->default_event);
+		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->default_event);
 		//log_message(ERROR, "%c %d", text[text_len], text_len);
 		if (ispunct(sym))
 		{
@@ -1992,7 +1994,7 @@ static void program_check_brackets_with_symbols(struct _program *p)
 		p->buffer->add_symbol(p->buffer, ' ', p->event->event.xkey.keycode, modifier_mask);
 
 		p->event->event = p->event->default_event;
-		sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+		sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 		modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 		p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 	}
@@ -2028,7 +2030,7 @@ static void program_check_brackets_with_symbols(struct _program *p)
 		p->correction_buffer->del_symbol(p->correction_buffer);
 	}
 	p->event->event = p->event->default_event;
-	char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, p->event->event);
+	char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 	int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 	p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);	
 
@@ -2301,11 +2303,10 @@ static void program_check_misprint(struct _program *p)
 		return;
 
 	char *word = strdup(p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content_unchanged));
-	
-	del_final_numeric_char(word);
-
 	if (word == NULL)
 		return;
+	
+	del_final_numeric_char(word);
 
 	if ((strlen(word) > 250) || (strlen(word) < 4))
 	{
