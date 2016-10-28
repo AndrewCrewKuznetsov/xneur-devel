@@ -926,6 +926,9 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 
 static void program_perform_user_action(struct _program *p, int action)
 {
+	if (xconfig->actions[action].command == NULL) {
+		return;
+	}
 	if (p) {};
 
 	pthread_attr_t action_thread_attr;
