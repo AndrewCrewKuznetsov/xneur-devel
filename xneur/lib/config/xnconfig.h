@@ -179,6 +179,7 @@ struct _xneur_action
 	struct _xneur_hotkey hotkey;
 	char *name;
 	char *command;
+	enum _hotkey_action standard_action;
 };
 
 struct _xneur_config

@@ -140,6 +140,16 @@ static int xneur_config_get_status(char *str)
 	return -1;
 }
 
+static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
+	void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
+	if (tmp == NULL)
+		return NULL;
+	p->actions = (struct _xneur_action *)tmp;
+	bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+	return &(p->actions[p->actions_count - 1]);
+}
+
+
 static void parse_line(struct _xneur_config *p, char *line)
 {
 	if (line[0] == '#')
@@ -485,12 +495,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 27: // User actions
 		{
-			void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
-			if (tmp == NULL)
-				break;
-			p->actions = (struct _xneur_action *)tmp;
-			bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
-
+			one_more_user_action(p);
 			while (TRUE)
 			{
 				if (param == NULL)
