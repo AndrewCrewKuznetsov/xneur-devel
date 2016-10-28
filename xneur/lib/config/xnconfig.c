@@ -531,49 +531,35 @@ static void parse_line(struct _xneur_config *p, char *line)
 		case 27: // User actions
 		{
 			struct _xneur_action * new_action = one_more_user_action(p);
-			log_message(WARNING,full_string);
 			char *whole_string = full_string;
 			parse_hotkey(&whole_string,&(new_action->hotkey));
 			line = whole_string;
-			log_message(WARNING,whole_string);
 
-//			while (TRUE)
-//			{
-//				if (param == NULL)
-//					break;
-
-
-
-				if (line != NULL)
+			if (line != NULL)
+			{
+				char *cmd = strstr(line, USR_CMD_START);
+				if (cmd == NULL)
 				{
-					char *cmd = strstr(line, USR_CMD_START);
-					if (cmd == NULL)
-					{
-						new_action->name = NULL;
-						new_action->command = strdup(line);
-						break;
-					}
-					int len = strlen(line) - strlen(cmd);
-					new_action->name = strdup(line);
-					new_action->name[len - 1] = NULLSYM;
-
-					new_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
-					cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
-					if (cmd == NULL)
-					{
-						if (new_action->command != NULL)
-							free(new_action->command);
-						new_action->command = NULL;
-						break;
-					}
-					len = strlen(new_action->command) - strlen(cmd);
-					new_action->command[len] = NULLSYM;
-
-					//log_message (ERROR, "\"%s\" \"%s\"", new_action->name, new_action->command);
-
+					new_action->name = NULL;
+					new_action->command = strdup(line);
+					break;
 				}
-//				break;
-//			}
+				int len = strlen(line) - strlen(cmd);
+				new_action->name = strdup(line);
+				new_action->name[len - 1] = NULLSYM;
+
+				new_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
+				cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
+				if (cmd == NULL)
+				{
+					if (new_action->command != NULL)
+						free(new_action->command);
+					new_action->command = NULL;
+					break;
+				}
+				len = strlen(new_action->command) - strlen(cmd);
+				new_action->command[len] = NULLSYM;
+			}
 
 			break;
 		}
