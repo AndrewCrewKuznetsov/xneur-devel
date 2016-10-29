@@ -48,7 +48,6 @@ AddBind TranslitWord
 AddBind ChangecaseWord 
 AddBind PreviewChangeWord 
 AddBind ChangeString 
-AddBind ChangeMode Control Print
 AddBind ChangeSelected Shift Break
 AddBind TranslitSelected Alt Scroll_Lock
 AddBind ChangecaseSelected Shift Alt Break

@@ -140,6 +140,65 @@ static int xneur_config_get_status(char *str)
 	return -1;
 }
 
+static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
+	void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
+	if (tmp == NULL)
+		return NULL;
+	p->actions = (struct _xneur_action *)tmp;
+	bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+	p->actions_count++;
+	return &(p->actions[p->actions_count - 1]);
+}
+
+static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
+{
+	log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
+
+	hotkey->key = NULL;
+	while (TRUE)
+	{
+		char *oldline = NULL;
+		if (*line)
+		{
+			oldline = strdup(*line);
+		}
+		char *modifier = get_word(line);
+		if (modifier == NULL)
+			break;
+
+		if (modifier[0] == '\0')
+			continue;
+
+		int index = get_option_index(modifier_names, modifier);
+
+		// It seems that original function could parse "Alt t" as well as "t Alt"
+		// Now I need to unify user and standard actions
+		// So, by the name of backward compatibility (hotkey->key == NULL) check is added below:
+		if (index != -1)
+		{
+			// The word is really modifier
+			hotkey->modifiers |= (1 << index);
+			log_message(DEBUG, _("Adding modifier: '%s'"),modifier);
+			free(oldline);
+		}
+		else if (hotkey->key == NULL)
+		{
+			// The word is not modifier, it is a key and it is first non-modifier word
+			hotkey->key = strdup(modifier);
+			log_message(DEBUG, _("Key set to: '%s'"),modifier);
+			free(oldline);
+		}
+		else
+		{
+			// The word is not modified and key is already been readed
+			*line = oldline;
+			if (oldline)
+				log_message(DEBUG, _("Restoring old line: '%s'"),oldline);
+			return;
+		}
+	}
+}
+
 static void parse_line(struct _xneur_config *p, char *line)
 {
 	if (line[0] == '#')
@@ -199,21 +258,17 @@ static void parse_line(struct _xneur_config *p, char *line)
 				break;
 			}
 
-			p->hotkeys[action].key = NULL;
-			while (TRUE)
+			if (p->hotkeys[action].key == NULL)
 			{
-				char *modifier = get_word(&line);
-				if (modifier == NULL)
-					break;
-
-				if (modifier[0] == '\0')
-					continue;
-
-				int index = get_option_index(modifier_names, modifier);
-				if (index == -1)
-					p->hotkeys[action].key = strdup(modifier);
-				else
-					p->hotkeys[action].modifiers |= (1 << index);
+			        parse_hotkey(&line, &(p->hotkeys[action]));
+			}
+			else
+			{
+			        log_message(WARNING, _("More than one hotkey specified for action '%s'"),param);
+			        struct _xneur_action * new_action = one_more_user_action(p);
+			        parse_hotkey(&line, &(new_action->hotkey));
+			        new_action->standard_action = action;
+			        new_action->name = strdup(param);
 			}
 
 			break;
@@ -481,61 +536,37 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 27: // User actions
 		{
-			void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
-			if (tmp == NULL)
-				break;
-			p->actions = (struct _xneur_action *)tmp;
-			bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+			struct _xneur_action * new_action = one_more_user_action(p);
+			char *whole_string = full_string;
+			parse_hotkey(&whole_string,&(new_action->hotkey));
+			line = whole_string;
 
-			while (TRUE)
+			if (line != NULL)
 			{
-				if (param == NULL)
-					break;
-
-				if (param[0] == '\0')
-					continue;
-
-				int index = get_option_index(modifier_names, param);
-				if (index == -1)
+				char *cmd = strstr(line, USR_CMD_START);
+				if (cmd == NULL)
 				{
-					p->actions[p->actions_count].hotkey.key = strdup(param);
-					if (line != NULL)
-					{
-						char *cmd = strstr(line, USR_CMD_START);
-						if (cmd == NULL)
-						{
-							p->actions[p->actions_count].name = NULL;
-							p->actions[p->actions_count].command = strdup(line);
-							break;
-						}
-						int len = strlen(line) - strlen(cmd);
-						p->actions[p->actions_count].name = strdup(line);
-						p->actions[p->actions_count].name[len - 1] = NULLSYM;
-
-						p->actions[p->actions_count].command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
-						cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
-						if (cmd == NULL)
-						{
-							if (p->actions[p->actions_count].command != NULL)
-								free(p->actions[p->actions_count].command);
-							p->actions[p->actions_count].command = NULL;
-							break;
-						}
-						len = strlen(p->actions[p->actions_count].command) - strlen(cmd);
-						p->actions[p->actions_count].command[len] = NULLSYM;
-
-						//log_message (ERROR, "\"%s\" \"%s\"", p->actions[p->actions_count].name, p->actions[p->actions_count].command);
-
-					}
+					new_action->name = NULL;
+					new_action->command = strdup(line);
 					break;
 				}
+				int len = strlen(line) - strlen(cmd);
+				new_action->name = strdup(line);
+				new_action->name[len - 1] = NULLSYM;
 
-				p->actions[p->actions_count].hotkey.modifiers |= (1 << index);
-
-				param = get_word(&line);
+				new_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
+				cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
+				if (cmd == NULL)
+				{
+					if (new_action->command != NULL)
+						free(new_action->command);
+					new_action->command = NULL;
+					break;
+				}
+				len = strlen(new_action->command) - strlen(cmd);
+				new_action->command[len] = NULLSYM;
 			}
 
-			p->actions_count++;
 			break;
 		}
 		case 28: // Show OSD
@@ -1218,7 +1249,7 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 		}
 		pclose(fp);
 	}
-	
+
 	return -1;
 }
 
