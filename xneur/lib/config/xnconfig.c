@@ -167,7 +167,10 @@ static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 			break;
 
 		if (modifier[0] == '\0')
+		{
+			free(oldline);
 			continue;
+		}
 
 		int index = get_option_index(modifier_names, modifier);
 
@@ -264,11 +267,14 @@ static void parse_line(struct _xneur_config *p, char *line)
 			}
 			else
 			{
-			        log_message(WARNING, _("More than one hotkey specified for action '%s'"),param);
-			        struct _xneur_action * new_action = one_more_user_action(p);
-			        parse_hotkey(&line, &(new_action->hotkey));
-			        new_action->standard_action = action;
-			        new_action->name = strdup(param);
+				log_message(WARNING, _("More than one hotkey specified for action '%s'"),param);
+				struct _xneur_action * new_action = one_more_user_action(p);
+				if (new_action != NULL)
+				{
+					parse_hotkey(&line, &(new_action->hotkey));
+					new_action->standard_action = action;
+					new_action->name = strdup(param);
+				}
 			}
 
 			break;
@@ -537,6 +543,9 @@ static void parse_line(struct _xneur_config *p, char *line)
 		case 27: // User actions
 		{
 			struct _xneur_action * new_action = one_more_user_action(p);
+			if (new_action == NULL)
+				break;
+
 			char *whole_string = full_string;
 			parse_hotkey(&whole_string,&(new_action->hotkey));
 			line = whole_string;
@@ -565,6 +574,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 				}
 				len = strlen(new_action->command) - strlen(cmd);
 				new_action->command[len] = NULLSYM;
+				free(line);
 			}
 
 			break;
@@ -1067,8 +1077,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 			break;
 		}
 	}
-	if (full_string != NULL)
-		free(full_string);
+	free(full_string);
 }
 
 static int parse_config_file(struct _xneur_config *p, const char *dir_name, const char *file_name)

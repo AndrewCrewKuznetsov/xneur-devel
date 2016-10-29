@@ -178,7 +178,10 @@ char* get_home_file_path_name(const char *dir_name, const char *file_name)
 		free(dir_part);
 		
 		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
+		{
+			free(path_file);
 			return NULL;
+		}
 		snprintf(path_file, max_path_len, "%s/%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_name, file_name);
 	}
 	return path_file;
