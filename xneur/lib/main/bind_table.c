@@ -119,13 +119,27 @@ static char* user_hotkeys_concat_bind(int action)
 	return text;
 }
 
+
+static int create_modifier_mask(int modifiers){
+	// This function should be single point to edit modifiers
+	int modifier_mask = 0;
+	if (modifiers & 0x01)
+		modifier_mask += 1; // Shift
+	if (modifiers & 0x02)
+		modifier_mask += 4; // Control
+	if (modifiers & 0x04)
+		modifier_mask += 8; // Alt
+	if (modifiers & 0x08)
+		modifier_mask += 64;// Win
+	return modifier_mask;
+}
+
 static void bind_action(enum _hotkey_action action)
 {
 	// Bind standart action to global config
-	btable[action].modifier_mask	= 0;
-	btable[action].key_sym		= 0;
-	btable[action].key_sym_shift	= 0;
-	btable[action].key_code =0;
+	btable[action].key_sym       = 0;
+	btable[action].key_sym_shift = 0;
+	btable[action].key_code      = 0;
 
 	if (xconfig->hotkeys[action].key == NULL)
 	{
@@ -133,16 +147,7 @@ static void bind_action(enum _hotkey_action action)
 		return;
 	}
 
-	int modifiers = xconfig->hotkeys[action].modifiers;
-	if (modifiers & 0x01)
-		btable[action].modifier_mask = btable[action].modifier_mask + 1;	// Shift
-	if (modifiers & 0x02)
-		btable[action].modifier_mask = btable[action].modifier_mask + 4;	// Control
-	if (modifiers & 0x04)
-		btable[action].modifier_mask = btable[action].modifier_mask + 8;	// Alt
-	if (modifiers & 0x08)
-		btable[action].modifier_mask = btable[action].modifier_mask + 64;	// Win
-
+	btable[action].modifier_mask = create_modifier_mask(xconfig->hotkeys[action].modifiers);
 
 	KeySym key_sym, key_sym_shift;
 	key_sym = NoSymbol;
@@ -171,10 +176,9 @@ static void bind_action(enum _hotkey_action action)
 
 static void bind_user_action(int action)
 {
-	ubtable[action].modifier_mask	= 0;
-	ubtable[action].key_sym		= 0;
-	ubtable[action].key_sym_shift	= 0;
-	ubtable[action].key_code		= 0;
+	ubtable[action].key_sym       = 0;
+	ubtable[action].key_sym_shift = 0;
+	ubtable[action].key_code      = 0;
 
 	if (xconfig->actions[action].hotkey.key == NULL)
 	{
@@ -182,16 +186,8 @@ static void bind_user_action(int action)
 		return;
 	}
 
-	int action_modifiers = xconfig->actions[action].hotkey.modifiers;
 
-	if (action_modifiers & 0x01)
-		ubtable[action].modifier_mask = ubtable[action].modifier_mask + 1;	// Shift
-	if (action_modifiers & 0x02)
-		ubtable[action].modifier_mask = ubtable[action].modifier_mask + 4;	// Control
-	if (action_modifiers & 0x04)
-		ubtable[action].modifier_mask = ubtable[action].modifier_mask + 8;	// Alt
-	if (action_modifiers & 0x08)
-		ubtable[action].modifier_mask = ubtable[action].modifier_mask + 64;	// Win
+	ubtable[action].modifier_mask = create_modifier_mask(xconfig->actions[action].hotkey.modifiers);
 
 	KeySym key_sym, key_sym_shift;
 	key_sym = NoSymbol;
@@ -273,7 +269,7 @@ enum _hotkey_action get_manual_action(KeySym key_sym, int mask)
 		if (ubtable[action].modifier_mask == mask)
 			return standard_action;
 	}
-	
+
 	return ACTION_NONE;
 }
 
