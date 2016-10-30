@@ -62,6 +62,7 @@ static int force_update = FALSE;
 
 static void exec_user_action(char *cmd)
 {
+	printf("%s\n", cmd);
 	char *command = malloc ((strlen(cmd) + strlen(" 2> /dev/stdout") + 1) * sizeof(char));
 	command[0] = '\0';
 	strcat(command, cmd);
@@ -129,11 +130,11 @@ GtkMenu* create_menu(struct _tray_icon *tray, int state)
 	// User Actions Submenu
 	GtkWidget *action_submenu = gtk_menu_new();
 
-	for (int action = 0; action < xconfig->actions_count; action++)
+	for (int action = 0; action < xconfig->user_actions_count; action++)
 	{
-		menuitem = gtk_menu_item_new_with_mnemonic(xconfig->actions[action].name);
+		menuitem = gtk_menu_item_new_with_mnemonic(xconfig->user_actions[action].name);
 		gtk_widget_show(menuitem);
-		g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(exec_user_action), xconfig->actions[action].command);
+		g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(exec_user_action), xconfig->user_actions[action].command);
 		gtk_container_add(GTK_CONTAINER(action_submenu), menuitem);
 	}
 	menuitem = gtk_image_menu_item_new_with_mnemonic(_("User action"));

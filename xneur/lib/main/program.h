@@ -43,7 +43,7 @@ struct _program
 	Window  last_window;
 
 	int user_action;
-	enum _hotkey_action manual_action;
+	enum _hotkey_action action;
 
 	enum _correction_action correction_action;
 	struct _buffer *correction_buffer;
@@ -54,7 +54,7 @@ struct _program
 	void (*update) (struct _program *p);
 	void (*on_key_action) (struct _program *p, int type, KeySym key, int modifier);
 	void (*process_input) (struct _program *p);
-	int  (*perform_manual_action) (struct _program *p, enum _hotkey_action action);
+	int  (*perform_action) (struct _program *p, enum _hotkey_action action);
 	void (*perform_auto_action) (struct _program *p, int action);
 	void (*perform_user_action) (struct _program *p, int action);
 	int  (*check_lang_last_word) (struct _program *p);

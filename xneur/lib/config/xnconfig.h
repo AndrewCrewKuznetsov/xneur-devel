@@ -168,6 +168,7 @@ struct _xneur_hotkey
 	char *key;
 };
 
+
 struct _xneur_notify
 {
 	char *file;
@@ -177,9 +178,14 @@ struct _xneur_notify
 struct _xneur_action
 {
 	struct _xneur_hotkey hotkey;
+	enum _hotkey_action action;
+};
+
+struct _xneur_user_action
+{
+	struct _xneur_hotkey hotkey;
 	char *name;
 	char *command;
-	enum _hotkey_action standard_action;
 };
 
 struct _xneur_config
@@ -202,13 +208,16 @@ struct _xneur_config
 	struct _list_char *plugins;
 
 	struct _xneur_handle *handle;		// Array of languages used in program
-	struct _xneur_hotkey *hotkeys;			// Array of hotkeys used in program
+	
 	struct _xneur_notify *sounds;			// Array of sounds for actions
 	struct _xneur_notify *osds;			// Array of OSDs for actions
 	struct _xneur_notify *popups;			// Array of popups for actions
-	struct _xneur_action *actions;			// Array of actions
+	
+	struct _xneur_action *actions;			// Array of hotkeys used in program
+	int actions_count;				// Count of hotkeys
 
-	int   actions_count;				// Count of actions
+	struct _xneur_user_action *user_actions;			// Array of actions
+	int user_actions_count;				// Count of actions
 
 	KeySym *delimeters;
 	char *delimeters_string;

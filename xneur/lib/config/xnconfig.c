@@ -140,7 +140,19 @@ static int xneur_config_get_status(char *str)
 	return -1;
 }
 
-static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
+static struct _xneur_user_action * one_more_user_action(struct _xneur_config *p)
+{
+	void *tmp = realloc(p->user_actions, (p->user_actions_count + 1) * sizeof(struct _xneur_user_action));
+	if (tmp == NULL)
+		return NULL;
+	p->user_actions = (struct _xneur_user_action *)tmp;
+	bzero(&p->user_actions[p->user_actions_count], sizeof(struct _xneur_user_action));
+	p->user_actions_count++;
+	return &(p->user_actions[p->user_actions_count - 1]);
+}
+
+static struct _xneur_action * one_more_action(struct _xneur_config *p)
+{
 	void *tmp = realloc(p->actions, (p->actions_count + 1) * sizeof(struct _xneur_action));
 	if (tmp == NULL)
 		return NULL;
@@ -152,7 +164,7 @@ static struct _xneur_action * one_more_user_action(struct _xneur_config *p){
 
 static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 {
-	log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
+	//log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
 
 	hotkey->key = NULL;
 	while (TRUE)
@@ -181,22 +193,22 @@ static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 		{
 			// The word is really modifier
 			hotkey->modifiers |= (1 << index);
-			log_message(DEBUG, _("Adding modifier: '%s'"),modifier);
+			//log_message(DEBUG, _("Adding modifier: '%s'"),modifier);
 			free(oldline);
 		}
 		else if (hotkey->key == NULL)
 		{
 			// The word is not modifier, it is a key and it is first non-modifier word
 			hotkey->key = strdup(modifier);
-			log_message(DEBUG, _("Key set to: '%s'"),modifier);
+			//log_message(DEBUG, _("Key set to: '%s'"),modifier);
 			free(oldline);
 		}
 		else
 		{
 			// The word is not modified and key is already been readed
 			*line = oldline;
-			if (oldline)
-				log_message(DEBUG, _("Restoring old line: '%s'"),oldline);
+			//if (oldline)
+			//	log_message(DEBUG, _("Restoring old line: '%s'"),oldline);
 			return;
 		}
 	}
@@ -261,6 +273,13 @@ static void parse_line(struct _xneur_config *p, char *line)
 				break;
 			}
 
+			struct _xneur_action * new_action = one_more_action(p);
+			if (new_action != NULL)
+			{
+				parse_hotkey(&line, &(new_action->hotkey));
+				new_action->action = action;
+			}
+			/*
 			if (p->hotkeys[action].key == NULL)
 			{
 			        parse_hotkey(&line, &(p->hotkeys[action]));
@@ -275,7 +294,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 					new_action->standard_action = action;
 					new_action->name = strdup(param);
 				}
-			}
+			}*/
 
 			break;
 		}
@@ -542,12 +561,12 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 27: // User actions
 		{
-			struct _xneur_action * new_action = one_more_user_action(p);
-			if (new_action == NULL)
+			struct _xneur_user_action * new_user_action = one_more_user_action(p);
+			if (new_user_action == NULL)
 				break;
 
 			char *whole_string = full_string;
-			parse_hotkey(&whole_string,&(new_action->hotkey));
+			parse_hotkey(&whole_string,&(new_user_action->hotkey));
 			line = whole_string;
 
 			if (line != NULL)
@@ -555,25 +574,25 @@ static void parse_line(struct _xneur_config *p, char *line)
 				char *cmd = strstr(line, USR_CMD_START);
 				if (cmd == NULL)
 				{
-					new_action->name = NULL;
-					new_action->command = strdup(line);
+					new_user_action->name = NULL;
+					new_user_action->command = strdup(line);
 					break;
 				}
 				int len = strlen(line) - strlen(cmd);
-				new_action->name = strdup(line);
-				new_action->name[len - 1] = NULLSYM;
+				new_user_action->name = strdup(line);
+				new_user_action->name[len - 1] = NULLSYM;
 
-				new_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
+				new_user_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
 				cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
 				if (cmd == NULL)
 				{
-					if (new_action->command != NULL)
-						free(new_action->command);
-					new_action->command = NULL;
+					if (new_user_action->command != NULL)
+						free(new_user_action->command);
+					new_user_action->command = NULL;
 					break;
 				}
-				len = strlen(new_action->command) - strlen(cmd);
-				new_action->command[len] = NULLSYM;
+				len = strlen(new_user_action->command) - strlen(cmd);
+				new_user_action->command[len] = NULLSYM;
 				free(line);
 			}
 
@@ -1112,10 +1131,13 @@ static void free_structures(struct _xneur_config *p)
 	
 	p->plugins->uninit(p->plugins);
 
-	for (int hotkey = 0; hotkey < MAX_HOTKEYS; hotkey++)
+	if (p->actions != NULL)
 	{
-		if (p->hotkeys[hotkey].key != NULL)
-			free(p->hotkeys[hotkey].key);
+		for (int action = 0; action < p->actions_count; action++)
+		{
+			if (p->actions[action].hotkey.key != NULL)
+				free(p->actions[action].hotkey.key);
+		}
 	}
 
 	for (int notify = 0; notify < MAX_NOTIFIES; notify++)
@@ -1130,20 +1152,19 @@ static void free_structures(struct _xneur_config *p)
 			free(p->popups[notify].file);
 	}
 
-	if (p->actions != NULL)
+	if (p->user_actions != NULL)
 	{
-		for (int action = 0; action < p->actions_count; action++)
+		for (int action = 0; action < p->user_actions_count; action++)
 		{
-			if (p->actions[action].hotkey.key != NULL)
-				free(p->actions[action].hotkey.key);
-			if (p->actions[action].name != NULL)
-				free(p->actions[action].name);
-			if (p->actions[action].command != NULL)
-				free(p->actions[action].command);
+			if (p->user_actions[action].hotkey.key != NULL)
+				free(p->user_actions[action].hotkey.key);
+			if (p->user_actions[action].name != NULL)
+				free(p->user_actions[action].name);
+			if (p->user_actions[action].command != NULL)
+				free(p->user_actions[action].command);
 		}
 	}
 
-	bzero(p->hotkeys, MAX_HOTKEYS * sizeof(struct _xneur_hotkey));
 	bzero(p->sounds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 	bzero(p->osds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 	bzero(p->popups, MAX_NOTIFIES * sizeof(struct _xneur_notify));
@@ -1158,6 +1179,9 @@ static void free_structures(struct _xneur_config *p)
 
 	if (p->actions != NULL)
 		free(p->actions);
+	
+	if (p->user_actions != NULL)
+		free(p->user_actions);
 }
 
 static void xneur_config_reload(struct _xneur_config *p)
@@ -1373,30 +1397,11 @@ static int xneur_config_save(struct _xneur_config *p)
 		fprintf(stream, "SetManualApp %s\n", p->manual_apps->data[i].string);
 	fprintf(stream, "\n");
 
+	
 	fprintf(stream, "# Binds hotkeys for some actions\n");
-	for (int action = 0; action < MAX_HOTKEYS; action++)
-	{
-		fprintf(stream, "AddBind %s ", action_names[action]);
-
-		const int total_modifiers = sizeof(modifier_names) / sizeof(modifier_names[0]);
-		for (int i = 0; i < total_modifiers; i++)
-		{
-			if (p->hotkeys[action].modifiers & (1 << i))
-				fprintf(stream, "%s ", modifier_names[i]);
-		}
-
-		if (p->hotkeys[action].key != NULL)
-			fprintf(stream, "%s", p->hotkeys[action].key);
-		fprintf(stream, "\n");
-	}
-	fprintf(stream, "\n");
-
-	fprintf(stream, "# This option add user action when pressed key bind\n");
-	fprintf(stream, "# Example:\n");
-	fprintf(stream, "#AddAction Control Alt f Firefox Browser <cmd>firefox</cmd>\n");
 	for (int action = 0; action < p->actions_count; action++)
 	{
-		fprintf(stream, "AddAction ");
+		fprintf(stream, "AddBind %s ", action_names[p->actions[action].action]);
 
 		const int total_modifiers = sizeof(modifier_names) / sizeof(modifier_names[0]);
 		for (int i = 0; i < total_modifiers; i++)
@@ -1404,10 +1409,30 @@ static int xneur_config_save(struct _xneur_config *p)
 			if (p->actions[action].hotkey.modifiers & (1 << i))
 				fprintf(stream, "%s ", modifier_names[i]);
 		}
-		if (p->actions[action].name == NULL)
-			fprintf(stream, "%s %s\n", p->actions[action].hotkey.key, p->actions[action].command);
+
+		if (p->actions[action].hotkey.key != NULL)
+			fprintf(stream, "%s", p->actions[action].hotkey.key);
+		fprintf(stream, "\n");
+	}
+	fprintf(stream, "\n");
+
+	fprintf(stream, "# This option add user action when pressed key bind\n");
+	fprintf(stream, "# Example:\n");
+	fprintf(stream, "#AddAction Control Alt f Firefox Browser <cmd>firefox</cmd>\n");
+	for (int action = 0; action < p->user_actions_count; action++)
+	{
+		fprintf(stream, "AddAction ");
+
+		const int total_modifiers = sizeof(modifier_names) / sizeof(modifier_names[0]);
+		for (int i = 0; i < total_modifiers; i++)
+		{
+			if (p->user_actions[action].hotkey.modifiers & (1 << i))
+				fprintf(stream, "%s ", modifier_names[i]);
+		}
+		if (p->user_actions[action].name == NULL)
+			fprintf(stream, "%s %s\n", p->user_actions[action].hotkey.key, p->user_actions[action].command);
 		else
-			fprintf(stream, "%s %s %s%s%s\n", p->actions[action].hotkey.key, p->actions[action].name, USR_CMD_START, p->actions[action].command, USR_CMD_END);
+			fprintf(stream, "%s %s %s%s%s\n", p->user_actions[action].hotkey.key, p->user_actions[action].name, USR_CMD_START, p->user_actions[action].command, USR_CMD_END);
 	}
 	fprintf(stream, "\n");
 
@@ -1789,7 +1814,6 @@ static void xneur_config_uninit(struct _xneur_config *p)
 
 	free_structures(p);
 
-	free(p->hotkeys);
 	free(p->sounds);
 	free(p->osds);
 	free(p->popups);
@@ -1824,9 +1848,6 @@ struct _xneur_config* xneur_config_init(void)
 	p->delimeters[p->delimeters_count] = XK_space;
 	p->delimeters_string[p->delimeters_count] = '\0';
 	p->delimeters_count++;
-
-	p->hotkeys = (struct _xneur_hotkey *) malloc(MAX_HOTKEYS * sizeof(struct _xneur_hotkey));
-	bzero(p->hotkeys, MAX_HOTKEYS * sizeof(struct _xneur_hotkey));
 
 	p->sounds = (struct _xneur_notify *) malloc(MAX_NOTIFIES * sizeof(struct _xneur_notify));
 	bzero(p->sounds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
@@ -1894,4 +1915,3 @@ struct _xneur_config* xneur_config_init(void)
 
 	return p;
 }
-

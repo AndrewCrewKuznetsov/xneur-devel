@@ -212,7 +212,7 @@ void grab_all_keys(Window window, int is_grab)
 		XISelectEvents(main_window->display, window, &mask, 1);
 		free(mask.mask);
 
-		grab_manual_action(window); 
+		grab_action(window); 
 		grab_user_action(window);
 	}
 	else

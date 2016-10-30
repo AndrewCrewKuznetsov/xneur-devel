@@ -837,9 +837,9 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 	if (type == KeyPress)
 	{
 		p->user_action = get_user_action(key, modifier_mask);
-		p->manual_action = get_manual_action(key, modifier_mask);
+		p->action = get_action(key, modifier_mask);
 		// If blocked events then processing stop
-		if ((p->user_action >= 0) || (p->manual_action != ACTION_NONE) || (xconfig->block_events))
+		if ((p->user_action >= 0) || (p->action != ACTION_NONE) || (xconfig->block_events))
 		{
 			p->event->default_event.xkey.keycode = 0;
 			return;
@@ -889,11 +889,11 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 		if (xconfig->block_events)
 		{
 			p->event->default_event.xkey.keycode = 0;
-			if (p->manual_action == ACTION_BLOCK_EVENTS)
+			if (p->action == ACTION_BLOCK_EVENTS)
 			{
-				p->perform_manual_action(p, p->manual_action);
+				p->perform_action(p, p->action);
 
-				p->manual_action = ACTION_NONE;
+				p->action = ACTION_NONE;
 			}
 			return;
 		}
@@ -902,19 +902,19 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 
 		if (p->user_action >= 0)
 		{
-			log_message(LOG, _("Execute user action \"%s\""), xconfig->actions[p->user_action].name);
+			log_message(LOG, _("Execute user action \"%s\""), xconfig->user_actions[p->user_action].name);
 			p->perform_user_action(p, p->user_action);
 			p->event->default_event.xkey.keycode = 0;
 			p->user_action = -1;
 			return;
 		}
 
-		if (p->manual_action != ACTION_NONE)
+		if (p->action != ACTION_NONE)
 		{
-			log_message (LOG, _("Execute manual action \"%s\""), _(normal_action_names[p->manual_action]));
-			if (p->perform_manual_action(p, p->manual_action))
+			log_message (LOG, _("Execute action \"%s\""), _(normal_action_names[xconfig->actions[p->action].action]));
+			if (p->perform_action(p, xconfig->actions[p->action].action))
 			{
-				p->manual_action = ACTION_NONE;
+				p->action = ACTION_NONE;
 				p->event->default_event.xkey.keycode = 0;
 				return;
 			}
@@ -933,11 +933,11 @@ static void program_perform_user_action(struct _program *p, int action)
 	pthread_attr_setdetachstate(&action_thread_attr, PTHREAD_CREATE_DETACHED);
 
 	pthread_t action_thread;
-	pthread_create(&action_thread, &action_thread_attr,(void *) &system, (void *) xconfig->actions[action].command);
+	pthread_create(&action_thread, &action_thread_attr,(void *) &system, (void *) xconfig->user_actions[action].command);
 
 	pthread_attr_destroy(&action_thread_attr);
 
-	show_notify(NOTIFY_EXEC_USER_ACTION, xconfig->actions[action].name);
+	show_notify(NOTIFY_EXEC_USER_ACTION, xconfig->user_actions[action].name);
 }
 
 static void program_perform_auto_action(struct _program *p, int action)
@@ -1101,7 +1101,7 @@ static void program_perform_auto_action(struct _program *p, int action)
 	}
 }
 
-static int program_perform_manual_action(struct _program *p, enum _hotkey_action action)
+static int program_perform_action(struct _program *p, enum _hotkey_action action)
 {
 	p->plugin->hotkey_action(p->plugin, action);
 
@@ -3558,7 +3558,7 @@ struct _program* program_init(void)
 	}
 
 	p->user_action = -1;
-	p->manual_action = ACTION_NONE;
+	p->action = ACTION_NONE;
 
 	p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
 	p->correction_action = CORRECTION_NONE;
@@ -3570,7 +3570,7 @@ struct _program* program_init(void)
 	p->on_key_action		= program_on_key_action;
 	p->process_input		= program_process_input;
 	p->perform_auto_action		= program_perform_auto_action;
-	p->perform_manual_action	= program_perform_manual_action;
+	p->perform_action	= program_perform_action;
 	p->perform_user_action		= program_perform_user_action;
 	p->check_lang_last_word		= program_check_lang_last_word;
 	p->check_lang_last_syllable	= program_check_lang_last_syllable;

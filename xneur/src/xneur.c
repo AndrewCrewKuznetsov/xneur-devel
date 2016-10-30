@@ -100,7 +100,7 @@ static void xneur_reload(int status);
 
 static void xneur_init(void)
 {
-	bind_manual_actions();
+	bind_actions();
 	bind_user_actions();
 }
 
@@ -245,6 +245,8 @@ static void xneur_cleanup(void)
 	sound_uninit();
 	log_message(DEBUG, _("Current sound data is freed"));
 
+	unbind_actions();
+	log_message(DEBUG, _("Current keybinds is freed"));
 	unbind_user_actions();
 	log_message(DEBUG, _("Current user keybinds is freed"));
 	
@@ -296,6 +298,7 @@ static void xneur_reload(int status)
 	show_notify(NOTIFY_XNEUR_RELOAD, NULL);
 	
 	sound_uninit();
+	unbind_actions();
 	unbind_user_actions();
 	program->plugin->xneur_reload(program->plugin);
 	

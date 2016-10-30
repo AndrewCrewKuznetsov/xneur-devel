@@ -80,13 +80,12 @@ static GtkListStore *store_exclude_app		= NULL;
 static GtkListStore *store_auto_app			= NULL;
 static GtkListStore *store_manual_app		= NULL;
 static GtkListStore *store_layout_app		= NULL;
-//static GtkListStore *store_draw_flag_app	= NULL;
 static GtkListStore *store_abbreviation		= NULL;
 static GtkListStore *store_sound			= NULL;
 static GtkListStore *store_osd				= NULL;
 static GtkListStore *store_popup			= NULL;
+static GtkListStore *store_user_action			= NULL;
 static GtkListStore *store_action			= NULL;
-static GtkListStore *store_hotkey			= NULL;
 static GtkListStore *store_autocompletion_exclude_app		= NULL;
 static GtkListStore *store_dont_send_keyrelease_app		= NULL;
 static GtkListStore *store_delay_send_key_app		= NULL;
@@ -117,7 +116,7 @@ static const char *notify_names[]			=   {
 										"Execute user action", "Block keyboard and mouse events", "Unblock keyboard and mouse events"
 										};
 
-static const char *hotkey_names[]			=   {
+static const char *action_names[]			=   {
 										"Correct/Undo correction", "Transliterate", "Change case", "Preview correction", 
 										"Correct last line",  
 										"Correct selected text", "Transliterate selected text", "Change case of selected text", "Preview correction of selected text",
@@ -156,24 +155,24 @@ void error_msg(const char *msg, ...)
 
 static char* concat_bind(int action)
 {
-	char *text = (char *) malloc((24 + 1 + strlen(xconfig->hotkeys[action].key)) * sizeof(char));
+	char *text = (char *) malloc((24 + 1 + strlen(xconfig->actions[action].hotkey.key)) * sizeof(char));
 	text[0] = '\0';
 
 	for (int i = 0; i < total_modifiers; i++)
 	{
-		if ((xconfig->hotkeys[action].modifiers & (0x1 << i)) == 0)
+		if ((xconfig->actions[action].hotkey.modifiers & (0x1 << i)) == 0)
 			continue;
 
 		strcat(text, modifier_names[i]);
 		strcat(text, "+");
 	}
 
-	strcat(text, xconfig->hotkeys[action].key);
+	strcat(text, xconfig->actions[action].hotkey.key);
 	
 	return text;
 }
 
-static void split_bind(char *text, int action)
+/*static void split_bind(char *text, int action)
 {
 	char **key_stat = g_strsplit(text, "+", 4);
 
@@ -184,7 +183,7 @@ static void split_bind(char *text, int action)
 		return;
 	}
 	
-	xconfig->hotkeys[action].modifiers = 0;
+	xconfig->actions[action].hotkey.modifiers = 0;
 	
 	for (int i = 0; i <= last; i++)
 	{
@@ -196,16 +195,16 @@ static void split_bind(char *text, int action)
 				continue; 
 
 			assigned = TRUE;
-			xconfig->hotkeys[action].modifiers |= (0x1 << j); 
+			xconfig->actions[action].hotkey.modifiers |= (0x1 << j); 
 			break; 
 		} 
 
 		if (assigned == FALSE)
-			xconfig->hotkeys[action].key = strdup(key_stat[i]); 
+			xconfig->actions[action].hotkey.key = strdup(key_stat[i]); 
 	}
  
 	g_strfreev(key_stat);
-}
+}*/
 
 static void get_xprop_name(GtkBuilder* builder)
 {
@@ -873,22 +872,22 @@ void xneur_preference(void)
 	// Hotkeys List set
 	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview5"));
 
-	store_hotkey = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_hotkey));
+	store_action = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_action));
 	gtk_widget_show(treeview);
 
-	//hotkey_names[0] = hotkey_names[0];
-	for (int i = 0; i < MAX_HOTKEYS; i++)
+	// Standart Actions
+	for (int action = 0; action < xconfig->actions_count; action++)
 	{
 		GtkTreeIter iter;
-		gtk_list_store_append(GTK_LIST_STORE(store_hotkey), &iter);
+		gtk_list_store_append(GTK_LIST_STORE(store_action), &iter);
 
 		char *binds = "";
-		if (xconfig->hotkeys[i].key != NULL)
-			binds = concat_bind(i);
+		if (xconfig->actions[action].hotkey.key != NULL)
+			binds = concat_bind(action);
 
-		gtk_list_store_set(GTK_LIST_STORE(store_hotkey), &iter, 
-												0, _(hotkey_names[i]),
+		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
+												0, _(action_names[xconfig->actions[action].action]),
 												1, binds, 
 												-1);
 	}
@@ -1070,33 +1069,33 @@ void xneur_preference(void)
 	// User Actions List set
 	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview9"));
 
-	store_action = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_action));
+	store_user_action = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(store_user_action));
 	gtk_widget_show(treeview);
 
-	for (int action = 0; action < xconfig->actions_count; action++)
+	for (int action = 0; action < xconfig->user_actions_count; action++)
 	{
 		GtkTreeIter iter;
-		gtk_list_store_append(GTK_LIST_STORE(store_action), &iter);
+		gtk_list_store_append(GTK_LIST_STORE(store_user_action), &iter);
 		
-		char *text = (char *) malloc((24 + 1 + strlen(xconfig->actions[action].hotkey.key)) * sizeof(char));
+		char *text = (char *) malloc((24 + 1 + strlen(xconfig->user_actions[action].hotkey.key)) * sizeof(char));
 		text[0] = '\0';
 
 		for (int i = 0; i < total_modifiers; i++)
 		{
-			if ((xconfig->actions[action].hotkey.modifiers & (0x1 << i)) == 0)
+			if ((xconfig->user_actions[action].hotkey.modifiers & (0x1 << i)) == 0)
 				continue;
 
 			strcat(text, modifier_names[i]);
 			strcat(text, "+");
 		}
 
-		strcat(text, xconfig->actions[action].hotkey.key);
+		strcat(text, xconfig->user_actions[action].hotkey.key);
 		
-		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
-												0, xconfig->actions[action].name,
+		gtk_list_store_set(GTK_LIST_STORE(store_user_action), &iter, 
+												0, xconfig->user_actions[action].name,
 												1, text,
-												2, xconfig->actions[action].command,
+												2, xconfig->user_actions[action].command,
 												-1);
 		if (text != NULL)
 			g_free(text);
@@ -1597,8 +1596,8 @@ static void xneur_insert_user_action(GtkBuilder* builder)
 	}
 	
 	GtkTreeIter iter;
-	gtk_list_store_append(GTK_LIST_STORE(store_action), &iter);
-	gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
+	gtk_list_store_append(GTK_LIST_STORE(store_user_action), &iter);
+	gtk_list_store_set(GTK_LIST_STORE(store_user_action), &iter, 
 	                   						0, gtk_entry_get_text(GTK_ENTRY(entry3)),
 											1, gtk_entry_get_text(GTK_ENTRY(entry2)),
 											2, gtk_entry_get_text(GTK_ENTRY(entry1)), 
@@ -1633,7 +1632,7 @@ void xneur_add_user_action(void)
 
 static void xneur_replace_user_action(GtkBuilder* builder)
 {
-	GtkTreeModel *model = GTK_TREE_MODEL(store_action);
+	GtkTreeModel *model = GTK_TREE_MODEL(store_user_action);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tmp_widget));
 
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
@@ -1644,7 +1643,7 @@ static void xneur_replace_user_action(GtkBuilder* builder)
 		GtkWidget *widget1= GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 		GtkWidget *widget2= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 		GtkWidget *widget3= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
-		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
+		gtk_list_store_set(GTK_LIST_STORE(store_user_action), &iter, 
 		                   					0, gtk_entry_get_text(GTK_ENTRY(widget3)),
 											1, gtk_entry_get_text(GTK_ENTRY(widget2)),
 											2, gtk_entry_get_text(GTK_ENTRY(widget1)), 
@@ -1658,7 +1657,7 @@ static void xneur_replace_user_action(GtkBuilder* builder)
 void xneur_edit_user_action(GtkWidget *treeview)
 {
 	tmp_widget = GTK_WIDGET(treeview);
-	GtkTreeModel *model = GTK_TREE_MODEL(store_action);
+	GtkTreeModel *model = GTK_TREE_MODEL(store_user_action);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
@@ -1680,7 +1679,7 @@ void xneur_edit_user_action(GtkWidget *treeview)
 		char *key_bind;
 		char *user_action;
 		char *action_name;
-		gtk_tree_model_get(GTK_TREE_MODEL(store_action), &iter, 0, &action_name, 1, &key_bind, 2, &user_action, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(store_user_action), &iter, 0, &action_name, 1, &key_bind, 2, &user_action, -1);
 
 		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 		gtk_entry_set_text(GTK_ENTRY(widget), user_action);
@@ -1703,7 +1702,7 @@ void xneur_edit_user_action(GtkWidget *treeview)
 
 static void xneur_replace_action(GtkBuilder* builder)
 {
-	GtkTreeModel *model = GTK_TREE_MODEL(store_hotkey);
+	GtkTreeModel *model = GTK_TREE_MODEL(store_action);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tmp_widget));
 
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
@@ -1713,7 +1712,7 @@ static void xneur_replace_action(GtkBuilder* builder)
 	{
 		GtkWidget *widget1= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 		GtkWidget *widget2= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
-		gtk_list_store_set(GTK_LIST_STORE(store_hotkey), &iter, 
+		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
 											0, gtk_entry_get_text(GTK_ENTRY(widget1)),
 											1, gtk_entry_get_text(GTK_ENTRY(widget2)), 
 										   -1);
@@ -1726,7 +1725,7 @@ static void xneur_replace_action(GtkBuilder* builder)
 void xneur_clear_action(GtkWidget *treeview)
 {
 	tmp_widget = GTK_WIDGET(treeview);
-	GtkTreeModel *model = GTK_TREE_MODEL(store_hotkey);
+	GtkTreeModel *model = GTK_TREE_MODEL(store_action);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(tmp_widget));
 
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
@@ -1734,7 +1733,7 @@ void xneur_clear_action(GtkWidget *treeview)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		gtk_list_store_set(GTK_LIST_STORE(store_hotkey), &iter, 
+		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
 											1, "",
 											-1);
 	}
@@ -1743,7 +1742,7 @@ void xneur_clear_action(GtkWidget *treeview)
 void xneur_edit_action(GtkWidget *treeview)
 {
 	tmp_widget = GTK_WIDGET(treeview);
-	GtkTreeModel *model = GTK_TREE_MODEL(store_hotkey);
+	GtkTreeModel *model = GTK_TREE_MODEL(store_action);
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
@@ -1764,7 +1763,7 @@ void xneur_edit_action(GtkWidget *treeview)
 		
 		char *key_bind;
 		char *action;
-		gtk_tree_model_get(GTK_TREE_MODEL(store_hotkey), &iter, 0, &action, 1, &key_bind, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(store_action), &iter, 0, &action, 1, &key_bind, -1);
 
 		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
 		gtk_editable_set_editable(GTK_EDITABLE(widget), FALSE);
@@ -2023,7 +2022,7 @@ void xneur_rem_abbreviation(GtkWidget *widget)
 
 void xneur_rem_user_action(GtkWidget *widget)
 {
-	remove_item(widget, store_action);
+	remove_item(widget, store_user_action);
 }
 
 gboolean save_exclude_app(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
@@ -2125,7 +2124,7 @@ gboolean save_user_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i
 	gchar *action_text;
 	gchar *action_name;
 	
-	gtk_tree_model_get(GTK_TREE_MODEL(store_action), iter, 0, &action_name, 1, &key_bind, 2, &action_text, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(store_user_action), iter, 0, &action_name, 1, &key_bind, 2, &action_text, -1);
 	
 	char **key_stat = g_strsplit(key_bind, "+", 4);
 
@@ -2137,9 +2136,9 @@ gboolean save_user_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i
 	}
 	
 	int action = atoi(gtk_tree_path_to_string(path));
-	xconfig->actions = (struct _xneur_action *) realloc(xconfig->actions, (action + 1) * sizeof(struct _xneur_action));
-	bzero(&xconfig->actions[action], sizeof(struct _xneur_action));		
-	xconfig->actions[action].hotkey.modifiers = 0;
+	xconfig->user_actions = (struct _xneur_user_action *) realloc(xconfig->user_actions, (action + 1) * sizeof(struct _xneur_user_action));
+	bzero(&xconfig->user_actions[action], sizeof(struct _xneur_user_action));		
+	xconfig->user_actions[action].hotkey.modifiers = 0;
 	
 	for (int i = 0; i <= last; i++)
 	{
@@ -2151,21 +2150,21 @@ gboolean save_user_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i
 				continue; 
 
 			assigned = TRUE;
-			xconfig->actions[action].hotkey.modifiers |= (0x1 << j); 
+			xconfig->user_actions[action].hotkey.modifiers |= (0x1 << j); 
 			break; 
 		} 
 
 		if (assigned == FALSE)
 		{
-			xconfig->actions[action].hotkey.key = strdup(key_stat[i]); 
+			xconfig->user_actions[action].hotkey.key = strdup(key_stat[i]); 
 			if (action_text != NULL)
-			  xconfig->actions[action].command = strdup(action_text);
+			  xconfig->user_actions[action].command = strdup(action_text);
 			if (action_name != NULL)
-			  xconfig->actions[action].name = strdup(action_name);
+			  xconfig->user_actions[action].name = strdup(action_name);
 		}
 	}
 
-	xconfig->actions_count = action + 1;
+	xconfig->user_actions_count = action + 1;
 	
 	g_strfreev(key_stat);
 
@@ -2181,15 +2180,72 @@ gboolean save_user_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i
 
 gboolean save_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
 {
-	if (model || path || user_data){};
+	/*if (model || path || user_data){};
 
 	gchar *key_bind;
 	gchar *action_text;
-	gtk_tree_model_get(GTK_TREE_MODEL(store_hotkey), iter, 0, &action_text, 1, &key_bind, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(store_action), iter, 0, &action_text, 1, &key_bind, -1);
 
 	int i = atoi(gtk_tree_path_to_string(path));
 	split_bind((char *) key_bind, i);
 	
+	return FALSE;*/
+	
+	if (model || path || user_data){};
+
+	gchar *key_bind;
+	gchar *action_text;
+	
+	gtk_tree_model_get(GTK_TREE_MODEL(store_action), iter, 0, &action_text, 1, &key_bind, -1);
+	
+	char **key_stat = g_strsplit(key_bind, "+", 4);
+
+	int last = is_correct_hotkey(key_stat);
+	/*if (last == -1)
+	{
+		g_strfreev(key_stat);
+		return FALSE;
+	}*/
+	
+	int action = atoi(gtk_tree_path_to_string(path));
+	xconfig->actions = (struct _xneur_action *) realloc(xconfig->actions, (action + 1) * sizeof(struct _xneur_action));
+	bzero(&xconfig->actions[action], sizeof(struct _xneur_action));		
+	xconfig->actions[action].hotkey.modifiers = 0;
+	for (int i = 0; i < MAX_HOTKEYS; i++)
+	{
+		if (strcmp(_(action_names[i]), action_text) == 0)
+		{
+			xconfig->actions[action].action = i;
+		}
+	}
+
+	for (int i = 0; i <= last; i++)
+	{
+		int assigned = FALSE;
+		for (int j = 0; j < total_modifiers; j++) 
+ 		{ 
+			if (g_utf8_collate (g_utf8_casefold(key_stat[i], strlen (key_stat[i])), 
+								g_utf8_casefold(modifier_names[j], strlen (modifier_names[j]))) != 0) 
+				continue; 
+
+			assigned = TRUE;
+			xconfig->actions[action].hotkey.modifiers |= (0x1 << j); 
+			break; 
+		} 
+
+		if (assigned == FALSE)
+			xconfig->actions[action].hotkey.key = strdup(key_stat[i]); 
+	}
+
+	xconfig->actions_count = action + 1;
+	
+	g_strfreev(key_stat);
+
+	if (key_bind != NULL)
+		g_free(key_bind);
+	if (action_text != NULL)
+		g_free(action_text);
+
 	return FALSE;
 }
 
@@ -2312,10 +2368,10 @@ void xneur_save_preference(GtkBuilder* builder)
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_layout_app), save_layout_app, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_abbreviation), save_abbreviation, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_sound), save_sound, NULL);
-	gtk_tree_model_foreach(GTK_TREE_MODEL(store_action), save_user_action, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_osd), save_osd, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_popup), save_popup, NULL);
-	gtk_tree_model_foreach(GTK_TREE_MODEL(store_hotkey), save_action, NULL);
+	gtk_tree_model_foreach(GTK_TREE_MODEL(store_action), save_action, NULL);
+	gtk_tree_model_foreach(GTK_TREE_MODEL(store_user_action), save_user_action, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_autocompletion_exclude_app), save_autocompletion_exclude_app, NULL);
 	gtk_tree_model_foreach(GTK_TREE_MODEL(store_plugin), save_plugin, NULL);
 
@@ -2481,6 +2537,7 @@ void xneur_save_preference(GtkBuilder* builder)
 
 	// Save
 	xconfig->save(xconfig);
+	printf("Config Saved!\n");
 	xconfig->reload(xconfig);
 	
 	// GXNEUR Preferences

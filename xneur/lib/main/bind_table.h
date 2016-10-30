@@ -30,18 +30,20 @@ struct _bind_table
 	int modifier_mask;
 };
 
-void bind_manual_actions(void);
+void bind_actions(void);
+void unbind_actions(void);
+
 void bind_user_actions(void);
 void unbind_user_actions(void);
 
-void grab_manual_action(Window window);
+void grab_action(Window window);
 void grab_user_action(Window window);
 
 void grab_action_common(struct _bind_table btaction, Window window, Window strange_window);
 
 //void ungrab_modifiers(Window window);
 
-enum _hotkey_action get_manual_action(KeySym key_sym, int mask);
+enum _hotkey_action get_action(KeySym key_sym, int mask);
 int get_user_action(KeySym key_sym, int mask);
 
 
