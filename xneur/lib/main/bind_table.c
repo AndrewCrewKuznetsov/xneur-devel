@@ -93,6 +93,7 @@ static void bind_action(enum _hotkey_action action)
 	btable[action].key_sym       = 0;
 	btable[action].key_sym_shift = 0;
 	btable[action].key_code      = 0;
+	btable[action].modifier_mask = 0;
 
 	if (xconfig->actions[action].hotkey.key == NULL)
 	{
@@ -127,51 +128,12 @@ static void bind_action(enum _hotkey_action action)
 		free(key);
 }
 
-/*static void bind_action(enum _hotkey_action action)
-{
-	// Bind standart action to global config
-	btable[action].key_sym       = 0;
-	btable[action].key_sym_shift = 0;
-	btable[action].key_code      = 0;
-
-	if (xconfig->hotkeys[action].key == NULL)
-	{
-		log_message(DEBUG, _("   No key set for action \"%s\""), _(normal_action_names[action]));
-		return;
-	}
-
-	btable[action].modifier_mask = create_modifier_mask(xconfig->hotkeys[action].modifiers);
-
-	KeySym key_sym, key_sym_shift;
-	key_sym = NoSymbol;
-	key_sym_shift = NoSymbol;
-	main_window->keymap->get_keysyms_by_string(main_window->keymap, xconfig->hotkeys[action].key, &key_sym, &key_sym_shift);
-	if (key_sym == NoSymbol)
-		key_sym = None;
-	if (key_sym_shift == NoSymbol)
-		key_sym_shift = key_sym;
-
-	btable[action].key_sym = key_sym;
-	btable[action].key_sym_shift = key_sym_shift;
-	btable[action].key_code = XKeysymToKeycode(main_window->display, key_sym);
-
-	char *key = hotkeys_concat_bind (action);
-	log_message(DEBUG, _("   Action \"%s\" with key \"%s\""), _(normal_action_names[action]), key);
-	//log_message(ERROR, _("      KeySym %d (%d) keycode %d mask %d"), key_sym, key_sym_shift, btable[action].key_code, btable[action].modifier_mask);
-	if ((key_sym == None) || (key_sym_shift == None))
-	{
-		log_message(ERROR, _("      KeySym (or with Shift modifier) is undefined!"));
-
-	}
-	if (key != NULL)
-		free(key);
-}*/
-
 static void bind_user_action(int action)
 {
 	ubtable[action].key_sym       = 0;
 	ubtable[action].key_sym_shift = 0;
 	ubtable[action].key_code      = 0;
+	ubtable[action].modifier_mask = 0;
 
 	if (xconfig->user_actions[action].hotkey.key == NULL)
 	{
@@ -209,9 +171,9 @@ static void bind_user_action(int action)
 enum _hotkey_action get_action(KeySym key_sym, int mask)
 {
 	// Reset Caps and Num mask
-	//mask &= ~LockMask;
-	//mask &= ~Mod2Mask;
-	//mask &= ~Mod3Mask;
+	mask &= ~LockMask;
+	mask &= ~Mod2Mask;
+	mask &= ~Mod3Mask;
 
 	KeyCode kc = XKeysymToKeycode(main_window->display, key_sym);
 	if (IsModifierKey(key_sym))
@@ -236,7 +198,7 @@ enum _hotkey_action get_action(KeySym key_sym, int mask)
 
 	for (int action = 0; action < xconfig->actions_count; action++)
 	{
-		//log_message (ERROR, "U%d---%d %d", action, ubtable[action].key_code, kc);
+		//log_message (ERROR, "A%d---bt:(%d)%d, ac:(%d)%d", action, btable[action].modifier_mask, btable[action].key_code, mask, kc);
 		//if (btable[action].key_sym != key_sym && ubtable[action].key_sym_shift != key_sym)
 		//	continue;
 		if (btable[action].key_code != kc)
@@ -247,22 +209,6 @@ enum _hotkey_action get_action(KeySym key_sym, int mask)
 		}
 	}
 
-	// New action storage - all together
-	/*
-	for (int action = 0; action < xconfig->actions_count; action++)
-	{
-		//log_message (ERROR, "U%d---%d %d", action, ubtable[action].key_code, kc);
-		//if (ubtable[action].key_sym != key_sym && ubtable[action].key_sym_shift != key_sym)
-		//      continue;
-		enum _hotkey_action standard_action = xconfig->actions[action].standard_action;
-		if (standard_action == ACTION_NONE)
-			continue;
-		if (ubtable[action].key_code != kc)
-			continue;
-		if (ubtable[action].modifier_mask == mask)
-			return standard_action;
-	}
-	*/
 	return ACTION_NONE;
 }
 
@@ -284,11 +230,12 @@ void unbind_actions(void)
 int get_user_action(KeySym key_sym, int mask)
 {
 	// Reset Caps and Num mask
-	//mask &= ~LockMask;
-	//mask &= ~Mod2Mask;
-	//mask &= ~Mod3Mask;
+	mask &= ~LockMask;
+	mask &= ~Mod2Mask;
+	mask &= ~Mod3Mask;
 
-	KeyCode kc = XKeysymToKeycode(main_window->display, key_sym);;	if (IsModifierKey(key_sym))
+	KeyCode kc = XKeysymToKeycode(main_window->display, key_sym);
+	if (IsModifierKey(key_sym))
 	{
 		if (key_sym == XK_Shift_L || key_sym == XK_Shift_R)
 			mask -= (1 << 0);
@@ -310,7 +257,7 @@ int get_user_action(KeySym key_sym, int mask)
 
 	for (int action = 0; action < xconfig->user_actions_count; action++)
 	{
-		//log_message (ERROR, "U%d---%d %d", action, ubtable[action].key_code, kc);
+		//log_message (ERROR, "U%d---bt:(%d)%d, ac:(%d)%d", action, ubtable[action].modifier_mask, ubtable[action].key_code, mask, kc);
 		//if (ubtable[action].key_sym != key_sym && ubtable[action].key_sym_shift != key_sym)
 		//	continue;
 		if (ubtable[action].key_code != kc)
@@ -326,7 +273,6 @@ int get_user_action(KeySym key_sym, int mask)
 void bind_user_actions(void)
 {
 	log_message(DEBUG, _("Binded hotkeys user actions:"));
-
 	ubtable = (struct _bind_table *) malloc(xconfig->user_actions_count * sizeof(struct _bind_table));
 	for (int action = 0; action < xconfig->user_actions_count; action++)
 		bind_user_action(action);

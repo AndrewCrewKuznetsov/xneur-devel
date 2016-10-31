@@ -202,20 +202,17 @@ msgid ""
 msgstr ""
 
 #: ui/action_add.ui:8
-msgid "Add user action..."
+#, fuzzy
+msgid "Add action..."
 msgstr "Añadir acción del usuario..."
 
-#: ui/action_add.ui:73
+#: ui/action_add.ui:72 ui/usr_action_add.ui:73
 msgid "Action name:"
 msgstr ""
 
-#: ui/action_add.ui:102
+#: ui/action_add.ui:96 ui/usr_action_add.ui:102
 msgid "Key bind:"
 msgstr ""
-
-#: ui/action_add.ui:132
-msgid "User action:"
-msgstr "Accion del usuario:"
 
 #: ui/app_add.ui:8
 msgid "Add application..."
@@ -289,402 +286,402 @@ msgstr ""
 msgid "Show icons from directory"
 msgstr ""
 
-#: ui/config.ui:109
+#: ui/config.ui:113
+msgid "Used for rendering built-in engine"
+msgstr ""
+
+#: ui/config.ui:116
+msgid "Used for rendering Status Icon engine"
+msgstr ""
+
+#: ui/config.ui:119
+msgid "Used for rendering App Indicator engine"
+msgstr ""
+
+#: ui/config.ui:126
 msgid "XNeur Settings"
 msgstr "Configuraciones de XNeur"
 
-#: ui/config.ui:144
+#: ui/config.ui:161
 msgid "Use manual switching mode"
 msgstr ""
 
-#: ui/config.ui:161
+#: ui/config.ui:178
 msgid "Enable auto-learning mode"
 msgstr "Habilitar modo de autoaprendizaje"
 
-#: ui/config.ui:178
+#: ui/config.ui:195
 msgid "Keep selection after changing selected text"
 msgstr ""
 
-#: ui/config.ui:195
+#: ui/config.ui:212
 msgid "Rotate layout after changing selected text"
 msgstr ""
 
-#: ui/config.ui:218
+#: ui/config.ui:235
 msgid "Check language on input process"
 msgstr ""
 
-#: ui/config.ui:235
+#: ui/config.ui:252
 msgid "Check similar words"
 msgstr ""
 
-#: ui/config.ui:256
+#: ui/config.ui:273
 msgid "Main"
 msgstr ""
 
-#: ui/config.ui:268
+#: ui/config.ui:285
 msgid "Correct aCCIDENTAL caps"
 msgstr ""
 
-#: ui/config.ui:285
+#: ui/config.ui:302
 msgid "Disable CapsLock use"
 msgstr ""
 
-#: ui/config.ui:302
+#: ui/config.ui:319
 msgid "Correct TWo INitial caps"
 msgstr ""
 
-#: ui/config.ui:319
+#: ui/config.ui:336
 msgid "Correct spaces with punctuation"
 msgstr ""
 
-#: ui/config.ui:336
+#: ui/config.ui:353
 msgid "Correct small letter to capital letter after dot"
 msgstr ""
 
-#: ui/config.ui:353
+#: ui/config.ui:370
 msgid "Correct two space with a comma and a space"
 msgstr ""
 
-#: ui/config.ui:370
+#: ui/config.ui:387
 msgid "Correct two minus with a dash"
 msgstr ""
 
-#: ui/config.ui:387
+#: ui/config.ui:404
 msgid "Correct dash with a emdash"
 msgstr ""
 
-#: ui/config.ui:404
+#: ui/config.ui:421
 msgid "Correct (c) with a copyright sign"
 msgstr ""
 
-#: ui/config.ui:421
+#: ui/config.ui:438
 msgid "Correct (tm) with a trademark sign"
 msgstr ""
 
-#: ui/config.ui:438
+#: ui/config.ui:455
 msgid "Correct (r) with a registered sign"
 msgstr ""
 
-#: ui/config.ui:455
+#: ui/config.ui:472
 msgid "Correct three points with a ellipsis sign"
 msgstr ""
 
-#: ui/config.ui:472
+#: ui/config.ui:489
 msgid "Correct misprint"
 msgstr ""
 
-#: ui/config.ui:496
+#: ui/config.ui:513
 msgid "Typographics"
 msgstr ""
 
-#: ui/config.ui:516
+#: ui/config.ui:533
 msgid "<b>General</b>"
 msgstr ""
 
-#: ui/config.ui:575 ui/list.ui:8
+#: ui/config.ui:592 ui/list.ui:8
 msgid "Rules change..."
 msgstr ""
 
-#: ui/config.ui:616
+#: ui/config.ui:633
 msgid "Initial layout number:"
 msgstr ""
 
-#: ui/config.ui:663
+#: ui/config.ui:680
 msgid "Remember keyboard layout for each application instance"
 msgstr ""
 
-#: ui/config.ui:771
+#: ui/config.ui:788
 msgid "Exceptions (One keyboard layout for all application instances)"
 msgstr ""
 
-#: ui/config.ui:798
+#: ui/config.ui:815
 msgid "<b>Layouts</b>"
 msgstr ""
 
-#: ui/config.ui:1016
+#: ui/config.ui:1066
 msgid "<b>Hotkeys</b>"
 msgstr ""
 
-#: ui/config.ui:1041
+#: ui/config.ui:1091
 msgid "Enable autocompletion"
 msgstr "Habilitar modo de autoaprendizaje"
 
-#: ui/config.ui:1058
+#: ui/config.ui:1108
 msgid "Add space after autocompletion"
 msgstr ""
 
-#: ui/config.ui:1176
+#: ui/config.ui:1226
 msgid "Disable the autocompletion for these applications"
 msgstr ""
 
-#: ui/config.ui:1210
+#: ui/config.ui:1260
 msgid "<b>Autocompletion</b>"
 msgstr ""
 
-#: ui/config.ui:1325
+#: ui/config.ui:1375
 msgid "Ignore these applications"
 msgstr ""
 
-#: ui/config.ui:1428
+#: ui/config.ui:1478
 msgid "Force automatic mode for these applications"
 msgstr ""
 
-#: ui/config.ui:1531
+#: ui/config.ui:1581
 msgid "Force manual mode for these applications"
 msgstr ""
 
-#: ui/config.ui:1558
+#: ui/config.ui:1608
 msgid "<b>Applications</b>"
 msgstr ""
 
-#: ui/config.ui:1592
+#: ui/config.ui:1642
 msgid "Enable sounds"
 msgstr ""
 
-#: ui/config.ui:1615
+#: ui/config.ui:1665
 msgid "Sound volume"
 msgstr ""
 
-#: ui/config.ui:1721
+#: ui/config.ui:1771
 msgid "Sounds"
 msgstr ""
 
-#: ui/config.ui:1738
+#: ui/config.ui:1788
 msgid "Show OSD"
 msgstr ""
 
-#: ui/config.ui:1762
+#: ui/config.ui:1812
 msgid "OSD Font"
 msgstr ""
 
-#: ui/config.ui:1797
+#: ui/config.ui:1847
 msgid "Use command <b>xfontsel -print</b> to get new font."
 msgstr ""
 
-#: ui/config.ui:1855
+#: ui/config.ui:1905
 msgid "OSD"
 msgstr ""
 
-#: ui/config.ui:1873
+#: ui/config.ui:1923
 msgid "Show popup messages"
 msgstr ""
 
-#: ui/config.ui:1896
+#: ui/config.ui:1946
 msgid "Popup expiration interval (in milliseconds)"
 msgstr ""
 
-#: ui/config.ui:1978
+#: ui/config.ui:2028
 msgid "Popup messages"
 msgstr ""
 
-#: ui/config.ui:2001
+#: ui/config.ui:2051
 msgid "<b>Notifications</b>"
 msgstr ""
 
-#: ui/config.ui:2026
+#: ui/config.ui:2076
 msgid "Ignore keyboard layout for abbreviations"
 msgstr ""
 
-#: ui/config.ui:2123
+#: ui/config.ui:2173
 msgid "<b>Abbreviations</b>"
 msgstr ""
 
-#: ui/config.ui:2148
+#: ui/config.ui:2198
 msgid "Enable keyboard logging"
 msgstr ""
 
-#: ui/config.ui:2193
+#: ui/config.ui:2243
 msgid "Send log via port"
 msgstr ""
 
-#: ui/config.ui:2224
+#: ui/config.ui:2274
 msgid "Send log via host (name or IP)"
 msgstr ""
 
-#: ui/config.ui:2255
+#: ui/config.ui:2305
 msgid "Send log to e-mail"
 msgstr ""
 
-#: ui/config.ui:2292
+#: ui/config.ui:2342
 msgid "Log file size in bytes"
 msgstr ""
 
-#: ui/config.ui:2304
+#: ui/config.ui:2354
 msgid "View log..."
 msgstr ""
 
-#: ui/config.ui:2340
+#: ui/config.ui:2390
 msgid "<b>Log</b>"
 msgstr ""
 
-#: ui/config.ui:2380
+#: ui/config.ui:2430
 msgid "Backspace"
 msgstr ""
 
-#: ui/config.ui:2397
+#: ui/config.ui:2447
 msgid "Left arrow"
 msgstr ""
 
-#: ui/config.ui:2414
+#: ui/config.ui:2464
 msgid "Right arrow"
 msgstr ""
 
-#: ui/config.ui:2431
+#: ui/config.ui:2481
 msgid "Up arrow"
 msgstr ""
 
-#: ui/config.ui:2448
+#: ui/config.ui:2498
 msgid "Down arrow"
 msgstr ""
 
-#: ui/config.ui:2465
+#: ui/config.ui:2515
 msgid "Delete"
 msgstr ""
 
-#: ui/config.ui:2482
+#: ui/config.ui:2532
 msgid "Enter"
 msgstr ""
 
-#: ui/config.ui:2499
+#: ui/config.ui:2549
 msgid "Tab"
 msgstr ""
 
-#: ui/config.ui:2516
+#: ui/config.ui:2566
 msgid "You changed layout"
 msgstr ""
 
-#: ui/config.ui:2533
+#: ui/config.ui:2583
 msgid "Application in full screen mode"
 msgstr ""
 
-#: ui/config.ui:2564
+#: ui/config.ui:2614
 msgid ""
 "This will help avoid switching layout when editing parts previously "
 "introduced word."
 msgstr ""
 
-#: ui/config.ui:2594
+#: ui/config.ui:2644
 msgid "Don't switch layout if before input where pressed"
 msgstr ""
 
-#: ui/config.ui:2622
+#: ui/config.ui:2672
 msgid "Flush internal buffer on Escape"
 msgstr ""
 
-#: ui/config.ui:2639
+#: ui/config.ui:2689
 msgid "Flush internal buffer on Enter or Tab"
 msgstr ""
 
-#: ui/config.ui:2659
+#: ui/config.ui:2709
 msgid "Compatibility with the completion"
 msgstr ""
 
-#: ui/config.ui:2682
+#: ui/config.ui:2732
 msgid "Additional"
 msgstr ""
 
-#: ui/config.ui:2710
+#: ui/config.ui:2760
 msgid "Monitor the input"
 msgstr ""
 
-#: ui/config.ui:2729
+#: ui/config.ui:2779
 msgid ""
 "Disabling this option will add any application to the list of excluded "
 "applications."
 msgstr ""
 
-#: ui/config.ui:2740
+#: ui/config.ui:2790
 msgid "Monitor the mouse"
 msgstr ""
 
-#: ui/config.ui:2759
+#: ui/config.ui:2809
 msgid ""
 "Disabling this option will disable mouse tracking. Reset buffer when "
 "clicking the mouse will not."
 msgstr ""
 
-#: ui/config.ui:2776
+#: ui/config.ui:2826
 msgid "Tracking input"
 msgstr ""
 
-#: ui/config.ui:2800
+#: ui/config.ui:2850
 msgid "<b>Troubleshooting</b>"
 msgstr ""
 
-#: ui/config.ui:2845
+#: ui/config.ui:2904
 msgid "Log verbosity level"
 msgstr ""
 
-#: ui/config.ui:2931
+#: ui/config.ui:2993
 msgid "Delay before sending events (in milliseconds)"
 msgstr ""
 
-#: ui/config.ui:3053
+#: ui/config.ui:3115
 msgid "Delay before sending events in these applications"
 msgstr ""
 
-#: ui/config.ui:3157
+#: ui/config.ui:3219
 msgid "Dont send event KeyRelease in these applications"
 msgstr ""
 
-#: ui/config.ui:3182
+#: ui/config.ui:3244
 msgid "<b>Advanced</b>"
 msgstr ""
 
-#: ui/config.ui:3249
+#: ui/config.ui:3311
 msgid "<b>Plugins</b>"
 msgstr ""
 
-#: ui/config.ui:3289
+#: ui/config.ui:3351
 msgid "Autostartup"
 msgstr ""
 
-#: ui/config.ui:3314
+#: ui/config.ui:3376
 msgid "Delay before startup"
 msgstr ""
 
-#: ui/config.ui:3356
+#: ui/config.ui:3418
 msgid "Startup"
 msgstr ""
 
-#: ui/config.ui:3412
+#: ui/config.ui:3474
 msgid "Icons directory"
 msgstr ""
 
-#: ui/config.ui:3508
+#: ui/config.ui:3570
 msgid "Set the extension to move the icon in the shell area of the Gnome 3."
 msgstr ""
 
-#: ui/config.ui:3524
+#: ui/config.ui:3586
 msgid "Gnome 3 Shell"
 msgstr ""
 
-#: ui/config.ui:3543
+#: ui/config.ui:3605
 msgid "UI"
 msgstr ""
 
-#: ui/config.ui:3578
+#: ui/config.ui:3640
 msgid "Keyboard properties command"
 msgstr ""
 
-#: ui/config.ui:3663
+#: ui/config.ui:3725
 msgid "System"
 msgstr ""
 
-#: ui/config.ui:3691
+#: ui/config.ui:3753
 msgid "<b>Properties</b>"
-msgstr ""
-
-#: ui/config.ui:3762
-msgid "Used for rendering built-in engine"
-msgstr ""
-
-#: ui/config.ui:3765
-msgid "Used for rendering Status Icon engine"
-msgstr ""
-
-#: ui/config.ui:3768
-msgid "Used for rendering App Indicator engine"
 msgstr ""
 
 #: ui/rule_add.ui:8
@@ -727,9 +724,21 @@ msgstr ""
 msgid "More:"
 msgstr ""
 
-#: src/callbacks.c:355 src/misc.c:2455
-msgid "Press any key"
+#: ui/rule_add.ui:266
+msgid "Insensitive"
 msgstr ""
+
+#: ui/rule_add.ui:294
+msgid "Condition"
+msgstr ""
+
+#: ui/usr_action_add.ui:8
+msgid "Add user action..."
+msgstr "Añadir acción del usuario..."
+
+#: ui/usr_action_add.ui:132
+msgid "User action:"
+msgstr "Accion del usuario:"
 
 #: src/main.c:113
 #, c-format
@@ -913,14 +922,6 @@ msgstr ""
 
 #: src/misc.c:1678
 msgid "Combination of letters"
-msgstr ""
-
-#: src/misc.c:1683
-msgid "Condition"
-msgstr ""
-
-#: src/misc.c:1688
-msgid "Insensitive"
 msgstr ""
 
 #: src/misc.c:2323

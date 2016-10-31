@@ -24,6 +24,7 @@
 #define UI_FILE_CONFIG PACKAGE_UI_FILE_DIR"/config.ui"
 #define UI_FILE_ABBREVIATION_ADD PACKAGE_UI_FILE_DIR"/abbr_add.ui"
 #define UI_FILE_CHOOSE PACKAGE_UI_FILE_DIR"/choose_file.ui"
+#define UI_FILE_USR_ACTION_ADD PACKAGE_UI_FILE_DIR"/usr_action_add.ui"
 #define UI_FILE_ACTION_ADD PACKAGE_UI_FILE_DIR"/action_add.ui"
 #define UI_FILE_APP_ADD PACKAGE_UI_FILE_DIR"/app_add.ui"
 #define UI_FILE_RULE_ADD PACKAGE_UI_FILE_DIR"/rule_add.ui"
@@ -72,8 +73,10 @@ void xneur_edit_user_action(GtkWidget *treeview);
 void xneur_add_autocompletion_exclude_app(void);
 void xneur_rem_autocompletion_exclude_app(GtkWidget *widget);
 
+void xneur_add_action(void);
 void xneur_edit_action(GtkWidget *treeview);
 void xneur_clear_action(GtkWidget *treeview);
+void xneur_rem_action(GtkWidget *widget);
 
 void xneur_save_preference(GtkBuilder* builder);
 void xneur_dontsave_preference(GtkBuilder* builder);

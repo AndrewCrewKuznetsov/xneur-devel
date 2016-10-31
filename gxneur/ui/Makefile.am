@@ -5,6 +5,7 @@ glade_DATA = 	config.ui 		\
 		abbr_add.ui		\
 		app_add.ui		\
 		rule_add.ui		\
+		usr_action_add.ui	\
 		action_add.ui		\
 		choose_file.ui
 

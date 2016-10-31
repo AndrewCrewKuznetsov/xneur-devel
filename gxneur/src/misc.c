@@ -914,7 +914,15 @@ void xneur_preference(void)
 	// Button Clear Action
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_clear_action), G_OBJECT(treeview));
-	
+
+	// Button Add Action
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button23"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_add_action), G_OBJECT(treeview));
+
+	// Button Remove Action
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button24"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_rem_action), G_OBJECT(treeview));
+
 	// Abbreviations List set
 	treeview = GTK_WIDGET(gtk_builder_get_object (builder, "treeview6"));
 
@@ -1577,6 +1585,28 @@ void xneur_add_abbreviation(void)
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_abbreviation), builder);
 }
 
+static void xneur_insert_action(GtkBuilder* builder)
+{
+	GtkWidget *combo = GTK_WIDGET(gtk_builder_get_object (builder, "combobox1"));
+	GtkWidget *entry2 = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+	const gchar *key_bind = gtk_entry_get_text(GTK_ENTRY(entry2));
+	if (strlen(key_bind) == 0) 
+	{
+		error_msg(_("Key bind field is empty!"));
+		return;
+	}
+	int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+	GtkTreeIter iter;
+	gtk_list_store_append(GTK_LIST_STORE(store_action), &iter);
+	gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
+	                   						0, _(action_names[i]),
+											1, key_bind,
+										   -1);
+
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
+	gtk_widget_destroy(window);
+}
+
 static void xneur_insert_user_action(GtkBuilder* builder)
 {
 	GtkWidget *entry1 = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
@@ -1607,11 +1637,51 @@ static void xneur_insert_user_action(GtkBuilder* builder)
 	gtk_widget_destroy(window);
 }
 
-void xneur_add_user_action(void)
+void xneur_add_action(void)
 {
 	GError* error = NULL;
 	GtkBuilder* builder = gtk_builder_new ();
 	if (!gtk_builder_add_from_file (builder, UI_FILE_ACTION_ADD, &error))
+	{
+		g_warning ("Couldn't load builder file: %s", error->message);
+		g_error_free (error);
+	}
+	gtk_builder_connect_signals(builder, NULL);
+	
+	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
+
+	GtkWidget *combo = GTK_WIDGET(gtk_builder_get_object (builder, "combobox1"));
+
+	GtkTreeIter iter;
+	GtkListStore *store = gtk_list_store_new(1,G_TYPE_STRING);
+	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+
+	for (int i = 0; i < MAX_HOTKEYS; i++)
+	{
+		gtk_list_store_append(store,&iter);
+		gtk_list_store_set(store,&iter,0,_(action_names[i]),-1);
+	}
+
+	gtk_combo_box_set_model(GTK_COMBO_BOX(combo), GTK_TREE_MODEL(store));
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), cell, 0);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), cell, "text", 0);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo),0);
+
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+	g_signal_connect ((gpointer) widget, "key-press-event", G_CALLBACK (on_key_press_event), builder);
+	
+	gtk_widget_show(window);
+	
+	// Button OK
+	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
+	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(xneur_insert_action), builder);
+}
+
+void xneur_add_user_action(void)
+{
+	GError* error = NULL;
+	GtkBuilder* builder = gtk_builder_new ();
+	if (!gtk_builder_add_from_file (builder, UI_FILE_USR_ACTION_ADD, &error))
 	{
 		g_warning ("Couldn't load builder file: %s", error->message);
 		g_error_free (error);
@@ -1667,7 +1737,7 @@ void xneur_edit_user_action(GtkWidget *treeview)
 	{
 		GError* error = NULL;
 		GtkBuilder* builder = gtk_builder_new ();
-		if (!gtk_builder_add_from_file (builder, UI_FILE_ACTION_ADD, &error))
+		if (!gtk_builder_add_from_file (builder, UI_FILE_USR_ACTION_ADD, &error))
 		{
 			g_warning ("Couldn't load builder file: %s", error->message);
 			g_error_free (error);
@@ -1710,10 +1780,11 @@ static void xneur_replace_action(GtkBuilder* builder)
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(select, &model, &iter))
 	{
-		GtkWidget *widget1= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
+		GtkWidget *widget1= GTK_WIDGET(gtk_builder_get_object (builder, "combobox1"));
 		GtkWidget *widget2= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
+		int i = gtk_combo_box_get_active(GTK_COMBO_BOX(widget1));
 		gtk_list_store_set(GTK_LIST_STORE(store_action), &iter, 
-											0, gtk_entry_get_text(GTK_ENTRY(widget1)),
+											0, _(action_names[i]),
 											1, gtk_entry_get_text(GTK_ENTRY(widget2)), 
 										   -1);
 	}
@@ -1765,9 +1836,27 @@ void xneur_edit_action(GtkWidget *treeview)
 		char *action;
 		gtk_tree_model_get(GTK_TREE_MODEL(store_action), &iter, 0, &action, 1, &key_bind, -1);
 
-		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
-		gtk_editable_set_editable(GTK_EDITABLE(widget), FALSE);
-		gtk_entry_set_text(GTK_ENTRY(widget), action);
+		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "combobox1"));
+		GtkTreeIter iter;
+		GtkListStore *store = gtk_list_store_new(1,G_TYPE_STRING);
+		GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+
+		for (int i = 0; i < MAX_HOTKEYS; i++)
+		{
+			gtk_list_store_append(store,&iter);
+			gtk_list_store_set(store,&iter,0,_(action_names[i]),-1);
+		}
+
+		gtk_combo_box_set_model(GTK_COMBO_BOX(widget), GTK_TREE_MODEL(store));
+		gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widget), cell, 0);
+		gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(widget), cell, "text", 0);
+		for (int i = 0; i < MAX_HOTKEYS; i++)
+		{
+			if (strcmp(_(action_names[i]), action) == 0)
+			{
+				gtk_combo_box_set_active(GTK_COMBO_BOX(widget), i);
+			}
+		}
 		
 		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
 		gtk_widget_grab_focus(widget);
@@ -1775,11 +1864,6 @@ void xneur_edit_action(GtkWidget *treeview)
 		g_signal_connect ((gpointer) widget, "key-release-event", G_CALLBACK (on_key_release_event), builder);
 		gtk_entry_set_text(GTK_ENTRY(widget), key_bind);
 
-		widget= GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
-		gtk_widget_hide (widget);
-		widget= GTK_WIDGET(gtk_builder_get_object (builder, "label1"));
-		gtk_widget_hide (widget);
-		
 		gtk_widget_show(window);
 		
 		// Button OK
@@ -2023,6 +2107,11 @@ void xneur_rem_abbreviation(GtkWidget *widget)
 void xneur_rem_user_action(GtkWidget *widget)
 {
 	remove_item(widget, store_user_action);
+}
+
+void xneur_rem_action(GtkWidget *widget)
+{
+	remove_item(widget, store_action);
 }
 
 gboolean save_exclude_app(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)

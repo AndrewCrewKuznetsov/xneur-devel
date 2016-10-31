@@ -208,20 +208,16 @@ msgstr ""
 "Николай Янкин"
 
 #: ui/action_add.ui:8
-msgid "Add user action..."
-msgstr "Добавить пользовательское действие..."
+msgid "Add action..."
+msgstr "Добавить действие..."
 
-#: ui/action_add.ui:73
+#: ui/action_add.ui:72 ui/usr_action_add.ui:73
 msgid "Action name:"
 msgstr "Название действия:"
 
-#: ui/action_add.ui:102
+#: ui/action_add.ui:96 ui/usr_action_add.ui:102
 msgid "Key bind:"
 msgstr "Комбинация клавиш:"
-
-#: ui/action_add.ui:132
-msgid "User action:"
-msgstr "Пользовательское действие:"
 
 #: ui/app_add.ui:8
 msgid "Add application..."
@@ -295,276 +291,288 @@ msgstr "Показывать значок программы"
 msgid "Show icons from directory"
 msgstr "Показывать значки из каталога"
 
-#: ui/config.ui:109
+#: ui/config.ui:113
+msgid "Used for rendering built-in engine"
+msgstr "Использовать для отрисовки значка встроенный движок"
+
+#: ui/config.ui:116
+msgid "Used for rendering Status Icon engine"
+msgstr "Использовать для отрисовки значка движок значков статуса"
+
+#: ui/config.ui:119
+msgid "Used for rendering App Indicator engine"
+msgstr "Использовать для отрисовки значка движок индикаторов приложений"
+
+#: ui/config.ui:126
 msgid "XNeur Settings"
 msgstr "Настройки XNeur"
 
-#: ui/config.ui:144
+#: ui/config.ui:161
 msgid "Use manual switching mode"
 msgstr "Включить ручной режим переключения"
 
-#: ui/config.ui:161
+#: ui/config.ui:178
 msgid "Enable auto-learning mode"
 msgstr "Включить режим самообучения"
 
-#: ui/config.ui:178
+#: ui/config.ui:195
 msgid "Keep selection after changing selected text"
 msgstr "Сохранять выделение после изменения выделенного текста"
 
-#: ui/config.ui:195
+#: ui/config.ui:212
 msgid "Rotate layout after changing selected text"
 msgstr "Переключать раскладку после изменения выделенного текста"
 
-#: ui/config.ui:218
+#: ui/config.ui:235
 msgid "Check language on input process"
 msgstr "Проверять язык при вводе"
 
-#: ui/config.ui:235
+#: ui/config.ui:252
 msgid "Check similar words"
 msgstr "Проверять похожие слова"
 
-#: ui/config.ui:256
+#: ui/config.ui:273
 msgid "Main"
 msgstr "Основное"
 
-#: ui/config.ui:268
+#: ui/config.ui:285
 msgid "Correct aCCIDENTAL caps"
 msgstr "Исправление сЛУЧАЙНОГО CapsLock"
 
-#: ui/config.ui:285
+#: ui/config.ui:302
 msgid "Disable CapsLock use"
 msgstr "Отключение кнопки CapsLock"
 
-#: ui/config.ui:302
+#: ui/config.ui:319
 msgid "Correct TWo INitial caps"
 msgstr "Исправление двух ПРописных букв"
 
-#: ui/config.ui:319
+#: ui/config.ui:336
 msgid "Correct spaces with punctuation"
 msgstr "Исправление пробелов со знаками пунктуации"
 
-#: ui/config.ui:336
+#: ui/config.ui:353
 msgid "Correct small letter to capital letter after dot"
 msgstr "Исправление строчной буквы на прописную после точки"
 
-#: ui/config.ui:353
+#: ui/config.ui:370
 msgid "Correct two space with a comma and a space"
 msgstr "Исправление двух пробелов на запятую и пробел"
 
-#: ui/config.ui:370
+#: ui/config.ui:387
 msgid "Correct two minus with a dash"
 msgstr "Исправление двух минусов на тире"
 
-#: ui/config.ui:387
+#: ui/config.ui:404
 msgid "Correct dash with a emdash"
 msgstr "Исправление тире на длинное тире"
 
-#: ui/config.ui:404
+#: ui/config.ui:421
 msgid "Correct (c) with a copyright sign"
 msgstr "Исправление (с) на знак копирайта"
 
-#: ui/config.ui:421
+#: ui/config.ui:438
 msgid "Correct (tm) with a trademark sign"
 msgstr "Исправление (tm) на знак торговой марки"
 
-#: ui/config.ui:438
+#: ui/config.ui:455
 msgid "Correct (r) with a registered sign"
 msgstr "Исправление (r) на знак регистрации"
 
-#: ui/config.ui:455
+#: ui/config.ui:472
 msgid "Correct three points with a ellipsis sign"
 msgstr "Исправление трех точек на знак многоточия"
 
-#: ui/config.ui:472
+#: ui/config.ui:489
 msgid "Correct misprint"
 msgstr "Исправление опечаток"
 
-#: ui/config.ui:496
+#: ui/config.ui:513
 msgid "Typographics"
 msgstr "Типографика"
 
-#: ui/config.ui:516
+#: ui/config.ui:533
 msgid "<b>General</b>"
 msgstr "<b>Общее</b>"
 
-#: ui/config.ui:575 ui/list.ui:8
+#: ui/config.ui:592 ui/list.ui:8
 msgid "Rules change..."
 msgstr "Правила переключения..."
 
-#: ui/config.ui:616
+#: ui/config.ui:633
 msgid "Initial layout number:"
 msgstr "Номер раскладки по умолчанию "
 
-#: ui/config.ui:663
+#: ui/config.ui:680
 msgid "Remember keyboard layout for each application instance"
 msgstr "Запоминать раскладку отдельно для каждой копии приложения"
 
-#: ui/config.ui:771
+#: ui/config.ui:788
 msgid "Exceptions (One keyboard layout for all application instances)"
 msgstr "Исключения (одна раскладка для всех копий приложения)"
 
-#: ui/config.ui:798
+#: ui/config.ui:815
 msgid "<b>Layouts</b>"
 msgstr "<b>Раскладки</b>"
 
-#: ui/config.ui:1016
+#: ui/config.ui:1066
 msgid "<b>Hotkeys</b>"
 msgstr "<b>Комбинации клавиш</b>"
 
-#: ui/config.ui:1041
+#: ui/config.ui:1091
 msgid "Enable autocompletion"
 msgstr "Включить автодополнение"
 
-#: ui/config.ui:1058
+#: ui/config.ui:1108
 msgid "Add space after autocompletion"
 msgstr "Добавлять пробел после автодополнения"
 
-#: ui/config.ui:1176
+#: ui/config.ui:1226
 msgid "Disable the autocompletion for these applications"
 msgstr "Отключить автодополнение для этих приложений"
 
-#: ui/config.ui:1210
+#: ui/config.ui:1260
 msgid "<b>Autocompletion</b>"
 msgstr "<b>Автодополнение</b>"
 
-#: ui/config.ui:1325
+#: ui/config.ui:1375
 msgid "Ignore these applications"
 msgstr "Не обрабатывать эти приложения"
 
-#: ui/config.ui:1428
+#: ui/config.ui:1478
 msgid "Force automatic mode for these applications"
 msgstr "Принудительный автоматический режим для этих приложений"
 
-#: ui/config.ui:1531
+#: ui/config.ui:1581
 msgid "Force manual mode for these applications"
 msgstr "Принудительный ручной режим для этих приложений"
 
-#: ui/config.ui:1558
+#: ui/config.ui:1608
 msgid "<b>Applications</b>"
 msgstr "<b>Приложения</b>"
 
-#: ui/config.ui:1592
+#: ui/config.ui:1642
 msgid "Enable sounds"
 msgstr "Проигрывать звуки"
 
-#: ui/config.ui:1615
+#: ui/config.ui:1665
 msgid "Sound volume"
 msgstr "Уровень громкости "
 
-#: ui/config.ui:1721
+#: ui/config.ui:1771
 msgid "Sounds"
 msgstr "Звуки"
 
-#: ui/config.ui:1738
+#: ui/config.ui:1788
 msgid "Show OSD"
 msgstr "Показывать OSD"
 
-#: ui/config.ui:1762
+#: ui/config.ui:1812
 msgid "OSD Font"
 msgstr "Шрифт OSD"
 
-#: ui/config.ui:1797
+#: ui/config.ui:1847
 msgid "Use command <b>xfontsel -print</b> to get new font."
 msgstr ""
 "Используйте команду <b>xfontsel -print</b> для получения нового шрифта."
 
-#: ui/config.ui:1855
+#: ui/config.ui:1905
 msgid "OSD"
 msgstr "OSD"
 
-#: ui/config.ui:1873
+#: ui/config.ui:1923
 msgid "Show popup messages"
 msgstr "Показывать всплывающие сообщения"
 
-#: ui/config.ui:1896
+#: ui/config.ui:1946
 msgid "Popup expiration interval (in milliseconds)"
 msgstr "Время показа всплывающего сообщения (в миллисекундах)"
 
-#: ui/config.ui:1978
+#: ui/config.ui:2028
 msgid "Popup messages"
 msgstr "Всплывающие сообщения"
 
-#: ui/config.ui:2001
+#: ui/config.ui:2051
 msgid "<b>Notifications</b>"
 msgstr "<b>Уведомления</b>"
 
-#: ui/config.ui:2026
+#: ui/config.ui:2076
 msgid "Ignore keyboard layout for abbreviations"
 msgstr "Игнорировать раскладку для сокращений"
 
-#: ui/config.ui:2123
+#: ui/config.ui:2173
 msgid "<b>Abbreviations</b>"
 msgstr "<b>Сокращения</b>"
 
-#: ui/config.ui:2148
+#: ui/config.ui:2198
 msgid "Enable keyboard logging"
 msgstr "Включить сохранение набираемого текста в файл журнала"
 
-#: ui/config.ui:2193
+#: ui/config.ui:2243
 msgid "Send log via port"
 msgstr "Отправить журнал через порт"
 
-#: ui/config.ui:2224
+#: ui/config.ui:2274
 msgid "Send log via host (name or IP)"
 msgstr "Отправить журнал через сервер (адрес или IP)"
 
-#: ui/config.ui:2255
+#: ui/config.ui:2305
 msgid "Send log to e-mail"
 msgstr "Отправить журнал на e-mail"
 
-#: ui/config.ui:2292
+#: ui/config.ui:2342
 msgid "Log file size in bytes"
 msgstr "Размер журнала в байтах"
 
-#: ui/config.ui:2304
+#: ui/config.ui:2354
 msgid "View log..."
 msgstr "Посмотреть журнал..."
 
-#: ui/config.ui:2340
+#: ui/config.ui:2390
 msgid "<b>Log</b>"
 msgstr "<b>Журнал</b>"
 
-#: ui/config.ui:2380
+#: ui/config.ui:2430
 msgid "Backspace"
 msgstr "Backspace"
 
-#: ui/config.ui:2397
+#: ui/config.ui:2447
 msgid "Left arrow"
 msgstr "Стрелка влево"
 
-#: ui/config.ui:2414
+#: ui/config.ui:2464
 msgid "Right arrow"
 msgstr "Стрелка вправо"
 
-#: ui/config.ui:2431
+#: ui/config.ui:2481
 msgid "Up arrow"
 msgstr "Стрелка вверх"
 
-#: ui/config.ui:2448
+#: ui/config.ui:2498
 msgid "Down arrow"
 msgstr "Стрелка вниз"
 
-#: ui/config.ui:2465
+#: ui/config.ui:2515
 msgid "Delete"
 msgstr "Delete"
 
-#: ui/config.ui:2482
+#: ui/config.ui:2532
 msgid "Enter"
 msgstr "Ввод (Enter)"
 
-#: ui/config.ui:2499
+#: ui/config.ui:2549
 msgid "Tab"
 msgstr "Табуляция (Tab)"
 
-#: ui/config.ui:2516
+#: ui/config.ui:2566
 msgid "You changed layout"
 msgstr "Вы переключили раскладку"
 
-#: ui/config.ui:2533
+#: ui/config.ui:2583
 msgid "Application in full screen mode"
 msgstr "Приложение в полноэкранном режиме"
 
-#: ui/config.ui:2564
+#: ui/config.ui:2614
 msgid ""
 "This will help avoid switching layout when editing parts previously "
 "introduced word."
@@ -572,42 +580,42 @@ msgstr ""
 "Это поможет избежать переключений раскладки при редактировании частей ранее "
 "введенного слова"
 
-#: ui/config.ui:2594
+#: ui/config.ui:2644
 msgid "Don't switch layout if before input where pressed"
 msgstr "Не переключать раскладку, если перед вводом были нажаты"
 
-#: ui/config.ui:2622
+#: ui/config.ui:2672
 msgid "Flush internal buffer on Escape"
 msgstr "Сбрасывать внутренний буфер при нажатии Escape"
 
-#: ui/config.ui:2639
+#: ui/config.ui:2689
 msgid "Flush internal buffer on Enter or Tab"
 msgstr "Сбрасывать внутренний буфер при нажатии Enter или Tab"
 
-#: ui/config.ui:2659
+#: ui/config.ui:2709
 msgid "Compatibility with the completion"
 msgstr "Совместимость с автодополнением"
 
-#: ui/config.ui:2682
+#: ui/config.ui:2732
 msgid "Additional"
 msgstr "Дополнительно"
 
-#: ui/config.ui:2710
+#: ui/config.ui:2760
 msgid "Monitor the input"
 msgstr "Следить за вводом"
 
-#: ui/config.ui:2729
+#: ui/config.ui:2779
 msgid ""
 "Disabling this option will add any application to the list of excluded "
 "applications."
 msgstr ""
 "Выключение этой опции добавит ВСЕ приложения в список исключенных приложений."
 
-#: ui/config.ui:2740
+#: ui/config.ui:2790
 msgid "Monitor the mouse"
 msgstr "Следить за мышью"
 
-#: ui/config.ui:2759
+#: ui/config.ui:2809
 msgid ""
 "Disabling this option will disable mouse tracking. Reset buffer when "
 "clicking the mouse will not."
@@ -615,90 +623,78 @@ msgstr ""
 "Выключение этой опции выключит слежение за мышью. Сброса буфера при клике "
 "мышью не будет."
 
-#: ui/config.ui:2776
+#: ui/config.ui:2826
 msgid "Tracking input"
 msgstr "Слежение за вводом"
 
-#: ui/config.ui:2800
+#: ui/config.ui:2850
 msgid "<b>Troubleshooting</b>"
 msgstr "<b>Устранение проблем</b>"
 
-#: ui/config.ui:2845
+#: ui/config.ui:2904
 msgid "Log verbosity level"
 msgstr "Уровень подробности выводимых сообщений"
 
-#: ui/config.ui:2931
+#: ui/config.ui:2993
 msgid "Delay before sending events (in milliseconds)"
 msgstr "Задержка перед отправкой событий (в миллисекундах)"
 
-#: ui/config.ui:3053
+#: ui/config.ui:3115
 msgid "Delay before sending events in these applications"
 msgstr "Задерживать отправку событий в этих приложениях"
 
-#: ui/config.ui:3157
+#: ui/config.ui:3219
 msgid "Dont send event KeyRelease in these applications"
 msgstr "Не отправлять событие KeyRelease для этих приложений"
 
-#: ui/config.ui:3182
+#: ui/config.ui:3244
 msgid "<b>Advanced</b>"
 msgstr "<b>Специальное</b>"
 
-#: ui/config.ui:3249
+#: ui/config.ui:3311
 msgid "<b>Plugins</b>"
 msgstr "<b>Модули</b>"
 
-#: ui/config.ui:3289
+#: ui/config.ui:3351
 msgid "Autostartup"
 msgstr "Запускать автоматически при старте системы"
 
-#: ui/config.ui:3314
+#: ui/config.ui:3376
 msgid "Delay before startup"
 msgstr "Задержка перед запуском"
 
-#: ui/config.ui:3356
+#: ui/config.ui:3418
 msgid "Startup"
 msgstr "Параметры запуска"
 
-#: ui/config.ui:3412
+#: ui/config.ui:3474
 msgid "Icons directory"
 msgstr "Каталог значков"
 
-#: ui/config.ui:3508
+#: ui/config.ui:3570
 msgid "Set the extension to move the icon in the shell area of the Gnome 3."
 msgstr ""
 "Установить расширение для перемещения иконки в область оболочки Gnome 3."
 
-#: ui/config.ui:3524
+#: ui/config.ui:3586
 msgid "Gnome 3 Shell"
 msgstr "Оболочка Gnome 3"
 
-#: ui/config.ui:3543
+#: ui/config.ui:3605
 msgid "UI"
 msgstr "Внешний вид"
 
-#: ui/config.ui:3578
+#: ui/config.ui:3640
 msgid "Keyboard properties command"
 msgstr "Команда запуска параметров клавиатуры"
 
-#: ui/config.ui:3663
+#: ui/config.ui:3725
 msgid "System"
 msgstr "Системное"
 
-#: ui/config.ui:3691
+#: ui/config.ui:3753
 msgid "<b>Properties</b>"
 msgstr "<b>Параметры</b>"
-
-#: ui/config.ui:3762
-msgid "Used for rendering built-in engine"
-msgstr "Использовать для отрисовки значка встроенный движок"
-
-#: ui/config.ui:3765
-msgid "Used for rendering Status Icon engine"
-msgstr "Использовать для отрисовки значка движок значков статуса"
-
-#: ui/config.ui:3768
-msgid "Used for rendering App Indicator engine"
-msgstr "Использовать для отрисовки значка движок индикаторов приложений"
 
 #: ui/rule_add.ui:8
 msgid "Add your rule change..."
@@ -744,9 +740,21 @@ msgstr "совпадать с данным сочетанием букв"
 msgid "More:"
 msgstr "Дополнительно:"
 
-#: src/callbacks.c:355 src/misc.c:2455
-msgid "Press any key"
-msgstr "Нажмите любую клавишу"
+#: ui/rule_add.ui:266
+msgid "Insensitive"
+msgstr "Не учитывать регистр"
+
+#: ui/rule_add.ui:294
+msgid "Condition"
+msgstr "Условие"
+
+#: ui/usr_action_add.ui:8
+msgid "Add user action..."
+msgstr "Добавить пользовательское действие..."
+
+#: ui/usr_action_add.ui:132
+msgid "User action:"
+msgstr "Пользовательское действие:"
 
 #: src/main.c:113
 #, c-format
@@ -800,8 +808,8 @@ msgid ""
 "  -S, --show=<mode>                    Icon display mode (Icon, Flag, Text, "
 "Directory). Default is %s.)\n"
 msgstr ""
-"  -S, --show=<режим>                   Режим отображения иконки (Icon, "
-"Flag, Text, Directory. По умолчанию %s.)\n"
+"  -S, --show=<режим>                   Режим отображения иконки (Icon, Flag, "
+"Text, Directory. По умолчанию %s.)\n"
 
 #: src/main.c:132
 #, c-format
@@ -958,14 +966,6 @@ msgstr "Пользовательское действие пусто!"
 msgid "Combination of letters"
 msgstr "Буквосочетание"
 
-#: src/misc.c:1683
-msgid "Condition"
-msgstr "Условие"
-
-#: src/misc.c:1688
-msgid "Insensitive"
-msgstr "Не учитывать регистр"
-
 #: src/misc.c:2323
 msgid "To enable the extension you need to start the session again."
 msgstr "Для включения расширения вы должны начать сеанс заново."
@@ -998,6 +998,9 @@ msgstr "X Neural Switcher остановлен ("
 #: src/trayicon.c:585
 msgid "X Neural Switcher"
 msgstr "X Neural Switcher"
+
+#~ msgid "Press any key"
+#~ msgstr "Нажмите любую клавишу"
 
 #~ msgid ""
 #~ "0\n"
