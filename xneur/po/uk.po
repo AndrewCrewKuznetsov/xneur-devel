@@ -484,7 +484,7 @@ msgstr ""
 
 #: src/xneur.c:297
 #, fuzzy
-msgid "Caught SIGHUP/SIGCONT, reloading configuration file"
+msgid "Caught SIGHUP, reloading configuration file"
 msgstr "Отримано SIGHUP, перезавантажую файл налаштувань"
 
 #: src/xneur.c:312 src/xneur.c:455

@@ -46,3 +46,8 @@ xneur/src/xneur
 xnconfig.pc
 xneur.pc
 
+# Anjuta local files
+.anjuta_sym_db.db
+.anjuta/session/dock-layout.xml
+.anjuta/session/anjuta.session
+

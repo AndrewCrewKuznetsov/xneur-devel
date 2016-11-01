@@ -509,8 +509,8 @@ msgid "Caught SIGCHLD, kill zombie process"
 msgstr "Получен сигнал SIGCHLD, удаление процессов-зомби"
 
 #: src/xneur.c:297
-msgid "Caught SIGHUP/SIGCONT, reloading configuration file"
-msgstr "Получен сигнал SIGHUP/SIGCONT, перезагрузка конфигурационного файла"
+msgid "Caught SIGHUP, reloading configuration file"
+msgstr "Получен сигнал SIGHUP, перезагрузка конфигурационного файла"
 
 #: src/xneur.c:312 src/xneur.c:455
 msgid "Can't init libxnconfig"
@@ -935,7 +935,7 @@ msgstr "Неосвобожден указатель на область памя
 
 #: lib/misc/list_char.c:161 lib/misc/list_char.c:178
 msgid "Function realloc return NULL."
-msgstr ""
+msgstr "Функция realloc вернула нулевой указатель."
 
 #: lib/misc/list_char.c:361
 #, c-format
@@ -944,7 +944,7 @@ msgstr "Ошибка сортировки: %s > %s"
 
 #: lib/misc/mail.c:103
 msgid "Lost the package when sending mail."
-msgstr ""
+msgstr "Потерян пакет при отправке почты."
 
 #: lib/misc/mail.c:127
 #, c-format
@@ -1427,7 +1427,7 @@ msgstr "Ошибка BadWindow при %s мыши"
 
 #: lib/main/utils.c:145
 msgid "XGetModifierMapping return NULL. Grabbing modifiers key not changed."
-msgstr ""
+msgstr "XGetModifierMapping вернула NULL. Перехват клавиш-модификаторов не изменен."
 
 #: lib/main/window.c:56
 msgid "Can't connect to XServer"

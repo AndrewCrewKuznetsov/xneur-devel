@@ -474,7 +474,7 @@ msgid "Caught SIGCHLD, kill zombie process"
 msgstr ""
 
 #: src/xneur.c:297
-msgid "Caught SIGHUP/SIGCONT, reloading configuration file"
+msgid "Caught SIGHUP, reloading configuration file"
 msgstr ""
 
 #: src/xneur.c:312 src/xneur.c:455
