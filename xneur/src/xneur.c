@@ -294,14 +294,14 @@ static void xneur_reload(int status)
 {
 	if (status){}
 
-	log_message(LOG, _("Caught SIGHUP/SIGCONT, reloading configuration file"));
+	log_message(LOG, _("Caught SIGHUP, reloading configuration file"));
 	show_notify(NOTIFY_XNEUR_RELOAD, NULL);
 	
 	sound_uninit();
 	unbind_actions();
 	unbind_user_actions();
 	program->plugin->xneur_reload(program->plugin);
-	
+
 	if (xconfig != NULL)
 		xconfig->uninit(xconfig);
 
@@ -443,7 +443,6 @@ int main(int argc, char *argv[])
 	xneur_trap(SIGHUP, xneur_reload);
 	xneur_trap(SIGCHLD, xneur_zombie);
 	xneur_trap(SIGTSTP, xneur_terminate);
-	xneur_trap(SIGCONT, xneur_reload);
 	
 	xneur_get_options(argc, argv);
 	
@@ -484,7 +483,7 @@ int main(int argc, char *argv[])
 	show_notify(NOTIFY_XNEUR_START, NULL);
 
 	program->plugin->xneur_start(program->plugin);
-			
+
 	if (xneur_generate_proto)
 		generate_protos();
 	else	

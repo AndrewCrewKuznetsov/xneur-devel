@@ -443,6 +443,28 @@ static void program_process_input(struct _program *p)
 				{
 					break;
 				}
+				struct _xneur_handle *new_handle = xneur_handle_create();
+				int layouts_changed = FALSE;
+				if (new_handle->total_languages == xconfig->handle->total_languages)
+				{
+					for (int i = 0; i < new_handle->total_languages; i++)
+					{
+						//log_message(TRACE, "%s %s",xconfig->handle->languages[i].name, new_handle->languages[i].name);
+						if (strcmp(xconfig->handle->languages[i].name, new_handle->languages[i].name) == 0)
+							continue;
+
+						layouts_changed = TRUE;
+					}
+
+					if (layouts_changed == FALSE)
+					{
+						//log_message(TRACE, "Layounts not changed");
+						xneur_handle_destroy(new_handle);
+						break;
+					}
+				}
+				xneur_handle_destroy(new_handle);
+
 				log_message(TRACE, _("Received MappingNotify (event type %d)"), type);
 
 				p->buffer->uninit(p->buffer);

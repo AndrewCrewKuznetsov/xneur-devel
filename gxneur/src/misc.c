@@ -172,40 +172,6 @@ static char* concat_bind(int action)
 	return text;
 }
 
-/*static void split_bind(char *text, int action)
-{
-	char **key_stat = g_strsplit(text, "+", 4);
-
-	int last = is_correct_hotkey(key_stat);
-	if (last == -1)
-	{
-		g_strfreev(key_stat);
-		return;
-	}
-	
-	xconfig->actions[action].hotkey.modifiers = 0;
-	
-	for (int i = 0; i <= last; i++)
-	{
-		int assigned = FALSE;
-		for (int j = 0; j < total_modifiers; j++) 
- 		{ 
-			if (g_utf8_collate (g_utf8_casefold(key_stat[i], strlen (key_stat[i])), 
-			                    g_utf8_casefold(modifier_names[j], strlen (modifier_names[j]))) != 0) 
-				continue; 
-
-			assigned = TRUE;
-			xconfig->actions[action].hotkey.modifiers |= (0x1 << j); 
-			break; 
-		} 
-
-		if (assigned == FALSE)
-			xconfig->actions[action].hotkey.key = strdup(key_stat[i]); 
-	}
- 
-	g_strfreev(key_stat);
-}*/
-
 static void get_xprop_name(GtkBuilder* builder)
 {
 	FILE *fp = popen("xprop WM_CLASS", "r");
@@ -2269,17 +2235,6 @@ gboolean save_user_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i
 
 gboolean save_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
 {
-	/*if (model || path || user_data){};
-
-	gchar *key_bind;
-	gchar *action_text;
-	gtk_tree_model_get(GTK_TREE_MODEL(store_action), iter, 0, &action_text, 1, &key_bind, -1);
-
-	int i = atoi(gtk_tree_path_to_string(path));
-	split_bind((char *) key_bind, i);
-	
-	return FALSE;*/
-	
 	if (model || path || user_data){};
 
 	gchar *key_bind;
@@ -2290,11 +2245,6 @@ gboolean save_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, 
 	char **key_stat = g_strsplit(key_bind, "+", 4);
 
 	int last = is_correct_hotkey(key_stat);
-	/*if (last == -1)
-	{
-		g_strfreev(key_stat);
-		return FALSE;
-	}*/
 	
 	int action = atoi(gtk_tree_path_to_string(path));
 	xconfig->actions = (struct _xneur_action *) realloc(xconfig->actions, (action + 1) * sizeof(struct _xneur_action));
@@ -2626,7 +2576,6 @@ void xneur_save_preference(GtkBuilder* builder)
 
 	// Save
 	xconfig->save(xconfig);
-	printf("Config Saved!\n");
 	xconfig->reload(xconfig);
 	
 	// GXNEUR Preferences

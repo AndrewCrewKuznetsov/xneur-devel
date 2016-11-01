@@ -1131,14 +1131,6 @@ static void free_structures(struct _xneur_config *p)
 	
 	p->plugins->uninit(p->plugins);
 
-	if (p->actions != NULL)
-	{
-		for (int action = 0; action < p->actions_count; action++)
-		{
-			if (p->actions[action].hotkey.key != NULL)
-				free(p->actions[action].hotkey.key);
-		}
-	}
 
 	for (int notify = 0; notify < MAX_NOTIFIES; notify++)
 	{
@@ -1150,6 +1142,15 @@ static void free_structures(struct _xneur_config *p)
 
 		if (p->popups[notify].file != NULL)
 			free(p->popups[notify].file);
+	}
+
+	if (p->actions != NULL)
+	{
+		for (int action = 0; action < p->actions_count; action++)
+		{
+			if (p->actions[action].hotkey.key != NULL)
+				free(p->actions[action].hotkey.key);
+		}
 	}
 
 	if (p->user_actions != NULL)
@@ -1165,11 +1166,13 @@ static void free_structures(struct _xneur_config *p)
 		}
 	}
 
+	p->actions_count = 0;
+	p->user_actions_count = 0;
+
 	bzero(p->sounds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 	bzero(p->osds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 	bzero(p->popups, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 
-	p->actions_count = 0;
 
 	if (p->version != NULL)
 		free(p->version);
@@ -1177,11 +1180,11 @@ static void free_structures(struct _xneur_config *p)
 	if (p->osd_font != NULL)
 		free(p->osd_font);
 
-	if (p->actions != NULL)
-		free(p->actions);
+	//if (p->actions != NULL)
+	//	free(p->actions);
 	
-	if (p->user_actions != NULL)
-		free(p->user_actions);
+	//if (p->user_actions != NULL)
+	//	free(p->user_actions);
 }
 
 static void xneur_config_reload(struct _xneur_config *p)
@@ -1814,6 +1817,9 @@ static void xneur_config_uninit(struct _xneur_config *p)
 
 	free_structures(p);
 
+	free(p->actions);
+	free(p->user_actions);
+	
 	free(p->sounds);
 	free(p->osds);
 	free(p->popups);
@@ -1830,7 +1836,7 @@ static void xneur_config_uninit(struct _xneur_config *p)
 		free(p->host_keyboard_log);
 
 	xneur_handle_destroy(p->handle);
-
+	
 	free(p);
 }
 
