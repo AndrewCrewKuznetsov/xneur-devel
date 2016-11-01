@@ -24,12 +24,12 @@ kXneurApp::kXneur::kXneur(int& argc, char **argv): QApplication (argc, argv)
     {
         cfgXneur->xneurStart();
     }
-    else
+    /*else
     {
         cfgXneur->xneurStop();
         cfgXneur->xneurStart();
         qDebug()<<"xneur is running";
-    }
+    }*/
     emit changeIconTray(QString("%1").arg(cfgXneur->getCurrentLang()));
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.keyboard", "/Layouts", "org.kde.KeyboardLayouts","currentLayoutChanged", this, SLOT(layoutChanged(QString)));

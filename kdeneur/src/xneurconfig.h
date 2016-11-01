@@ -22,7 +22,6 @@ namespace kXneurApp
         int xneur_pid;
         QString get_bind(int);
         QStringList notifyNames;
-        QStringList lstCommand_hotKey;
         QStringList lstModifer;
 
     private slots:
@@ -32,6 +31,7 @@ namespace kXneurApp
 
     public:
        explicit xNeurConfig(QObject *parent = 0);
+        QStringList lstCommand_hotKey;
         ~xNeurConfig();
         static Display *dpy;
         QProcess *procxNeur;
@@ -44,7 +44,6 @@ namespace kXneurApp
         void clearNeurConfig();
         void saveNeurConfig();
         void test(QString);
-
 
         //tab General
         void gen_main_save_manual_switch(bool);

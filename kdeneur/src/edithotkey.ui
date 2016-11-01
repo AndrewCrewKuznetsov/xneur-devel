@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Add user action...</string>
+   <string>Add action...</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -34,20 +34,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="txtAction">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <widget class="QComboBox" name="comboAction"/>
    </item>
    <item>
     <widget class="QLabel" name="label_2">
@@ -62,6 +49,9 @@
       <font>
        <kerning>false</kerning>
       </font>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::WheelFocus</enum>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>

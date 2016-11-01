@@ -20,6 +20,7 @@ namespace kXneurApp
     public:
         explicit EditHotKey(QWidget *parent = 0, QString action="", QString key="");
         QString hot_keys;
+	QString action_name;
         ~EditHotKey();
     protected:
         virtual void keyPressEvent(QKeyEvent *event);

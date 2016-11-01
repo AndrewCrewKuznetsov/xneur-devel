@@ -1,6 +1,7 @@
 #include "edithotkey.h"
 #include "ui_edithotkey.h"
 #include "xneurconfig.h"
+#include "kdeneur.h"
 
 extern "C"
 {
@@ -12,9 +13,15 @@ kXneurApp::EditHotKey::EditHotKey(QWidget *parent, QString action, QString key) 
 {
     ui->setupUi(this);
 
+    if (action != NULL){};
     connect(ui->cmdCancel, SIGNAL(clicked()),SLOT(closeForm()));
     connect(ui->cmdSave,SIGNAL(clicked()),SLOT(save()));
-    ui->txtAction->setText(action);
+    xNeurConfig *cfgXneur = new kXneurApp::xNeurConfig();
+    for (int i = 0; i < cfgXneur->lstCommand_hotKey.size(); i++)
+    {
+      ui->comboAction->addItem(cfgXneur->lstCommand_hotKey[i]); ;//->setText(action);
+    }
+    ui->comboAction->setCurrentIndex(ui->comboAction->findText(action));
     ui->lblHotKey->setText(key);
     ui->lblHotKey->setFocus();
 }
@@ -107,6 +114,7 @@ void kXneurApp::EditHotKey::save()
 {
     done(Accepted);
     hot_keys = ui->lblHotKey->text();
+    action_name = ui->comboAction->currentText();
     this->close();
 }
 

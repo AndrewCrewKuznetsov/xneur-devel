@@ -33,7 +33,7 @@
       <enum>QTabWidget::West</enum>
      </property>
      <property name="currentIndex">
-      <number>9</number>
+      <number>2</number>
      </property>
      <widget class="TabBar" name="tabGeneral">
       <property name="locale">
@@ -416,6 +416,13 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
+          <widget class="QPushButton" name="tabHotKeys_AddHotKey">
+           <property name="text">
+            <string>Add</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="tabHotKeys_EditHotKey">
            <property name="text">
             <string>Edit</string>
@@ -426,6 +433,13 @@
           <widget class="QPushButton" name="tabHotKeys_ClearHotKey">
            <property name="text">
             <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="tabHotKeys_RemHotKey">
+           <property name="text">
+            <string>Remove</string>
            </property>
           </widget>
          </item>

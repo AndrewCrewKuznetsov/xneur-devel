@@ -45,11 +45,15 @@ namespace kXneurApp
     void rulesChange();
 
     //tab hotkeys
+    void addHotkey();
     void editHotkey();
+    void clearHotkey();
+    void removeHotkey ();
+    
     void removeUserAction();
     void addUserAction();
     void editUserAction();
-    void clearHotKey();
+    
 
     //tab autocompletion
     void auto_add_app_list_disable_autocompletion();

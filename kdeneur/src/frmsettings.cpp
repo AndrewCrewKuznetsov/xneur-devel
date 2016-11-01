@@ -55,27 +55,32 @@ void kXneurApp::frmSettings::saveSettingsNeur()
     cfgNeur->gen_tipo_save_correct_three_point(ui->chkGenTipograph_Correct_Three_Point->isChecked());
     cfgNeur->gen_tipo_save_correct_dash(ui->chkGenTipograph_CorrectDash->isChecked());
     cfgNeur->gen_tipo_save_correct_misprint(ui->chkGenTipograph_Correct_Misprint->isChecked());
-
+    qDebug () << "General";
+    
     //tab Layout
     cfgNeur->lay_save_number_layout(ui->Layout_spbLayoutNumber->value()-1);
     cfgNeur->lay_save_remember_layout_for_app(ui->Layout_chkRememberKbLayout->isChecked());
     cfgNeur->lay_save_list_app_one_layout(getListFromWidget(ui->Layout_lstListApplicationOneKbLayout));
     cfgNeur->lay_save_list_language(tab_lay_save_list_lang());
+    qDebug () << "Layout";
 
     //tab HotKeys
     cfgNeur->hot_save_list_command_hotkeys(hot_save_list_hotkeys());
     cfgNeur->hot_save_list_user_actions(hot_save_list_user_actions());
+    qDebug () << "HotKeys";
 
     //tab Autocompletion
     cfgNeur->auto_save_enable_pattern(ui->tabAutocompletion_chkTrueAutocomplit->isChecked());
     cfgNeur->auto_save_add_space(ui->tabAutocompletion_chkAddSpace->isChecked());
     cfgNeur->auto_save_list_app_disable_autocomplite(getListFromWidget(ui->tabAutocompletion_lstApp));
+    qDebug () << "Autocompletion";
 
     //tab Applications
     cfgNeur->app_save_list_auto_mode_app(getListFromWidget(ui->taApplication_lstAppAutoMode));
     cfgNeur->app_save_list_ignore_app(getListFromWidget(ui->taApplication_lstAppNotUsed));
     cfgNeur->app_save_list_manual_mode_app(getListFromWidget(ui->taApplication_lstAppManualMode));
-
+    qDebug () << "Applications";
+    
     //tab Notifications
     cfgNeur->notif_save_enable_sound(ui->tabSound_chkEnableSound->isChecked());
     cfgNeur->notif_save_volume_sound(ui->tabSound_spbSoundVolume->value());
@@ -87,10 +92,12 @@ void kXneurApp::frmSettings::saveSettingsNeur()
     cfgNeur->notif_save_list_action_sound(get_lget_from_notif_widget(ui->tabSound_lstListSound));
     cfgNeur->notif_save_list_action_osd(get_lget_from_notif_widget(ui->tabOSD_lstListOSD));
     cfgNeur->notif_save_list_action_popup_msg(get_lget_from_notif_widget(ui->tabPopupMessage_lstListPopupMessage));
+qDebug () << "Notifications";
 
     //tab Abbreviations
     cfgNeur->abbr_save_ignore_keyboarf_layout(ui->tabAbbreviations_chkIgnoreKeyLayout->isChecked());
     cfgNeur->abbr_save_list_abbreviations(abbr_save_list_apprevaitions());
+qDebug () << "Abbreviations";
 
     //tab Log
     cfgNeur->log_save_enable_keylog(ui->tabLog_chkEnableLog->isChecked());
@@ -98,6 +105,7 @@ void kXneurApp::frmSettings::saveSettingsNeur()
     cfgNeur->log_save_email(ui->tabLog_txtSendLogEmail->text());
     cfgNeur->log_save_host(ui->tabLog_txtSendLogHost->text());
     cfgNeur->log_save_port(ui->tabLog_spbSendLogPort->value());
+qDebug () << "Log";
 
     //tab Troubleshooting
     cfgNeur->trabl_save_backspace(ui->tabTroubleshooting_chkBackspace->isChecked());
@@ -115,18 +123,21 @@ void kXneurApp::frmSettings::saveSettingsNeur()
     cfgNeur->trabl_save_compat_with_completion(ui->tabTroubleshooting_chkCompatCompletion->isChecked());
     cfgNeur->trabl_save_monitor_input(ui->tabTroubleshooting_chkMonitorInput->isChecked());
     cfgNeur->trabl_save_monitor_mouse(ui->tabTroubleshooting_chkMonitorMouse->isChecked());
+qDebug () << "Troubleshooting";
 
     //tab Advanced
     cfgNeur->adv_save_log_level(ui->tabAdvanced_cmbLogLevel->currentIndex());
     cfgNeur->adv_save_delay_sending_events(ui->tabAdvanced_spbDelay->value());
     cfgNeur->adv_save_delay_app(getListFromWidget(ui->tabAdvanced_tabDelayList));
     cfgNeur->adv_save_key_release_app(getListFromWidget(ui->tabAdvanced_tabAppList));
+qDebug () << "Notifications";
 
     //tab Plugins
     cfgNeur->plug_save_list_plugins(plug_save_list_plugins());
+qDebug () << "Advanced";
 
     cfgNeur->saveNeurConfig();
-
+qDebug () << "Saved!";
 }
 
 void kXneurApp::frmSettings::settintgGrid()
@@ -303,8 +314,10 @@ void kXneurApp::frmSettings::createConnect()
   connect(ui->Layout_cmdRulesChange, SIGNAL(clicked()),SLOT(rulesChange()));
 
   //tab hotkeys
+  connect(ui->tabHotKeys_AddHotKey, SIGNAL(clicked()), SLOT(addHotkey()));
   connect(ui->tabHotKeys_EditHotKey, SIGNAL(clicked()), SLOT(editHotkey()));
-  connect(ui->tabHotKeys_ClearHotKey, SIGNAL(clicked()),SLOT(clearHotKey()));
+  connect(ui->tabHotKeys_ClearHotKey, SIGNAL(clicked()),SLOT(clearHotkey()));
+  connect(ui->tabHotKeys_RemHotKey, SIGNAL(clicked()), SLOT(removeHotkey()));
   connect(ui->tabHotKeys_UserActionsDel, SIGNAL(clicked()), SLOT(removeUserAction()));
   connect(ui->tabHotKeys_UserActionsAdd, SIGNAL(clicked()), SLOT(addUserAction()));
   connect(ui->tabHotKeys_UserActionsEdit, SIGNAL(clicked()), SLOT(editUserAction()));
@@ -625,7 +638,7 @@ QMap<QString, QString> kXneurApp::frmSettings::hot_save_list_hotkeys()
     QMap<QString, QString> lstHotKey;
     for (int i=0; i< ui->tabHotKey_lstHotKey->rowCount();++i)
     {
-        lstHotKey.insert(ui->tabHotKey_lstHotKey->item(i,0)->text(),ui->tabHotKey_lstHotKey->item(i,1)->text());
+        lstHotKey.insertMulti(ui->tabHotKey_lstHotKey->item(i,0)->text(),ui->tabHotKey_lstHotKey->item(i,1)->text());
     }
     return lstHotKey;
 }
@@ -857,6 +870,29 @@ QHash <QString, bool > kXneurApp::frmSettings::tab_lay_save_list_lang()
     return  lstLang;
 }
 
+void kXneurApp::frmSettings::addHotkey()
+{
+    int row=ui->tabHotKey_lstHotKey->currentRow();
+    if(row<0)
+    {
+        //TODO
+    }
+    else
+    {
+        QString action = ""; //ui->tabHotKey_lstHotKey->item(row, 0)->text();
+        QString key = ""; //ui->tabHotKey_lstHotKey->item(row, 1)->text();
+        kXneurApp::EditHotKey *frm = new kXneurApp::EditHotKey(0,action, key);
+        if(frm->exec()==QDialog::Accepted)
+        {
+
+	  ui->tabHotKey_lstHotKey->setRowCount(ui->tabHotKey_lstHotKey->rowCount()+1);
+	  ui->tabHotKey_lstHotKey->setItem(ui->tabHotKey_lstHotKey->rowCount()-1, 0, new QTableWidgetItem(frm->action_name));
+	  ui->tabHotKey_lstHotKey->setItem(ui->tabHotKey_lstHotKey->rowCount()-1, 1, new QTableWidgetItem(frm->hot_keys));
+        }
+        delete frm;
+    }
+}
+
 void kXneurApp::frmSettings::editHotkey()
 {
     int row=ui->tabHotKey_lstHotKey->currentRow();
@@ -871,9 +907,24 @@ void kXneurApp::frmSettings::editHotkey()
         kXneurApp::EditHotKey *frm = new kXneurApp::EditHotKey(0,action, key);
         if(frm->exec()==QDialog::Accepted)
         {
+	    ui->tabHotKey_lstHotKey->item(row, 0)->setText(frm->action_name);
             ui->tabHotKey_lstHotKey->item(row, 1)->setText(frm->hot_keys);
         }
         delete frm;
+    }
+}
+
+void kXneurApp::frmSettings::removeHotkey()
+{
+    int row = ui->tabHotKey_lstHotKey->currentRow();
+
+    if(row< 0)
+    {
+        //TODO
+    }
+    else
+    {
+        ui->tabHotKey_lstHotKey->removeRow(row);
     }
 }
 
@@ -929,7 +980,7 @@ void kXneurApp::frmSettings::editUserAction()
     }
 }
 
-void kXneurApp::frmSettings::clearHotKey()
+void kXneurApp::frmSettings::clearHotkey()
 {
     int row = ui->tabHotKey_lstHotKey->currentRow();
     ui->tabHotKey_lstHotKey->item(row, 1)->setText("");

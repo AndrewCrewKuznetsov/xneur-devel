@@ -13,6 +13,8 @@
 extern "C"
 {
     #include <unistd.h>
+    #include <string.h>
+    #include <stdlib.h>
     #include <xneur/xneur.h>
     #include <xneur/xnconfig.h>
     #include <xneur/list_char.h>
@@ -21,7 +23,7 @@ extern "C"
 #include "xneurconfig.h"
 
 #define MAX_LANGUAGES 4
-#define TOTAL_MODIFER 4
+#define TOTAL_MODIFIER 4
 #define LANGUAGES_DIR "languages"
 #define XNEUR_NEEDED_MAJOR_VERSION 19
 #define XNEUR_BUILD_MINOR_VERSION 0
@@ -75,14 +77,14 @@ QString kXneurApp::xNeurConfig::get_bind(int ind)
 {
     QString key;
     key.clear();
-    for (int i = 0; i < TOTAL_MODIFER; ++i)
+    for (int i = 0; i < TOTAL_MODIFIER; ++i)
     {
-        if ((xconfig->hotkeys[ind].modifiers & (0x1 << i)) == 0)
+        if ((xconfig->actions[ind].hotkey.modifiers & (0x1 << i)) == 0)
             continue;
 
         key += QString("%1+").arg(lstModifer.at(i));
     }
-  key+=QString("%1").arg( xconfig->hotkeys[ind].key);
+  key += QString("%1").arg(xconfig->actions[ind].hotkey.key);
   return key;
 }
 
@@ -118,7 +120,7 @@ bool kXneurApp::xNeurConfig::init_libxnconfig()
 
 bool kXneurApp::xNeurConfig::xneurStop()
 {
-
+    //xneur_pid = xconfig->get_pid(xconfig);
     if ( xneur_pid > 0 )
     {
         if ( xconfig->kill(xconfig) )
@@ -152,6 +154,7 @@ bool kXneurApp::xNeurConfig::xneurStart()
             return false;
         }
     }
+    procxNeur->
     procxNeur->start("xneur",QIODevice::ReadWrite);
     xneur_pid = procxNeur->pid();
     if ( xneur_pid > 0 )
@@ -189,10 +192,6 @@ void kXneurApp::xNeurConfig::procxNeurStop(int exitcode, QProcess::ExitStatus ex
 {
   emit setStatusXneur(false);
   qDebug()<<"MSG: xNeur stopped:" << " ExitCode " << exitcode << " ExitStatus " << exitstatus;
-  if(exitstatus >0)
-  {
-      qDebug()<< tr("ERROR: Warning process xNeur crashed, please look log file and inform the author xNeur. Thank You!");
-  }
 }
 
 void kXneurApp::xNeurConfig::procxNeurOutput()
@@ -214,6 +213,7 @@ void kXneurApp::xNeurConfig::clearNeurConfig()
 void kXneurApp::xNeurConfig::saveNeurConfig()
 {
       xconfig->save(xconfig);
+      xconfig->reload(xconfig);
 }
 
 void kXneurApp::xNeurConfig::test(QString str)
@@ -505,73 +505,83 @@ QMap <QString, QString> kXneurApp::xNeurConfig::hot_get_list_command_hotkeys()
 
     QString hot_key;
     QMap <QString, QString> tblHotKey;
-    int sz = lstCommand_hotKey.size();
-    for(int i=0;i<sz; ++i)
+    //int sz = lstCommand_hotKey.size();
+    for(int i = 0; i < xconfig->actions_count; ++i)
     {
-        if(xconfig->hotkeys[i].key!=NULL)
+        if(xconfig->actions[i].hotkey.key!=NULL)
         {
             hot_key = get_bind(i);
-            tblHotKey.insert(lstCommand_hotKey.at(i), hot_key);
+            tblHotKey.insertMulti(lstCommand_hotKey.at(xconfig->actions[i].action), hot_key);
         }
         else
         {
             hot_key="";
-            tblHotKey.insert(lstCommand_hotKey.at(i), hot_key);
+            tblHotKey.insertMulti(lstCommand_hotKey.at(xconfig->actions[i].action), hot_key);
         }
-        qDebug() << lstCommand_hotKey.at(i) << "\t" << hot_key;
+        qDebug() << lstCommand_hotKey.at(xconfig->actions[i].action) << "\t" << hot_key;
     }
-return tblHotKey;
+  return tblHotKey;
 }
 
 void kXneurApp::xNeurConfig::hot_save_list_command_hotkeys(QMap <QString, QString> listHotKey)
 {
+    QMap<QString, QString>::const_iterator action_list = listHotKey.constBegin();
 
-    bool key=false;
-    for(int j=0; j< listHotKey.size();++j)
+    for(int action=0; action < listHotKey.size(); action++)
     {
-        QMap <QString, QString>::const_iterator i = listHotKey.constBegin();
-        while(i!=listHotKey.constEnd())
-        {
-            if (lstCommand_hotKey.at(j)==i.key() && !QString("%1").arg(i.value()).isEmpty())
-            {
-                QStringList lsh_k = QString("%1").arg(i.value()).replace(" ","").split("+");
-                for(int k=0; k<lsh_k.size();++k)
-                {
-                    key=false;
-                    for(int p=0; p<TOTAL_MODIFER;++p)
-                    {
-                        if(lsh_k.at(k)== lstModifer.at(p))
-                        {
-                            key = true;
-                            xconfig->hotkeys[j].modifiers |= (0x1 << p);
-                        }
-                    }
-                    if (key==false)
-                    {
-                        xconfig->hotkeys[j].key =strdup(lsh_k.at(k).toUtf8().data());
-                    }
-                }
+      
+         xconfig->actions = (struct _xneur_action *) realloc(xconfig->actions, (action + 1) * sizeof(struct _xneur_action));
+         memset(&xconfig->actions[action], 0,  sizeof(struct _xneur_action));
+         xconfig->actions[action].hotkey.modifiers = 0;
+
+	 for (int i = 0; i < lstCommand_hotKey.size(); i++)
+	 {
+	    if (lstCommand_hotKey[i] == action_list.key())
+	    {
+		xconfig->actions[action].action = (_hotkey_action)i;
+		
+	    }
+	 }
+
+         QStringList key_stat = QString("%1").arg(action_list.value()).replace(" ","").split("+");
+         for(int i = 0; i < key_stat.size(); i++)
+         {
+             int assigned = false;
+             for(int j = 0; j < TOTAL_MODIFIER; j++)
+             {
+                 if(key_stat.at(i) == lstModifer.at(j))
+                 {
+                     assigned = true;
+                     xconfig->actions[action].hotkey.modifiers |= (0x1 << j);
+		     break;
+                 }
              }
-            ++i;
-        }
+             if (assigned == false)
+             {
+		  xconfig->actions[action].hotkey.key = strdup(key_stat.at(i).toUtf8().data());          
+             }
+         }
+         action_list++;
+	 xconfig->actions_count = action + 1;
+	 //qDebug() << xconfig->actions_count << QString("%1").arg(xconfig->actions[action].action) << QString("%1").arg(xconfig->actions[action].hotkey.key)
+	 //        << QString("%1").arg(xconfig->actions[action].hotkey.modifiers);
     }
 }
 
 QMap<QString, QMap<QString, QString> >  kXneurApp::xNeurConfig::hot_get_list_user_actions()
 {
     QString text;
-    QStringList lstModifer;
     //   hot_key       name act  command act
     QMap<QString, QMap<QString, QString> > lstUserAction;
     QMap<QString, QString> lstNameCmd;
-    lstModifer << "Shift" << "Control" << "Alt" << "Super";
+
     //FIXME: actions_count allways return  zero (0)
-    for (int action = 0; action < xconfig->actions_count; action++)
+    for (int action = 0; action < xconfig->user_actions_count; action++)
     {
         qDebug() << "ACTIONS " << action;
-        for (int i = 0; i < TOTAL_MODIFER; ++i)
+        for (int i = 0; i < TOTAL_MODIFIER; ++i)
         {
-                if ((xconfig->actions[action].hotkey.modifiers & (0x1 << i)) == 0)
+                if ((xconfig->user_actions[action].hotkey.modifiers & (0x1 << i)) == 0)
                 {
                     continue;
                 }
@@ -579,9 +589,9 @@ QMap<QString, QMap<QString, QString> >  kXneurApp::xNeurConfig::hot_get_list_use
                text += QString("%1+").arg(lstModifer.at(i));
                test(text);
         }
-        text += QString("%1").arg(xconfig->actions[action].hotkey.key);
+        text += QString("%1").arg(xconfig->user_actions[action].hotkey.key);
 
-        lstNameCmd.insert(xconfig->actions[action].name,xconfig->actions[action].command);
+        lstNameCmd.insert(xconfig->user_actions[action].name,xconfig->user_actions[action].command);
         lstUserAction.insert(text, lstNameCmd);
         lstNameCmd.clear();
         text="";
@@ -592,48 +602,52 @@ QMap<QString, QMap<QString, QString> >  kXneurApp::xNeurConfig::hot_get_list_use
 void kXneurApp::xNeurConfig::hot_save_list_user_actions(QMap<QString, QMap<QString, QString> > lstActions)
 {
     QMap<QString, QString> tmpCmd;
-    QMap<QString, QMap<QString, QString> >::const_iterator i = lstActions.constBegin();
-    bool key=false;
-    for(int j=0; j < lstActions.size();++j)
+    QMap<QString, QMap<QString, QString> >::const_iterator usr_action_list = lstActions.constBegin();
+
+    for(int action = 0; action < lstActions.size(); action++)
     {
-         xconfig->actions = (struct _xneur_action *) realloc(xconfig->actions, (j + 1) * sizeof(struct _xneur_action));
-         memset(&xconfig->actions[j], 0,  sizeof(struct _xneur_action));
-         xconfig->actions[j].hotkey.modifiers = 0;
-         tmpCmd = i.value();
-         QStringList lsh_k = QString("%1").arg(i.key()).replace(" ","").split("+");
-         for(int k=0; k<lsh_k.size();++k)
+         xconfig->user_actions = (struct _xneur_user_action *) realloc(xconfig->user_actions, (action + 1) * sizeof(struct _xneur_user_action));
+         memset(&xconfig->user_actions[action], 0,  sizeof(struct _xneur_user_action));
+         xconfig->user_actions[action].hotkey.modifiers = 0;
+	
+         tmpCmd = usr_action_list.value();
+	 
+         QStringList key_stat = QString("%1").arg(usr_action_list.key()).replace(" ","").split("+");
+         for(int i = 0; i < key_stat.size(); i++)
          {
 
-             key=false;
-             for(int p=0; p<TOTAL_MODIFER;++p)
+             int assigned = false;
+             for(int j = 0; j < TOTAL_MODIFIER; j++)
              {
-                 if(lsh_k.at(k)== lstModifer.at(p)/* || lsh_k.at(k).endsWith("_L") || lsh_k.at(k).endsWith("_R")*/)
+                 if(key_stat.at(i) == lstModifer.at(j)/* || lsh_k.at(k).endsWith("_L") || lsh_k.at(k).endsWith("_R")*/)
                  {
-                     key = true;
-                     xconfig->actions[j].hotkey.modifiers |= (0x1 << p);
+                     assigned = true;
+                     xconfig->user_actions[action].hotkey.modifiers |= (0x1 << j);
+		     break;
                  }
              }
-             if (key==false)
+             if (assigned == false)
              {
-                 QMap<QString, QString>::const_iterator l = tmpCmd.constBegin();
-                 while(l!=tmpCmd.constEnd())
-                {
-                     xconfig->actions[j].hotkey.key = strdup(lsh_k.at(k).toUtf8().data());
-                     if (!QString("%1").arg(l.value()).isEmpty())
-                     {
-                         xconfig->actions[j].command = strdup(QString("%1").arg(l.value()).toAscii().data());
-                     }
-                     if (!QString("%1").arg(l.key()).isEmpty())
-                     {
-                         xconfig->actions[j].name = strdup(QString("%1").arg(l.key()).toAscii().data());
-                     }
-                    xconfig->actions_count = j + 1;
-                    ++l;
-                 }
-
-             }
+	       xconfig->user_actions[action].hotkey.key = strdup(key_stat.at(i).toUtf8().data());
+               QMap<QString, QString>::const_iterator name_command = tmpCmd.constBegin();
+	       if (!QString("%1").arg(name_command.key()).isEmpty())
+               {
+                    xconfig->user_actions[action].name = strdup (name_command.key().toUtf8().data()) ;//strdup(QString("%1").arg(name_command.key()).toUtf8().data());
+               }
+               if (!QString("%1").arg(name_command.value()).isEmpty())
+               {
+                    xconfig->user_actions[action].command = strdup (name_command.value().toUtf8().data() ); //strdup(QString("%1").arg(name_command.value()).toUtf8().data());
+               }
+	     }
          }
-        ++i;
+         xconfig->user_actions_count = action + 1;
+         usr_action_list++;
+	 //qDebug()  <<action
+	 //<< QString("%1").arg(xconfig->user_actions[action].name)
+	 //<< QString("%1").arg(xconfig->user_actions[action].command) 
+	 //<< QString("%1").arg(xconfig->user_actions[action].hotkey.key)
+	 //<< QString("%1").arg(xconfig->user_actions[action].hotkey.modifiers);
+
     }
 }
 
