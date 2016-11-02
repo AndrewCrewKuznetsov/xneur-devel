@@ -154,7 +154,6 @@ bool kXneurApp::xNeurConfig::xneurStart()
             return false;
         }
     }
-    procxNeur->
     procxNeur->start("xneur",QIODevice::ReadWrite);
     xneur_pid = procxNeur->pid();
     if ( xneur_pid > 0 )
