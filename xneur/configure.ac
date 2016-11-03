@@ -1,25 +1,28 @@
 AC_INIT(xneur, 0.19.0)
-AC_CONFIG_SRCDIR(configure.ac)
-AM_INIT_AUTOMAKE
 
-AC_PREREQ(2.59)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_MACRO_DIR(m4)
+AM_INIT_AUTOMAKE([1.11])
 
-AC_PROG_LIBTOOL
-AC_PROG_INSTALL
+AM_SILENT_RULES([yes])
 
-AC_LANG_C
-AM_PROG_CC_C_O
-AC_PROG_MAKE_SET
+AC_PROG_CC
+AC_PATH_XTRA
 
-AC_HEADER_STDC
+AC_CONFIG_MACRO_DIRS([m4])
 
-PKG_PROG_PKG_CONFIG([0.20])
+AR_FLAGS=cr 
 
-AM_GNU_GETTEXT_VERSION([0.16.1])
-AM_GNU_GETTEXT([external])
+dnl ***************************************************************************
+dnl Internationalization
+dnl ***************************************************************************
+IT_PROG_INTLTOOL([0.35.0])
+GETTEXT_PACKAGE=xneur
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [GETTEXT package name])
+AM_GLIB_GNU_GETTEXT
+
+LT_INIT
 
 AC_CHECK_HEADERS([sys/io.h])
 
@@ -390,3 +393,4 @@ cat <<EOF
 EOF
 	fi
 fi
+

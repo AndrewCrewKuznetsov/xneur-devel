@@ -64,6 +64,7 @@ AddBind RotateLayout
 AddBind ReplaceAbbreviation Control Tab
 AddBind RotateLayoutBack 
 AddBind AutocompletionConfirmation Tab
+AddBind RotateAutocompletion Control Tab
 AddBind BlockKeyboardAndMouseEvents 
 AddBind InsertDate Super d
 

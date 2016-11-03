@@ -1,4 +1,6 @@
-INCLUDES = -DPACKAGE_SYSCONFDIR_DIR=\""@sysconfdir@/xneur"\" -DPACKAGE_SHAREDIR_DIR=\""@datarootdir@/xneur"\"
+AUTOMAKE_OPTIONS = subdir-objects
+
+AM_CPPFLAGS = -DPACKAGE_SYSCONFDIR_DIR=\""@sysconfdir@/xneur"\" -DPACKAGE_SHAREDIR_DIR=\""@datarootdir@/xneur"\"
 
 lib_LTLIBRARIES = libxneur.la
 
@@ -7,7 +9,7 @@ xneur_include_HEADERS = xneur.h
 
 libxneur_la_SOURCES =		\
 	../config/xnconfig_files.c \
-	xneurlib.c	\	
+	xneurlib.c	\
 	xneur.h		
 
 libxneur_la_CFLAGS = -I@top_srcdir@/lib/misc -I@top_srcdir@/lib/main -I@top_srcdir@/lib/ai -I@top_srcdir@/lib/config -I@top_srcdir@/lib/notify  @DEFAULT_CFLAGS@ @X11_CFLAGS@ @ASPELL_CFLAGS@ @ENCHANT_CFLAGS@

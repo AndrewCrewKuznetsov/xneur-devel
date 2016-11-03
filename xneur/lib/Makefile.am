@@ -4,5 +4,4 @@ SUBDIRS =		\
 	main			\
 	ai			\
 	lib			\
-	config			
-
+	config

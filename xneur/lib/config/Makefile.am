@@ -1,4 +1,6 @@
-INCLUDES = -DPACKAGE_SYSCONFDIR_DIR=\""@sysconfdir@/xneur"\" -DPACKAGE_SHAREDIR_DIR=\""@datarootdir@/xneur"\"
+AUTOMAKE_OPTIONS = subdir-objects
+
+AM_CPPFLAGS = -DPACKAGE_SYSCONFDIR_DIR=\""@sysconfdir@/xneur"\" -DPACKAGE_SHAREDIR_DIR=\""@datarootdir@/xneur"\"
 
 lib_LTLIBRARIES = libxnconfig.la
 

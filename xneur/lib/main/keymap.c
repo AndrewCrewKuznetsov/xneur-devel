@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <locale.h>
 
 #include "xnconfig.h"
 
@@ -60,7 +61,7 @@ static const int state_masks[]		= {0x00, 0x01, 0x80, 0x10}; // None, NumLock, Al
 
 static int locale_create(void)
 {
-	char *locale = (char *)setlocale(LC_ALL, "");
+	char *locale = setlocale(LC_ALL, "");
 	if (locale == NULL)
 	{
 		log_message(ERROR, _("Couldn't set default locale"));

@@ -48,10 +48,4 @@ force-update-gmo: check-gettext
 	touch po/*.po
 	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
 
-force-update-gmo-%: check-gettext
-	@language=`echo $@ | sed s/force-update-gmo-//` ; \
-	if test ! -f po/$$language.po ; then echo "file po/$$language.po does not exist" ; exit 1 ; fi ; \
-	touch po/$$language.po ; \
-	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
-
 .PHONY: check-gettext update-po update-gmo force-update-gmo
