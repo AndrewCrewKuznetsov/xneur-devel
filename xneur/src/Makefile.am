@@ -1,4 +1,6 @@
-INCLUDES = 	-DLOCALEDIR=\""@localedir@"\"
+AUTOMAKE_OPTIONS = subdir-objects
+
+AM_CPPFLAGS = 	-DLOCALEDIR=\""@localedir@"\"
 
 bin_PROGRAMS = xneur
 

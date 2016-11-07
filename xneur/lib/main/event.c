@@ -186,7 +186,15 @@ static KeySym event_get_cur_keysym(struct _event *p)
 
 static int event_get_cur_modifiers(struct _event *p)
 {
-	int mask = 0;
+	Window wDummy;
+	int iDummy;
+	unsigned int mask;
+	XQueryPointer(main_window->display,
+				(Window)p->event.xkey.window,
+				&wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+				&mask);
+	mask = mask & (~get_languages_mask ());
+	/*int mask = 0;
 	
 	if (p->event.xkey.state & ShiftMask)  // Shift
 		mask += (1 << 0); // 1
@@ -203,8 +211,8 @@ static int event_get_cur_modifiers(struct _event *p)
 	if (p->event.xkey.state & Mod4Mask)   // Super (Win)
 		mask += (1 << 6); // 64
 	if (p->event.xkey.state & Mod5Mask)   // ISO_Level3_Shift
-		mask += (1 << 7); // 128
-	return mask;
+		mask += (1 << 7); // 128*/
+	return (int)mask;
 }
 
 static int event_get_cur_modifiers_by_keysym(struct _event *p)

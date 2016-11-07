@@ -39,7 +39,7 @@ void unbind_user_actions(void);
 void grab_action(Window window);
 void grab_user_action(Window window);
 
-void grab_action_common(struct _bind_table btaction, Window window, Window strange_window);
+void grab_action_common(struct _bind_table btaction, Window window);
 
 //void ungrab_modifiers(Window window);
 

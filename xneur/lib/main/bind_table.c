@@ -171,9 +171,12 @@ static void bind_user_action(int action)
 enum _hotkey_action get_action(KeySym key_sym, int mask)
 {
 	// Reset Caps and Num mask
-	mask &= ~LockMask;
-	mask &= ~Mod2Mask;
-	mask &= ~Mod3Mask;
+	if (key_sym != XK_Caps_Lock)
+		mask &= ~LockMask;
+	if (key_sym != XK_Num_Lock)
+		mask &= ~Mod2Mask;
+	if (key_sym != XK_Scroll_Lock)
+		mask &= ~Mod3Mask;
 
 	KeyCode kc = XKeysymToKeycode(main_window->display, key_sym);
 	if (IsModifierKey(key_sym))
@@ -199,7 +202,7 @@ enum _hotkey_action get_action(KeySym key_sym, int mask)
 	for (int action = 0; action < xconfig->actions_count; action++)
 	{
 		//log_message (ERROR, "A%d---bt:(%d)%d, ac:(%d)%d", action, btable[action].modifier_mask, btable[action].key_code, mask, kc);
-		//if (btable[action].key_sym != key_sym && ubtable[action].key_sym_shift != key_sym)
+		//if (btable[action].key_sym != key_sym && btable[action].key_sym_shift != key_sym)
 		//	continue;
 		if (btable[action].key_code != kc)
 			continue;
@@ -230,9 +233,12 @@ void unbind_actions(void)
 int get_user_action(KeySym key_sym, int mask)
 {
 	// Reset Caps and Num mask
-	mask &= ~LockMask;
-	mask &= ~Mod2Mask;
-	mask &= ~Mod3Mask;
+	if (key_sym != XK_Caps_Lock)
+		mask &= ~LockMask;
+	if (key_sym != XK_Num_Lock)
+		mask &= ~Mod2Mask;
+	if (key_sym != XK_Scroll_Lock)
+		mask &= ~Mod3Mask;
 
 	KeyCode kc = XKeysymToKeycode(main_window->display, key_sym);
 	if (IsModifierKey(key_sym))
@@ -289,7 +295,7 @@ void grab_action(Window window)
 {
 	for (enum _hotkey_action action = 0; action < MAX_HOTKEYS; action++)
 	{
-		grab_action_common(btable[action],window,DefaultRootWindow (main_window->display));
+		grab_action_common(btable[action],window);
 	}
 }
 
@@ -297,11 +303,11 @@ void grab_user_action(Window window)
 {
 	for (int action = 0; action < xconfig->actions_count; action++)
 	{
-		grab_action_common(ubtable[action],window,window);
+		grab_action_common(ubtable[action],window);
 	}
 }
 
-void grab_action_common(struct _bind_table btaction, Window window, Window strange_window)
+void grab_action_common(struct _bind_table btaction, Window window)
 {
 	if (btaction.key_sym == 0)
 		return;
@@ -348,8 +354,7 @@ void grab_action_common(struct _bind_table btaction, Window window, Window stran
 	if (main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-					strange_window, // Why only here?!
-//					DefaultRootWindow (main_window->display),
+					window,
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)

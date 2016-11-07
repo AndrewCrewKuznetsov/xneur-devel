@@ -536,7 +536,7 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 	p->content[p->cur_pos] = sym;
 	p->keycode[p->cur_pos] = keycode;
 	p->keycode_modifiers[p->cur_pos] = modifier;
-
+	
 	// i18n_content
 	int languages_mask = get_languages_mask();
 	modifier = modifier & (~languages_mask);

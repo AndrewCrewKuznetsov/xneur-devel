@@ -22,7 +22,9 @@
 #endif
 
 #define XK_PUBLISHING
+
 #include <X11/XKBlib.h>
+#include <X11/extensions/XTest.h>
 
 #include <stdlib.h>
 #include <strings.h>
@@ -98,6 +100,17 @@ struct _window *main_window;
 int last_event_type = 0;
 
 // Private
+static void click_key(KeySym keysym) 
+{
+	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
+
+    XTestFakeKeyEvent(main_window->display, keycode, TRUE, 0); // key press event
+    XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
+    XFlush(main_window->display);
+
+    return;
+}
+
 static void toggle_lock(int mask, int state)
 {
 	int xkb_opcode, xkb_event, xkb_error;
@@ -551,7 +564,7 @@ static void program_process_input(struct _program *p)
 				break;
 			}
 			default:
-			{
+			{	
 				Window wDummy;
 				int iDummy;
 				unsigned int mask;
@@ -859,6 +872,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 	if (type == KeyPress)
 	{
 		p->user_action = get_user_action(key, modifier_mask);
+		//log_message (ERROR, " %d", modifier_mask);
 		p->action = get_action(key, modifier_mask);
 		// If blocked events then processing stop
 		if ((p->user_action >= 0) || (p->action != ACTION_NONE) || (xconfig->block_events))
@@ -922,6 +936,34 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 
 		p->plugin->key_release(p->plugin, key, modifier_mask);
 
+		if ((p->user_action >= 0) || (p->action != ACTION_NONE))
+		{
+			unsigned state;
+			XkbGetIndicatorState(main_window->display, XkbUseCoreKbd, &state);
+			if (key == XK_Caps_Lock)
+			{
+				//log_message(ERROR, "	Set Caps to %d", (state & 0x01)?0:1);
+				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
+				//toggle_lock (main_window->keymap->capslock_mask, (state & 0x01)?0:1);
+				click_key (XK_Caps_Lock);
+				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+			}
+			if (key == XK_Num_Lock)
+			{
+				//log_message (ERROR, "Need reset Num");
+				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
+				click_key (XK_Num_Lock);
+				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+			}
+			if (key == XK_Scroll_Lock)
+			{
+				//log_message (ERROR, "Need reset Scroll");
+				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
+				click_key (XK_Scroll_Lock);
+				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+			}
+		}
+		
 		if (p->user_action >= 0)
 		{
 			log_message(LOG, _("Execute user action \"%s\""), xconfig->user_actions[p->user_action].name);

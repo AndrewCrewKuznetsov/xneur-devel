@@ -219,6 +219,14 @@ void grab_all_keys(Window window, int is_grab)
 	{
 		// Ungrab all keys in app window...
 		XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
+
+		XIEventMask mask;
+		mask.deviceid = XIAllMasterDevices;
+		mask.mask_len = XIMaskLen(XI_KeyPress);
+		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+		XISetMask(mask.mask, 0);
+		XISelectEvents(main_window->display, window, &mask, 1);
+		free(mask.mask);
 	}
 	
 	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
