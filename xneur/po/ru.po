@@ -1227,11 +1227,15 @@ msgstr "Получено KeyPress '%s' (тип события %d)"
 msgid "Received KeyRelease '%s' (event type %d)"
 msgstr "Получено KeyRelease '%s' (тип события %d)"
 
-#: lib/main/program1.c:619 lib/main/program1.c:639 lib/main/program.c:619
-#: lib/main/program.c:639
+#: lib/main/program.c:619
 #, c-format
 msgid "Received XI_KeyPress '%s' (event type %d)"
 msgstr "Получено XI_KeyPress '%s' (тип события %d)"
+
+#: lib/main/program.c:639
+#, c-format
+msgid "Received XI_KeyRelease '%s' (event type %d)"
+msgstr "Получено XI_KeyRelease '%s' (тип события %d)"
 
 #: lib/main/program1.c:661 lib/main/program.c:661
 #, c-format
@@ -1399,6 +1403,7 @@ msgid "Program is freed"
 msgstr "Текущие данные программы очищены"
 
 #: lib/main/program.c:914
+#, c-format
 msgid "Execute action \"%s\""
 msgstr "Выполнение действия \"%s\""
 
@@ -1427,7 +1432,8 @@ msgstr "Ошибка BadWindow при %s мыши"
 
 #: lib/main/utils.c:145
 msgid "XGetModifierMapping return NULL. Grabbing modifiers key not changed."
-msgstr "XGetModifierMapping вернула NULL. Перехват клавиш-модификаторов не изменен."
+msgstr ""
+"XGetModifierMapping вернула NULL. Перехват клавиш-модификаторов не изменен."
 
 #: lib/main/window.c:56
 msgid "Can't connect to XServer"
@@ -1458,9 +1464,6 @@ msgstr "Текущие данные окна очищены"
 
 #~ msgid "More than one hotkey specified for action '%s'"
 #~ msgstr "Больше одной горячей клавиши для действия \"%s\""
-
-#~ msgid "Received XI_KeyRelease '%s' (event type %d)"
-#~ msgstr "Получено XI_KeyRelease '%s' (тип события %d)"
 
 #~ msgid "Uncatched event with type %d (see X11/X.h for details)"
 #~ msgstr "Непойманое событие с типом %d (см. X11/X.h для подробностей)"

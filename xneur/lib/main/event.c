@@ -194,24 +194,23 @@ static int event_get_cur_modifiers(struct _event *p)
 				&wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
 				&mask);
 	mask = mask & (~get_languages_mask ());
-	/*int mask = 0;
 	
 	if (p->event.xkey.state & ShiftMask)  // Shift
-		mask += (1 << 0); // 1
+		mask = mask & (1 << 0); // 1
 	if (p->event.xkey.state & LockMask)   // CapsLock
-		mask += (1 << 1); // 2
+		mask = mask & (1 << 1); // 2
 	if (p->event.xkey.state & ControlMask)// Control
-		mask += (1 << 2); // 4
+		mask = mask & (1 << 2); // 4
 	if (p->event.xkey.state & Mod1Mask)   // Alt
-		mask += (1 << 3); // 8
+		mask = mask & (1 << 3); // 8
 	if (p->event.xkey.state & Mod2Mask)   // NumLock
-		mask += (1 << 4); // 16
+		mask = mask & (1 << 4); // 16
 	if (p->event.xkey.state & Mod3Mask)
-		mask += (1 << 5); // 32
+		mask = mask & (1 << 5); // 32
 	if (p->event.xkey.state & Mod4Mask)   // Super (Win)
-		mask += (1 << 6); // 64
+		mask = mask & (1 << 6); // 64
 	if (p->event.xkey.state & Mod5Mask)   // ISO_Level3_Shift
-		mask += (1 << 7); // 128*/
+		mask = mask & (1 << 7); // 128
 	return (int)mask;
 }
 
