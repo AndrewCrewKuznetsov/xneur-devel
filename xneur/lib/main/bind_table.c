@@ -309,6 +309,7 @@ void grab_user_action(Window window)
 
 void grab_action_common(struct _bind_table btaction, Window window)
 {
+	if (window){};
 	if (btaction.key_sym == 0)
 		return;
 
@@ -318,49 +319,49 @@ void grab_action_common(struct _bind_table btaction, Window window)
 	XGrabKey(main_window->display,
 				XKeysymToKeycode(main_window->display, btaction.key_sym),
 				btaction.modifier_mask,
-				window,
+				DefaultRootWindow(main_window->display),
 	         	FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->numlock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->numlock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->capslock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->capslock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->scrolllock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->scrolllock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->numlock_mask && main_window->keymap->scrolllock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->scrolllock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 	if (main_window->keymap->numlock_mask && main_window->keymap->capslock_mask && main_window->keymap->scrolllock_mask)
 			XGrabKey (main_window->display, XKeysymToKeycode(main_window->display, btaction.key_sym),
 					btaction.modifier_mask | main_window->keymap->numlock_mask | main_window->keymap->capslock_mask | main_window->keymap->scrolllock_mask,
-					window,
+					DefaultRootWindow(main_window->display),
 					FALSE, GrabModeAsync, GrabModeAsync);
 
 }

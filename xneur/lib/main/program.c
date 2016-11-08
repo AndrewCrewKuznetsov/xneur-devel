@@ -100,28 +100,6 @@ struct _window *main_window;
 int last_event_type = 0;
 
 // Private
-static void click_key(KeySym keysym) 
-{
-	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
-
-    XTestFakeKeyEvent(main_window->display, keycode, TRUE, 0); // key press event
-    XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
-    XFlush(main_window->display);
-
-    return;
-}
-
-static void toggle_lock(int mask, int state)
-{
-	int xkb_opcode, xkb_event, xkb_error;
-	int xkb_lmaj = XkbMajorVersion;
-	int xkb_lmin = XkbMinorVersion;
-	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
-	{
-		/*int status = */XkbLockModifiers (main_window->display, XkbUseCoreKbd, mask, state);
-		//log_message(TRACE, _("Set lock state: %d %d, status: %d"), mask, state, status);
-	}
-}
 
 static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 {
@@ -601,6 +579,7 @@ static void program_process_input(struct _program *p)
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
+
 							p->event->event = p->event->default_event;
 							p->event->send_next_event(p->event);
 						}

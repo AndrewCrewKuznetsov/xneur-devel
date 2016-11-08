@@ -298,3 +298,26 @@ char* get_wm_class_name(Window window)
 
 	return string;
 }
+
+void click_key(KeySym keysym) 
+{
+	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
+
+    XTestFakeKeyEvent(main_window->display, keycode, TRUE, 0); // key press event
+    XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
+    XFlush(main_window->display);
+
+    return;
+}
+
+void toggle_lock(int mask, int state)
+{
+	int xkb_opcode, xkb_event, xkb_error;
+	int xkb_lmaj = XkbMajorVersion;
+	int xkb_lmin = XkbMinorVersion;
+	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
+	{
+		/*int status = */XkbLockModifiers (main_window->display, XkbUseCoreKbd, mask, state);
+		//log_message(TRACE, _("Set lock state: %d %d, status: %d"), mask, state, status);
+	}
+}

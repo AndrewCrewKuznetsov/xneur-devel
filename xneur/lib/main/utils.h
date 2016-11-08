@@ -22,10 +22,13 @@
 
 #include <X11/XKBlib.h>
 #include <X11/extensions/XInput2.h>
+#include <X11/extensions/XTest.h>
 
 char*  get_wm_class_name(Window window);
 void   grab_button(Window window, int is_grab);
 void   grab_all_keys(Window window, int is_grab);
-unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size); 
+unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size);
+void toggle_lock(int mask, int state);
+void click_key(KeySym keysym);
 
 #endif /* _UTILS_H_ */
