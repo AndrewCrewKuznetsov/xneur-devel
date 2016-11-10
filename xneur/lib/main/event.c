@@ -186,32 +186,38 @@ static KeySym event_get_cur_keysym(struct _event *p)
 
 static int event_get_cur_modifiers(struct _event *p)
 {
+	/*
 	Window wDummy;
 	int iDummy;
-	unsigned int mask;
+	int mask = 0;
+	unsigned int query_mask;
 	XQueryPointer(main_window->display,
 				(Window)p->event.xkey.window,
 				&wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-				&mask);
-	mask = mask & (~get_languages_mask ());
-	
+				&query_mask);
+	mask = query_mask & (~get_languages_mask ());
+	*/
+
+	int mask = 0;
+
 	if (p->event.xkey.state & ShiftMask)  // Shift
-		mask = mask & (1 << 0); // 1
+		mask += (1 << 0); // 1
 	if (p->event.xkey.state & LockMask)   // CapsLock
-		mask = mask & (1 << 1); // 2
+		mask += (1 << 1); // 2
 	if (p->event.xkey.state & ControlMask)// Control
-		mask = mask & (1 << 2); // 4
+		mask += (1 << 2); // 4
 	if (p->event.xkey.state & Mod1Mask)   // Alt
-		mask = mask & (1 << 3); // 8
+		mask += (1 << 3); // 8
 	if (p->event.xkey.state & Mod2Mask)   // NumLock
-		mask = mask & (1 << 4); // 16
+		mask += (1 << 4); // 16
 	if (p->event.xkey.state & Mod3Mask)
-		mask = mask & (1 << 5); // 32
+		mask += (1 << 5); // 32
 	if (p->event.xkey.state & Mod4Mask)   // Super (Win)
-		mask = mask & (1 << 6); // 64
+		mask += (1 << 6); // 64
 	if (p->event.xkey.state & Mod5Mask)   // ISO_Level3_Shift
-		mask = mask & (1 << 7); // 128
-	return (int)mask;
+		mask += (1 << 7); // 128
+	
+	return mask;
 }
 
 static int event_get_cur_modifiers_by_keysym(struct _event *p)

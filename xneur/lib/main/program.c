@@ -570,7 +570,7 @@ static void program_process_input(struct _program *p)
 						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"),
 							        XKeysymToString(key_sym),
 							        type);
-						//log_message(TRACE, _("    Mask %d"), mask);
+						//log_message(TRACE, _("    Mask %d %d"), mask, p->event->event.xkey.state);
 
 						// Save received event
 						p->event->default_event = p->event->event;
@@ -851,7 +851,6 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 	if (type == KeyPress)
 	{
 		p->user_action = get_user_action(key, modifier_mask);
-		//log_message (ERROR, " %d", modifier_mask);
 		p->action = get_action(key, modifier_mask);
 		// If blocked events then processing stop
 		if ((p->user_action >= 0) || (p->action != ACTION_NONE) || (xconfig->block_events))
@@ -892,7 +891,6 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 				}
 			}
 		}
-
 		p->perform_auto_action(p, auto_action);
 	}
 

@@ -42,7 +42,7 @@ if test "x$found_x11" = "xno"; then
 	fi
 
 	X11_CFLAGS="$X_CFLAGS"
-	AC_CHECK_LIB(Xtst, XTestFakeMotionEvent, LIBXTST="-lXtst")
+	AC_CHECK_LIB(Xtst, XTestFakeKeyEvent, LIBXTST="-lXtst")
 	if test "x$LIBXTST" = "x" ; 
 	then
 		echo " **** ERROR **** "
