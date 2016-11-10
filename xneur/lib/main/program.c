@@ -1081,6 +1081,7 @@ static void program_perform_auto_action(struct _program *p, int action)
 				}
 
 				p->last_action = ACTION_NONE;
+				p->correction_action = CORRECTION_NONE;
 
 				p->check_pattern(p);
 
@@ -2494,7 +2495,7 @@ static void program_check_misprint(struct _program *p)
 		//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 		log_message (DEBUG, _("Found a misprint , correction '%s' to '%s'..."), word+offset, possible_word);
-;
+
 		p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
 		int backspaces_count = p->buffer->cur_pos - p->buffer->get_last_word_offset (p->buffer, p->buffer->content, p->buffer->cur_pos) - offset;
