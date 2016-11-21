@@ -16,7 +16,11 @@ AR_FLAGS=cr
 dnl ***************************************************************************
 dnl Internationalization
 dnl ***************************************************************************
-IT_PROG_INTLTOOL([0.35.0])
+m4_ifdef([IT_PROG_INTLTOOL],[
+IT_PROG_INTLTOOL([0.35.0])],[
+AC_MSG_ERROR("You need to install intltool in order to build gxneur. Install intltool and run ./autogen.sh again.")
+])
+
 GETTEXT_PACKAGE=gxneur
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [GETTEXT package name])
