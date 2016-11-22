@@ -49,6 +49,7 @@ libtool
 ltmain.sh
 missing
 xneur/src/xneur
+gxneur/src/gxneur
 xnconfig.pc
 xneur.pc
 
