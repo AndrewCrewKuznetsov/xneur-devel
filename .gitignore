@@ -22,6 +22,9 @@ Makefile.in
 *.a
 *.la
 
+# Translate binary files
+*.gmo
+
 # autom4te cache
 autom4te.cache
 

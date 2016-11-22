@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2012 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -25,7 +25,7 @@
 #include <X11/extensions/XTest.h>
 
 char*  get_wm_class_name(Window window);
-void   grab_button(Window window, int is_grab);
+void   grab_button(int is_grab);
 void   grab_all_keys(Window window, int is_grab);
 unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size);
 void toggle_lock(int mask, int state);

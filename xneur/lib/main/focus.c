@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2013 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -223,13 +223,13 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 
 	if ((mode == LISTEN_DONTGRAB_INPUT) || (p->last_focus == FOCUS_EXCLUDED))
 	{
-		grab_button(p->parent_window, FALSE);
+		grab_button(FALSE);
 		grab_all_keys(p->owner_window, FALSE);
 	}
 	else
 	{
 		if (xconfig->tracking_mouse)
-			grab_button(p->parent_window, TRUE);
+			grab_button(TRUE);
 		grab_all_keys(p->owner_window, TRUE);
 	}
 	

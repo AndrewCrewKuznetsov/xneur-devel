@@ -1,4 +1,4 @@
-AC_INIT(gxneur, 0.19.0)
+AC_INIT(gxneur, 0.20.0)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -28,8 +28,8 @@ AM_GLIB_GNU_GETTEXT
 
 LT_INIT
 
-PKG_CHECK_MODULES(XNEURCONF, [xnconfig = 0.19.0])
-PKG_CHECK_MODULES(XNEURLIB, [xneur = 0.19.0])
+PKG_CHECK_MODULES(XNEURCONF, [xnconfig = 0.20.0])
+PKG_CHECK_MODULES(XNEURLIB, [xneur = 0.20.0])
 
 PKG_CHECK_MODULES(X11, [x11 >= 1.1], found_x11="yes", found_x11="no")
 if test "x$found_x11" = "xno"; then

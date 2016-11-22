@@ -2,13 +2,13 @@ Source: gxneur
 Section: x11
 Priority: optional
 Maintainer: Alexander GQ Gerasiov <gq@debian.org>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, pkg-config, libgtk2.0-dev, libxneur-dev (>= 0.19.0), libtool, docbook-to-man, libgconf2-dev, libappindicator-dev
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, pkg-config, libgtk2.0-dev, libxneur-dev (>= 0.20.0), libtool, docbook-to-man, libgconf2-dev, libappindicator-dev
 Standards-Version: 3.8.4
 Homepage: http://xneur.ru
 
 Package: gxneur
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, xneur (>= 0.19.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}, xneur (>= 0.20.0)
 Description: GTK+ frontend for xneur keyboard layout switcher
  gXNeur runs in system tray and shows XNeur's state. It also allows to configure
  XNeur via GUI dialog.

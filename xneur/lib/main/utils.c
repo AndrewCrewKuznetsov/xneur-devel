@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2013 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -33,7 +33,7 @@
 
 #define MAXSTR 10000
 
-static const char *grab_ungrab[2] = {"ungrab", "grab"};
+//static const char *grab_ungrab[2] = {"ungrab", "grab"};
 
 const KeySym mod_keys[] =	{
 					XK_Shift_L, XK_Shift_R, XK_Caps_Lock,
@@ -94,45 +94,28 @@ static Window find_window_with_atom(Window window, Atom atom)
 	return None;
 }
 
-void grab_button(Window window, int is_grab)
+void grab_button(int is_grab)
 {
-	int status;
-	if (window) {};
-    // Закоментировано, т.к. в KDE такой перехват вызывает блок системного меню и системных кнопок окна
-	//int xi_opcode, event, error;
-
-    //if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error)) 
-	//{
-	//	log_message(WARNING, _("X Input extension not available."));
-		if (is_grab)
-		{
-			status = XGrabButton(main_window->display, Button1, AnyModifier, DefaultRootWindow(main_window->display), FALSE, ButtonPressMask/*|ButtonReleaseMask*/, GrabModeSync, GrabModeAsync, None, None);
-			XSync (main_window->display, FALSE);
-		}
-		else
-			status = XUngrabButton(main_window->display, AnyButton, AnyModifier, DefaultRootWindow(main_window->display));
-		
-		if (status == BadCursor)
-			log_message(ERROR, _("Failed to %s mouse with error BadCursor"), grab_ungrab[is_grab]);
-		else if (status == BadValue)
-			log_message(ERROR, _("Failed to %s mouse with error BadValue"), grab_ungrab[is_grab]);
-		else if (status == BadWindow)
-			log_message(ERROR, _("Failed to %s mouse with error BadWindow"), grab_ungrab[is_grab]);
-
-		return;
-    //}
-	
-	//XIEventMask mask;
-	//mask.deviceid = XIAllDevices;
-	//mask.mask_len = XIMaskLen(XI_ButtonPress);
-	//mask.mask = calloc(mask.mask_len, sizeof(char));
-	//if (is_grab)
-	//{
-	//	XISetMask(mask.mask, XI_ButtonPress);
-	//}
-    //XISelectEvents(main_window->display, window, &mask, 1);
-
-    //free(mask.mask);	
+	if (is_grab)
+	{
+		XIEventMask mask;
+		mask.deviceid = XIAllMasterDevices;
+		mask.mask_len = XIMaskLen(XI_RawButtonPress);
+		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+		XISetMask(mask.mask, XI_RawButtonPress);
+		XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
+		free(mask.mask);
+	}
+	else
+	{
+		XIEventMask mask;
+		mask.deviceid = XIAllMasterDevices;
+		mask.mask_len = XIMaskLen(XI_RawButtonPress);
+		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+		XISetMask(mask.mask, 0);
+		XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
+		free(mask.mask);
+	}
 }
 
 void grab_modifier_keys(Window window, int is_grab)
@@ -197,18 +180,10 @@ void grab_all_keys(Window window, int is_grab)
 		XIEventMask mask;
 		mask.deviceid = XIAllMasterDevices;
 		mask.mask_len = XIMaskLen(XI_KeyPress)+
-						XIMaskLen(XI_KeyRelease)+
-						XIMaskLen(XI_FocusIn)+
-						XIMaskLen(XI_FocusOut)+
-						XIMaskLen(XI_Enter)+
-						XIMaskLen(XI_Leave);
+						XIMaskLen(XI_KeyRelease);
 		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
 		XISetMask(mask.mask, XI_KeyPress);
 		XISetMask(mask.mask, XI_KeyRelease);
-		XISetMask(mask.mask, XI_FocusIn);
-		XISetMask(mask.mask, XI_FocusOut);
-		XISetMask(mask.mask, XI_Enter);
-		XISetMask(mask.mask, XI_Leave);
 		XISelectEvents(main_window->display, window, &mask, 1);
 		free(mask.mask);
 

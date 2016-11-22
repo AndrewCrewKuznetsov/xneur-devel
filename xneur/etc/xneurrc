@@ -65,7 +65,6 @@ AddBind ReplaceAbbreviation Shift Tab
 AddBind RotateLayoutBack 
 AddBind AutocompletionConfirmation Tab
 AddBind RotateAutocompletion Control Tab
-AddBind BlockKeyboardAndMouseEvents 
 AddBind InsertDate Super d
 
 # This option add user action when pressed key bind

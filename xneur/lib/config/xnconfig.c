@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2013 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -41,7 +41,7 @@
 
 #include "xnconfig.h"
 
-#define LIBRARY_VERSION_MAJOR		19
+#define LIBRARY_VERSION_MAJOR		20
 #define LIBRARY_VERSION_MINOR		0
 #define OPTIONS_DELIMETER		" "
 
@@ -81,7 +81,7 @@ static const char *action_names[] =	{
 						"ChangeClipboard", "TranslitClipboard", "ChangecaseClipboard", "PreviewChangeClipboard",
 						"EnableLayout1", "EnableLayout2", "EnableLayout3", "EnableLayout4",
 						"RotateLayout","RotateLayoutBack","ReplaceAbbreviation", "AutocompletionConfirmation",
-						"RotateAutocompletion", "BlockKeyboardAndMouseEvents", "InsertDate"
+						"RotateAutocompletion", "InsertDate"
 					};
 static const char *notify_names[] =	{
 						"XneurStart", "XneurReload", "XneurStop",
@@ -95,7 +95,7 @@ static const char *notify_names[] =	{
 						"CorrectTwoSpaceWithCommaAndSpace", "CorrectTwoMinusWithDash", "CorrectCWithCopyright",
 						"CorrectTMWithTrademark", "CorrectRWithRegistered", "CorrectThreePointsWithEllipsis",
 						"CorrectMisprint",
-						"ExecuteUserAction","BlockKeyboardAndMouseEvents", "UnblockKeyboardAndMouseEvents"
+						"ExecuteUserAction", "UnblockKeyboardAndMouseEvents"
 					};
 
 pid_t getsid(pid_t pid);

@@ -9,7 +9,7 @@ Homepage: http://xneur.ru
 Package: xneur
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: gxneur (>=0.19) | kdeneur (>=0.19), xsel
+Recommends: gxneur (>=0.20) | kdeneur (>=0.20), xsel
 Suggests: myspell-en-us | myspell-en-gb | aspell-en | aspell-dictionary
 Description: in-place conversion of text typed in with a wrong keyboard layout
  When users work in multilingual environment (e.g. Russian+English), they

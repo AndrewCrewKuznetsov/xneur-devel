@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2012 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -46,7 +46,7 @@ static const char *normal_action_names[] =	{
 	                                    "Correct clipboard text", "Transliterate clipboard text", "Change case of clipboard text", "Preview correction of clipboard text",
 										"Switch to layout 1", "Switch to layout 2", "Switch to layout 3", "Switch to layout 4",
 		                                "Rotate layouts", "Rotate layouts back", "Expand abbreviations", "Autocompletion confirmation",
-										"Rotate autocompletion", "Block/Unblock keyboard and mouse events", "Insert date"
+										"Rotate autocompletion", "Insert date"
 						};
 
 static const char *modifier_names[] =	{"Shift", "Control", "Alt", "Super"};

@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2013 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -90,7 +90,7 @@ static const char *normal_action_names[] =	{
 	                                    "Correct clipboard text", "Transliterate clipboard text", "Change case of clipboard text", "Preview correction of clipboard text",
 										"Switch to layout 1", "Switch to layout 2", "Switch to layout 3", "Switch to layout 4",
 		                                "Rotate layouts", "Rotate layouts back", "Expand abbreviations", "Autocompletion confirmation",
-										"Rotate autocompletion", "Block/Unblock keyboard and mouse events", "Insert date"
+										"Rotate autocompletion", "Insert date"
 						};
 
 extern struct _xneur_config *xconfig;
@@ -368,54 +368,6 @@ static void program_process_input(struct _program *p)
 				log_message(TRACE, _("Received SelectionRequest (event type %d)"), p->event->event.xselectionrequest.requestor, type);
 				break;
 			}
-			case ButtonPress:
-			{
-				// Clear buffer only when clicked left button
-				if (p->event->event.xbutton.button == Button1)
-				{
-					p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-					p->correction_buffer->clear(p->correction_buffer);
-					p->correction_action = ACTION_NONE;
-					log_message(TRACE, _("Received Button%dPress on window %d with subwindow %d (event type %d)"), p->event->event.xbutton.button, p->event->event.xbutton.window, p->event->event.xbutton.subwindow, type);
-				}
-
-				if (xconfig->block_events)
-				{
-					XAllowEvents(main_window->display, AsyncPointer, CurrentTime);
-					break;
-				}
-
-				XAllowEvents(main_window->display, ReplayPointer, CurrentTime);
-
-				if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
-				{
-					p->update(p);
-				}
-
-				break;
-			}
-			case ButtonRelease:
-			{
-				// Clear buffer only when clicked left button
-				if (p->event->event.xbutton.button == Button1)
-				{
-					p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-					p->correction_buffer->clear(p->correction_buffer);
-					p->correction_action = ACTION_NONE;
-				}
-
-				log_message(TRACE, _("Received Button%dRelease on window %d with subwindow %d (event type %d)"), p->event->event.xbutton.button, p->event->event.xbutton.window, type);
-
-				if (xconfig->block_events)
-				{
-					XAllowEvents(main_window->display, AsyncPointer, CurrentTime);
-					break;
-				}
-
-				//p->update(p);
-
-				XAllowEvents(main_window->display, ReplayPointer, CurrentTime);
-			}
 			case PropertyNotify:
 			{
 				if (XInternAtom(main_window->display, "XKLAVIER_STATE", FALSE) == p->event->event.xproperty.atom)
@@ -555,11 +507,6 @@ static void program_process_input(struct _program *p)
 				{
 					if (type == KeyPress)
 					{
-						if (xconfig->block_events)
-						{
-							XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
-						}
-
 						KeySym key_sym = p->event->get_cur_keysym(p->event);
 
 						XQueryPointer(main_window->display,
@@ -586,11 +533,6 @@ static void program_process_input(struct _program *p)
 					}
 					else if (type == KeyRelease)
 					{
-						if (xconfig->block_events)
-						{
-							XAllowEvents(main_window->display, AsyncKeyboard, CurrentTime);
-						}
-
 						KeySym key_sym = p->event->get_cur_keysym(p->event);
 
 						XQueryPointer(main_window->display,
@@ -660,11 +602,11 @@ static void program_process_input(struct _program *p)
 
 						break;
 					}
-					case XI_ButtonPress:
+					case XI_RawButtonPress:
 					{
 						// Clear buffer only when clicked left button
-						if (xi_event->detail == 1)
-						{
+						//if (xi_event->detail == 1)
+						//{
 							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 							p->correction_buffer->clear(p->correction_buffer);
 							p->correction_action = ACTION_NONE;
@@ -672,8 +614,8 @@ static void program_process_input(struct _program *p)
 							{
 								p->update(p);
 							}
-							log_message(TRACE, _("Received XI_ButtonPress (event type %d, subtype %d)"), type, xi_event->evtype);
-						}
+							log_message(TRACE, _("Received XI_ButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
+						//}
 						break;
 					}
 				}
@@ -853,7 +795,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 		p->user_action = get_user_action(key, modifier_mask);
 		p->action = get_action(key, modifier_mask);
 		// If blocked events then processing stop
-		if ((p->user_action >= 0) || (p->action != ACTION_NONE) || (xconfig->block_events))
+		if ((p->user_action >= 0) || (p->action != ACTION_NONE))
 		{
 			p->event->default_event.xkey.keycode = 0;
 			return;
@@ -897,19 +839,6 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 	if (type == KeyRelease)
 	{
 		p->user_action = get_user_action(key, modifier_mask);
-
-		// If blocked events then processing stop
-		if (xconfig->block_events)
-		{
-			p->event->default_event.xkey.keycode = 0;
-			if (p->action == ACTION_BLOCK_EVENTS)
-			{
-				p->perform_action(p, p->action);
-
-				p->action = ACTION_NONE;
-			}
-			return;
-		}
 
 		p->plugin->key_release(p->plugin, key, modifier_mask);
 
@@ -1381,25 +1310,6 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 			int modifier_mask =  p->event->get_cur_modifiers(p->event);
 			p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
-
-			break;
-		}
-		case ACTION_BLOCK_EVENTS:
-		{
-			p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-			p->correction_buffer->clear(p->correction_buffer);
-
-			p->event->default_event.xkey.keycode = 0;
-			xconfig->block_events = !xconfig->block_events;
-			if (xconfig->block_events)
-			{
-				show_notify(NOTIFY_BLOCK_EVENTS, NULL);
-			}
-			else
-			{
-				show_notify(NOTIFY_UNBLOCK_EVENTS, NULL);
-			}
-			log_message (DEBUG, _("Now keyboard and mouse block status is %s"), _(xconfig->get_bool_name(xconfig->block_events)));
 
 			break;
 		}

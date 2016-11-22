@@ -1181,15 +1181,21 @@ msgstr "Получено SelectionNotify (тип события %d)"
 msgid "Received SelectionRequest (event type %d)"
 msgstr "Получено SelectionRequest (тип события %d)"
 
-#: lib/main/program1.c:388 lib/main/program.c:388
+#: lib/main/program.c:379
 #, c-format
-msgid "Received Button%dPress on window %d with subwindow %d (event type %d)"
-msgstr "Получено Button%dPress в окне %d с подокном %d (тип события %d)"
+msgid ""
+"Received ButtonPress (button %d) on window %d with subwindow %d (event type "
+"%d)"
+msgstr ""
+"Получено ButtonPress (клавиша %d) в окне %d с подокном %d (тип события %d)"
 
-#: lib/main/program1.c:416 lib/main/program.c:416
+#: lib/main/program.c:405
 #, c-format
-msgid "Received Button%dRelease on window %d with subwindow %d (event type %d)"
-msgstr "Получено Button%dRelease в окне %d с подокном %d (тип события %d)"
+msgid ""
+"Received ButtonRelease (button %d) on window %d with subwindow %d (event "
+"type %d)"
+msgstr ""
+"Получено ButtonRelease (клавиша %d) в окне %d с подокном %d (тип события %d)"
 
 #: lib/main/program1.c:432 lib/main/program.c:432
 #, c-format
@@ -1227,10 +1233,10 @@ msgstr "Получено KeyPress '%s' (тип события %d)"
 msgid "Received KeyRelease '%s' (event type %d)"
 msgstr "Получено KeyRelease '%s' (тип события %d)"
 
-#: lib/main/program.c:619
+#: lib/main/program.c:675
 #, c-format
-msgid "Received XI_KeyPress '%s' (event type %d)"
-msgstr "Получено XI_KeyPress '%s' (тип события %d)"
+msgid "Received XI_ButtonPress (button %d) (event type %d, subtype %d)"
+msgstr "Получено XI_ButtonPress (клавиша %d) (тип события %d, подтип %d)"
 
 #: lib/main/program.c:639
 #, c-format
@@ -1455,6 +1461,9 @@ msgstr "Создано основное окно с id %d"
 #: lib/main/window.c:169
 msgid "Window is freed"
 msgstr "Текущие данные окна очищены"
+
+#~ msgid "Received XI_KeyPress '%s' (event type %d)"
+#~ msgstr "Получено XI_KeyPress '%s' (тип события %d)"
 
 #~ msgid "Argument number mismatch for ExcludeLanguage option"
 #~ msgstr "Несовпаденние числа аргументов для опции ExcludeLanguage"

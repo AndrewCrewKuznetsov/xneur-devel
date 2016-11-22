@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2013 XNeur Team
+ *  Copyright (C) 2006-2016 XNeur Team
  *
  */
 
@@ -29,8 +29,8 @@
 #define CACHEDIR			".cache"
 #define LOCK_NAME			"lock"
 
-#define MAX_NOTIFIES		38
-#define MAX_HOTKEYS			24
+#define MAX_NOTIFIES		37
+#define MAX_HOTKEYS			23
 
 #include <sys/types.h>
 #define XK_PUBLISHING
@@ -71,7 +71,7 @@ enum _notify_action
 	NOTIFY_ENABLE_LAYOUT_0,
 	NOTIFY_ENABLE_LAYOUT_1,
 	NOTIFY_ENABLE_LAYOUT_2,
-	NOTIFY_ENABLE_LAYOUT_3,
+	NOTIFY_ENABLE_LAYOUT_3 = 10,
 	NOTIFY_AUTOMATIC_CHANGE_WORD,
 	NOTIFY_MANUAL_CHANGE_WORD,
 	NOTIFY_MANUAL_TRANSLIT_WORD,
@@ -81,7 +81,7 @@ enum _notify_action
 	NOTIFY_CHANGE_SELECTED,
 	NOTIFY_TRANSLIT_SELECTED,
 	NOTIFY_CHANGECASE_SELECTED,
-	NOTIFY_PREVIEW_CHANGE_SELECTED,
+	NOTIFY_PREVIEW_CHANGE_SELECTED = 20,
 	NOTIFY_CHANGE_CLIPBOARD,
 	NOTIFY_TRANSLIT_CLIPBOARD,
 	NOTIFY_CHANGECASE_CLIPBOARD,
@@ -91,15 +91,13 @@ enum _notify_action
 	NOTIFY_CORR_TWO_CAPITAL_LETTER,
 	NOTIFY_CORR_TWO_SPACE,
 	NOTIFY_CORR_TWO_MINUS,
-	NOTIFY_CORR_COPYRIGHT,
+	NOTIFY_CORR_COPYRIGHT = 30,
 	NOTIFY_CORR_TRADEMARK,
 	NOTIFY_CORR_REGISTERED,
 	NOTIFY_CORR_ELLIPSIS,
 	NOTIFY_CORR_MISPRINT,
 	NOTIFY_EXEC_USER_ACTION,
-	NOTIFY_BLOCK_EVENTS,
-	NOTIFY_UNBLOCK_EVENTS,
-	NOTIFY_NONE,
+	NOTIFY_NONE = 36,
 };
 
 enum _hotkey_action
@@ -114,7 +112,7 @@ enum _hotkey_action
 	ACTION_CHANGECASE_SELECTED,
 	ACTION_PREVIEW_CHANGE_SELECTED,
 	ACTION_CHANGE_CLIPBOARD,
-	ACTION_TRANSLIT_CLIPBOARD,
+	ACTION_TRANSLIT_CLIPBOARD = 10,
 	ACTION_CHANGECASE_CLIPBOARD,
 	ACTION_PREVIEW_CHANGE_CLIPBOARD,
 	ACTION_ENABLE_LAYOUT_0,
@@ -124,11 +122,10 @@ enum _hotkey_action
 	ACTION_ROTATE_LAYOUT,
 	ACTION_ROTATE_LAYOUT_BACK,
 	ACTION_REPLACE_ABBREVIATION,
-	ACTION_AUTOCOMPLETION,
+	ACTION_AUTOCOMPLETION = 20,
 	ACTION_ROTATE_AUTOCOMPLETION,
-	ACTION_BLOCK_EVENTS,
 	ACTION_INSERT_DATE,
-	ACTION_NONE,
+	ACTION_NONE=23,
 };
 
 enum _change_action
@@ -256,8 +253,6 @@ struct _xneur_config
 	int   flush_buffer_when_press_enter;		// Flush internal buffer when pressed Enter or Tab
 	int   check_lang_on_process;			// Check lang on input process
 	int   disable_capslock;				// Disable CapsLock use
-
-	int   block_events;					// Block all events (keyboard and mouse)
 
 	int   autocompletion;			// Save pattern and mining
 	int   add_space_after_autocompletion;

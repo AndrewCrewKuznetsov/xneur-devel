@@ -71,7 +71,7 @@ void xneur_edit_rule(GtkWidget *treeview);
 void xneur_edit_dictionary(GtkWidget *treeview);
 
 #define MAX_LANGUAGES			4
-#define XNEUR_NEEDED_MAJOR_VERSION	19
+#define XNEUR_NEEDED_MAJOR_VERSION	20
 #define XNEUR_BUILD_MINOR_VERSION	0
 	
 struct _xneur_config *xconfig				= NULL;
@@ -113,17 +113,17 @@ static const char *notify_names[]			=   {
 										"Correct two minus with a dash", "Correct (c) with a copyright sign", "Correct (tm) with a trademark sign",
 										"Correct (r) with a registered sign", "Correct three points with a ellipsis sign", 
 										"Correct misprint",
-										"Execute user action", "Block keyboard and mouse events", "Unblock keyboard and mouse events"
+										"Execute user action"
 										};
 
 static const char *action_names[]			=   {
-										"Correct/Undo correction", "Transliterate", "Change case", "Preview correction", 
-										"Correct last line",  
-										"Correct selected text", "Transliterate selected text", "Change case of selected text", "Preview correction of selected text",
-	                                    "Correct clipboard text", "Transliterate clipboard text", "Change case of clipboard text", "Preview correction of clipboard text",
-										"Switch to layout 1", "Switch to layout 2", "Switch to layout 3", "Switch to layout 4",
-		                                "Rotate layouts", "Rotate layouts back", "Expand abbreviations", "Autocompletion confirmation", 
-										"Rotate autocompletion", "Block/Unblock keyboard and mouse events", "Insert date"
+										"Correct/Undo correction", "Transliterate", "Change case", "Preview correction",//4 
+										"Correct last line",  //5
+										"Correct selected text", "Transliterate selected text", "Change case of selected text", "Preview correction of selected text", //9
+	                                    "Correct clipboard text", "Transliterate clipboard text", "Change case of clipboard text", "Preview correction of clipboard text", //13
+										"Switch to layout 1", "Switch to layout 2", "Switch to layout 3", "Switch to layout 4", //17
+		                                "Rotate layouts", "Rotate layouts back", "Expand abbreviations", "Autocompletion confirmation", //21
+										"Rotate autocompletion", "Insert date" //23
                                         };
 
 static const int total_notify_names = sizeof(notify_names) / sizeof(notify_names[0]);

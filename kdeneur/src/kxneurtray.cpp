@@ -136,7 +136,7 @@ void kXneurApp::kXneurTray::setTrayIconFlags(QString lang)
     }break;
     case ICON:
         trayIcon->setIcon(QIcon(":/icons/kdeneur.png"));
-        qDebug() << "Not found icon for " << lang << " language!";
+        qDebug() << "Show App Icon!";
         break;
     }
 }

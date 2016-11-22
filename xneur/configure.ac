@@ -1,4 +1,4 @@
-AC_INIT(xneur, 0.19.0)
+AC_INIT(xneur, 0.20.0)
 
 AC_CONFIG_HEADERS([config.h])
 

@@ -25,7 +25,7 @@ extern "C"
 #define MAX_LANGUAGES 4
 #define TOTAL_MODIFIER 4
 #define LANGUAGES_DIR "languages"
-#define XNEUR_NEEDED_MAJOR_VERSION 19
+#define XNEUR_NEEDED_MAJOR_VERSION 20
 #define XNEUR_BUILD_MINOR_VERSION 0
 //#define XNEUR_PLUGIN_DIR "/usr/lib/xneur"
 
@@ -56,15 +56,14 @@ kXneurApp::xNeurConfig::xNeurConfig(QObject *parent) :  QObject(parent)
                 << tr( "Change case of clipboard text") << tr("Preview correction of clipboard text") << tr("Expand abbreviations") << tr("Correct aCCIDENTAL caps")
                 << tr( "Correct TWo INitial caps") << tr("Correct two space with a comma and a space") << tr("Correct two minus with a dash")
                 << tr( "Correct (c) with a copyright sign") << tr("Correct (tm) with a trademark sign") << tr("Correct (r) with a registered sign")
-                << tr( "Correct three points with a ellipsis sign") << tr("Execute user action") << tr("Block keyboard and mouse events")
-                << tr( "Unblock keyboard and mouse events");
+                << tr( "Correct three points with a ellipsis sign") << tr("Execute user action");
 
     lstCommand_hotKey << tr("Correct/Undo correction") << tr("Transliterate") << tr("Change case") << tr("Preview correction") << tr("Correct last line")
                << tr("Correct selected text") << tr("Transliterate selected text") << tr("Change case of selected text") << tr("Preview correction of selected text")
                << tr("Correct clipboard text") << tr("Transliterate clipboard text") << tr("Change case of clipboard text") << tr("Preview correction of clipboard text")
                << tr("Switch to layout 1") << tr("Switch to layout 2") << tr("Switch to layout 3") << tr("Switch to layout 4")
                << tr("Rotate layouts") << tr("Rotate layouts back") << tr("Expand abbreviations") << tr("Autocompletion confirmation")
-               << tr("Rotate autocompletion") << tr("Block/Unblock keyboard and mouse events") << tr("Insert date");
+               << tr("Rotate autocompletion") << tr("Insert date");
      lstModifer << "Shift" << "Control" << "Alt" << "Super";
 
 }

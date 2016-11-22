@@ -1100,14 +1100,18 @@ msgstr ""
 msgid "Received SelectionRequest (event type %d)"
 msgstr ""
 
-#: lib/main/program1.c:388 lib/main/program.c:388
+#: lib/main/program.c:379
 #, c-format
-msgid "Received Button%dPress on window %d with subwindow %d (event type %d)"
+msgid ""
+"Received ButtonPress (button %d) on window %d with subwindow %d (event type "
+"%d)"
 msgstr ""
 
-#: lib/main/program1.c:416 lib/main/program.c:416
+#: lib/main/program.c:405
 #, c-format
-msgid "Received Button%dRelease on window %d with subwindow %d (event type %d)"
+msgid ""
+"Received ButtonRelease (button %d) on window %d with subwindow %d (event "
+"type %d)"
 msgstr ""
 
 #: lib/main/program1.c:432 lib/main/program.c:432
@@ -1145,9 +1149,9 @@ msgstr ""
 msgid "Received KeyRelease '%s' (event type %d)"
 msgstr ""
 
-#: lib/main/program.c:619
+#: lib/main/program.c:675
 #, c-format
-msgid "Received XI_KeyPress '%s' (event type %d)"
+msgid "Received XI_ButtonPress (button %d) (event type %d, subtype %d)"
 msgstr ""
 
 #: lib/main/program.c:639
