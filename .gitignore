@@ -25,6 +25,9 @@ Makefile.in
 # Translate binary files
 *.gmo
 
+# Hidden files
+.*
+
 # autom4te cache
 autom4te.cache
 
