@@ -265,7 +265,6 @@ static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_l
 		}
 
 		log_message(DEBUG, _("   [+] This word has no hits for %s language proto of size %d"), handle->languages[lang].name, proto_len);
-		return lang;
 	}
 
 	log_message(DEBUG, _("   [-] This word has hits in all languages proto of size %d"), proto_len);
