@@ -647,8 +647,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 			if (p->osds[osd].file == NULL)
 				p->osds[osd].enabled = FALSE;
 
-			if (tmp != NULL)
-				free(tmp);
+			free(tmp);
 
 			break;
 		}
@@ -706,8 +705,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 			if (p->popups[popup].file == NULL)
 				p->popups[popup].enabled = FALSE;
 
-			if (tmp != NULL)
-				free(tmp);
+			free(tmp);
 
 			break;
 		}
@@ -736,8 +734,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 		}
 		case 36: // Log Size
 		{
-			if (param != NULL)
-			  p->size_keyboard_log = atoi (param);
+			p->size_keyboard_log = atoi (param);
 			break;
 		}
 		case 37: // Log E-Mail
@@ -1272,8 +1269,7 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 		return -1;
 	snprintf(ps_command, 1024, "ps -p %d | grep xneur", process_id);
 	FILE *fp = popen(ps_command, "r");
-	if (ps_command != NULL)
-		free (ps_command);
+	free (ps_command);
 	if (fp != NULL)
 	{
 		char buffer[1024];
@@ -1335,13 +1331,11 @@ static int xneur_config_save(struct _xneur_config *p)
 	if (stream == NULL)
 	{
 		log_message(ERROR, _("Can't create file %s"), config_file_path_name);
-		if (config_file_path_name != NULL)
-			free(config_file_path_name);
+		free(config_file_path_name);
 		return FALSE;
 	}
 
-	if (config_file_path_name != NULL)
-		free(config_file_path_name);
+	free(config_file_path_name);
 
 	fprintf(stream, "# It's a X Neural Switcher configuration file by XNeur\n# All values writted XNeur\n\n");
 

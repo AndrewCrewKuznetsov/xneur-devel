@@ -118,8 +118,7 @@ struct _xneur_handle *xneur_handle_create (void)
 
 	if (!(kbd_desc_ptr = XkbAllocKeyboard()))
 	{
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 	
@@ -140,8 +139,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 
@@ -156,8 +154,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 
@@ -166,8 +163,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 	Window rw = RootWindow(display, DefaultScreen(display));
@@ -187,8 +183,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 	
@@ -204,8 +199,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 	
@@ -219,8 +213,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		{
 			XCloseDisplay(display);
 			XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-			if (handle != NULL)
-				free(handle);
+			free(handle);
 			return NULL;
 		}
 
@@ -237,8 +230,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		if (handle != NULL)
-			free(handle);
+		free(handle);
 		return NULL;
 	}
 	//log_message(ERROR, "%s", 
@@ -408,8 +400,7 @@ struct _xneur_handle *xneur_handle_create (void)
 				if (enchant_broker_dict_exists(handle->enchant_broker, dict_name) == FALSE)
 				{
 					handle->has_enchant_checker[lang] = 0;
-					if (dict_name != NULL)
-						free(dict_name);
+					free(dict_name);
 					continue;
 				}
 			}
@@ -418,8 +409,7 @@ struct _xneur_handle *xneur_handle_create (void)
 			handle->enchant_dicts[lang] = enchant_broker_request_dict (handle->enchant_broker, dict_name);
 			handle->has_enchant_checker[lang] = 1;
 
-			if (dict_name != NULL)
-				free(dict_name);
+			free(dict_name);
 		}
 		else
 		{

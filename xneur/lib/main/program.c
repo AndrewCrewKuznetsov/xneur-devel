@@ -1336,8 +1336,8 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			p->correction_buffer->clear(p->correction_buffer);
 
 			p->event->default_event.xkey.keycode = 0;
-			if (date != NULL)
-				free (date);
+
+			free (date);
 			break;
 		}
 		case ACTION_REPLACE_ABBREVIATION: // User needs to replace acronym
@@ -1412,8 +1412,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 				//Incapsulate to p->event->clear_code() or smth else
 				p->event->default_event.xkey.keycode = 0;
 
-				if (replacement != NULL)
-					free(replacement);
+				free(replacement);
 				if (utf_string != NULL)
 					free(utf_string);
 				return TRUE;
@@ -2152,8 +2151,7 @@ static void program_check_pattern(struct _program *p)
 	p->last_action = ACTION_AUTOCOMPLETION;
 	p->last_pattern_id = 0;
 
-	if (word != NULL)
-		free (word);
+	free (word);
 }
 
 static void program_rotate_pattern(struct _program *p)
@@ -2440,8 +2438,7 @@ static void program_check_misprint(struct _program *p)
 		// <<<
 
 		p->buffer->set_content(p->buffer, new_content);
-		if (new_content != NULL)
-			free(new_content);
+		free(new_content);
 
 		p->buffer->set_offset(p->buffer, new_offset);
 		p->send_string_silent(p, 0);
@@ -2459,11 +2456,9 @@ static void program_check_misprint(struct _program *p)
 		p->correction_action = CORRECTION_MISPRINT;
 		//p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 
-		if (possible_word != NULL)
-			free(possible_word);
+		free(possible_word);
 	}
-	if (word != NULL)
-		free(word);
+	free(word);
 }
 
 static void program_send_string_silent(struct _program *p, int send_backspaces)
@@ -3234,8 +3229,7 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 				curr_temp_dictionary->rem(curr_temp_dictionary, word_to_dict);
 				free(word_to_dict);
 			}
-			if (curr_word != NULL)
-				free(curr_word);
+			free(curr_word);
 		}
 	}
 

@@ -298,8 +298,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		strftime(buffer, 256, "%X", loctime);
 		fprintf(stream, "</ul><ul>\n<font color=\"#0000FF\" size=\"2\">(%s): </font>", buffer);
 	}
-	if (buffer != NULL)
-		free(buffer);
+	free(buffer);
 	
 	for (int i = 0; i < p->cur_pos; i++)
 	{
@@ -796,8 +795,8 @@ static void buffer_uninit(struct _buffer *p)
 
 		free(p->i18n_content);
 	}
-	if (p != NULL)
-		free(p);
+	
+	free(p);
 
 	log_message(DEBUG, _("String is freed"));
 }

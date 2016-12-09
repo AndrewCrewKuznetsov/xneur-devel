@@ -321,8 +321,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 		{
 			if (possible_words != NULL)
 				free (possible_words);
-			if (word != NULL)
-				free(word);
+			free(word);
 			continue;
 		}
 
@@ -387,8 +386,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 		delete_aspell_string_enumeration (elements);
 #endif
-		if (word != NULL)
-			free(word);
+		free(word);
 	}
 	
 	if (possible_words == NULL)

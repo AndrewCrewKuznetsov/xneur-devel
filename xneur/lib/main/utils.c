@@ -156,8 +156,7 @@ void grab_modifier_keys(Window window, int is_grab)
 		}
 	}
 
-	if (modmap)
-		XFreeModifiermap (modmap);
+	XFreeModifiermap (modmap);
 
 	int menu_kc = XKeysymToKeycode(main_window->display, XK_Menu);
 	if (is_grab)
