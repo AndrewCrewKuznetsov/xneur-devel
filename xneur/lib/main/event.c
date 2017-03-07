@@ -128,29 +128,26 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 		free(app_name);
 }
 
-static void event_send_backspaces(struct _event *p, int count)
+static void common_send_xkey(struct _event *p, int count, int input_keycode, int Mask_modifier)
 {
 	for (int i = 0; i < count; i++)
-	{
-		p->send_xkey(p, p->backspace, None);
-	}
+		p->send_xkey(p, input_keycode, Mask_modifier);
+}
+
+static void event_send_backspaces(struct _event *p, int count)
+{
+	common_send_xkey(p, count, p->backspace, None);
 }
 
 static void event_send_spaces(struct _event *p, int count)
 {
-	for (int i = 0; i < count; i++)
-	{
-		p->send_xkey(p, p->space, None);
-	}
+	common_send_xkey(p, count, p->space, None);
 }
 
 static void event_send_selection(struct _event *p, int count)
 {
-	for (int i = 0; i < count; i++)
-		p->send_xkey(p, p->left, None);
-
-	for (int i = 0; i < count; i++)
-		p->send_xkey(p, p->right, ShiftMask);
+	common_send_xkey(p, count, p->left, None);
+	common_send_xkey(p, count, p->right, ShiftMask);
 }
 
 static void event_send_string(struct _event *p, struct _buffer *str)
