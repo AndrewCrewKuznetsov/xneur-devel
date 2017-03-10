@@ -237,28 +237,8 @@ fi
 
 AC_ARG_WITH(libnotify, [  --without-libnotify	  Compile without libnotify message support])
 if test "x$with_libnotify" != "xno"; then
-
-	AC_ARG_WITH(gtk, [  --with-gtk[[=ARG]]	  Compile with additional GTK support ARG=[[yes|no|gtk2|gtk3]] [[default=no]]])
-	if test "x$with_gtk" != "xno"; then
-		if test "x$with_gtk" = "x"; then
-			with_gtk="gtk3"
-		fi
-	
-		case $with_gtk in
-			gtk2)
-				PKG_CHECK_MODULES(GTK, [gtk+-2.0], found_gtk="yes", found_gtk="no")
-				;;
-			gtk3|yes)
-				PKG_CHECK_MODULES(GTK, [gtk+-3.0], found_gtk="yes", found_gtk="no")
-				;;
-			*)
-				AC_MSG_ERROR([Unsupported Gtk+ selected, --with-gtk=[[yes|no|gtk2|gtk3]]])
-				;;
-		esac
-	
-		PKG_CHECK_MODULES(LIBNOTIFY, [libnotify >= 0.4.0])
-		AC_DEFINE(WITH_LIBNOTIFY, 1, [Define if you want libnotify message support])
-	fi
+	PKG_CHECK_MODULES(LIBNOTIFY, [libnotify >= 0.4.0])
+	AC_DEFINE(WITH_LIBNOTIFY, 1, [Define if you want libnotify message support])
 fi
 
 AC_ARG_WITH(plugins, [  --without-plugins	  Compile without plugins support])
@@ -385,14 +365,5 @@ cat <<EOF
 	Libnotify compiler flags:	$LIBNOTIFY_CFLAGS
 	Libnotify linker flags:		$LIBNOTIFY_LIBS
 EOF
-fi
-
-if test "x$with_popup" != "xno"; then
-	if test "x$found_gtk" == "xyes"; then
-cat <<EOF
-	GTK compiler flags:		$GTK_CFLAGS
-	GTK linker flags:		$GTK_LIBS
-EOF
-	fi
 fi
 
