@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include "xnconfig.h"
 
@@ -75,6 +76,14 @@ int get_key_state(int key)
 	return ((mask & key_mask) != 0);
 }
 
+unsigned long long current_timestamp()
+{
+    struct timeval te;
+    gettimeofday(&te, NULL); // get current time
+	unsigned long long milliseconds = te.tv_sec*1000LLU + te.tv_usec/1000; // caculate milliseconds
+    return milliseconds;
+}
+
 void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 {
 	char *app_name = NULL;
@@ -85,6 +94,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	{
 		usleep(xconfig->send_delay * 1000);
 	}
+	usleep(1000); // Always sleep for correct timestamp
 
 	p->event.type			= KeyPress;
 	p->event.xkey.type		= KeyPress;
@@ -95,7 +105,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	p->event.xkey.display		= main_window->display;
 	p->event.xkey.state		= modifiers;
 	p->event.xkey.keycode		= kc;
-	p->event.xkey.time		= CurrentTime;
+	p->event.xkey.time		= current_timestamp();
 
 	if (xconfig->dont_send_key_release_apps->exist(xconfig->dont_send_key_release_apps, app_name, BY_PLAIN))
 	{
@@ -114,10 +124,11 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	{
 		usleep(xconfig->send_delay * 1000);
 	}
+	usleep(1000); // Always sleep for correct timestamp
 
 	p->event.type			= KeyRelease;
 	p->event.xkey.type		= KeyRelease;
-	p->event.xkey.time		= CurrentTime;
+	p->event.xkey.time		= current_timestamp();
 
 	XSendEvent(main_window->display, InputFocus, TRUE, NoEventMask, &p->event);
 	XFlush(main_window->display);
