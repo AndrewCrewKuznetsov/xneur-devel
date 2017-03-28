@@ -1706,7 +1706,6 @@ static void program_check_copyright(struct _program *p)
 
 static void program_check_registered(struct _program *p)
 {
-	log_message (DEBUG, _("check_registered"));
 	if (!xconfig->correct_r_with_registered)
 		return;
 
