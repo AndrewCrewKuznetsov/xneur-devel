@@ -78,10 +78,10 @@ int get_key_state(int key)
 
 unsigned long long current_timestamp()
 {
-    struct timeval te;
-    gettimeofday(&te, NULL); // get current time
+	struct timeval te;
+	gettimeofday(&te, NULL); // get current time
 	unsigned long long milliseconds = te.tv_sec*1000LLU + te.tv_usec/1000; // caculate milliseconds
-    return milliseconds;
+	return milliseconds;
 }
 
 void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
