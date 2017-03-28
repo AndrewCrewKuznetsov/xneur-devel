@@ -988,12 +988,6 @@ static void program_perform_auto_action(struct _program *p, int action)
 
 				p->check_brackets_with_symbols(p);
 
-				if (!xconfig->check_lang_on_process)
-				{
-					p->check_pattern(p);
-					return;
-				}
-
 				p->check_copyright(p);
 
 				p->check_trademark(p);
@@ -1001,6 +995,12 @@ static void program_perform_auto_action(struct _program *p, int action)
 				p->check_registered(p);
 
 				p->check_ellipsis(p);
+
+				if (!xconfig->check_lang_on_process)
+				{
+					p->check_pattern(p);
+					return;
+				}
 
 				// Checking word
 				if (p->changed_manual == MANUAL_FLAG_UNSET)
@@ -1706,6 +1706,7 @@ static void program_check_copyright(struct _program *p)
 
 static void program_check_registered(struct _program *p)
 {
+	log_message (DEBUG, _("check_registered"));
 	if (!xconfig->correct_r_with_registered)
 		return;
 
