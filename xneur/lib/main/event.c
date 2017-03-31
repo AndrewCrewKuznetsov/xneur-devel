@@ -94,7 +94,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	{
 		usleep(xconfig->send_delay * 1000);
 	}
-	usleep(1000); // Always sleep for correct timestamp
+	//usleep(1000); // Always sleep for correct timestamp
 
 	p->event.type			= KeyPress;
 	p->event.xkey.type		= KeyPress;
@@ -124,7 +124,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	{
 		usleep(xconfig->send_delay * 1000);
 	}
-	usleep(1000); // Always sleep for correct timestamp
+	//usleep(1000); // Always sleep for correct timestamp
 
 	p->event.type			= KeyRelease;
 	p->event.xkey.type		= KeyRelease;
