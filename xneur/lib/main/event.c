@@ -76,12 +76,39 @@ int get_key_state(int key)
 	return ((mask & key_mask) != 0);
 }
 
-unsigned long long current_timestamp()
+unsigned long long current_timestamp(Window window)
 {
-	struct timeval te;
-	gettimeofday(&te, NULL); // get current time
-	unsigned long long milliseconds = te.tv_sec*1000LLU + te.tv_usec/1000; // caculate milliseconds
-	return milliseconds;
+	Atom prop, da;
+	int di;
+	int status;
+	unsigned char *prop_ret = NULL;
+	unsigned long dl;
+	prop = XInternAtom(main_window->display, "GDK_TIMESTAMP_PROP", True);
+
+	unsigned int children_count;
+	Window root_window, parent_window;
+	Window *children_return = NULL;
+
+	int is_same_screen = XQueryTree(main_window->display, window, &root_window, &parent_window, &children_return, &children_count);
+	if (children_return != NULL)
+		XFree(children_return);
+	if (!is_same_screen || parent_window == None)
+		return CurrentTime;
+
+	status = XGetWindowProperty(main_window->display, parent_window, prop, 0L, sizeof (Atom), False,
+								AnyPropertyType, &da, &di, &dl, &dl, &prop_ret);
+
+	if (status == Success && prop_ret)
+	{
+		return CurrentTime;
+	}
+	else
+	{
+		struct timeval te;
+		gettimeofday(&te, NULL); // get current time
+		unsigned long long microseconds = te.tv_sec*1000LLU + te.tv_usec; // caculate microseconds
+		return microseconds;
+	}
 }
 
 void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
@@ -94,7 +121,6 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	{
 		usleep(xconfig->send_delay * 1000);
 	}
-	//usleep(1000); // Always sleep for correct timestamp
 
 	p->event.type			= KeyPress;
 	p->event.xkey.type		= KeyPress;
@@ -105,7 +131,8 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	p->event.xkey.display		= main_window->display;
 	p->event.xkey.state		= modifiers;
 	p->event.xkey.keycode		= kc;
-	p->event.xkey.time		= current_timestamp();
+	//p->event.xkey.time		= CurrentTime;
+	p->event.xkey.time		= current_timestamp(p->owner_window);
 
 	if (xconfig->dont_send_key_release_apps->exist(xconfig->dont_send_key_release_apps, app_name, BY_PLAIN))
 	{
@@ -124,11 +151,11 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	{
 		usleep(xconfig->send_delay * 1000);
 	}
-	//usleep(1000); // Always sleep for correct timestamp
 
 	p->event.type			= KeyRelease;
 	p->event.xkey.type		= KeyRelease;
-	p->event.xkey.time		= current_timestamp();
+	//p->event.xkey.time		= CurrentTime;
+	p->event.xkey.time		= current_timestamp(p->owner_window);
 
 	XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 	XFlush(main_window->display);
