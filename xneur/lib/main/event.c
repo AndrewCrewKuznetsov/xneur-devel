@@ -76,7 +76,7 @@ int get_key_state(int key)
 	return ((mask & key_mask) != 0);
 }
 
-unsigned long long current_timestamp(Window window)
+int is_x11_server_time(Window window)
 {
 	Atom prop, da;
 	int di;
@@ -93,12 +93,23 @@ unsigned long long current_timestamp(Window window)
 	if (children_return != NULL)
 		XFree(children_return);
 	if (!is_same_screen || parent_window == None)
-		return CurrentTime;
+		parent_window = window;
 
 	status = XGetWindowProperty(main_window->display, parent_window, prop, 0L, sizeof (Atom), False,
 								AnyPropertyType, &da, &di, &dl, &dl, &prop_ret);
 
 	if (status == Success && prop_ret)
+	{
+		char magic = 'a';
+		if (prop_ret[0] == magic)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+unsigned long long current_timestamp(Window window)
+{
+	if (is_x11_server_time (window))
 	{
 		return CurrentTime;
 	}
