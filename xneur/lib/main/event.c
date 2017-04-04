@@ -117,7 +117,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 		return;
 	}
 
-	XSendEvent(main_window->display, InputFocus, TRUE, NoEventMask, &p->event);
+	XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 	XFlush(main_window->display);
 
 	if (is_delay)
@@ -130,7 +130,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	p->event.xkey.type		= KeyRelease;
 	p->event.xkey.time		= current_timestamp();
 
-	XSendEvent(main_window->display, InputFocus, TRUE, NoEventMask, &p->event);
+	XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 	XFlush(main_window->display);
 
 	if (app_name != NULL)
