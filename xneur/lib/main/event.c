@@ -83,27 +83,42 @@ int is_x11_server_time(Window window)
 	int status;
 	unsigned char *prop_ret = NULL;
 	unsigned long dl;
+	Window curr_window = window;
 	prop = XInternAtom(main_window->display, "GDK_TIMESTAMP_PROP", True);
 
-	unsigned int children_count;
-	Window root_window, parent_window;
-	Window *children_return = NULL;
+	while (TRUE)
+	{
+		unsigned int children_count;
+		Window root_window, parent_window;
+		Window *children_return = NULL;
 
-	int is_same_screen = XQueryTree(main_window->display, window, &root_window, &parent_window, &children_return, &children_count);
-	if (children_return != NULL)
-		XFree(children_return);
-	if (!is_same_screen || parent_window == None)
-		parent_window = window;
-
-	status = XGetWindowProperty(main_window->display, parent_window, prop, 0L, sizeof (Atom), False,
+		status = XGetWindowProperty(main_window->display, curr_window, prop, 0L, sizeof (Atom), False,
 								AnyPropertyType, &da, &di, &dl, &dl, &prop_ret);
 
-	if (status == Success && prop_ret)
-	{
-		char magic = 'a';
-		if (prop_ret[0] == magic)
-			return TRUE;
+		if (status == Success && prop_ret)
+		{
+			char magic = 'a';
+			if (prop_ret[0] == magic)
+				return TRUE;
+		}
+		int is_same_screen = XQueryTree(main_window->display, curr_window, &root_window, &parent_window, &children_return, &children_count);
+		if (children_return != NULL)
+			XFree(children_return);
+		if (!is_same_screen || parent_window == None || parent_window == root_window)
+			break;
+		curr_window = parent_window;
 	}
+	// FIXME >> Firefox and Thunderbird fix (some children windows not have GDK_TIMESTAMP_PROP atom)
+	char *app_name = get_wm_class_name(window);
+	if (app_name != NULL)
+	{
+		if ((strcmp("Firefox", app_name) == 0) || (strcmp("Thunderbird", app_name) == 0))
+		{
+			free(app_name);
+			return TRUE;
+		}
+	}
+	// FIXME <<
 	return FALSE;
 }
 

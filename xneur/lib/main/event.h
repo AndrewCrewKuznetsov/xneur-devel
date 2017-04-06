@@ -35,11 +35,11 @@ struct _event
 	KeyCode left;			// Left Arrow key code
 	KeyCode right;			// Right Arrow key code
 	KeyCode space;
-	
+
 	KeySym (*get_cur_keysym) (struct _event *p);
 	int (*get_cur_modifiers) (struct _event *p);
 	int (*get_cur_modifiers_by_keysym) (struct _event *p);
-	
+
 	int  (*get_next_event) (struct _event *p);
 	void (*send_next_event) (struct _event *p);
 	void (*set_owner_window) (struct _event *p, Window window);
