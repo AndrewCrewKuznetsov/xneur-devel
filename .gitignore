@@ -50,10 +50,17 @@ ltmain.sh
 missing
 xneur/src/xneur
 gxneur/src/gxneur
+kdeneur/src/kdeneur
+xcurf/src/xcurf
 xnconfig.pc
 xneur.pc
 xneur/po/stamp-it
+xcurf/po/stamp-it
 xneur/stamp-h1
+gxneur/stamp-h1
+kdeneur/stamp-h1
+xcurf/stamp-h1
+xneurchecker/stamp-h1
 
 # Anjuta local files
 xneur/.anjuta
