@@ -64,4 +64,9 @@ xneurchecker/stamp-h1
 
 # Anjuta local files
 xneur/.anjuta
+xneur/xneur.anjuta
+gxneur/gxneur.anjuta
+xcurf/xcurf.anjuta
+xneurchecker/.anjuta
+xneurchecker/xneurchecker.anjuta
 .anjuta_sym_db.db
