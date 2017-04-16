@@ -94,8 +94,10 @@ public:
     QVBoxLayout *verticalLayout_4;
     QTableWidget *tabHotKey_lstHotKey;
     QHBoxLayout *horizontalLayout_3;
+    QPushButton *tabHotKeys_AddHotKey;
     QPushButton *tabHotKeys_EditHotKey;
     QPushButton *tabHotKeys_ClearHotKey;
+    QPushButton *tabHotKeys_RemHotKey;
     QSpacerItem *horizontalSpacer;
     QTableWidget *tabHotKey_lstUserActions;
     QHBoxLayout *horizontalLayout_4;
@@ -539,6 +541,11 @@ public:
 
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        tabHotKeys_AddHotKey = new QPushButton(tabHotKeys);
+        tabHotKeys_AddHotKey->setObjectName(QString::fromUtf8("tabHotKeys_AddHotKey"));
+
+        horizontalLayout_3->addWidget(tabHotKeys_AddHotKey);
+
         tabHotKeys_EditHotKey = new QPushButton(tabHotKeys);
         tabHotKeys_EditHotKey->setObjectName(QString::fromUtf8("tabHotKeys_EditHotKey"));
 
@@ -548,6 +555,11 @@ public:
         tabHotKeys_ClearHotKey->setObjectName(QString::fromUtf8("tabHotKeys_ClearHotKey"));
 
         horizontalLayout_3->addWidget(tabHotKeys_ClearHotKey);
+
+        tabHotKeys_RemHotKey = new QPushButton(tabHotKeys);
+        tabHotKeys_RemHotKey->setObjectName(QString::fromUtf8("tabHotKeys_RemHotKey"));
+
+        horizontalLayout_3->addWidget(tabHotKeys_RemHotKey);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -1463,7 +1475,7 @@ public:
 
         retranslateUi(frmSettings);
 
-        tabWidget->setCurrentIndex(9);
+        tabWidget->setCurrentIndex(2);
         tbWidGeneral->setCurrentIndex(1);
         tbWidNotifications->setCurrentIndex(2);
 
@@ -1507,8 +1519,10 @@ public:
         ___qtablewidgetitem->setText(QApplication::translate("frmSettings", "Actions", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem1 = tabHotKey_lstHotKey->horizontalHeaderItem(1);
         ___qtablewidgetitem1->setText(QApplication::translate("frmSettings", "HotKeys", 0, QApplication::UnicodeUTF8));
+        tabHotKeys_AddHotKey->setText(QApplication::translate("frmSettings", "Add", 0, QApplication::UnicodeUTF8));
         tabHotKeys_EditHotKey->setText(QApplication::translate("frmSettings", "Edit", 0, QApplication::UnicodeUTF8));
         tabHotKeys_ClearHotKey->setText(QApplication::translate("frmSettings", "Clear", 0, QApplication::UnicodeUTF8));
+        tabHotKeys_RemHotKey->setText(QApplication::translate("frmSettings", "Remove", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem2 = tabHotKey_lstUserActions->horizontalHeaderItem(0);
         ___qtablewidgetitem2->setText(QApplication::translate("frmSettings", "Action", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem3 = tabHotKey_lstUserActions->horizontalHeaderItem(1);

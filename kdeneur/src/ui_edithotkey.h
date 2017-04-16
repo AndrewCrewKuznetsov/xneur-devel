@@ -13,11 +13,11 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
+#include <QtGui/QComboBox>
 #include <QtGui/QDialog>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 
@@ -28,7 +28,7 @@ class Ui_EditHotKey
 public:
     QVBoxLayout *verticalLayout;
     QLabel *label;
-    QLineEdit *txtAction;
+    QComboBox *comboAction;
     QLabel *label_2;
     QLabel *lblHotKey;
     QHBoxLayout *horizontalLayout;
@@ -49,13 +49,10 @@ public:
 
         verticalLayout->addWidget(label);
 
-        txtAction = new QLineEdit(EditHotKey);
-        txtAction->setObjectName(QString::fromUtf8("txtAction"));
-        txtAction->setMinimumSize(QSize(0, 25));
-        txtAction->setFocusPolicy(Qt::NoFocus);
-        txtAction->setReadOnly(true);
+        comboAction = new QComboBox(EditHotKey);
+        comboAction->setObjectName(QString::fromUtf8("comboAction"));
 
-        verticalLayout->addWidget(txtAction);
+        verticalLayout->addWidget(comboAction);
 
         label_2 = new QLabel(EditHotKey);
         label_2->setObjectName(QString::fromUtf8("label_2"));
@@ -67,6 +64,7 @@ public:
         QFont font;
         font.setKerning(false);
         lblHotKey->setFont(font);
+        lblHotKey->setFocusPolicy(Qt::WheelFocus);
         lblHotKey->setAutoFillBackground(false);
         lblHotKey->setFrameShape(QFrame::Panel);
         lblHotKey->setFrameShadow(QFrame::Plain);
@@ -103,7 +101,7 @@ public:
 
     void retranslateUi(QDialog *EditHotKey)
     {
-        EditHotKey->setWindowTitle(QApplication::translate("EditHotKey", "Add user action...", 0, QApplication::UnicodeUTF8));
+        EditHotKey->setWindowTitle(QApplication::translate("EditHotKey", "Add action...", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("EditHotKey", "Action name:", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("EditHotKey", "Key bind:", 0, QApplication::UnicodeUTF8));
         lblHotKey->setText(QApplication::translate("EditHotKey", "TextLabel", 0, QApplication::UnicodeUTF8));
