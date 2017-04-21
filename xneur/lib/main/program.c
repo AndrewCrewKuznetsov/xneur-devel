@@ -526,7 +526,6 @@ static void program_process_input(struct _program *p)
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
-
 							p->event->event = p->event->default_event;
 							p->event->send_next_event(p->event);
 						}
@@ -1563,8 +1562,7 @@ static void program_check_caps_last_word(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_INCIDENTAL_CAPS);
 	show_notify(NOTIFY_CORR_INCIDENTAL_CAPS, NULL);
@@ -1602,8 +1600,7 @@ static void program_check_tcl_last_word(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 	
 	p->change_word(p, CHANGE_TWO_CAPITAL_LETTER);
 	show_notify(NOTIFY_CORR_TWO_CAPITAL_LETTER, NULL);
@@ -1647,8 +1644,7 @@ static void program_check_two_space(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_TWO_SPACE);
 	show_notify(NOTIFY_CORR_TWO_SPACE, NULL);
@@ -1671,8 +1667,7 @@ static void program_check_two_minus(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_TWO_MINUS);
 	show_notify(NOTIFY_CORR_TWO_MINUS, NULL);
@@ -1696,8 +1691,7 @@ static void program_check_copyright(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_COPYRIGHT);
 	show_notify(NOTIFY_CORR_COPYRIGHT, NULL);
@@ -1721,8 +1715,7 @@ static void program_check_registered(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_REGISTERED);
 	show_notify(NOTIFY_CORR_REGISTERED, NULL);
@@ -1748,8 +1741,7 @@ static void program_check_trademark(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_TRADEMARK);
 	show_notify(NOTIFY_CORR_TRADEMARK, NULL);
@@ -1783,8 +1775,7 @@ static void program_check_ellipsis(struct _program *p)
 
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
-	if (p->correction_action != CORRECTION_NONE)
-		p->correction_action = CORRECTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	p->change_word(p, CHANGE_ELLIPSIS);
 	show_notify(NOTIFY_CORR_ELLIPSIS, NULL);
@@ -2397,8 +2388,7 @@ static void program_check_misprint(struct _program *p)
 
 	if (possible_word != NULL)
 	{
-		if (p->correction_action != CORRECTION_NONE)
-			p->correction_action = CORRECTION_NONE;
+		p->correction_action = CORRECTION_NONE;
 
 		//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
