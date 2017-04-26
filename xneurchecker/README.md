@@ -4,7 +4,7 @@ Command line utility for demonstrating how xneur works. It can be used in pipe w
 
 ## Synopsis
 ```
-xneurchecker - manual text checker based on xneur library (version ) 
+xneurchecker - manual text checker based on xneur library (version 0.4)
 usage: xneurchecker [options] "<word_1> <...word_n>"
   where options are:
 
