@@ -26,3 +26,5 @@ set(xnmain_SRCS
 add_library(xnmain STATIC ${xnmain_SRCS})
 target_compile_definitions(xnmain PRIVATE VERSION=\"${PROJECT_VERSION}\") # VERSION definition is used in code
 target_compile_definitions(xnmain PRIVATE PACKAGE=\"${PROJECT_NAME}\") # PACKAGE definition is used in code
+
+target_link_libraries(xnmain xnai xnlib)
