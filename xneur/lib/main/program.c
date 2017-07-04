@@ -1674,6 +1674,15 @@ static void program_check_two_minus(struct _program *p)
 	p->correction_action = CORRECTION_TWO_MINUS;
 }
 
+int check_character_pos(struct _program *p, char *in_str)
+{
+	char *focuspointer = p->buffer->content + p->buffer->cur_pos;
+	for (int i = strlen(in_str); i >= 0; i--)
+		if (*(focuspointer-i) != *(in_str++))
+			return 1;
+	return 0;
+}
+
 static void program_check_copyright(struct _program *p)
 {
 	if (!xconfig->correct_c_with_copyright)
@@ -1682,9 +1691,7 @@ static void program_check_copyright(struct _program *p)
 	if (p->buffer->cur_pos < 3)
 		return;
 
-	if ((p->buffer->content[p->buffer->cur_pos-1] != ')') ||
-		(p->buffer->content[p->buffer->cur_pos-2] != 'c') ||
-		(p->buffer->content[p->buffer->cur_pos-3] != '('))
+	if (check_character_pos(p, "(c)"))
 		return;
 
 	log_message (DEBUG, _("Find (c), correction with a copyright sign..."));
@@ -1706,9 +1713,7 @@ static void program_check_registered(struct _program *p)
 	if (p->buffer->cur_pos < 3)
 		return;
 
-	if ((p->buffer->content[p->buffer->cur_pos-1] != ')') ||
-		(p->buffer->content[p->buffer->cur_pos-2] != 'r') ||
-		(p->buffer->content[p->buffer->cur_pos-3] != '('))
+	if (check_character_pos(p, "(r)"))
 		return;
 
 	log_message (DEBUG, _("Find (r), correction with a registered sign..."));
@@ -1731,10 +1736,7 @@ static void program_check_trademark(struct _program *p)
 	if (p->buffer->cur_pos < 4)
 		return;
 
-	if ((p->buffer->content[p->buffer->cur_pos-1] != ')') ||
-		(p->buffer->content[p->buffer->cur_pos-2] != 'm') ||
-		(p->buffer->content[p->buffer->cur_pos-3] != 't') ||
-		(p->buffer->content[p->buffer->cur_pos-4] != '('))
+	if (check_character_pos(p, "(tm)"))
 		return;
 
 	log_message (DEBUG, _("Find (tm), correction with a trademark sign..."));
