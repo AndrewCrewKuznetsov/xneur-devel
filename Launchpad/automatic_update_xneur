@@ -77,10 +77,15 @@ else
 # Note: I am using gnupg-agent for comfortable work
 
 # begin update for basic releases 
-dch -b --force-distribution --distribution "zesty" -v "${NEW_VER}-0zesty" \
+dch -b --force-distribution --distribution "artful" -v "${NEW_VER}-0artful" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "zesty" -v "${NEW_VER}-0zesty" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "yakkety" -v "${NEW_VER}-0yakkety" \
@@ -116,6 +121,8 @@ debuild -S -sd
 # end update for other releases
 
 cd ..
+echo "Download to Launchpad Artful..."
+dput ppa xneur_${NEW_VER}-0artful_source.changes | cat
 echo "Download to Launchpad Zesty..."
 dput ppa xneur_${NEW_VER}-0zesty_source.changes | cat
 echo "Download to Launchpad Yakkety..."

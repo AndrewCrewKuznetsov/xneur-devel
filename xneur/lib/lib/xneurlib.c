@@ -249,6 +249,16 @@ struct _xneur_handle *xneur_handle_create (void)
 		char *short_name = strsep(&prop_value, ",");
 		//log_message (ERROR, "%s", short_name);
 
+		// Check double layout
+		//
+		for (int lang = 0; lang < handle->total_languages; lang++)
+	    {
+			if (strcmp(handle->languages[lang].dir, short_name) == 0)
+			{
+				goto function_end;
+			}
+		}
+
 		void *tmp = realloc(handle->languages, (handle->total_languages + 1) * sizeof(struct _xneur_language));
 		if (tmp == NULL)
 			continue;
@@ -272,6 +282,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		
 		if (prop_value == NULL)
 			break;
+		function_end:;
 	}
 
 	XCloseDisplay(display);
