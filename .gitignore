@@ -83,3 +83,6 @@ xneurchecker/xneurchecker.anjuta
 # User configurations
 *.kdev4
 *.pro.user*
+
+# cmake build directories
+*/build/*
