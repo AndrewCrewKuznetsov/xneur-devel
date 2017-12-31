@@ -24,7 +24,7 @@ PKG_CHECK_MODULES(X11, [x11 >= 1.1], found_x11="yes", found_x11="no")
 if test "x$found_x11" = "xno"; then
 	AC_PATH_XTRA
 	if test "x$no_x" = "xyes"; then
-		AC_MSG_ERROR([Can't locate your X11 installation])
+		AC_MSG_ERROR([Cant locate your X11 installation])
 	fi
 	X11_CFLAGS="$X_CFLAGS"
 	X11_LIBS="$X_LIBS -lX11"

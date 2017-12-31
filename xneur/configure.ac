@@ -42,7 +42,7 @@ if test "x$found_x11" = "xno"; then
 	AC_PATH_XTRA
 
 	if test "x$no_x" = "xyes"; then
-		AC_MSG_ERROR([Can't locate your X11 installation])
+		AC_MSG_ERROR([Cant locate your X11 installation])
 	fi
 
 	X11_CFLAGS="$X_CFLAGS"
@@ -123,7 +123,7 @@ if test "x$with_sound" != "xno"; then
 				AC_MSG_RESULT([found at $found_aplay_bin_dir])
 			else
 				AC_MSG_RESULT([no])
-				AC_MSG_ERROR([Can't locate your aplay bin])
+				AC_MSG_ERROR([Cant locate your aplay bin])
 			fi
 
 			AC_DEFINE(WITH_APLAY, 1, [Define if you want aplay support])
@@ -150,7 +150,7 @@ if test "x$with_keylogger" != "xno"; then
 	AC_DEFINE(WITH_KEYLOGGER, 1, [Define if you want keylogger function])
 fi
 
-AC_ARG_WITH(spell, [  --with-spell[[=ARG]]	  Compile with sound support ARG=[[yes|no|enchant|aspell]] [[default=yes]]])
+AC_ARG_WITH(spell, [  --with-spell[[=ARG]]	  Compile with spell checking support ARG=[[yes|no|enchant|aspell]] [[default=yes]]])
 if test "x$with_spell" != "xno"; then
 	if test "x$with_spell" = "x"; then
 		with_spell="enchant"
@@ -186,7 +186,7 @@ if test "x$with_spell" != "xno"; then
 					ASPELL_CFLAGS="-I$found_aspell_include_dir"
 				else
 					AC_MSG_RESULT([no])
-					AC_MSG_ERROR([Can't locate your aspell headers])
+					AC_MSG_ERROR([Cant locate your aspell headers])
 				fi
 
 				AC_MSG_CHECKING([for aspell library])
@@ -195,7 +195,7 @@ if test "x$with_spell" != "xno"; then
 					ASPELL_LIBS="-L$found_aspell_lib_dir -laspell"
 				else
 					AC_MSG_RESULT([no])
-					AC_MSG_ERROR([Can't locate your aspell library])
+					AC_MSG_ERROR([Cant locate your aspell library])
 				fi
 
 				AC_DEFINE(WITH_ASPELL, 1, [Define if you want aspell support])
@@ -224,7 +224,7 @@ if test "x$with_xosd" != "xno"; then
 		AC_MSG_RESULT([found at $found_xosd_bin_dir])
 	else
 		AC_MSG_RESULT([no])
-		AC_MSG_ERROR([Can't locate your xosd-config bin])
+		AC_MSG_ERROR([Cant locate your xosd-config bin])
 	fi
 
 	AC_DEFINE(WITH_XOSD, 1, [Define if you want xosd support])
