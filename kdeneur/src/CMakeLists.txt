@@ -30,35 +30,15 @@ set (MOC_HEADERS
     adduseraction.h
 )
 
-set (UIS
-    frmabout.ui
-    frmsettings.ui
-    frmaddabbreviature.ui
-    getnameapp.ui
-    ruleschange.ui
-    addrules.ui
-    edithotkey.ui
-    adduseraction.ui
-)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
-set (RESOURCES
-    resursrc.qrc
-)
-
-# Next lines needed for building all Qt projects
 find_package (Qt4 REQUIRED)
 include( ${QT_USE_FILE} )
 add_definitions( ${QT_DEFINITIONS} )
 include_directories( ${CMAKE_BINARY_DIR} )
 
-# Next, using precompiler, compiler and linker
-
-# using Qt meta-system (precompiler)
-QT4_ADD_RESOURCES( RES_SOURCES ${RESOURCES} )
-QT4_WRAP_UI( UI_HEADERS ${UIS} )
-QT4_WRAP_CPP( MOC_SRCS ${MOC_HEADERS} )
-
-# compile
 if ("${TR_FILES}" STREQUAL "")
 	message (WARNING "TR_FILES variable is empty. Did you set it correctly?")
 endif()
@@ -67,8 +47,11 @@ QT4_ADD_TRANSLATION (QM_FILES ${TR_FILES})
 #  string(ASCII 27 Esc)
 #  message ("${Esc}[31m наш tr_files в src равен `${TR_FILES}` ${Esc}[m")
 
-add_executable(kdeneur ${SOURCES} ${MOC_SRCS} ${RES_SOURCES} ${UI_HEADERS} ${QM_FILES})
+add_executable(kdeneur ${SOURCES} ${QM_FILES} resursrc.qrc)
+target_include_directories(kdeneur PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(kdeneur X11 kdeui kdecore xneur xnconfig plasma ${QT_LIBRARIES})
+# Replace ${QT_LIBRARIES} with Qt::QtCore Qt::QtDBus Qt::QtGui ?
+# https://cmake.org/cmake/help/latest/module/FindQt4.html
 
 set (PKGDATADIR /usr/share/${PROJECT_NAME})
 target_compile_definitions (kdeneur PRIVATE PACKAGE_PIXMAPS_DIR=\"${PKGDATADIR}/pixmaps\")
