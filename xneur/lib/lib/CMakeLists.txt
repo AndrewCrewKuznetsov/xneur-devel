@@ -119,4 +119,4 @@ target_compile_definitions(xnlib PRIVATE PACKAGE=\"${PROJECT_NAME}\") # PACKAGE 
 install(FILES xneur.h DESTINATION include/xneur)
 install(TARGETS xnlib DESTINATION lib)
 
-target_link_libraries(xnlib X11 Xtst Xi xnconfig pcre z ${GST_LIBRARIES} ${LIBNOTIFY_LIBRARIES} ${XOSD_LIBS} ${FREEALUT_LIBRARIES} ${APLAY_LIBS} ${ASPELL_LIBS} ${ENCHANT_INCLUDE_DIRS}) # added Xtst and Xi remove ${XOSD_LIBS} ?
+target_link_libraries(xnlib X11 Xtst Xi xnconfig pcre z ${GST_LIBRARIES} ${LIBNOTIFY_LIBRARIES} ${XOSD_LIBS} ${FREEALUT_LIBRARIES} ${APLAY_LIBS} ${ASPELL_LIBS} ${ENCHANT_LIBRARIES}) # added Xtst and Xi remove ${XOSD_LIBS} ?
