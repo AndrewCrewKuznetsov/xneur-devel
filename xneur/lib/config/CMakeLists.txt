@@ -44,5 +44,7 @@ set_target_properties(xnconfig PROPERTIES VERSION 20.0.0 SOVERSION 20)
 # target_compile_definitions(xnconfig PRIVATE VERSION=\"${PROJECT_VERSION}\") # seems like VERSION definition is not used in code
 target_compile_definitions(xnconfig PRIVATE PACKAGE=\"${PROJECT_NAME}\") # PACKAGE definition is used in code
 
+target_link_libraries(xnconfig Xtst)
+
 install(FILES xnconfig.h DESTINATION include/xneur)
 install(TARGETS xnconfig DESTINATION lib)
