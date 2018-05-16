@@ -89,11 +89,6 @@ dch -b --force-distribution --distribution "artful" -v "${NEW_VER}-0artful" \
 debuild -S -sd
 
 cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "zesty" -v "${NEW_VER}-0zesty" \
-  "Automated backport upload; no source changes."
-debuild -S -sd
-
-cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
   "Automated backport upload; no source changes."
 debuild -S -sd
@@ -115,8 +110,6 @@ echo "Download to Launchpad Bionic..."
 dput ppa gxneur_${NEW_VER}-0bionic_source.changes | cat
 echo "Download to Launchpad Artful..."
 dput ppa gxneur_${NEW_VER}-0artful_source.changes | cat
-echo "Download to Launchpad Zesty..."
-dput ppa gxneur_${NEW_VER}-0zesty_source.changes | cat
 echo "Download to Launchpad Xenial..."
 dput ppa gxneur_${NEW_VER}-0xenial_source.changes | cat
 echo "Download to Launchpad Trusty..."
