@@ -18,7 +18,7 @@ target_compile_definitions(xneur-bin PRIVATE PACKAGE=\"${PROJECT_NAME}\") # PACK
 
 add_library(newlang_creation STATIC ${SOURCE_LIB})
 
-target_link_libraries(xneur-bin xnai newlang_creation xnlib xnconfig xnmain xnmisc xnnotify X11 Xtst Xi pcre pthread z)
+target_link_libraries(xneur-bin  newlang_creation xnlib xnconfig  X11 Xtst Xi pcre pthread z) # removed xnmisc, xnmain, xnai, xnnotify from this list
 
 set_target_properties(xneur-bin PROPERTIES OUTPUT_NAME xneur) # Hndle lib and exe with same names
 install(TARGETS xneur-bin DESTINATION bin)
