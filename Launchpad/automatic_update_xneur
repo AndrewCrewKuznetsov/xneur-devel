@@ -88,22 +88,7 @@ dch -b --force-distribution --distribution "zesty" -v "${NEW_VER}-0zesty" \
 debuild -S -sd
 
 cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "yakkety" -v "${NEW_VER}-0yakkety" \
-  "Automated backport upload; no source changes."
-debuild -S -sd
-
-cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
-  "Automated backport upload; no source changes."
-debuild -S -sd
-
-cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
-  "Automated backport upload; no source changes."
-debuild -S -sd
-
-cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "vivid" -v "${NEW_VER}-0vivid" \
   "Automated backport upload; no source changes."
 debuild -S -sd
 
@@ -125,14 +110,8 @@ echo "Download to Launchpad Artful..."
 dput ppa xneur_${NEW_VER}-0artful_source.changes | cat
 echo "Download to Launchpad Zesty..."
 dput ppa xneur_${NEW_VER}-0zesty_source.changes | cat
-echo "Download to Launchpad Yakkety..."
-dput ppa xneur_${NEW_VER}-0yakkety_source.changes | cat
 echo "Download to Launchpad Xenial..."
 dput ppa xneur_${NEW_VER}-0xenial_source.changes | cat
-echo "Download to Launchpad Wily..."
-dput ppa xneur_${NEW_VER}-0wily_source.changes | cat
-echo "Download to Launchpad Vivid..."
-dput ppa xneur_${NEW_VER}-0vivid_source.changes | cat
 echo "Download to Launchpad Trusty..."
 dput ppa xneur_${NEW_VER}-0trusty_source.changes | cat
 echo "Download to Launchpad Precise..."
