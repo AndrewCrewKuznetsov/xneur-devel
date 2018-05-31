@@ -1,7 +1,7 @@
+data\com.gxneur.settings.gschema.xml
 pixmaps\am.png
 pixmaps\bg.png
 pixmaps\by.png
-pixmaps\CMakeLists.txt
 pixmaps\cz.png
 pixmaps\de.png
 pixmaps\ee.png
@@ -217,9 +217,6 @@ pixmaps\it.png
 pixmaps\kz.png
 pixmaps\lt.png
 pixmaps\lv.png
-pixmaps\Makefile
-pixmaps\Makefile.am
-pixmaps\Makefile.in
 pixmaps\no.png
 pixmaps\pl.png
 pixmaps\pt.png
@@ -233,7 +230,4 @@ pixmaps\ua.png
 pixmaps\us.png
 pixmaps\uz.png
 pixmaps\x3.png
-pixmaps\
-pixmaps\all pixmaps:
-pixmaps\orangeX
-pixmaps\switcher
+
