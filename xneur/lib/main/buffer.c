@@ -553,7 +553,6 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 			continue;
 		}
 
-		//log_message (ERROR, _("'%c' - '%c' - '%c'"), sym, symbol, symbol_unchanged);
 		char *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
 		assert(tmp != NULL);
 		p->i18n_content[i].content = tmp;

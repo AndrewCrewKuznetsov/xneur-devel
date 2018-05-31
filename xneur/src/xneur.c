@@ -314,6 +314,7 @@ static void xneur_reload(int status)
 	}
 
 	xneur_load_config();
+
 	xneur_init();
 	sound_init();
 	popup_init();
@@ -322,6 +323,9 @@ static void xneur_reload(int status)
 	{
 		program->plugin->add(program->plugin, xconfig->plugins->data[i].string);
 	}
+
+	program->buffer->handle = xconfig->handle;
+	program->correction_buffer->handle = xconfig->handle;
 }
 
 static void xneur_usage(void)
