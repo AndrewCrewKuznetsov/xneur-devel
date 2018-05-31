@@ -22,6 +22,7 @@
 #   include "config.h"
 #endif
 
+#include <gio/gio.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <sys/stat.h>
@@ -33,14 +34,6 @@
 #include <unistd.h>
 
 #include "configuration.h"
-
-
-#define UNUSED(x) (void)(x)
-
-#ifdef HAVE_GCONF
-
-//#include <gconf/gconf-client.h>
-#include <gio/gio.h>
 
 GSettings *_gsettingsSet = NULL;
 
@@ -136,44 +129,3 @@ void gxneur_config_set_enabled(gboolean enabled)
 {
 	gxneur_config_enabled = enabled;
 }
-
-#else
-
-int gxneur_config_read_int(const char* key, int* value)
-{
-	UNUSED(key || value);
-	return CONFIG_NOT_SUPPORTED;
-}
-
-int gxneur_config_read_str(const char* key, gchar** value)
-{
-	UNUSED(key || value);
-	return CONFIG_NOT_SUPPORTED;
-}
-
-
-int gxneur_config_write_int(const char* key, int value, gboolean send_notify)
-{
-	UNUSED(key || value || send_notify);
-	return CONFIG_NOT_SUPPORTED;
-}
-
-int gxneur_config_write_str(const char* key, const char* value, gboolean send_notify)
-{
-	UNUSED(key || value || send_notify);
-	return CONFIG_NOT_SUPPORTED;
-}
-
-int gxneur_config_add_notify(const char* key, gxneur_config_notify_callback callback, gpointer payload)
-{
-	UNUSED(key || callback || payload);
-	return CONFIG_NOT_SUPPORTED;
-}
-
-void gxneur_config_set_enabled(gboolean enabled)
-{
-	UNUSED(enabled);
-}
-
-#endif
-

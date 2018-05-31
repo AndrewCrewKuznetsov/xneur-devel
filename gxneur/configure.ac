@@ -81,19 +81,9 @@ if test "x$with_appindicator" != "xno"; then
 	fi
 fi
 
-AC_DEFINE(PACKAGE_GCONF_DIR, "/apps/" PACKAGE, [Define GConf directory for settings])
 AC_DEFINE(PACKAGE_GSETTINGS_DIR, "com." PACKAGE ".settings", [Define GSettings paths for settings])
 
 AC_DEFINE(KB_PROP_COMMAND, "/usr/bin/gnome-control-center region layouts", [Define keyboard properties command])
-
-#PKG_CHECK_MODULES(GCONF, [gconf-2.0 >= 2.0])
-AC_ARG_WITH(gconf, [  --without-gconf	Compile without GConf support])
-if test "x$with_gconf" != "xno"; then
-	PKG_CHECK_MODULES(GCONF, [gconf-2.0 >= 2.0], found_gconf="yes", found_gconf="no")
-	if test "x$found_gconf" = "xyes"; then
-		AC_DEFINE(HAVE_GCONF, 1, [Have GConf])
-	fi
-fi
 
 DEFAULT_CFLAGS="-Wall -Wextra -Werror -g0 -fPIC -std=gnu99"
 AC_SUBST(DEFAULT_CFLAGS)
