@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/com/gxneur/settings/" id="com.gxneur.settings">
+    <key type="i" name="delay">
+      <default>0</default>
+      <summary>Seconds to wait before starting.</summary>
+      <description>Seconds to wait before starting</description>
+    </key>
+    <key type="s" name="icons-directory">
+      <default>''</default>
+      <summary>The directory with icons pack.</summary>
+      <description>The directory with icons pack</description>
+    </key>
+    <key type="s" name="keyboard-properties">
+      <default>'/usr/bin/unity-control-center region layouts'</default>
+      <summary>Command to run on "Keyboard" "Properties" menu item.</summary>
+      <description>Command to run on "Keyboard" "Properties" menu item.</description>
+    </key>
+    <key type="s" name="show-in-the-tray">
+      <default>'Flag'</default>
+      <summary>Icon display mode (Icon, Flag, Text, Directory).</summary>
+      <description>Icon display mode (Icon, Flag, Text, Directory).</description>
+    </key>
+    <key type="s" name="rendering-engine">
+      <default>'AppIndicator'</default>
+      <summary>Rendering engine to use (Built-in, StatusIcon, AppIndicator).</summary>
+      <description>Rendering engine to use (Built-in, StatusIcon, AppIndicator).</description>
+    </key>
+  </schema>
+</schemalist>

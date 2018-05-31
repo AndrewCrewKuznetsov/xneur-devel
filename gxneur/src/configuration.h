@@ -32,15 +32,13 @@
 
 #define CONFIG_NOT_SUPPORTED (-4)
 
-typedef void (*gxneur_config_notify_callback)(void* payload);
-
 int gxneur_config_read_int(const char* key, int* value);
 int gxneur_config_read_str(const char* key, gchar** value);
 
-int gxneur_config_write_int(const char* key, int value, gboolean send_notify);
-int gxneur_config_write_str(const char* key, const char* value, gboolean send_notify);
+int gxneur_config_write_int(const char* key, int value);
+int gxneur_config_write_str(const char* key, const char* value);
 
-int gxneur_config_add_notify(const char* key, gxneur_config_notify_callback callback, gpointer payload);
+int gxneur_config_add_notify(const char* key, void* callback);
 
 void gxneur_config_set_enabled(gboolean enabled);
 

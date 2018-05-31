@@ -284,7 +284,7 @@ static const char *get_tray_icon_name (char *name)
 	if (strcasecmp(show_in_the_tray, "Directory") == 0)
 	{
 		gchar *string_value = NULL;
-		gxneur_config_read_str("icons_directory", &string_value);
+		gxneur_config_read_str("icons-directory", &string_value);
 		if (string_value != NULL)
 		{
 			icon_name = g_strdup_printf ("%s%s%s.png", string_value,
@@ -530,7 +530,7 @@ void show_in_the_tray_callback(gpointer user_data)
 	if (arg_show_in_the_tray)
 		return;
 
-	gxneur_config_read_str("show_in_the_tray", &show_in_the_tray);
+	gxneur_config_read_str("show-in-the-tray", &show_in_the_tray);
 
 	force_update = TRUE;
 }
@@ -544,7 +544,7 @@ void rendering_engine_callback(gpointer user_data)
 		return;
 
 	gchar *new_engine = g_strdup(rendering_engine);
-	gxneur_config_read_str("rendering_engine", &new_engine);
+	gxneur_config_read_str("rendering-engine", &new_engine);
 
 	if (strcasecmp(new_engine, rendering_engine) == 0)
 		return;
@@ -567,11 +567,11 @@ void create_tray_icon (void)
 {
 	dpy = XOpenDisplay(NULL);
 
-	gxneur_config_read_str("show_in_the_tray", &show_in_the_tray);
-	gxneur_config_read_str("rendering_engine", &rendering_engine);
+	gxneur_config_read_str("show-in-the-tray", &show_in_the_tray);
+	gxneur_config_read_str("rendering-engine", &rendering_engine);
 
-	gxneur_config_add_notify("show_in_the_tray", show_in_the_tray_callback, NULL);
-	gxneur_config_add_notify("rendering_engine", rendering_engine_callback, NULL);
+	gxneur_config_add_notify("show-in-the-tray", show_in_the_tray_callback);
+	gxneur_config_add_notify("rendering-engine", rendering_engine_callback);
 
 	if (arg_show_in_the_tray)
 	{

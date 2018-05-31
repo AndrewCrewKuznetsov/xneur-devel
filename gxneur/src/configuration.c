@@ -39,20 +39,18 @@
 
 #ifdef HAVE_GCONF
 
-#include <gconf/gconf-client.h>
+//#include <gconf/gconf-client.h>
+#include <gio/gio.h>
 
-static GConfClient* _gconfClient = NULL;
+GSettings *_gsettingsSet = NULL;
 
-static GConfClient* gconfClient(void)
+static GSettings* gsettingsSet(void)
 {
-	if (!_gconfClient) {
-		_gconfClient = gconf_client_get_default();
-		g_assert(GCONF_IS_CLIENT(_gconfClient));
-		gconf_client_add_dir(_gconfClient, PACKAGE_GCONF_DIR, GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
+	if (!_gsettingsSet) {
+		_gsettingsSet = g_settings_new(PACKAGE_GSETTINGS_DIR);
 	}
-	return _gconfClient;
+	return _gsettingsSet;
 }
-
 
 static gboolean gxneur_config_enabled = TRUE;
 
@@ -64,25 +62,8 @@ int gxneur_config_read_int(const char* key, int* value)
 	if (!key || !value)
 		return -2;
 
-	int result = -1;
-
-	gchar* k = g_strdup_printf("%s/%s", PACKAGE_GCONF_DIR, key);
-	g_assert(k != NULL);
-
-	GConfValue* gcValue = gconf_client_get_without_default(gconfClient(),  k, NULL);
-
-	if(gcValue != NULL) 
-	{
-		if(gcValue->type == GCONF_VALUE_INT)
-			*value = gconf_value_get_int(gcValue),
-			result = 0;
-		gconf_value_free(gcValue);
-	}
-
-	if (k != NULL)
-		g_free(k);
-	
-	return result;
+	*value = (int) g_settings_get_int(gsettingsSet(), key);
+	return 0;
 }
 
 int gxneur_config_read_str(const char* key, gchar** value)
@@ -93,31 +74,11 @@ int gxneur_config_read_str(const char* key, gchar** value)
 	if (!key || !value)
 		return -2;
 
-	int result = -1;
-
-	gchar* k = g_strdup_printf("%s/%s", PACKAGE_GCONF_DIR, key);
-	g_assert(k != NULL);
-
-	GConfValue* gcValue = gconf_client_get_without_default(gconfClient(),  k, NULL);
-
-	if(gcValue != NULL) 
-	{
-		if(gcValue->type == GCONF_VALUE_STRING)
-		{
-			if (*value != NULL)
-				g_free(*value);
-			*value = g_strdup(gconf_value_get_string(gcValue));
-		}
-		result = 0;
-		gconf_value_free(gcValue);
-	}
-
-	if (k != NULL)
-		g_free(k);
-	return result;
+	*value = g_settings_get_string(gsettingsSet(), key);
+	return 0;	
 }
 
-int gxneur_config_write_int(const char* key, int value, gboolean send_notify)
+int gxneur_config_write_int(const char* key, int value)
 {
 	if (!gxneur_config_enabled)
 		return CONFIG_NOT_SUPPORTED;
@@ -125,24 +86,16 @@ int gxneur_config_write_int(const char* key, int value, gboolean send_notify)
 	if (!key)
 		return -2;
 
-	int result = 0;
-
-	gchar* k = g_strdup_printf("%s/%s", PACKAGE_GCONF_DIR, key);
-	g_assert(k != NULL);
-
-	if(!gconf_client_set_int(gconfClient(), k, value, NULL)) 
-		    g_warning("Failed to set %s (%d)\n", k, value),
-		    result = -1;
-	else if (send_notify)
-		gconf_client_notify(gconfClient(), k);
-
-	if (k != NULL)
-		g_free(k);
-
-	return result;
+	
+	if(!g_settings_set_int(gsettingsSet(), key, value)) 
+	{
+		    g_warning("Failed to set %s (%d)\n", key, value);
+		    return -1;
+	}
+	return 0;
 }
 
-int gxneur_config_write_str(const char* key, const char* value, gboolean send_notify)
+int gxneur_config_write_str(const char* key, const char* value)
 {
 	if (!gxneur_config_enabled)
 		return CONFIG_NOT_SUPPORTED;
@@ -152,67 +105,30 @@ int gxneur_config_write_str(const char* key, const char* value, gboolean send_no
 
 	int result = 0;
 
-	gchar* k = g_strdup_printf("%s/%s", PACKAGE_GCONF_DIR, key);
-	g_assert(k != NULL);
-
-	if(!gconf_client_set_string(gconfClient(), k, value, NULL)) 
-		    g_warning("Failed to set %s (%s)\n", k, value),
+	if(!g_settings_set_string(gsettingsSet(), key, value)) 
+		    g_warning("Failed to set %s (%s)\n", key, value),
 		    result = -1;
-	else if (send_notify)
-		gconf_client_notify(gconfClient(), k);
-
-	if (k != NULL)
-		g_free(k);
 
 	return result;
 }
 
-typedef struct _callback_t
-{
-	gxneur_config_notify_callback callback;
-	gpointer payload;
-	
-} callback_t;
-
-static
-void gconf_callback(GConfClient* client,
-                            guint cnxn_id,
-                            GConfEntry* entry,
-                            gpointer user_data)
-{
-	UNUSED(client || cnxn_id || entry);
-
-	callback_t *callback = (callback_t*)user_data;
-	g_assert(callback != NULL);
-	
-	(callback->callback)(callback->payload);
-}
-
-
-int gxneur_config_add_notify(const char* key, gxneur_config_notify_callback callback, gpointer payload)
+int gxneur_config_add_notify(const char* key, void* callback)
 {
 	if (!gxneur_config_enabled)
 		return CONFIG_NOT_SUPPORTED;
 
-	gchar* k = g_strdup_printf("%s/%s", PACKAGE_GCONF_DIR, key);
+	gchar* k = g_strdup_printf("changed::%s", key);
 	g_assert(k != NULL);
-
-	callback_t* callback_data = (callback_t*)malloc(sizeof(callback_t));
-	g_assert(callback_data != NULL);
-
-	callback_data->callback = callback;
-	callback_data->payload = payload;
-
-	gconf_client_notify_add(gconfClient(),
-                          k,
-                          gconf_callback,
-                          callback_data,
-                          NULL,
-                          NULL);
-
+	
+	g_signal_connect (
+				gsettingsSet(),
+				k,
+				G_CALLBACK (callback),
+				NULL);
+	
 	if (k != NULL)
 		g_free(k);
-
+	
 	return 0;
 }
 

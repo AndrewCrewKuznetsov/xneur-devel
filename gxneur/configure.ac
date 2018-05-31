@@ -9,6 +9,8 @@ AM_SILENT_RULES([yes])
 AC_PROG_CC
 AC_PATH_XTRA
 
+GLIB_GSETTINGS
+
 AC_CONFIG_MACRO_DIRS([m4])
 
 AR_FLAGS=cr 
@@ -80,6 +82,7 @@ if test "x$with_appindicator" != "xno"; then
 fi
 
 AC_DEFINE(PACKAGE_GCONF_DIR, "/apps/" PACKAGE, [Define GConf directory for settings])
+AC_DEFINE(PACKAGE_GSETTINGS_DIR, "com." PACKAGE ".settings", [Define GSettings paths for settings])
 
 AC_DEFINE(KB_PROP_COMMAND, "/usr/bin/gnome-control-center region layouts", [Define keyboard properties command])
 
@@ -95,7 +98,7 @@ fi
 DEFAULT_CFLAGS="-Wall -Wextra -Werror -g0 -fPIC -std=gnu99"
 AC_SUBST(DEFAULT_CFLAGS)
 
-AC_OUTPUT([Makefile gxneur.desktop src/Makefile pixmaps/Makefile ui/Makefile po/Makefile.in])
+AC_OUTPUT([Makefile gxneur.desktop data/Makefile src/Makefile pixmaps/Makefile ui/Makefile po/Makefile.in])
 
 cat << EOF
 

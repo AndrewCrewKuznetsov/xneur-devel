@@ -90,21 +90,21 @@ int main(int argc, char *argv[])
 			{
 				arg_delay = atoi(optarg);
 				if (store)
-					gxneur_config_write_int("delay", arg_delay, TRUE);
+					gxneur_config_write_int("delay", arg_delay);
 				break;
 			}
 			case 'S':
 			{
 				arg_show_in_the_tray = optarg;
 				if (store)
-					gxneur_config_write_str("show_in_the_tray", arg_show_in_the_tray, TRUE);
+					gxneur_config_write_str("show-in-the-tray", arg_show_in_the_tray);
 				break;
 			}
 			case 1000:
 			{
 				arg_keyboard_properties = optarg;
 				if (store)
-					gxneur_config_write_str("keyboard_properties", arg_keyboard_properties, TRUE);
+					gxneur_config_write_str("keyboard-properties", arg_keyboard_properties);
 				break;
 			}
 			case 1001:
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 			{
 				arg_rendering_engine = optarg;
 				if (store)
-					gxneur_config_write_str("rendering_engine", arg_rendering_engine, TRUE);
+					gxneur_config_write_str("rendering-engine", arg_rendering_engine);
 				break;
 			}
 			case 'c':
@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
 
 	int value = -1;
 	gxneur_config_read_int("delay", &value);
+
 	if (arg_delay >= 0)
 		value = arg_delay;
 	if (value <= 0)

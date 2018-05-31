@@ -158,7 +158,10 @@ if test "x$with_spell" != "xno"; then
 
 	case $with_spell in
 		enchant|yes)
-			PKG_CHECK_MODULES(ENCHANT, [enchant >= 1.0])
+                        PKG_CHECK_MODULES(ENCHANT, [enchant >= 1.0], found_enchant="yes", found_enchant="no")
+                        if test "x$found_enchant" = "xno"; then
+				PKG_CHECK_MODULES(ENCHANT, [enchant-2 >= 1.0])
+			fi
 			AC_DEFINE(WITH_ENCHANT, 1, [Define if you want enchant support])
 			;;
 		aspell)

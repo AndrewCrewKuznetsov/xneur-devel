@@ -489,7 +489,7 @@ static void xneur_edit_keyboard_properties(GtkBuilder* parent_builder)
 void xneur_kb_preference(void)
 {
 	gchar *string_value = NULL;
-	gxneur_config_read_str("keyboard_properties", &string_value);
+	gxneur_config_read_str("keyboard-properties", &string_value);
 	if (arg_keyboard_properties) {
 		if (string_value != NULL)
 			g_free(string_value);
@@ -1369,7 +1369,7 @@ void xneur_preference(void)
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "combobox2"));
 	int show_in_the_tray = 0;
 	gchar *string_value = NULL;
-	if (gxneur_config_read_str("show_in_the_tray", &string_value) == CONFIG_NOT_SUPPORTED)
+	if (gxneur_config_read_str("show-in-the-tray", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
 	if (arg_show_in_the_tray) {
 		if (string_value != NULL)
@@ -1394,7 +1394,7 @@ void xneur_preference(void)
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
 	int icons_directory_config_not_supported = 0;
 	string_value = NULL;
-	if (gxneur_config_read_str("icons_directory", &string_value) == CONFIG_NOT_SUPPORTED)
+	if (gxneur_config_read_str("icons-directory", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE), icons_directory_config_not_supported = 1;
 	gtk_entry_set_text(GTK_ENTRY(widget), string_value ? string_value : "");
 	if (string_value != NULL)
@@ -1411,7 +1411,7 @@ void xneur_preference(void)
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "combobox3"));
 	int rendering_engine = 0;
 	string_value = NULL;
-	if (gxneur_config_read_str("rendering_engine", &string_value) == CONFIG_NOT_SUPPORTED)
+	if (gxneur_config_read_str("rendering-engine", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
 	
 	if (arg_rendering_engine) {
@@ -1433,7 +1433,7 @@ void xneur_preference(void)
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry5"));
 	int keyboard_properties_config_not_supported = 0;
 	string_value = NULL;
-	if (gxneur_config_read_str("keyboard_properties", &string_value) == CONFIG_NOT_SUPPORTED)
+	if (gxneur_config_read_str("keyboard-properties", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE),
 		keyboard_properties_config_not_supported = 1;
 	if (arg_keyboard_properties) {
@@ -2710,7 +2710,7 @@ void xneur_save_preference(GtkBuilder* builder)
 	
 	// Delay
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton5"));
-	if (!gxneur_config_write_int("delay", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound)), FALSE))
+	if (!gxneur_config_write_int("delay", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound))))
 		arg_delay = -1;
 
 	// Show on the tray
@@ -2723,13 +2723,13 @@ void xneur_save_preference(GtkBuilder* builder)
 		string_value = "Icon";
 	else if (show_in_the_tray == 3)
 		string_value = "Directory";
-	if (!gxneur_config_write_str("show_in_the_tray", string_value, FALSE))
+	if (!gxneur_config_write_str("show-in-the-tray", string_value))
 		arg_show_in_the_tray = NULL,
-		gxneur_config_write_str("show_in_the_tray", string_value, TRUE);
+		gxneur_config_write_str("show-in-the-tray", string_value);
 	
 	// Icons directory
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
-	if (!gxneur_config_write_str("icons_directory", gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)), FALSE))
+	if (!gxneur_config_write_str("icons-directory", gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound))))
 		arg_keyboard_properties = NULL;
 	//add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
@@ -2742,13 +2742,13 @@ void xneur_save_preference(GtkBuilder* builder)
 		string_value = "StatusIcon";
 	else if (rendering_engine == 2)
 		string_value = "AppIndicator";
-	if (!gxneur_config_write_str("rendering_engine", string_value, FALSE))
+	if (!gxneur_config_write_str("rendering-engine", string_value))
 		arg_rendering_engine = NULL,
-		gxneur_config_write_str("rendering_engine", string_value, TRUE);
+		gxneur_config_write_str("rendering-engine", string_value);
 
 	// Keyboard properties
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry5"));
-	if (!gxneur_config_write_str("keyboard_properties", gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)), FALSE))
+	if (!gxneur_config_write_str("keyboard-properties", gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound))))
 		arg_keyboard_properties = NULL;
 	//add_pixmap_directory(gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
