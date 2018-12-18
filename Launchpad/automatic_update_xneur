@@ -77,10 +77,15 @@ else
 # Note: I am using gnupg-agent for comfortable work
 
 # begin update for basic releases 
-dch -b --force-distribution --distribution "bionic" -v "${NEW_VER}-0bionic" \
+dch -b --force-distribution --distribution "cosmic" -v "${NEW_VER}-0cosmic" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "bionic" -v "${NEW_VER}-0bionic" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "artful" -v "${NEW_VER}-0artful" \
@@ -106,6 +111,8 @@ debuild -S -sd
 # end update for other releases
 
 cd ..
+echo "Download to Launchpad Cosmic..."
+dput ppa xneur_${NEW_VER}-0cosmic_source.changes | cat
 echo "Download to Launchpad Bionic..."
 dput ppa xneur_${NEW_VER}-0bionic_source.changes | cat
 echo "Download to Launchpad Artful..."

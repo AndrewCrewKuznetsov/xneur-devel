@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2016 XNeur Team
+ *  Copyright (C) 2006-2018 XNeur Team
  *
  */
 
@@ -41,7 +41,7 @@
 
 #include "xnconfig.h"
 
-#define LIBRARY_VERSION_MAJOR		20
+#define LIBRARY_VERSION_MAJOR		21
 #define LIBRARY_VERSION_MINOR		0
 #define OPTIONS_DELIMETER		" "
 

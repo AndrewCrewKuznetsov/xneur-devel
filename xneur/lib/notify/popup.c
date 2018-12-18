@@ -48,7 +48,7 @@ extern struct _xneur_config *xconfig;
 
 static const char *icon = "xneur";
 static const char *type = NULL;
-static const NotifyUrgency urgency = NOTIFY_URGENCY_CRITICAL;
+static const NotifyUrgency urgency = NOTIFY_URGENCY_LOW;
 
 time_t timestamp = 0;
 
@@ -86,6 +86,7 @@ static void popup_show_thread(struct _popup_body *popup_body)
 	notify_notification_set_category(notify, type);
 	notify_notification_set_urgency(notify, urgency);
 	notify_notification_set_timeout(notify, xconfig->popup_expire_timeout);
+	//notify_notification_set_timeout(notify, NOTIFY_EXPIRES_DEFAULT);
 
 	notify_notification_show(notify, NULL);
 

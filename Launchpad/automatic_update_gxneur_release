@@ -78,28 +78,23 @@ else
 # Note: I am using gnupg-agent for comfortable work
 
 # begin update for basic releases 
-dch -b --force-distribution --distribution "zesty" -v "${NEW_VER}-0zesty" \
+dch -b --force-distribution --distribution "cosmic" -v "${NEW_VER}-0cosmic" \
   "Minor update."
 debuild -S -sa
 # end update for basic releases
 
 cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "yakkety" -v "${NEW_VER}-0yakkety" \
+dch -b --force-distribution --distribution "bionic" -v "${NEW_VER}-0bionic" \
+  "Automated backport upload; no source changes."
+debuild -S -sd
+
+cp -f ../changelog debian/changelog
+dch -b --force-distribution --distribution "artful" -v "${NEW_VER}-0artful" \
   "Automated backport upload; no source changes."
 debuild -S -sd
 
 cp -f ../changelog debian/changelog
 dch -b --force-distribution --distribution "xenial" -v "${NEW_VER}-0xenial" \
-  "Automated backport upload; no source changes."
-debuild -S -sd
-
-cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "wily" -v "${NEW_VER}-0wily" \
-  "Automated backport upload; no source changes."
-debuild -S -sd
-
-cp -f ../changelog debian/changelog
-dch -b --force-distribution --distribution "vivid" -v "${NEW_VER}-0vivid" \
   "Automated backport upload; no source changes."
 debuild -S -sd
 
@@ -116,16 +111,14 @@ debuild -S -sd
 # end update for other releases
 
 cd ..
-echo "Download to Launchpad Zesty..."
-dput ppa gxneur_${NEW_VER}-0zesty_source.changes | cat
-echo "Download to Launchpad Yakkety..."
-dput ppa gxneur_${NEW_VER}-0yakkety_source.changes | cat
+echo "Download to Launchpad Cosmic..."
+dput ppa gxneur_${NEW_VER}-0cosmic_source.changes | cat
+echo "Download to Launchpad Bionic..."
+dput ppa gxneur_${NEW_VER}-0bionic_source.changes | cat
+echo "Download to Launchpad Artful..."
+dput ppa gxneur_${NEW_VER}-0artful_source.changes | cat
 echo "Download to Launchpad Xenial..."
 dput ppa gxneur_${NEW_VER}-0xenial_source.changes | cat
-echo "Download to Launchpad Wily..."
-dput ppa gxneur_${NEW_VER}-0wily_source.changes | cat
-echo "Download to Launchpad Vivid..."
-dput ppa gxneur_${NEW_VER}-0vivid_source.changes | cat
 echo "Download to Launchpad Trusty..."
 dput ppa gxneur_${NEW_VER}-0trusty_source.changes | cat
 echo "Download to Launchpad Precise..."

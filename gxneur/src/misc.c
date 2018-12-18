@@ -13,7 +13,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *  Copyright (C) 2006-2016 XNeur Team
+ *  Copyright (C) 2006-2018 XNeur Team
  *
  */
 
@@ -71,7 +71,7 @@ void xneur_edit_rule(GtkWidget *treeview);
 void xneur_edit_dictionary(GtkWidget *treeview);
 
 #define MAX_LANGUAGES			4
-#define XNEUR_NEEDED_MAJOR_VERSION	20
+#define XNEUR_NEEDED_MAJOR_VERSION	21
 #define XNEUR_BUILD_MINOR_VERSION	0
 	
 struct _xneur_config *xconfig				= NULL;
