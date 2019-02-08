@@ -657,9 +657,13 @@ struct _keymap* keymap_init(struct _xneur_handle *handle, Display *display)
 	for (int i = 0; i < p->handle->total_languages; i++)
 	{
 		// FIXME Replace hardcode "us" to setting
-		if (strcmp(p->handle->languages[i].dir, "us") == 0)
+		if (p->handle->languages[i].dir != NULL)
 		{
-			p->latin_group = i;
+			if (strcmp(p->handle->languages[i].dir, "us") == 0)
+			{
+				p->latin_group = i;
+				//log_message(LOG, _("language dir %s"), p->handle->languages[i].dir);
+			}
 		}
 	}
 	
