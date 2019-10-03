@@ -62,10 +62,6 @@ if(SOUNDS)
 	endif()
 endif(SOUNDS)
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	target_compile_definitions(xnlib PRIVATE WITH_DEBUG=1)
-endif()
-
 if(KEYLOGGER)
 	target_compile_definitions(xnlib PRIVATE WITH_KEYLOGGER=1)
 endif(KEYLOGGER)
