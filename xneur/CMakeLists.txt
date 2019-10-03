@@ -10,8 +10,6 @@ option(SPELL "Compile with spell checking function" ON) # ON|OFF|enchant|aspell 
 option(NOTIFICATIONS "Compile with libnotify message support" ON)
 option(PLUGINS "Compile with plugins support" ON)
 
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_SOURCE_DIR})
-
 add_subdirectory(etc)
 add_subdirectory(lib)
 add_subdirectory(pixmaps)
@@ -20,9 +18,5 @@ add_subdirectory(po)
 add_subdirectory(share)
 add_subdirectory(src)
 
-find_package(ECM 5.18.0 REQUIRED CONFIG)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
-
-include(KDEInstallDirs) # For gzipping mans
 install(FILES xneur.1 DESTINATION ${MAN_INSTALL_DIR}/man1)
 install(FILES xneurrc.5 DESTINATION ${MAN_INSTALL_DIR}/man5)
