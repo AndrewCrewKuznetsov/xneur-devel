@@ -24,6 +24,7 @@
 #include <X11/extensions/XInput2.h>
 #include <X11/extensions/XTest.h>
 
+Bool is_modifier(KeySym key_sym);
 char*  get_wm_class_name(Window window);
 void   grab_button(int is_grab);
 void   grab_all_keys(Window window, int is_grab);

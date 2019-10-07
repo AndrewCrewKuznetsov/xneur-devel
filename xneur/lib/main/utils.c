@@ -34,18 +34,30 @@
 
 #define MAXSTR 10000
 
-//static const char *grab_ungrab[2] = {"ungrab", "grab"};
-
-const KeySym mod_keys[] =	{
-					XK_Shift_L, XK_Shift_R, XK_Caps_Lock,
-					XK_Control_L, XK_Control_R,
-					XK_Alt_L, XK_Alt_R, XK_Meta_L,
-					XK_Num_Lock, XK_Super_L, XK_Super_R, XK_Hyper_L, XK_Hyper_R,
-					XK_Mode_switch, XK_ISO_Level3_Shift, XK_Menu, XK_ISO_Prev_Group, XK_ISO_Next_Group
-				};
-
 extern struct _xneur_config *xconfig;
 extern struct _window *main_window;
+
+Bool is_modifier(KeySym key_sym)
+{
+	XModifierKeymap *modmap = XGetModifierMapping(main_window->display);
+	if (modmap == NULL) {
+		log_message(ERROR, _("Can't get modifier mapping. Modifier keys are not ignored"));
+		return False;
+	}
+
+	KeyCode key_code = XKeysymToKeycode(main_window->display, key_sym);
+
+	int size = modmap->max_keypermod * 8;
+	for (int i = 0; i < size; ++i) {
+		if (key_code == modmap->modifiermap[i]) {
+			return True;
+		}
+	}
+
+	XFreeModifiermap(modmap);
+
+	return False;
+}
 
 static Window get_root_window(Window window)
 {
@@ -119,55 +131,6 @@ void grab_button(int is_grab)
 	}
 }
 
-void grab_modifier_keys(Window window, int is_grab)
-{
-	int i, k = 0;
-
-	XModifierKeymap *modmap = XGetModifierMapping (main_window->display);
-	if (modmap == NULL)
-	{
-		log_message(ERROR, _("XGetModifierMapping return NULL. Grabbing modifiers key not changed."));
-		return;
-	}
-	
-	for (i = 0; i < 8; i++) 
-	{
-		int j;
-
-		for (j = 0; j < modmap->max_keypermod; j++) 
-		{
-			if (modmap->modifiermap[k]) 
-			{
-				/*
-				int keysyms_per_keycode_return;
-				KeySym *keysym = XGetKeyboardMapping(main_window->display,
-				modmap->modifiermap[k],
-				1,
-				&keysyms_per_keycode_return);
-				log_message (ERROR, "Modifiers List:");
-				log_message (ERROR, "%d %d %s", i, j, XKeysymToString(keysym[0]));
-				XFree(keysym);*/
-
-				if (is_grab)
-					XGrabKey(main_window->display, modmap->modifiermap[k], AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
-				else
-					XUngrabKey(main_window->display, modmap->modifiermap[k], AnyModifier, window);	
-			}
-			k++;
-		}
-	}
-
-	XFreeModifiermap (modmap);
-
-	int menu_kc = XKeysymToKeycode(main_window->display, XK_Menu);
-	if (is_grab)
-		XGrabKey(main_window->display, menu_kc, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
-	else
-		XUngrabKey(main_window->display, menu_kc, AnyModifier, window);
-	
-	return;
-}
-	
 void grab_all_keys(Window window, int is_grab)
 {
 	if (is_grab)
@@ -186,8 +149,6 @@ void grab_all_keys(Window window, int is_grab)
 		}
 		else {
 			XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
-			// ...without ModKeys.
-			grab_modifier_keys(window, FALSE);
 		}
 	}
 	else

@@ -800,6 +800,10 @@ static void program_process_selection_notify(struct _program *p)
 
 static void program_on_key_action(struct _program *p, int type, KeySym key, int modifier_mask)
 {
+	if (is_modifier(key)) {
+		return;
+	}
+
 	if (type == KeyPress)
 	{
 		p->user_action = get_user_action(key, modifier_mask);
