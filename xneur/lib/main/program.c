@@ -520,6 +520,7 @@ static void program_process_input(struct _program *p)
 							//log_message(TRACE, _("    Mask %d"), mask);
 
 							// Processing received event
+							p->event->event.xkey.state = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
 							p->on_key_action(p, KeyPress, key_sym, mask);
 
@@ -542,6 +543,7 @@ static void program_process_input(struct _program *p)
 							//log_message(TRACE, _("    Mask %d"), mask);
 
 							// Processing received event
+							p->event->event.xkey.state = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
 							p->on_key_action(p, KeyRelease, key_sym, mask);
 
