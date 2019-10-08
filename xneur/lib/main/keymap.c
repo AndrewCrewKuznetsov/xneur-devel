@@ -418,7 +418,9 @@ static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent *e)
 		mod = ShiftMask;
 	if (ke->state & NumlockMask)
 		mod |= NumlockMask;
-	
+	if (ke->state & LockMask)
+		mod = LockMask;
+
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 	
 	ke->state = get_keycode_mod(p->latin_group);
