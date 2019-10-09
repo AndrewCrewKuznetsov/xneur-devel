@@ -522,6 +522,7 @@ static void program_process_input(struct _program *p)
 							// Processing received event
 							p->event->event.xkey.state = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
+							p->event->default_event = p->event->event;
 							p->on_key_action(p, KeyPress, key_sym, mask);
 
 							break;
@@ -545,6 +546,7 @@ static void program_process_input(struct _program *p)
 							// Processing received event
 							p->event->event.xkey.state = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
+							p->event->default_event = p->event->event;
 							p->on_key_action(p, KeyRelease, key_sym, mask);
 
 							break;
