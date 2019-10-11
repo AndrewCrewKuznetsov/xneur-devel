@@ -13,4 +13,4 @@ Latest Release and other info you can read at: http://www.xneur.ru
 
 # Building with CMake
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-    cmake3 --build build
+    cmake --build build
