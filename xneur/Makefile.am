@@ -14,7 +14,7 @@ AUTOMAKE_OPTIONS =		\
 	dist-bzip2
 
 noinst_DATA =			\
-	README			\
+	README.md		\
 	COPYING			\
 	AUTHORS			\
 	INSTALL			\

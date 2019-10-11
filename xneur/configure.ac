@@ -2,7 +2,7 @@ AC_INIT(xneur, 0.21.0)
 
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.11])
+AM_INIT_AUTOMAKE([1.11 tar-ustar foreign])
 
 AM_SILENT_RULES([yes])
 
