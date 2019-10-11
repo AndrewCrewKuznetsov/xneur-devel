@@ -25,6 +25,7 @@
 
 #include <X11/XKBlib.h>
 #include <X11/extensions/XTest.h>
+#include <X11/extensions/XInput2.h>
 
 #include <stdlib.h>
 #include <strings.h>
@@ -328,11 +329,6 @@ static void program_process_input(struct _program *p)
 {
 	p->update(p);
 
-	int xi_opcode, event, error;
-	if (!XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error))
-	{
-			log_message(WARNING, _("X Input extension not available."));
-	}
 	while (1)
 	{
 		int type = p->event->get_next_event(p->event);
@@ -347,7 +343,6 @@ static void program_process_input(struct _program *p)
 		}
 
 		p->last_layout = curr_layout;
-
 		switch (type)
 		{
 			case ClientMessage:
@@ -499,24 +494,98 @@ static void program_process_input(struct _program *p)
 				int iDummy;
 				unsigned int mask;
 
-				XGenericEventCookie *cookie = &p->event->event.xcookie;
-
-				if (cookie->type != GenericEvent ||
-					cookie->extension != xi_opcode ||
-					!XGetEventData(main_window->display, cookie))
+				if (has_x_input_extension)
 				{
-					if (type == KeyPress)
+					XGenericEventCookie *cookie = &p->event->event.xcookie;
+					if (cookie->type == GenericEvent &&
+						cookie->extension == xi_opcode &&
+						XGetEventData(main_window->display, cookie))
+					{
+						XIDeviceEvent* xi_event = cookie->data;
+						switch (xi_event->evtype) {
+						case XI_KeyPress:
+						{
+							KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
+							if (key_sym == NoSymbol)
+								key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
+							XQueryPointer(main_window->display,
+										  (Window)p->focus->owner_window,
+										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+										  &mask);
+							mask = mask & (~get_languages_mask ());
+							log_message(TRACE, _("Received XI_KeyPress '%s' == %u (event type %d)"),
+										XKeysymToString(key_sym),
+										xi_event->detail,
+										type);
+							//log_message(TRACE, _("    Mask %d"), mask);
+
+							// Processing received event
+							p->event->event.xkey.state = xi_event->mods.effective;
+							p->event->event.xkey.keycode = xi_event->detail;
+							p->event->default_event = p->event->event;
+							p->on_key_action(p, KeyPress, key_sym, mask);
+
+							break;
+						}
+						case XI_KeyRelease:
+						{
+							KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
+							if (key_sym == NoSymbol)
+								key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
+							XQueryPointer(main_window->display,
+										  (Window)p->focus->owner_window,
+										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+										  &mask);
+							mask = mask & (~get_languages_mask ());
+							log_message(TRACE, _("Received XI_KeyRelease '%s'== %u (event type %d)"),
+										XKeysymToString(key_sym),
+										xi_event->detail,
+										type);
+							//log_message(TRACE, _("    Mask %d"), mask);
+
+							// Processing received event
+							p->event->event.xkey.state = xi_event->mods.effective;
+							p->event->event.xkey.keycode = xi_event->detail;
+							p->event->default_event = p->event->event;
+							p->on_key_action(p, KeyRelease, key_sym, mask);
+
+							break;
+						}
+						case XI_RawButtonPress:
+						{
+							// Clear buffer only when clicked left button
+							//if (xi_event->detail == 1)
+							//{
+							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
+							p->correction_buffer->clear(p->correction_buffer);
+							p->correction_action = ACTION_NONE;
+							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+							{
+								p->update(p);
+							}
+							log_message(TRACE, _("Received XI_ButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
+							//}
+							break;
+						}
+						}
+						XFreeEventData(main_window->display, cookie);
+					}
+				}
+				else {
+					switch (type) {
+					case KeyPress:
 					{
 						KeySym key_sym = p->event->get_cur_keysym(p->event);
 
 						XQueryPointer(main_window->display,
-						              (Window)p->focus->owner_window,
-						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-						              &mask);
+									  (Window)p->focus->owner_window,
+									  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+									  &mask);
 						mask = mask & (~get_languages_mask ());
-						log_message(TRACE, _("Received KeyPress '%s' (event type %d)"),
-							        XKeysymToString(key_sym),
-							        type);
+						log_message(TRACE, _("Received KeyPress '%s' == %u (event type %d)"),
+									XKeysymToString(key_sym),
+									p->event->event.xkey.keycode,
+									type);
 						//log_message(TRACE, _("    Mask %d %d"), mask, p->event->event.xkey.state);
 
 						// Save received event
@@ -529,19 +598,22 @@ static void program_process_input(struct _program *p)
 							p->event->event = p->event->default_event;
 							p->event->send_next_event(p->event);
 						}
+
+						break;
 					}
-					else if (type == KeyRelease)
+					case KeyRelease:
 					{
 						KeySym key_sym = p->event->get_cur_keysym(p->event);
 
 						XQueryPointer(main_window->display,
-						              (Window)p->focus->owner_window,
-						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-						              &mask);
+									  (Window)p->focus->owner_window,
+									  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+									  &mask);
 						mask = mask & (~get_languages_mask ());
-						log_message(TRACE, _("Received KeyRelease '%s' (event type %d)"),
-							        XKeysymToString(key_sym),
-							        type);
+						log_message(TRACE, _("Received KeyRelease '%s' == %u (event type %d)"),
+									XKeysymToString(key_sym),
+									p->event->event.xkey.keycode,
+									type);
 						//log_message(TRACE, _("    Mask %d"), mask);
 
 						// Save received event
@@ -554,71 +626,12 @@ static void program_process_input(struct _program *p)
 							p->event->event = p->event->default_event;
 							p->event->send_next_event(p->event);
 						}
+
+						break;
 					}
-					break;
+					}
 				}
 
-				XIDeviceEvent* xi_event = cookie->data;
-				switch (xi_event->evtype)
-				{
-					case XI_KeyPress:
-					{
-						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
-						if (key_sym == NoSymbol)
-							key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-						XQueryPointer(main_window->display,
-						              (Window)p->focus->owner_window,
-						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-						              &mask);
-						mask = mask & (~get_languages_mask ());
-						log_message(TRACE, _("Received XI_KeyPress '%s' (event type %d)"),
-						            XKeysymToString(key_sym),
-						            type);
-						//log_message(TRACE, _("    Mask %d"), mask);
-
-						// Processing received event
-						p->on_key_action(p, KeyPress, key_sym, mask);
-
-						break;
-					}
-					case XI_KeyRelease:
-					{
-						KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
-						if (key_sym == NoSymbol)
-							key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-						XQueryPointer(main_window->display,
-						              (Window)p->focus->owner_window,
-						              &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-						              &mask);
-						mask = mask & (~get_languages_mask ());
-						log_message(TRACE, _("Received XI_KeyRelease '%s' (event type %d)"),
-						            XKeysymToString(key_sym),
-						            type);
-						//log_message(TRACE, _("    Mask %d"), mask);
-
-						// Processing received event
-						p->on_key_action(p, KeyRelease, key_sym, mask);
-
-						break;
-					}
-					case XI_RawButtonPress:
-					{
-						// Clear buffer only when clicked left button
-						//if (xi_event->detail == 1)
-						//{
-							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
-							p->correction_buffer->clear(p->correction_buffer);
-							p->correction_action = ACTION_NONE;
-							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
-							{
-								p->update(p);
-							}
-							log_message(TRACE, _("Received XI_ButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
-						//}
-						break;
-					}
-				}
-				XFreeEventData(main_window->display, cookie);
 				break;
 			}
 		}
@@ -789,6 +802,10 @@ static void program_process_selection_notify(struct _program *p)
 
 static void program_on_key_action(struct _program *p, int type, KeySym key, int modifier_mask)
 {
+	if (is_modifier(key)) {
+		return;
+	}
+
 	if (type == KeyPress)
 	{
 		p->user_action = get_user_action(key, modifier_mask);
@@ -3483,6 +3500,15 @@ struct _program* program_init(void)
 		if (p != NULL)
 			free(p);
 		return NULL;
+	}
+
+	int event = 0;
+	int error = 0;
+	has_x_input_extension = XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error);
+
+	if (!has_x_input_extension)
+	{
+		log_message(WARNING, _("X Input extension not available."));
 	}
 
 	p->event			= event_init();			// X Event processor
