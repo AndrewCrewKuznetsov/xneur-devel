@@ -12,4 +12,4 @@ jobs:
       uses: lpenz/ghaction-cmake@v0.2
       with:
         directory: xneur
-        dependencies: libgstreamer1.0-dev libnotify-dev libenchant-dev libxi-dev libxtst-dev
+        dependencies: gettext libgstreamer1.0-dev libnotify-dev libenchant-dev libxi-dev libxtst-dev
