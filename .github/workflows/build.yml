@@ -4,12 +4,13 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: sudo apt-get install libgstreamer1.0-dev libnotify-dev libenchant-dev libxi-dev libxtst-dev
+    - name: Checkout code
+      uses: actions/checkout@v1
     - name: Build
       uses: lpenz/ghaction-cmake@v0.1
       with:
-        dependencies: libgstreamer1.0-dev libnotify-dev libenchant-dev libxi-dev libxtst-dev
+        directory: xneur
