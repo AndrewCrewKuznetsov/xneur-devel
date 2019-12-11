@@ -11,6 +11,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v1
     - name: Build
-      uses: lpenz/ghaction-cmake@v0.1
+      uses: lpenz/ghaction-cmake@v0.2
       with:
         directory: xneur
