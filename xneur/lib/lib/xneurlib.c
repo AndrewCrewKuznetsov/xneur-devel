@@ -291,7 +291,6 @@ struct _xneur_handle *xneur_handle_create (void)
 		snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, handle->languages[lang].dir);
 
 		handle->languages[lang].dictionary = load_list(lang_dir, DICT_NAME, TRUE);
-		handle->languages[lang].dictionary->rem(handle->languages[lang].dictionary, "(?i)^.$");
 		handle->languages[lang].proto      = load_list(lang_dir, PROTO_NAME, TRUE);
 		handle->languages[lang].big_proto  = load_list(lang_dir, BIG_PROTO_NAME, TRUE);
 		handle->languages[lang].pattern    = load_list(lang_dir, PATTERN_NAME, TRUE);
