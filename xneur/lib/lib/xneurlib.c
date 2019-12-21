@@ -239,20 +239,14 @@ struct _xneur_handle *xneur_handle_create (void)
 
 	for (int group = 0; group < groups_count; group++)
 	{
-		Atom group_atom = kbd_desc_ptr->names->groups[group];
-
-		if (group_atom == None)
-			continue;
-
+		Atom  group_atom = kbd_desc_ptr->names->groups[group];
 		char *group_name = XGetAtomName(display, group_atom);
-		//log_message (ERROR, "%s", group_name);
 		char *short_name = strsep(&prop_value, ",");
-		//log_message (ERROR, "%s", short_name);
 
 		// Check double layout
 		//
 		for (int lang = 0; lang < handle->total_languages; lang++)
-	    {
+		{
 			if (strcmp(handle->languages[lang].dir, short_name) == 0)
 			{
 				goto function_end;
