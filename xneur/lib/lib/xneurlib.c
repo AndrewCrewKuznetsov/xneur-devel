@@ -113,7 +113,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	struct _xneur_handle *handle = (struct _xneur_handle *) malloc(sizeof(struct _xneur_handle));;
 	if (handle == NULL)
 		return NULL;
-	
+
 	XkbDescPtr kbd_desc_ptr;
 
 	if (!(kbd_desc_ptr = XkbAllocKeyboard()))
@@ -121,7 +121,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
-	
+
 	Display *display = XOpenDisplay(NULL);
 
 	/*char *names[XkbNumKbdGroups];
@@ -132,7 +132,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		printf("%d) %c %s\n", i, i == g ? '*' : ' ', names[i]);
 	}
 	free_layout(names, gc);*/
-	
+
 	XkbGetNames(display, XkbAllNamesMask, kbd_desc_ptr);
 
 	if (kbd_desc_ptr->names == NULL)
@@ -159,7 +159,7 @@ struct _xneur_handle *xneur_handle_create (void)
 	}
 
 	Atom _XKB_RULES_NAMES = XInternAtom(display, "_XKB_RULES_NAMES", 1);
-	if (_XKB_RULES_NAMES == None) 
+	if (_XKB_RULES_NAMES == None)
 	{
 		XCloseDisplay(display);
 		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
@@ -174,7 +174,7 @@ struct _xneur_handle *xneur_handle_create (void)
     unsigned long bytes_after;
     unsigned char *prop;
     int status;
-	
+
     status = XGetWindowProperty(display, rw, _XKB_RULES_NAMES, 0, (10000+3)/4,
 				False, AnyPropertyType, &type,
 				&size, &nitems, &bytes_after,
@@ -186,7 +186,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
-	
+
 	if (size == 32)
 		nbytes = sizeof(long);
 	else if (size == 16)
@@ -202,11 +202,11 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
-	
+
 	int prop_count = 0;
 	char *prop_value = NULL;
     long length = nitems * nbytes;
-	while (length >= size/8) 
+	while (length >= size/8)
 	{
 		int prop_value_len = get_next_property_value(&prop, &length, size, &prop_value);
 		if (prop_value_len == 0)
@@ -233,14 +233,14 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
-	//log_message(ERROR, "%s", 
+	//log_message(ERROR, "%s",
 	handle->languages = (struct _xneur_language *) malloc(sizeof(struct _xneur_language));
 	handle->total_languages = 0;
 
 	for (int group = 0; group < groups_count; group++)
 	{
 		Atom group_atom = kbd_desc_ptr->names->groups[group];
-			
+
 		if (group_atom == None)
 			continue;
 
@@ -279,7 +279,7 @@ struct _xneur_handle *xneur_handle_create (void)
 
 		//if (group_name != NULL)
 			//free(group_name);
-		
+
 		if (prop_value == NULL)
 			break;
 		function_end:;
@@ -287,7 +287,7 @@ struct _xneur_handle *xneur_handle_create (void)
 
 	XCloseDisplay(display);
 	XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-	
+
 	if (handle->total_languages == 0)
 	{
 		free(handle);
@@ -314,32 +314,14 @@ struct _xneur_handle *xneur_handle_create (void)
 		char *lang_dir = (char *) malloc(path_len * sizeof(char));
 		snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, handle->languages[lang].dir);
 
-		handle->languages[lang].dictionary = load_list(lang_dir, DICT_NAME, TRUE);		
-		if (handle->languages[lang].dictionary == NULL)
-		{
-			handle->languages[lang].dictionary->data_count = 0;
-		}
-		else	
-		{
-			handle->languages[lang].dictionary->rem(handle->languages[lang].dictionary, "(?i)^.$");
-		}
-		
-		handle->languages[lang].proto = load_list(lang_dir, PROTO_NAME, TRUE);
-		if (handle->languages[lang].proto == NULL)
-			handle->languages[lang].proto->data_count = 0;
-
-		handle->languages[lang].big_proto = load_list(lang_dir, BIG_PROTO_NAME, TRUE);
-		if (handle->languages[lang].big_proto == NULL)
-			handle->languages[lang].big_proto->data_count = 0;
-
-		handle->languages[lang].pattern = load_list(lang_dir, PATTERN_NAME, TRUE);
-		if (handle->languages[lang].pattern == NULL)
-			handle->languages[lang].pattern->data_count = 0;
-		
+		handle->languages[lang].dictionary = load_list(lang_dir, DICT_NAME, TRUE);
+		handle->languages[lang].dictionary->rem(handle->languages[lang].dictionary, "(?i)^.$");
+		handle->languages[lang].proto      = load_list(lang_dir, PROTO_NAME, TRUE);
+		handle->languages[lang].big_proto  = load_list(lang_dir, BIG_PROTO_NAME, TRUE);
+		handle->languages[lang].pattern    = load_list(lang_dir, PATTERN_NAME, TRUE);
 		handle->languages[lang].temp_dictionary = handle->languages[lang].dictionary->clone(handle->languages[lang].dictionary);
 
-		if (lang_dir != NULL)
-			free(lang_dir);
+		free(lang_dir);
 	}
 
 #ifdef WITH_ASPELL
@@ -445,21 +427,21 @@ struct _xneur_handle *xneur_handle_create (void)
 			);
 	}
 
-	return handle;	
+	return handle;
 }
 
 void xneur_handle_destroy (struct _xneur_handle *handle)
 {
-	if (handle == NULL) 
+	if (handle == NULL)
 		return;
-	
+
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
 #ifdef WITH_ASPELL
 		if (handle->has_spell_checker[lang])
 			delete_aspell_speller(handle->spell_checkers[lang]);
 #endif
-		
+
 #ifdef WITH_ENCHANT
 		if ((handle->enchant_dicts[lang] != NULL) && (handle->has_enchant_checker[lang]))
 			enchant_broker_free_dict (handle->enchant_broker, handle->enchant_dicts[lang]);
@@ -467,7 +449,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 
 		if (handle->languages == NULL)
 			continue;
-		
+
 		if (handle->languages[lang].temp_dictionary != NULL)
 			handle->languages[lang].temp_dictionary->uninit(handle->languages[lang].temp_dictionary);
 
@@ -490,7 +472,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 	}
 	handle->total_languages = 0;
 	free(handle->languages);
-		
+
 #ifdef WITH_ASPELL
 	delete_aspell_config(handle->spell_config);
 	if (handle->spell_checkers != NULL)
@@ -498,7 +480,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 	if (handle->has_spell_checker != NULL)
 		free(handle->has_spell_checker);
 #endif
-	
+
 #ifdef WITH_ENCHANT
 	enchant_broker_free (handle->enchant_broker);
 	if (handle->enchant_dicts != NULL)
@@ -506,7 +488,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 	if (handle->has_enchant_checker != NULL)
 		free(handle->has_enchant_checker);
 #endif
-	
+
 	free(handle);
 
 }
