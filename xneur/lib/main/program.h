@@ -24,19 +24,17 @@
 
 struct _program
 {
-	struct _switchlang *switchlang;
-	struct _selection *selection;
 	struct _event *event;
 	struct _focus *focus;
 	struct _buffer *buffer;
 	struct _plugin *plugin;
-	
+
 	int  last_action;
 	int  changed_manual;
 	int  app_forced_mode;
 	int  app_focus_mode;
 	int  app_autocompletion_mode;
-	
+
 	int  action_mode;
 
 	int  last_layout;
@@ -49,7 +47,7 @@ struct _program
 	struct _buffer *correction_buffer;
 
 	int last_pattern_id;
-	
+
 	void (*layout_update) (struct _program *p);
 	void (*update) (struct _program *p);
 	void (*on_key_action) (struct _program *p, int type, KeySym key, int modifier);
