@@ -99,13 +99,13 @@ static const int names_len = sizeof(layout_names) / sizeof(layout_names[0]);
 
 static long get_next_property_value (unsigned char **pointer, long *length, int size, char **string)
 {
-    if (size != 8)
+	if (size != 8)
 		return 0;
 
-    int len = 0; *string = (char *)*pointer;
-    while ((len++, --*length, *((*pointer)++)) && *length>0);
+	int len = 0; *string = (char *)*pointer;
+	while ((len++, --*length, *((*pointer)++)) && *length>0);
 
-    return len;
+	return len;
 }
 
 struct _xneur_handle *xneur_handle_create (void)
@@ -168,14 +168,13 @@ struct _xneur_handle *xneur_handle_create (void)
 	}
 	Window rw = RootWindow(display, DefaultScreen(display));
 	Atom type;
-    int size;
-    unsigned long nitems;
-    unsigned long nbytes;
-    unsigned long bytes_after;
-    unsigned char *prop;
-    int status;
+	int size;
+	unsigned long nitems;
+	unsigned long bytes_after;
+	unsigned char *prop;
+	int status;
 
-    status = XGetWindowProperty(display, rw, _XKB_RULES_NAMES, 0, (10000+3)/4,
+	status = XGetWindowProperty(display, rw, _XKB_RULES_NAMES, 0, (10000+3)/4,
 				False, AnyPropertyType, &type,
 				&size, &nitems, &bytes_after,
 				&prop);
@@ -187,28 +186,11 @@ struct _xneur_handle *xneur_handle_create (void)
 		return NULL;
 	}
 
-	if (size == 32)
-		nbytes = sizeof(long);
-	else if (size == 16)
-		nbytes = sizeof(short);
-	else if (size == 8)
-		nbytes = 1;
-	else if (size == 0)
-		nbytes = 0;
-	else
-	{
-		XCloseDisplay(display);
-		XkbFreeKeyboard(kbd_desc_ptr, XkbAllComponentsMask, True);
-		free(handle);
-		return NULL;
-	}
-
 	int prop_count = 0;
 	char *prop_value = NULL;
-    long length = nitems * nbytes;
-	while (length >= size/8)
+	while (nitems >= 1)
 	{
-		int prop_value_len = get_next_property_value(&prop, &length, size, &prop_value);
+		int prop_value_len = get_next_property_value(&prop, &nitems, size, &prop_value);
 		if (prop_value_len == 0)
 		{
 			XCloseDisplay(display);
@@ -233,7 +215,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		free(handle);
 		return NULL;
 	}
-	//log_message(ERROR, "%s",
+
 	handle->languages = (struct _xneur_language *) malloc(sizeof(struct _xneur_language));
 	handle->total_languages = 0;
 
