@@ -208,14 +208,15 @@ struct _list_char_data* list_char_find(struct _list_char *list, const char *stri
 
 struct _list_char_data* list_char_find_alike(struct _list_char *list, const char *string)
 {
-	if (strlen(string) < 4)
+	size_t len = strlen(string);
+	if (len < 4)
 		return NULL;
 	
 	int id = get_add_id(list, string);
 	if ((id == -1) || (id == list->data_count))
 		return NULL;
 
-	if (strncmp(list->data[id].string, string, strlen(string)) != 0)
+	if (strncmp(list->data[id].string, string, len) != 0)
 		return NULL;
 
 	return &list->data[id];
@@ -223,21 +224,22 @@ struct _list_char_data* list_char_find_alike(struct _list_char *list, const char
 
 struct _list_char* list_char_alike(struct _list_char *list, const char *string)
 {
-	if (strlen(string) < 4)
+	size_t len = strlen(string);
+	if (len < 4)
 		return NULL;
 	
 	int id = get_add_id(list, string);
 	if ((id == -1) || (id == list->data_count))
 		return NULL;
 
-	if (strncmp(list->data[id].string, string, strlen(string)) != 0)
+	if (strncmp(list->data[id].string, string, len) != 0)
 		return NULL;
 
 	struct _list_char* list_alike = list_char_init();
 	
 	for (int i = id; i < list->data_count; i++)
 	{
-		if (strncmp(list->data[i].string, string, strlen(string)) != 0)
+		if (strncmp(list->data[i].string, string, len) != 0)
 			break;
 		add_last(list_alike, list->data[i].string);
 	}
