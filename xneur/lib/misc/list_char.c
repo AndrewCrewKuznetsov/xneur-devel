@@ -256,8 +256,12 @@ struct _list_char* list_char_clone(struct _list_char *list)
 {
 	struct _list_char *list_copy = list_char_init();
 
-	for (int i = 0; i < list->data_count; i++)
-		add_last(list_copy, list->data[i].string);
+	list_copy->data = (struct _list_char_data *) malloc(list->data_count * sizeof(struct _list_char_data));
+	list_copy->data_count = list->data_count;
+
+	for (int i = 0; i < list->data_count; i++) {
+		list_copy->data[i].string = strdup(list->data[i].string);
+	}
 
 	list_copy->sort(list_copy);
 
