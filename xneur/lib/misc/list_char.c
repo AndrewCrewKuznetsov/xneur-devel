@@ -263,8 +263,6 @@ struct _list_char* list_char_clone(struct _list_char *list)
 		list_copy->data[i].string = strdup(list->data[i].string);
 	}
 
-	list_copy->sort(list_copy);
-
 	return list_copy;
 }
 
