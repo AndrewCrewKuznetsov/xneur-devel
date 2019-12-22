@@ -47,7 +47,7 @@ static void rem_by_id(struct _list_char *list, int id)
 
 	list->data_count--;
 	struct _list_char_data *tmp = realloc(list->data, list->data_count * sizeof(struct _list_char_data));
-	if (tmp != NULL) 
+	if (tmp != NULL)
 		list->data = tmp;
 }
 
@@ -81,7 +81,7 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 {
 	if (list->data_count == 0)
 		return -1;
-	
+
 	if (mode == BY_PLAIN)
 	{
 		// Print all list for debug
@@ -90,8 +90,8 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 			struct _list_char_data *data = &list->data[0];
 			data = &list->data[i];
 			log_message (ERROR, "%d %s", i, data->string);
-		}*/ 
-		
+		}*/
+
 		int first = 0;
 		int last = list->data_count - 1;
 
@@ -133,11 +133,11 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 			//data = &list->data[i];
 			strcat(full_str, data->string);
 			strcat(full_str, "|");
-		} 
+		}
 
 		struct _list_char_data *data;
 		data = &list->data[list->data_count - 1];
-		strcat(full_str, data->string);			
+		strcat(full_str, data->string);
 
 		if (check_regexp_match(string, full_str))
 		{
@@ -152,7 +152,7 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 }
 
 static struct _list_char_data* add_last(struct _list_char *list, const char *string)
-{	
+{
 	list->data_count++;
 	struct _list_char_data *tmp = (struct _list_char_data *)realloc(list->data, list->data_count * sizeof(struct _list_char_data));
 	if (tmp == NULL)
@@ -172,13 +172,13 @@ struct _list_char_data* list_char_add(struct _list_char *list, const char *strin
 {
 	int id = get_add_id(list, string);
 
-	struct _list_char_data *tmp = realloc(list->data, (list->data_count + 1) * sizeof(struct _list_char_data)); 
+	struct _list_char_data *tmp = realloc(list->data, (list->data_count + 1) * sizeof(struct _list_char_data));
 	if (tmp == NULL)
 	{
 		log_message (ERROR, _("Function realloc return NULL."));
 		return NULL;
 	}
-	
+
 	list->data = (struct _list_char_data *)tmp;
 	if (id != list->data_count)
 		memmove(list->data + id + 1, list->data + id, (list->data_count - id) * sizeof(struct _list_char_data));
@@ -197,21 +197,12 @@ void list_char_rem(struct _list_char *list, const char *string)
 	rem_by_id(list, id);
 }
 
-struct _list_char_data* list_char_find(struct _list_char *list, const char *string, int mode)
-{
-	int id = find_id(list, string, mode);
-	if (id == -1)
-		return NULL;
-
-	return &list->data[id];
-}
-
 struct _list_char_data* list_char_find_alike(struct _list_char *list, const char *string)
 {
 	size_t len = strlen(string);
 	if (len < 4)
 		return NULL;
-	
+
 	int id = get_add_id(list, string);
 	if ((id == -1) || (id == list->data_count))
 		return NULL;
@@ -227,7 +218,7 @@ struct _list_char* list_char_alike(struct _list_char *list, const char *string)
 	size_t len = strlen(string);
 	if (len < 4)
 		return NULL;
-	
+
 	int id = get_add_id(list, string);
 	if ((id == -1) || (id == list->data_count))
 		return NULL;
@@ -236,7 +227,7 @@ struct _list_char* list_char_alike(struct _list_char *list, const char *string)
 		return NULL;
 
 	struct _list_char* list_alike = list_char_init();
-	
+
 	for (int i = id; i < list->data_count; i++)
 	{
 		if (strncmp(list->data[i].string, string, len) != 0)
@@ -248,8 +239,7 @@ struct _list_char* list_char_alike(struct _list_char *list, const char *string)
 
 int list_char_exist(struct _list_char *list, const char *string, int mode)
 {
-	struct _list_char_data *data = list->find(list, string, mode);
-	return (data != NULL);
+	return find_id(list, string, mode) != -1;
 }
 
 struct _list_char* list_char_clone(struct _list_char *list)
@@ -276,10 +266,10 @@ void list_char_sort(struct _list_char *list)
 	// Insertion sort
 	int i, j;
 	struct _list_char_data temp;
-	for (i = 1; i < list->data_count; i++) 
+	for (i = 1; i < list->data_count; i++)
 	{
 		temp = list->data[i];
-		for (j = i - 1; j >= 0; j--) 
+		for (j = i - 1; j >= 0; j--)
 		{
 			data1 = list->data[j].string;
 			data2 = temp.string;
@@ -358,7 +348,7 @@ void list_char_sort(struct _list_char *list)
 	}
 	while (i >= 1);
 	*/
-	
+
 	for (int i = 0; i < list->data_count - 1; i++)
 	{
 		if (strcmp(list->data[i].string, list->data[i+1].string) > 0)
@@ -405,11 +395,10 @@ struct _list_char* list_char_init(void)
 	bzero(list, sizeof(struct _list_char));
 
 	list->data_count = 0;
-	
+
 	list->uninit	= list_char_uninit;
 	list->add	= list_char_add;
 	list->rem	= list_char_rem;
-	list->find	= list_char_find;
 	list->find_alike	= list_char_find_alike;
 	list->load	= list_char_load;
 	list->save	= list_char_save;

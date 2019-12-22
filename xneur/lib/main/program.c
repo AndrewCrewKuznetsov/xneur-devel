@@ -212,6 +212,16 @@ static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
 	return KLB_ADD_SYM;
 }
 
+static void fetch_window_name(char *text_to_find, Window window) {
+	char *app_name = get_wm_class_name(window);
+	if (app_name != NULL && xconfig->layout_remember_apps->exist(xconfig->layout_remember_apps, app_name, BY_PLAIN)) {
+		sprintf(text_to_find, "%s", app_name);
+	} else {
+		sprintf(text_to_find, "%d", (int) window);
+	}
+	free(app_name);
+}
+
 static void program_layout_update(struct _program *p)
 {
 	if (!xconfig->remember_layout)
@@ -230,20 +240,7 @@ static void program_layout_update(struct _program *p)
 		return;
 	}
 
-	struct _list_char_data* last_app = NULL;
-
-	char *last_app_name = get_wm_class_name(p->last_window);
-	if (last_app_name != NULL)
-		last_app = xconfig->layout_remember_apps->find(xconfig->layout_remember_apps, last_app_name, BY_PLAIN);
-
-	if (last_app != NULL)
-		sprintf(text_to_find, "%s", last_app_name);
-	else
-		sprintf(text_to_find, "%d", (int) p->last_window);
-
-	if (last_app_name != NULL)
-		free(last_app_name);
-
+	fetch_window_name(text_to_find, p->last_window);
 	// Remove layout for old window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
 	{
@@ -259,19 +256,7 @@ static void program_layout_update(struct _program *p)
 	sprintf(window_layouts, "%s %d", text_to_find, p->last_layout);
 	xconfig->window_layouts->add(xconfig->window_layouts, window_layouts);
 
-	struct _list_char_data* curr_app = NULL;
-
-	char *curr_app_name = get_wm_class_name(p->focus->owner_window);
-	if (curr_app_name != NULL)
-		curr_app = xconfig->layout_remember_apps->find(xconfig->layout_remember_apps, curr_app_name, BY_PLAIN);
-
-	if (curr_app != NULL)
-		sprintf(text_to_find, "%s", curr_app_name);
-	else
-		sprintf(text_to_find, "%d", (int) p->focus->owner_window);
-
-	if (curr_app_name != NULL)
-		free(curr_app_name);
+	fetch_window_name(text_to_find, p->focus->owner_window);
 
 	// Restore layout for new window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
@@ -485,7 +470,7 @@ static void program_process_input(struct _program *p)
 				break;
 			}
 			default:
-			{	
+			{
 				Window wDummy;
 				int iDummy;
 				unsigned int mask;
@@ -881,7 +866,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
 			}
 		}
-		
+
 		if (p->user_action >= 0)
 		{
 			log_message(LOG, _("Execute user action \"%s\""), xconfig->user_actions[p->user_action].name);
@@ -1614,7 +1599,7 @@ static void program_check_tcl_last_word(struct _program *p)
 	p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
 
 	p->correction_action = CORRECTION_NONE;
-	
+
 	p->change_word(p, CHANGE_TWO_CAPITAL_LETTER);
 	show_notify(NOTIFY_CORR_TWO_CAPITAL_LETTER, NULL);
 
@@ -1643,7 +1628,7 @@ static void program_check_two_space(struct _program *p)
 		free(word);
 		return;
 	}
-	
+
 	pos = pos - 1;
 	if (ispunct(word[pos]) || isspace(word[pos]))
 	{
@@ -2261,7 +2246,7 @@ static void program_check_misprint(struct _program *p)
 	char *word = strdup(p->buffer->get_last_word(p->buffer, p->buffer->i18n_content[lang].content_unchanged));
 	if (word == NULL)
 		return;
-	
+
 	del_final_numeric_char(word);
 
 	if ((strlen(word) > 250) || (strlen(word) < 4))
