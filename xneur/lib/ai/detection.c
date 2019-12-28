@@ -144,7 +144,7 @@ static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym
 	// check for another languages
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded || lang == cur_lang || (strlen(word[lang]) <= 0)) 
+		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded || lang == cur_lang || (strlen(word[lang]) <= 0))
 			continue;
 
 		if (strlen(word[lang]) == 0)
@@ -169,7 +169,7 @@ static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym
 	log_message(DEBUG, _("   [-] This word has no hits for all enchant wrapper dictionaries"));
 	return NO_LANGUAGE;
 }
-#endif				
+#endif
 
 static int get_proto_hits(struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang)
 {
@@ -212,7 +212,7 @@ static int get_big_proto_hits(struct _xneur_handle *handle, char *word, int *sym
 		strncpy(proto, word+local_offset, n_bytes);
 		proto[n_bytes] = NULLSYM;
 
-		if (handle->languages[lang].proto->exist(handle->languages[lang].big_proto, proto, BY_PLAIN))
+		if (handle->languages[lang].big_proto->exist(handle->languages[lang].big_proto, proto, BY_PLAIN))
 		{
 			free(proto);
 			return TRUE;
@@ -277,16 +277,16 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 	int min_levenshtein = LEVENSHTEIN_LEN;
 	char *possible_words = NULL;
 	int possible_lang = NO_LANGUAGE;
-	
+
 	int lang = 0;
 	for (lang = 0; lang < handle->total_languages; lang++)
 	{
 		char *word = strdup(p->get_last_word(p, p->i18n_content[lang].content));
 		if (word == NULL)
 			continue;
-		
+
 		del_final_numeric_char(word);
-		
+
 		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded)
 		{
 			if (possible_words != NULL)
@@ -296,7 +296,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 		}
 
 		int word_len = strlen(p->get_last_word(p, p->content));
-		
+
 		if ((word_len > 250) || (word_len < 2))
 		{
 			if (possible_words != NULL)
@@ -305,18 +305,18 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 			continue;
 		}
 
-		word_len = strlen(word); 
-		
+		word_len = strlen(word);
+
 		int offset = 0;
 		for (offset = 0; offset < word_len; offset++)
 		{
 			if (!ispunct(word[offset]))
 				break;
 		}
-		
-#ifdef WITH_ENCHANT 
+
+#ifdef WITH_ENCHANT
 		size_t count = 0;
-		
+
 		if (!handle->has_enchant_checker[lang])
 		{
 			if (possible_words != NULL)
@@ -325,7 +325,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 			continue;
 		}
 
-		char **suggs = enchant_dict_suggest (handle->enchant_dicts[lang], word+offset, strlen(word+offset), &count); 
+		char **suggs = enchant_dict_suggest (handle->enchant_dicts[lang], word+offset, strlen(word+offset), &count);
 		if (count > 0)
 		{
 			for (unsigned int i = 0; i < count; i++)
@@ -338,10 +338,10 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 						free(possible_words);
 					possible_words = strdup(suggs[i]);
 					possible_lang = lang;
-					
+
 				}
-				//log_message (ERROR, "    %d. %s (%d)", i+1, suggs[i], levenshtein(word, suggs[i]));	
-			}			
+				//log_message (ERROR, "    %d. %s (%d)", i+1, suggs[i], levenshtein(word, suggs[i]));
+			}
 		}
 		enchant_dict_free_string_list(handle->enchant_dicts[lang], suggs);
 #endif
@@ -378,27 +378,27 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 					free(possible_words);
 				possible_words = strdup(sugg_word);
 				possible_lang = lang;
-				
+
 			}
 			i++;
-			//log_message (ERROR, "    %d. %s (%d) (%d)", i, sugg_word, levenshtein(word, sugg_word), damerau_levenshtein(word, sugg_word, 1, 1, 1, 1));	
+			//log_message (ERROR, "    %d. %s (%d) (%d)", i, sugg_word, levenshtein(word, sugg_word), damerau_levenshtein(word, sugg_word, 1, 1, 1, 1));
 		}
 
 		delete_aspell_string_enumeration (elements);
 #endif
 		free(word);
 	}
-	
+
 	if (possible_words == NULL)
 	{
-		log_message(DEBUG, _("   [-] This word has no suggest for all dictionaries")); 
+		log_message(DEBUG, _("   [-] This word has no suggest for all dictionaries"));
 		return possible_lang;
 
 	}
-	
-	log_message(DEBUG, _("   [+] Found suggest word '%s' in %s dictionary (Levenshtein distance = %d)"),  
+
+	log_message(DEBUG, _("   [+] Found suggest word '%s' in %s dictionary (Levenshtein distance = %d)"),
 						possible_words, handle->languages[possible_lang].name, min_levenshtein);
-	free (possible_words); 
+	free (possible_words);
 	return possible_lang;
 }
 
@@ -424,12 +424,12 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
 				break;
 		}
 		word[i] = word[i] + offset;
-		
+
 		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
 		word_unchanged_base[i] = word_unchanged[i];
 		word_unchanged[i] = word_unchanged[i] + offset;
 		del_final_numeric_char(word_unchanged[i]);
-		
+
 		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
 
 		sym_len[i] = p->i18n_content[i].symbol_len + p->get_last_word_offset(p, p->content, strlen(p->content));
@@ -451,7 +451,7 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
 	if (lang == NO_LANGUAGE)
 		lang = get_aspell_hits(handle, word, sym_len, cur_lang);
 #endif
-	
+
 	// If not found in dictionary, try to find in proto
 	int len = strlen(p->content);
 	int offset = p->get_last_word_offset(p, p->content, len);
@@ -468,7 +468,7 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
 		free(word_base[i]);
 		free(word_unchanged_base[i]);
 	}
-	
+
 	free(word);
 	free(word_unchanged);
 	free(word_base);
@@ -499,12 +499,12 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 				break;
 		}
 		word[i] = word[i] + offset;
-		
+
 		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
 		word_unchanged_base[i] = word_unchanged[i];
 		word_unchanged[i] = word_unchanged[i] + offset;
 		del_final_numeric_char(word_unchanged[i]);
-		
+
 		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
 
 		sym_len[i] = p->i18n_content[i].symbol_len + p->get_last_word_offset(p, p->content, strlen(p->content));
@@ -530,7 +530,7 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 	// Check misprint
 	if (lang == NO_LANGUAGE)
 		lang = get_similar_words (handle, p);
-	
+
 	// If not found in dictionary, try to find in proto
 	int len = strlen(p->content);
 	int offset = p->get_last_word_offset(p, p->content, len);
@@ -553,5 +553,5 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 	free(word_unchanged_base);
 	free(sym_len);
 	return lang;
-} 
+}
 
