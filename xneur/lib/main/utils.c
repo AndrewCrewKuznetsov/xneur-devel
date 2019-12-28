@@ -171,26 +171,21 @@ void grab_all_keys(Window window, int is_grab)
 	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
 }
 
-unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size)
+unsigned char *get_win_prop(Window window, Atom atom, unsigned long *nitems)
 {
 	Atom actual_type;
 	int actual_format;
-	unsigned long _nitems;
 	unsigned long bytes_after; /* unused */
 	unsigned char *prop;
 	int status;
 
 	status = XGetWindowProperty(main_window->display, window, atom, 0, (~0L),
-                              FALSE, AnyPropertyType, &actual_type,
-                              &actual_format, &_nitems, &bytes_after,
-                              &prop);
+	                            False, AnyPropertyType, &actual_type,
+	                            &actual_format, nitems, &bytes_after,
+	                            &prop);
 	if (status != Success)
 		return NULL;
 
-
-	*nitems = _nitems;
-	*type = actual_type;
-	*size = actual_format;
 	return prop;
 }
 
@@ -208,12 +203,10 @@ char* get_wm_class_name(Window window)
 		if (named_window == None)
 			return NULL;
 
-		Atom type;
-		int size;
-		long nitems;
+		unsigned long nitems;
 
 		Atom request = XInternAtom(main_window->display, "WM_NAME", False);
-		unsigned char *data = get_win_prop(named_window, request, &nitems, &type, &size);
+		unsigned char *data = get_win_prop(named_window, request, &nitems);
 
 		if (nitems > 0)
 			return (char *)data;

@@ -75,13 +75,11 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 		// dont process modifier keys (see utils.h)
 		/*if (main_window->_NET_SUPPORTED)
 		{
-			Atom type;
-			int size;
-			long nitems;
+			unsigned long nitems;
 
 			Atom request = XInternAtom(main_window->display, "_NET_ACTIVE_WINDOW", False);
 			Window root = XDefaultRootWindow(main_window->display);
-			unsigned char *data = get_win_prop(root, request, &nitems, &type, &size);
+			unsigned char *data = get_win_prop(root, request, &nitems);
 
 			if (nitems > 0)
 				new_window = *((Window*)data);

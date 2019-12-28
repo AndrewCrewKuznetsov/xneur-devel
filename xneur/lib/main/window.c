@@ -103,23 +103,15 @@ static int window_create(struct _window *p)
 	p->internal_atom = XInternAtom(p->display, "XNEUR_INTERNAL_MSG", 0);
 
 	// Check "_NET_SUPPORTED" atom support
-	Atom type = 0;
-	long nitems = 0L;
-	int size = 0;
-	Atom *results = NULL;
-	long i = 0;
+	unsigned long nitems = 0L;
 
-	Window root;
-	Atom request;
-	Atom feature_atom;
-
-	request = XInternAtom(p->display, "_NET_SUPPORTED", False);
-	feature_atom = XInternAtom(p->display, "_NET_ACTIVE_WINDOW", False);
-	root = XDefaultRootWindow(p->display);
+	Atom request = XInternAtom(p->display, "_NET_SUPPORTED", False);
+	Atom feature_atom = XInternAtom(p->display, "_NET_ACTIVE_WINDOW", False);
+	Window root = XDefaultRootWindow(p->display);
 
 	p->_NET_SUPPORTED = FALSE;
-	results = (Atom *) get_win_prop(root, request, &nitems, &type, &size);
-	for (i = 0L; i < nitems; i++)
+	Atom *results = (Atom *) get_win_prop(root, request, &nitems);
+	for (unsigned long i = 0L; i < nitems; i++)
 	{
 		if (results[i] == feature_atom)
 			p->_NET_SUPPORTED = TRUE;
