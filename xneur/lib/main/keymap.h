@@ -26,7 +26,6 @@
 
 int   get_keycode_mod(int keyboard_group);
 int   get_languages_mask(void);
-void  purge_keymap_caches(void);
 
 struct keycode_to_symbol_pair;
 struct symbol_to_keycode_pair;
