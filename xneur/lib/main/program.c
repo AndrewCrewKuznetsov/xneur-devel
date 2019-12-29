@@ -99,6 +99,32 @@ struct _window *main_window;
 
 int last_event_type = 0;
 
+static void program_on_key_action(struct _program *p, int type, KeySym key, int modifier_mask);
+static void program_perform_user_action(struct _program *p, int action);
+static void program_perform_auto_action(struct _program *p, int action);
+static int  program_perform_action(struct _program *p, enum _hotkey_action action);
+static int  program_check_lang_last_word(struct _program *p);
+static int  program_check_lang_last_syllable(struct _program *p);
+static void program_check_caps_last_word(struct _program *p);
+static void program_check_tcl_last_word(struct _program *p);
+static void program_check_two_space(struct _program *p);
+static void program_check_two_minus(struct _program *p);
+static void program_check_copyright(struct _program *p);
+static void program_check_registered(struct _program *p);
+static void program_check_trademark(struct _program *p);
+static void program_check_ellipsis(struct _program *p);
+static void program_check_space_before_punctuation(struct _program *p);
+static void program_check_space_with_bracket(struct _program *p);
+static void program_check_brackets_with_symbols(struct _program *p);
+static void program_check_capital_letter_after_dot(struct _program *p);
+static void program_check_pattern(struct _program *p);
+static void program_rotate_pattern(struct _program *p);
+static void program_check_misprint(struct _program *p);
+static void program_send_string_silent(struct _program *p, int send_backspaces);
+static void program_change_word(struct _program *p, enum _change_action action);
+static void program_add_word_to_dict(struct _program *p, int new_lang);
+static void program_add_word_to_pattern(struct _program *p, int new_lang);
+
 // Private
 
 static int get_auto_action(struct _program *p, KeySym key, int modifier_mask)
@@ -296,7 +322,7 @@ static void program_update(struct _program *p)
 
 	p->focus->update_grab_events(p->focus, listen_mode);
 
-	p->layout_update(p);
+	program_layout_update(p);
 
 	p->buffer->save_and_clear(p->buffer, p->last_window);
 	p->correction_buffer->clear(p->correction_buffer);
@@ -311,7 +337,7 @@ static void program_update(struct _program *p)
 
 static void program_process_input(struct _program *p)
 {
-	p->update(p);
+	program_update(p);
 
 	while (1)
 	{
@@ -464,7 +490,7 @@ static void program_process_input(struct _program *p)
 				    && (type == FocusOut))
 				{
 					log_message(TRACE, _("Received FocusOut on window %d (event type %d)"), p->event->event.xfocus.window, type);
-					p->update(p);
+					program_update(p);
 				}
 				break;
 			}
@@ -503,7 +529,7 @@ static void program_process_input(struct _program *p)
 							p->event->event.xkey.state = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
 							p->event->default_event = p->event->event;
-							p->on_key_action(p, KeyPress, key_sym, mask);
+							program_on_key_action(p, KeyPress, key_sym, mask);
 
 							break;
 						}
@@ -527,7 +553,7 @@ static void program_process_input(struct _program *p)
 							p->event->event.xkey.state = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
 							p->event->default_event = p->event->event;
-							p->on_key_action(p, KeyRelease, key_sym, mask);
+							program_on_key_action(p, KeyRelease, key_sym, mask);
 
 							break;
 						}
@@ -541,7 +567,7 @@ static void program_process_input(struct _program *p)
 							p->correction_action = CORRECTION_NONE;
 							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
 							{
-								p->update(p);
+								program_update(p);
 							}
 							log_message(TRACE, _("Received XI_ButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
 							//}
@@ -571,7 +597,7 @@ static void program_process_input(struct _program *p)
 						// Save received event
 						p->event->default_event = p->event->event;
 						// Processing received event
-						p->on_key_action(p, KeyPress, key_sym, mask);
+						program_on_key_action(p, KeyPress, key_sym, mask);
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
@@ -599,7 +625,7 @@ static void program_process_input(struct _program *p)
 						// Save received event
 						p->event->default_event = p->event->event;
 						// Processing received event
-						p->on_key_action(p, KeyRelease, key_sym, mask);
+						program_on_key_action(p, KeyRelease, key_sym, mask);
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
@@ -729,7 +755,7 @@ static void program_process_selection_notify(struct _program *p)
 		case ACTION_TRANSLIT_SELECTED:
 		{
 			int lang = main_window->keymap->latin_group;
-			p->change_lang(p, lang);
+			program_change_lang(p, lang);
 
 			show_notify(NOTIFY_TRANSLIT_SELECTED, NULL);
 			break;
@@ -737,7 +763,7 @@ static void program_process_selection_notify(struct _program *p)
 		case ACTION_TRANSLIT_CLIPBOARD:
 		{
 			int lang = main_window->keymap->latin_group;
-			p->change_lang(p, lang);
+			program_change_lang(p, lang);
 
 			show_notify(NOTIFY_TRANSLIT_CLIPBOARD, NULL);
 			break;
@@ -766,7 +792,7 @@ static void program_process_selection_notify(struct _program *p)
 
 	// Selection
 	if ((p->action_mode != ACTION_PREVIEW_CHANGE_SELECTED) && (p->action_mode != ACTION_PREVIEW_CHANGE_CLIPBOARD))
-		p->change_word(p, CHANGE_SELECTION);
+		program_change_word(p, CHANGE_SELECTION);
 
 	if (p->action_mode == ACTION_CHANGE_SELECTED || p->action_mode == ACTION_CHANGECASE_SELECTED || p->action_mode == ACTION_TRANSLIT_SELECTED)
 	{
@@ -829,7 +855,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 				}
 			}
 		}
-		p->perform_auto_action(p, auto_action);
+		program_perform_auto_action(p, auto_action);
 	}
 
 	if (type == KeyRelease)
@@ -869,7 +895,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 		if (p->user_action >= 0)
 		{
 			log_message(LOG, _("Execute user action \"%s\""), xconfig->user_actions[p->user_action].name);
-			p->perform_user_action(p, p->user_action);
+			program_perform_user_action(p, p->user_action);
 			p->event->default_event.xkey.keycode = 0;
 			p->user_action = -1;
 			return;
@@ -878,7 +904,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 		if (p->action != ACTION_NONE)
 		{
 			log_message (LOG, _("Execute action \"%s\""), _(normal_action_names[xconfig->actions[p->action].action]));
-			if (p->perform_action(p, xconfig->actions[p->action].action))
+			if (program_perform_action(p, xconfig->actions[p->action].action))
 			{
 				p->action = ACTION_NONE;
 				p->event->default_event.xkey.keycode = 0;
@@ -969,7 +995,7 @@ static void program_perform_auto_action(struct _program *p, int action)
 			if (action == KLB_ADD_SYM)
 			{
 				// Correct small letter to capital letter after dot
-				p->check_capital_letter_after_dot(p);
+				program_check_capital_letter_after_dot(p);
 
 				// Add symbol to internal bufer
 				int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
@@ -977,38 +1003,38 @@ static void program_perform_auto_action(struct _program *p, int action)
 				p->correction_buffer->add_symbol(p->correction_buffer, sym, p->event->event.xkey.keycode, modifier_mask);
 
 				// Correct space before punctuation
-			    p->check_space_before_punctuation(p);
+				program_check_space_before_punctuation(p);
 
-			    // Correct spaces with brackets
-			    p->check_space_with_bracket(p);
+				// Correct spaces with brackets
+				program_check_space_with_bracket(p);
 
-				p->check_brackets_with_symbols(p);
+				program_check_brackets_with_symbols(p);
 
-				p->check_copyright(p);
+				program_check_copyright(p);
 
-				p->check_trademark(p);
+				program_check_trademark(p);
 
-				p->check_registered(p);
+				program_check_registered(p);
 
-				p->check_ellipsis(p);
+				program_check_ellipsis(p);
 
 				if (!xconfig->check_lang_on_process)
 				{
-					p->check_pattern(p);
+					program_check_pattern(p);
 					return;
 				}
 
 				// Checking word
 				if (p->changed_manual == MANUAL_FLAG_UNSET)
 				{
-					if (p->check_lang_last_syllable(p))
+					if (program_check_lang_last_syllable(p))
 						p->event->default_event.xkey.keycode = 0;
 				}
 
 				p->last_action = ACTION_NONE;
 				p->correction_action = CORRECTION_NONE;
 
-				p->check_pattern(p);
+				program_check_pattern(p);
 
 				return;
 			}
@@ -1017,27 +1043,27 @@ static void program_perform_auto_action(struct _program *p, int action)
 			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 			// Check two capital letter
-			p->check_tcl_last_word(p);
+			program_check_tcl_last_word(p);
 
 			// Check incidental caps
-			p->check_caps_last_word(p);
+			program_check_caps_last_word(p);
 
 			// Check two minus
-			p->check_two_minus(p);
+			program_check_two_minus(p);
 
 			// Checking word
 			if (p->changed_manual == MANUAL_FLAG_UNSET)
-				p->check_lang_last_word(p);
+				program_check_lang_last_word(p);
 
-			p->add_word_to_pattern(p, get_curr_keyboard_group());
+			program_add_word_to_pattern(p, get_curr_keyboard_group());
 
 			if (sym == ' ')
 			{
-				p->check_two_space(p);
+				program_check_two_space(p);
 			}
 
 			// Check and correct misprint
-			p->check_misprint(p);
+			program_check_misprint(p);
 
 			// Add symbol to internal bufer
 			p->event->event = p->event->default_event;
@@ -1048,10 +1074,10 @@ static void program_perform_auto_action(struct _program *p, int action)
 			//p->check_space_with_punctuation_mark(p);
 
 			// Correct space before punctuation
-			p->check_space_before_punctuation(p);
+			program_check_space_before_punctuation(p);
 
 			// Correct spaces with brackets
-			p->check_space_with_bracket(p);
+			program_check_space_with_bracket(p);
 
 			// Send Event
 			p->event->event = p->event->default_event;
@@ -1082,7 +1108,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 		case ACTION_PREVIEW_CHANGE_SELECTED:
 		{
 			p->action_mode = action;
-			p->process_selection_notify(p);
+			program_process_selection_notify(p);
 			p->event->default_event.xkey.keycode = 0;
 			return TRUE;
 		}
@@ -1092,7 +1118,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 		case ACTION_PREVIEW_CHANGE_CLIPBOARD:
 		{
 			p->action_mode = action;
-			p->process_selection_notify(p);
+			program_process_selection_notify(p);
 			p->event->default_event.xkey.keycode = 0;
 			return TRUE;
 		}
@@ -1122,7 +1148,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			else
 				break;
 
-			p->change_word(p, action);
+			program_change_word(p, action);
 
 			show_notify(NOTIFY_CHANGE_STRING, NULL);
 			break;
@@ -1147,7 +1173,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 				break;
 
 			if ((xconfig->educate) && (action == ACTION_CHANGE_WORD) && (p->correction_action == CORRECTION_NONE))
-				p->add_word_to_dict(p, next_lang);
+				program_add_word_to_dict(p, next_lang);
 
 			int change_action = ACTION_NONE;
 
@@ -1216,7 +1242,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			if (action == ACTION_PREVIEW_CHANGE_WORD)
 				change_action = CHANGE_WORD_PREVIEW_CHANGE;
 
-			p->change_word(p, change_action);
+			program_change_word(p, change_action);
 
 			show_notify(NOTIFY_MANUAL_CHANGE_WORD, NULL);
 			p->event->default_event.xkey.keycode = 0;
@@ -1295,7 +1321,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 		{
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 			{
-				p->rotate_pattern(p);
+				program_rotate_pattern(p);
 
 				break;
 			}
@@ -1326,7 +1352,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 
 			p->buffer->set_content(p->buffer, date);
 
-			p->change_word(p, CHANGE_INS_DATE);
+			program_change_word(p, CHANGE_INS_DATE);
 
 			p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 			p->correction_buffer->clear(p->correction_buffer);
@@ -1399,7 +1425,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 				p->event->send_backspaces(p->event, backspaces_count);
 				p->buffer->set_content(p->buffer, string);
 
-				p->change_word(p, CHANGE_ABBREVIATION);
+				program_change_word(p, CHANGE_ABBREVIATION);
 
 				show_notify(NOTIFY_REPLACE_ABBREVIATION, NULL);
 				p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
@@ -1483,7 +1509,7 @@ static int program_check_lang_last_word(struct _program *p)
 	else
 		change_action = CHANGE_WORD_TO_LAYOUT_3;
 
-	p->change_word(p, change_action);
+	program_change_word(p, change_action);
 	show_notify(NOTIFY_AUTOMATIC_CHANGE_WORD, NULL);
 
 	p->last_layout = new_lang;
@@ -1531,7 +1557,7 @@ static int program_check_lang_last_syllable(struct _program *p)
 	else
 		change_action = CHANGE_SYLL_TO_LAYOUT_3;
 
-	p->change_word(p, change_action);
+	program_change_word(p, change_action);
 	show_notify(NOTIFY_AUTOMATIC_CHANGE_WORD, NULL);
 
 	p->last_layout = new_lang;
@@ -1561,7 +1587,7 @@ static void program_check_caps_last_word(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_INCIDENTAL_CAPS);
+	program_change_word(p, CHANGE_INCIDENTAL_CAPS);
 	show_notify(NOTIFY_CORR_INCIDENTAL_CAPS, NULL);
 
 	p->correction_action = CORRECTION_INCIDENTAL_CAPS;
@@ -1599,7 +1625,7 @@ static void program_check_tcl_last_word(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_TWO_CAPITAL_LETTER);
+	program_change_word(p, CHANGE_TWO_CAPITAL_LETTER);
 	show_notify(NOTIFY_CORR_TWO_CAPITAL_LETTER, NULL);
 
 	p->correction_action = CORRECTION_TWO_CAPITAL_LETTER;
@@ -1643,7 +1669,7 @@ static void program_check_two_space(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_TWO_SPACE);
+	program_change_word(p, CHANGE_TWO_SPACE);
 	show_notify(NOTIFY_CORR_TWO_SPACE, NULL);
 
 	p->correction_action = CORRECTION_TWO_SPACE;
@@ -1666,7 +1692,7 @@ static void program_check_two_minus(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_TWO_MINUS);
+	program_change_word(p, CHANGE_TWO_MINUS);
 	show_notify(NOTIFY_CORR_TWO_MINUS, NULL);
 	p->correction_action = CORRECTION_TWO_MINUS;
 }
@@ -1697,7 +1723,7 @@ static void program_check_copyright(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_COPYRIGHT);
+	program_change_word(p, CHANGE_COPYRIGHT);
 	show_notify(NOTIFY_CORR_COPYRIGHT, NULL);
 	p->correction_action = CORRECTION_COPYRIGHT;
 }
@@ -1719,7 +1745,7 @@ static void program_check_registered(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_REGISTERED);
+	program_change_word(p, CHANGE_REGISTERED);
 	show_notify(NOTIFY_CORR_REGISTERED, NULL);
 
 	p->correction_action = CORRECTION_REGISTERED;
@@ -1742,7 +1768,7 @@ static void program_check_trademark(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_TRADEMARK);
+	program_change_word(p, CHANGE_TRADEMARK);
 	show_notify(NOTIFY_CORR_TRADEMARK, NULL);
 
 	p->correction_action = CORRECTION_TRADEMARK;
@@ -1776,7 +1802,7 @@ static void program_check_ellipsis(struct _program *p)
 
 	p->correction_action = CORRECTION_NONE;
 
-	p->change_word(p, CHANGE_ELLIPSIS);
+	program_change_word(p, CHANGE_ELLIPSIS);
 	show_notify(NOTIFY_CORR_ELLIPSIS, NULL);
 
 	p->correction_action = CORRECTION_ELLIPSIS;
@@ -2441,7 +2467,7 @@ static void program_check_misprint(struct _program *p)
 		free(new_content);
 
 		p->buffer->set_offset(p->buffer, new_offset);
-		p->send_string_silent(p, 0);
+		program_send_string_silent(p, 0);
 		p->buffer->unset_offset(p->buffer, new_offset);
 
 		//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
@@ -2496,9 +2522,9 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->change_incidental_caps(p);
+				program_change_incidental_caps(p);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2513,9 +2539,9 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->unchange_incidental_caps(p);
+				program_unchange_incidental_caps(p);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2535,9 +2561,9 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->change_two_capital_letter(p);
+				program_change_two_capital_letter(p);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2552,9 +2578,9 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->unchange_two_capital_letter(p);
+				program_unchange_two_capital_letter(p);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2709,7 +2735,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2766,7 +2792,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2823,7 +2849,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2881,7 +2907,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Shift fields to point to begin of word
 				p->buffer->set_offset(p->buffer, offset);
 
-				p->send_string_silent(p, p->buffer->cur_pos);
+				program_send_string_silent(p, p->buffer->cur_pos);
 
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
@@ -2898,12 +2924,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 0);
+			program_change_lang(p, 0);
 
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos + 1;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			p->last_action = ACTION_NONE;
 
@@ -2918,12 +2944,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 1);
+			program_change_lang(p, 1);
 
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos + 1;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			p->last_action = ACTION_NONE;
 
@@ -2938,12 +2964,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 2);
+			program_change_lang(p, 2);
 
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos + 1;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			p->last_action = ACTION_NONE;
 
@@ -2958,12 +2984,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 3);
+			program_change_lang(p, 3);
 
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos + 1;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			p->last_action = ACTION_NONE;
 
@@ -2988,7 +3014,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos + 1;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			p->last_action = ACTION_NONE;
 
@@ -3007,7 +3033,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos + 1;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			p->last_action = ACTION_NONE;
 
@@ -3041,12 +3067,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 0);
+			program_change_lang(p, 0);
 
 			int len = p->buffer->cur_pos - 1;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			// Revert fields back
 			p->buffer->unset_offset(p->buffer, offset);
@@ -3059,12 +3085,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 1);
+			program_change_lang(p, 1);
 
 			int len = p->buffer->cur_pos - 1;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			// Revert fields back
 			p->buffer->unset_offset(p->buffer, offset);
@@ -3077,12 +3103,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 2);
+			program_change_lang(p, 2);
 
 			int len = p->buffer->cur_pos - 1;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			// Revert fields back
 			p->buffer->unset_offset(p->buffer, offset);
@@ -3095,12 +3121,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			// Shift fields to point to begin of word
 			p->buffer->set_offset(p->buffer, offset);
 
-			p->change_lang(p, 3);
+			program_change_lang(p, 3);
 
 			int len = p->buffer->cur_pos - 1;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
 				len = p->buffer->cur_pos;
-			p->send_string_silent(p, len);
+			program_send_string_silent(p, len);
 
 			// Revert fields back
 			p->buffer->unset_offset(p->buffer, offset);
@@ -3108,45 +3134,45 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_SELECTION:
 		{
-			p->send_string_silent(p, 0);
+			program_send_string_silent(p, 0);
 			break;
 		}
 		case CHANGE_STRING_TO_LAYOUT_0:
 		{
-			p->change_lang(p, 0);
+			program_change_lang(p, 0);
 			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
-			p->send_string_silent(p, p->buffer->cur_pos);
+			program_send_string_silent(p, p->buffer->cur_pos);
 			break;
 		}
 		case CHANGE_STRING_TO_LAYOUT_1:
 		{
-			p->change_lang(p, 1);
+			program_change_lang(p, 1);
 			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
-			p->send_string_silent(p, p->buffer->cur_pos);
+			program_send_string_silent(p, p->buffer->cur_pos);
 			break;
 		}
 		case CHANGE_STRING_TO_LAYOUT_2:
 		{
-			p->change_lang(p, 2);
+			program_change_lang(p, 2);
 			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
-			p->send_string_silent(p, p->buffer->cur_pos);
+			program_send_string_silent(p, p->buffer->cur_pos);
 			break;
 		}
 		case CHANGE_STRING_TO_LAYOUT_3:
 		{
-			p->change_lang(p, 3);
+			program_change_lang(p, 3);
 			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
 
-			p->send_string_silent(p, p->buffer->cur_pos);
+			program_send_string_silent(p, p->buffer->cur_pos);
 			break;
 		}
 		case CHANGE_ABBREVIATION:
 		case CHANGE_INS_DATE:
 		{
-			p->send_string_silent(p, 0);
+			program_send_string_silent(p, 0);
 			break;
 		}
 		case CHANGE_MISPRINT:
@@ -3162,13 +3188,13 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				int cur_pos = p->buffer->cur_pos - backspaces_count + offset;
 
 				p->buffer->set_offset(p->buffer, cur_pos);
-				p->send_string_silent(p, backspaces_count);
+				program_send_string_silent(p, backspaces_count);
 				p->buffer->unset_offset(p->buffer, cur_pos);
 
 				p->correction_buffer->clear(p->correction_buffer);
 
 				if (xconfig->educate)
-					p->add_word_to_dict(p, get_curr_keyboard_group());
+					program_add_word_to_dict(p, get_curr_keyboard_group());
 
 				p->correction_action = CORRECTION_NONE;
 			}
@@ -3344,7 +3370,7 @@ static void program_add_word_to_dict(struct _program *p, int new_lang)
 		free(word_to_dict);
 	}
 
-	p->add_word_to_pattern(p, new_lang);
+	program_add_word_to_pattern(p, new_lang);
 
 	free(new_word);
 }
@@ -3520,40 +3546,7 @@ struct _program* program_init(void)
 
 	// Function mapping
 	p->uninit			= program_uninit;
-	p->layout_update		= program_layout_update;
-	p->update			= program_update;
-	p->on_key_action		= program_on_key_action;
 	p->process_input		= program_process_input;
-	p->perform_auto_action		= program_perform_auto_action;
-	p->perform_action	= program_perform_action;
-	p->perform_user_action		= program_perform_user_action;
-	p->check_lang_last_word		= program_check_lang_last_word;
-	p->check_lang_last_syllable	= program_check_lang_last_syllable;
-	p->check_caps_last_word		= program_check_caps_last_word;
-	p->check_tcl_last_word		= program_check_tcl_last_word;
-	p->check_space_before_punctuation	= program_check_space_before_punctuation;
-	p->check_space_with_bracket	= program_check_space_with_bracket;
-	p->check_brackets_with_symbols = program_check_brackets_with_symbols;
-	p->check_capital_letter_after_dot = program_check_capital_letter_after_dot;
-	p->check_two_space = program_check_two_space;
-	p->check_two_minus = program_check_two_minus;
-	p->check_copyright = program_check_copyright;
-	p->check_trademark = program_check_trademark;
-	p->check_registered = program_check_registered;
-	p->check_ellipsis = program_check_ellipsis;
-	p->check_pattern	= program_check_pattern;
-	p->rotate_pattern	= program_rotate_pattern;
-	p->check_misprint	= program_check_misprint;
-	p->change_word			= program_change_word;
-	p->add_word_to_dict		= program_add_word_to_dict;
-	p->add_word_to_pattern		= program_add_word_to_pattern;
-	p->process_selection_notify	= program_process_selection_notify;
-	p->change_lang			= program_change_lang;
-	p->change_incidental_caps	= program_change_incidental_caps;
-	p->unchange_incidental_caps	= program_unchange_incidental_caps;
-	p->change_two_capital_letter	= program_change_two_capital_letter;
-	p->unchange_two_capital_letter	= program_unchange_two_capital_letter;
-	p->send_string_silent		= program_send_string_silent;
 
 	return p;
 }
