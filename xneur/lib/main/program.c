@@ -3193,17 +3193,15 @@ static void program_uninit(struct _program *p)
 
 struct _program* program_init(void)
 {
-	struct _program *p = (struct _program*) malloc(sizeof(struct _program));
-	memset(p, 0, sizeof(struct _program));
-
 	main_window = window_init(xconfig->handle);
 
 	if (!main_window->create(main_window) || !main_window->init_keymap(main_window))
 	{
-		if (p != NULL)
-			free(p);
 		return NULL;
 	}
+
+	struct _program *p = (struct _program*) malloc(sizeof(struct _program));
+	memset(p, 0, sizeof(struct _program));
 
 	int event = 0;
 	int error = 0;
