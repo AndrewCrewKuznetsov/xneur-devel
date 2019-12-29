@@ -44,7 +44,6 @@ struct _keymap
 	size_t symbol_to_keycode_cache_pos;
 
 	int latin_group;
-	int latin_group_mask;
 	int min_keycode;
 	int max_keycode;
 	int keysyms_per_keycode;
