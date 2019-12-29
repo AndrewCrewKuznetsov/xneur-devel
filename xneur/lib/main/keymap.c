@@ -225,20 +225,6 @@ static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySy
 }
 
 // Private
-static int init_keymaps(struct _keymap *p)
-{
-	// Define all key codes and key symbols
-	XDisplayKeycodes(p->display, &(p->min_keycode), &(p->max_keycode));
-	p->keymap = XGetKeyboardMapping(p->display, p->min_keycode, p->max_keycode - p->min_keycode + 1, &(p->keysyms_per_keycode));
-
-	if (!p->keymap)
-	{
-		log_message(ERROR, _("Unable to get keyboard mapping table"));
-		return FALSE;
-	}
-	return TRUE;
-}
-
 static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* preferred_lang, KeyCode *kc, int *modifier, size_t* symbol_len)
 {
 	if (*sym == 10 || *sym == 13)
@@ -531,17 +517,34 @@ static void keymap_uninit(struct _keymap *p)
 
 struct _keymap* keymap_init(struct _xneur_handle *handle, Display *display)
 {
+	if (!locale_create())
+	{
+		return NULL;
+	}
+
+	int min_keycode;
+	int max_keycode;
+	int keysyms_per_keycode;
+	// Define all key codes and key symbols
+	XDisplayKeycodes(display, &min_keycode, &max_keycode);
+	KeySym* keymap = XGetKeyboardMapping(display, min_keycode, max_keycode - min_keycode + 1, &keysyms_per_keycode);
+
+	if (!keymap)
+	{
+		log_message(ERROR, _("Unable to get keyboard mapping table"));
+		return NULL;
+	}
+
 	struct _keymap *p = (struct _keymap *) malloc(sizeof(struct _keymap));
 	memset(p, 0, sizeof(struct _keymap));
 
 	p->handle = handle;
 	p->display = display;
+	p->keymap = keymap;
+	p->min_keycode = min_keycode;
+	p->max_keycode = max_keycode;
+	p->keysyms_per_keycode = keysyms_per_keycode;
 
-	if (!locale_create() || !init_keymaps(p))
-	{
-		free(p);
-		return NULL;
-	}
 
 	p->keycode_to_symbol_cache = (struct keycode_to_symbol_pair *)calloc(keycode_to_symbol_cache_size, sizeof(struct keycode_to_symbol_pair));
 	p->symbol_to_keycode_cache = (struct symbol_to_keycode_pair *)calloc(symbol_to_keycode_cache_size, sizeof(struct symbol_to_keycode_pair));
