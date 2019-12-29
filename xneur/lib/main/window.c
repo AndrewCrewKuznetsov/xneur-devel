@@ -78,8 +78,9 @@ static int window_create(struct _window *p)
 		return FALSE;
 	}
 
+	Window root = DefaultRootWindow(display);
 	// Create Main Window
-	Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 100, 100, 0, 0, 0);
+	Window window = XCreateSimpleWindow(display, root, 0, 0, 100, 100, 0, 0, 0);
 	if (!window)
 	{
 		log_message(ERROR, _("Can't create program window"));
@@ -91,7 +92,7 @@ static int window_create(struct _window *p)
 	XSetWindowAttributes attrs;
 	attrs.override_redirect = True;
 
-	Window flag_window = XCreateWindow(display, DefaultRootWindow(display), 0, 0, 1, 1,0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attrs);
+	Window flag_window = XCreateWindow(display, root, 0, 0, 1, 1,0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attrs);
 	if (!flag_window)
 	{
 		log_message(ERROR, _("Can't create flag window"));
@@ -130,21 +131,6 @@ static int window_create(struct _window *p)
 	return TRUE;
 }
 
-static int window_init_keymap(struct _window *p)
-{
-	p->keymap = keymap_init(p->handle, p->display);
-	if (p->keymap == NULL)
-		return FALSE;
-	return TRUE;
-}
-
-static void window_uninit_keymap(struct _window *p)
-{
-	if (p->keymap != NULL)
-		p->keymap->uninit(p->keymap),
-		p->keymap = NULL;
-}
-
 static void window_uninit(struct _window *p)
 {
 	if (p->keymap != NULL)
@@ -160,13 +146,17 @@ struct _window* window_init(struct _xneur_handle *handle)
 	struct _window *p = (struct _window *) malloc(sizeof(struct _window));
 	memset(p, 0, sizeof(struct _window));
 
-	p->handle = handle;
-
+	if (!window_create(p)) {
+		free(p);
+		return NULL;
+	}
+	p->keymap = keymap_init(handle, p->display);
+	if (p->keymap == NULL) {
+		free(p);
+		return NULL;
+	}
 	// Function mapping
-	p->create		= window_create;
-	p->init_keymap		= window_init_keymap;
-	p->uninit_keymap	= window_uninit_keymap;
-	p->uninit		= window_uninit;
+	p->uninit = window_uninit;
 
 	return p;
 }
