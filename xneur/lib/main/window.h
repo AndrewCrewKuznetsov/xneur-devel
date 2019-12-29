@@ -27,7 +27,7 @@
 struct _window
 {
 	struct _xneur_handle *handle;
-	
+
 	struct _keymap *keymap;
 
 	Display *display;
@@ -36,10 +36,8 @@ struct _window
 	Atom internal_atom;
 
 	int _NET_SUPPORTED;
-	
+
 	int  (*create) (struct _window *p);
-	void (*destroy) (struct _window *p);
-	void (*move_window) (struct _window *p, int x, int y);
 	int  (*init_keymap) (struct _window *p);
 	void (*uninit_keymap) (struct _window *p);
 	void (*uninit) (struct _window *p);
