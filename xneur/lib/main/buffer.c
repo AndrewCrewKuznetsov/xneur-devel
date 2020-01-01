@@ -52,8 +52,6 @@
 
 #define INIT_STRING_LENGTH 64
 
-static const int keyboard_groups[]	= {0x00000000, 0x00002000, 0x00004000, 0x00006000};
-
 extern struct _xneur_config *xconfig;
 
 Window last_log_window = 0;
@@ -594,7 +592,7 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 		int state = p->keycode_modifiers[i];
 		for (int j = 0; j < p->handle->total_languages; j++)
 		{
-			state = state & (~keyboard_groups[j]);
+			state = state & (~get_keycode_mod(j));
 		}
 		char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[i], group, state);
 		if (symbol != NULL)
