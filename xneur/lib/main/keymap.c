@@ -80,7 +80,7 @@ int get_languages_mask(void)
 	int languages_mask = 0;
 	for (int group = 0; group < 4; group++)
 		languages_mask = languages_mask | keyboard_groups[group];
-	return languages_mask;
+	return ~languages_mask;
 }
 
 static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int group, int state)

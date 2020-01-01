@@ -85,7 +85,7 @@ static void buffer_set_lang_mask(struct _buffer *p, int lang)
 	// Set new language bit
 	for (int i = 0; i < p->cur_pos; i++)
 	{
-		p->keycode_modifiers[i] = p->keycode_modifiers[i] & (~languages_mask);
+		p->keycode_modifiers[i] = p->keycode_modifiers[i] & languages_mask;
 		p->keycode_modifiers[i] = p->keycode_modifiers[i] | keycode_mod;
 	}
 }
@@ -360,7 +360,7 @@ static void buffer_clear(struct _buffer *p)
 static void append_to_i18n_content(struct _buffer *buf, int pos, int languages_mask)
 {
 	KeyCode keycode = buf->keycode[pos];
-	int modifier    = buf->keycode_modifiers[pos] & (~languages_mask);
+	int modifier    = buf->keycode_modifiers[pos] & languages_mask;
 
 	for (int i = 0; i < buf->handle->total_languages; i++)
 	{
@@ -488,7 +488,7 @@ static void buffer_rotate_layout(struct _buffer *p)
 	for (int i = 0; i < p->cur_pos; i++)
 	{
 		// Get current lang. modifier
-		int km = p->keycode_modifiers[i] & (~languages_mask);
+		int km = p->keycode_modifiers[i] & languages_mask;
 		for (int lang = 0; lang < p->handle->total_languages; lang++)
 		{
 			if (p->keycode_modifiers[i] == (get_keycode_mod(lang) | km))
@@ -497,7 +497,7 @@ static void buffer_rotate_layout(struct _buffer *p)
 				if (lang == p->handle->total_languages)
 					lang = 0;
 				int keycode_mod	= get_keycode_mod(lang);
-				p->keycode_modifiers[i] = p->keycode_modifiers[i] & (~languages_mask);
+				p->keycode_modifiers[i] = p->keycode_modifiers[i] & languages_mask;
 				p->keycode_modifiers[i] = p->keycode_modifiers[i] | keycode_mod;
 				break;
 			}

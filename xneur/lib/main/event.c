@@ -245,18 +245,6 @@ static KeySym event_get_cur_keysym(struct _event *p)
 
 static int event_get_cur_modifiers(struct _event *p)
 {
-	/*
-	Window wDummy;
-	int iDummy;
-	int mask = 0;
-	unsigned int query_mask;
-	XQueryPointer(main_window->display,
-				(Window)p->event.xkey.window,
-				&wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-				&query_mask);
-	mask = query_mask & (~get_languages_mask ());
-	*/
-
 	int mask = 0;
 
 	if (p->event.xkey.state & ShiftMask)  // Shift
