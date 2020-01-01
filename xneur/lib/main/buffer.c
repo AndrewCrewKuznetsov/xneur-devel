@@ -444,23 +444,22 @@ static void buffer_change_case(struct _buffer *p)
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 
 	Display *display = XOpenDisplay(NULL);
-	XEvent event;
-	event.type		= KeyPress;
-	event.xkey.type		= KeyPress;
-	event.xkey.root		= RootWindow(display, DefaultScreen(display));
-	event.xkey.subwindow	= None;
-	event.xkey.same_screen	= True;
-	event.xkey.display	= display;
-	event.xkey.state	= 0;
-	event.xkey.keycode	= XKeysymToKeycode(display, XK_space);
-	event.xkey.time		= CurrentTime;
+	XKeyEvent event;
+	event.type        = KeyPress;
+	event.root        = RootWindow(display, DefaultScreen(display));
+	event.subwindow   = None;
+	event.same_screen = True;
+	event.display     = display;
+	event.state       = 0;
+	event.keycode     = XKeysymToKeycode(display, XK_space);
+	event.time        = CurrentTime;
 
 	for (int i = 0; i < p->cur_pos; i++)
 	{
-		event.xkey.keycode	= p->keycode[i];
-		event.xkey.state	= p->keycode_modifiers[i];
+		event.keycode = p->keycode[i];
+		event.state   = p->keycode_modifiers[i];
 
-		int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
+		int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 		if (nbytes <= 0)
 			continue;
 		if (symbol == NULL)
@@ -547,23 +546,22 @@ static char *buffer_get_utf_string(struct _buffer *p)
 	utf_string[0] = NULLSYM;
 
 	Display *display = XOpenDisplay(NULL);
-	XEvent event;
-	event.type		= KeyPress;
-	event.xkey.type		= KeyPress;
-	event.xkey.root		= RootWindow(display, DefaultScreen(display));
-	event.xkey.subwindow	= None;
-	event.xkey.same_screen	= True;
-	event.xkey.display	= display;
-	event.xkey.state	= 0;
-	event.xkey.keycode	= XKeysymToKeycode(display, XK_space);
-	event.xkey.time		= CurrentTime;
+	XKeyEvent event;
+	event.type        = KeyPress;
+	event.root        = RootWindow(display, DefaultScreen(display));
+	event.subwindow   = None;
+	event.same_screen = True;
+	event.display     = display;
+	event.state       = 0;
+	event.keycode     = XKeysymToKeycode(display, XK_space);
+	event.time        = CurrentTime;
 
 	for (int i = 0; i < p->cur_pos; i++)
 	{
-		event.xkey.keycode	= p->keycode[i];
-		event.xkey.state	= p->keycode_modifiers[i];
+		event.keycode = p->keycode[i];
+		event.state   = p->keycode_modifiers[i];
 
-		int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
+		int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 		if (nbytes <= 0)
 			continue;
 		if (symbol == NULL)
