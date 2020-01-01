@@ -53,6 +53,7 @@
 #include "popup.h"
 #include "notify.h"
 #include "plugin.h"
+#include "window.h"
 
 #include "newlang_creation.h"
 
@@ -326,6 +327,9 @@ static void xneur_reload(int status)
 
 	program->buffer->handle = xconfig->handle;
 	program->correction_buffer->handle = xconfig->handle;
+	if (main_window) {
+		main_window->keymap->handle = xconfig->handle;
+	}
 }
 
 static void xneur_usage(void)
