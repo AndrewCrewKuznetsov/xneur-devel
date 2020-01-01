@@ -49,7 +49,6 @@ struct _buffer
 	int cur_pos;		// Current filled size
 
 	void (*clear) (struct _buffer *p);
-	void (*save) (struct _buffer *p, char *path, Window window);
 	void (*save_and_clear) (struct _buffer *p, Window window);
 	void (*set_lang_mask) (struct _buffer *p, int group);
 	void (*set_uncaps_mask) (struct _buffer *p);
