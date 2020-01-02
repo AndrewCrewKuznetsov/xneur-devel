@@ -46,6 +46,27 @@ static int error_handler(Display *d, XErrorEvent *e)
         return FALSE;
 }
 
+/// Check "_NET_SUPPORTED" atom support
+static int is_has_net_supported(Display *display, Window window)
+{
+	Atom request      = XInternAtom(display, "_NET_SUPPORTED", False);
+	Atom feature_atom = XInternAtom(display, "_NET_ACTIVE_WINDOW", False);
+
+	unsigned long nitems = 0L;
+	int result = FALSE;
+	Atom *results = (Atom *) get_win_prop(display, window, request, &nitems);
+	if (results != NULL) {
+		for (unsigned long i = 0L; i < nitems; ++i) {
+			if (results[i] == feature_atom) {
+				result = TRUE;
+				break;
+			}
+		}
+		XFree(results);
+	}
+	return result;
+}
+
 static int window_create(struct _window *p)
 {
 	XSetErrorHandler(error_handler);
@@ -101,23 +122,7 @@ static int window_create(struct _window *p)
 	p->window  	= window;
 
 	p->internal_atom = XInternAtom(p->display, "XNEUR_INTERNAL_MSG", 0);
-
-	// Check "_NET_SUPPORTED" atom support
-	unsigned long nitems = 0L;
-
-	Atom request = XInternAtom(display, "_NET_SUPPORTED", False);
-	Atom feature_atom = XInternAtom(display, "_NET_ACTIVE_WINDOW", False);
-	Window root = XDefaultRootWindow(display);
-
-	p->_NET_SUPPORTED = FALSE;
-	Atom *results = (Atom *) get_win_prop(display, root, request, &nitems);
-	for (unsigned long i = 0L; i < nitems; i++)
-	{
-		if (results[i] == feature_atom)
-			p->_NET_SUPPORTED = TRUE;
-	}
-	//if (results != NULL)
-		//free(results);
+	p->_NET_SUPPORTED = is_has_net_supported(display, root);
 
 	log_message(LOG, _("Main window with id %d created"), window);
 
