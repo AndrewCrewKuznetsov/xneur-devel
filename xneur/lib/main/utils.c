@@ -208,8 +208,13 @@ char* get_wm_class_name(Window window)
 		Atom request = XInternAtom(main_window->display, "WM_NAME", False);
 		unsigned char *data = get_win_prop(named_window, request, &nitems);
 
-		if (nitems > 0)
-			return (char *)data;
+		if (nitems > 0 && data != NULL) {
+			// Returned string is freed by `free` function, but result from `get_win_prop` must be freed by `XFree` function
+			// so just make copy
+			char* result = strdup((char *)data);
+			XFree(data);
+			return result;
+		}
 
 		return NULL;
 	}
