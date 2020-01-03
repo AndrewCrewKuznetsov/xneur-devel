@@ -247,6 +247,51 @@ static void fetch_window_name(char *text_to_find, Window window) {
 	free(app_name);
 }
 
+static Bool is_modifier(KeySym key_sym)
+{
+	XModifierKeymap *modmap = XGetModifierMapping(main_window->display);
+	if (modmap == NULL) {
+		log_message(ERROR, _("Can't get modifier mapping. Modifier keys are not ignored"));
+		return False;
+	}
+
+	KeyCode key_code = XKeysymToKeycode(main_window->display, key_sym);
+
+	int size = modmap->max_keypermod * 8;
+	for (int i = 0; i < size; ++i) {
+		if (key_code == modmap->modifiermap[i]) {
+			return True;
+		}
+	}
+
+	XFreeModifiermap(modmap);
+
+	return False;
+}
+
+static void click_key(KeySym keysym)
+{
+	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
+
+	XTestFakeKeyEvent(main_window->display, keycode, TRUE, 0); // key press event
+	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
+	XFlush(main_window->display);
+
+	return;
+}
+
+static void toggle_lock(int mask, int state)
+{
+	int xkb_opcode, xkb_event, xkb_error;
+	int xkb_lmaj = XkbMajorVersion;
+	int xkb_lmin = XkbMinorVersion;
+	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
+	{
+		/*int status = */XkbLockModifiers (main_window->display, XkbUseCoreKbd, mask, state);
+		//log_message(TRACE, _("Set lock state: %d %d, status: %d"), mask, state, status);
+	}
+}
+
 static void program_layout_update(struct _program *p, int layout, Window old_window, Window new_window)
 {
 	if (!xconfig->remember_layout)

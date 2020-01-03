@@ -20,16 +20,9 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <X11/XKBlib.h>
-#include <X11/extensions/XInput2.h>
 #include <X11/extensions/XTest.h>
 
-Bool is_modifier(KeySym key_sym);
 char*  get_wm_class_name(Window window);
-void   grab_button(int is_grab);
-void   grab_all_keys(Window window, int is_grab);
 unsigned char *get_win_prop(Display *display, Window window, Atom atom, unsigned long *nitems);
-void toggle_lock(int mask, int state);
-void click_key(KeySym keysym);
 
 #endif /* _UTILS_H_ */

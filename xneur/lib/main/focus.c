@@ -18,6 +18,7 @@
  */
 
 #include <X11/XKBlib.h>
+#include <X11/extensions/XInput2.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -213,20 +214,69 @@ static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus
 	return focus;
 }
 
+static void grab_button(Display* display, int is_grab)
+{
+	XIEventMask mask;
+	mask.deviceid = XIAllMasterDevices;
+	mask.mask_len = XIMaskLen(XI_RawButtonPress);
+	mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+	XISetMask(mask.mask, is_grab ? XI_RawButtonPress : 0);
+	XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
+	free(mask.mask);
+}
+
+static void grab_all_keys(Display* display, Window window, int use_x_input_api, int is_grab)
+{
+	if (is_grab)
+	{
+		// Grab all keys...
+		if (use_x_input_api) {
+			XIEventMask mask;
+			mask.deviceid = XIAllDevices;
+			mask.mask_len = XIMaskLen(XI_KeyPress)
+			              + XIMaskLen(XI_KeyRelease);
+			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			XISetMask(mask.mask, XI_KeyPress);
+			XISetMask(mask.mask, XI_KeyRelease);
+			XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
+			free(mask.mask);
+		} else {
+			XGrabKey(display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
+		}
+	}
+	else
+	{
+		if (use_x_input_api) {
+			XIEventMask mask;
+			mask.deviceid = XIAllMasterDevices;
+			mask.mask_len = XIMaskLen(XI_KeyPress);
+			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			XISetMask(mask.mask, 0);
+			XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
+			free(mask.mask);
+		} else {
+			// Ungrab all keys in app window...
+			XUngrabKey(display, AnyKey, AnyModifier, window);
+		}
+	}
+
+	XSelectInput(display, window, FOCUS_CHANGE_MASK);
+}
+
 static void focus_update_grab_events(struct _focus *p, int mode)
 {
 	char *owner_window_name = get_wm_class_name(p->owner_window);
 
 	if ((mode == LISTEN_DONTGRAB_INPUT) || (p->last_focus == FOCUS_EXCLUDED))
 	{
-		grab_button(FALSE);
-		grab_all_keys(p->owner_window, FALSE);
+		grab_button(main_window->display, FALSE);
+		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, FALSE);
 	}
 	else
 	{
 		if (xconfig->tracking_mouse)
-			grab_button(TRUE);
-		grab_all_keys(p->owner_window, TRUE);
+			grab_button(main_window->display, TRUE);
+		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, TRUE);
 	}
 
 	/*
