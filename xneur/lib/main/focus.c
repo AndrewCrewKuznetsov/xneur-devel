@@ -251,18 +251,18 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 	XSelectInput(display, window, FOCUS_CHANGE_MASK);
 }
 
-static void focus_update_grab_events(struct _focus *p, int grab)
+static void focus_update_grab_events(struct _focus *p, int use_x_input_api, int grab)
 {
 	int grab_input = xconfig->tracking_input && grab;
 	int grab_mouse = xconfig->tracking_mouse && grab_input;
 
 	grab_button(main_window->display, grab_mouse);
-	grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, grab_input);
+	grab_all_keys(main_window->display, p->owner_window, use_x_input_api, grab_input);
 }
 
-static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
+static void focus_click_key(struct _focus *p, int use_x_input_api, int excluded, KeySym keysym)
 {
-	focus_update_grab_events(p, FALSE);
+	focus_update_grab_events(p, use_x_input_api, FALSE);
 
 	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
 
@@ -272,7 +272,7 @@ static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
 
 	// Enable events if they are not disabled for application
 	if (!excluded) {
-		focus_update_grab_events(p, TRUE);
+		focus_update_grab_events(p, use_x_input_api, TRUE);
 	}
 }
 

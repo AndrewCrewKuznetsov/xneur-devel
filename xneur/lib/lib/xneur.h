@@ -34,9 +34,6 @@
 
 extern struct _window *main_window;
 
-extern int has_x_input_extension;
-extern int xi_opcode;
-
 struct _xneur_language
 {
 	char *dir;

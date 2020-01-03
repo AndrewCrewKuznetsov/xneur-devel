@@ -334,7 +334,7 @@ static Window program_update(struct _program *p)
 	if (changed) {
 		p->event->set_owner_window(p->event, p->focus->owner_window);
 		// If application is excluded from tracking, disable grabbing input, otherwise enable
-		p->focus->update_grab_events(p->focus, !p->app_excluded);
+		p->focus->update_grab_events(p->focus, p->has_x_input_extension, !p->app_excluded);
 
 		program_layout_update(p, p->last_layout, prev, p->focus->owner_window);
 
@@ -531,11 +531,11 @@ static void program_process_input(struct _program *p)
 			}
 			default:
 			{
-				if (has_x_input_extension)
+				if (p->has_x_input_extension)
 				{
 					XGenericEventCookie *cookie = &p->event->event.xcookie;
 					if (cookie->type == GenericEvent &&
-						cookie->extension == xi_opcode &&
+						cookie->extension == p->xi_opcode &&
 						XGetEventData(main_window->display, cookie))
 					{
 						XIDeviceEvent* xi_event = cookie->data;
@@ -834,7 +834,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 			 || key == XK_Num_Lock
 			 || key == XK_Scroll_Lock
 			) {
-				p->focus->click_key(p->focus, p->app_excluded, key);
+				p->focus->click_key(p->focus, p->has_x_input_extension, p->app_excluded, key);
 			}
 		}
 
@@ -3086,9 +3086,9 @@ struct _program* program_init(void)
 
 	int event = 0;
 	int error = 0;
-	has_x_input_extension = XQueryExtension(main_window->display, "XInputExtension", &xi_opcode, &event, &error);
+	p->has_x_input_extension = XQueryExtension(main_window->display, "XInputExtension", &(p->xi_opcode), &event, &error);
 
-	if (!has_x_input_extension)
+	if (!p->has_x_input_extension)
 	{
 		log_message(WARNING, _("X Input extension not available."));
 	}

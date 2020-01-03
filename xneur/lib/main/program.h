@@ -47,6 +47,9 @@ struct _program
 
 	int last_pattern_id;
 
+	int has_x_input_extension;
+	int xi_opcode;
+
 	void (*process_input) (struct _program *p);
 	void (*uninit) (struct _program *p);
 };
