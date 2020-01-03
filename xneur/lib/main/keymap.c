@@ -148,7 +148,6 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 
 static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, int state)
 {
-	char *symbol;
 	struct keycode_to_symbol_pair *pr = NULL;
 
 	/* Look up cache. */
@@ -160,9 +159,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 
 	/* Miss. */
 	//log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
-	symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
-	if (!symbol)
-		return symbol;
+	char *symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
 
 	/* Just use next cache entry. LRU makes no sense here. */
 	p->keycode_to_symbol_cache_pos = (p->keycode_to_symbol_cache_pos + 1) % keycode_to_symbol_cache_size;
