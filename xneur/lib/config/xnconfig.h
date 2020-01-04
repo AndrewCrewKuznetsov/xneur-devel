@@ -200,7 +200,6 @@ struct _xneur_config
 	struct _list_char *dont_send_key_release_apps;
 	struct _list_char *delay_send_key_apps;
 
-	struct _list_char *window_layouts;
 	struct _list_char *abbreviations;
 	struct _list_char *plugins;
 

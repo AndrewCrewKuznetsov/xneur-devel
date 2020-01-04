@@ -298,15 +298,15 @@ static void program_layout_update(struct _program *p, int layout, Window old_win
 	{
 		sprintf(window_layout, "%s %d", text_to_find, lang);
 
-		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layout, BY_PLAIN))
+		if (!p->window_layouts->exist(p->window_layouts, window_layout, BY_PLAIN))
 			continue;
 
-		xconfig->window_layouts->rem(xconfig->window_layouts, window_layout);
+		p->window_layouts->rem(p->window_layouts, window_layout);
 	}
 
 	// Save layout for old window
 	sprintf(window_layout, "%s %d", text_to_find, layout);
-	xconfig->window_layouts->add(xconfig->window_layouts, window_layout);
+	p->window_layouts->add(p->window_layouts, window_layout);
 
 	fetch_window_name(text_to_find, new_window);
 
@@ -314,7 +314,7 @@ static void program_layout_update(struct _program *p, int layout, Window old_win
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
 	{
 		sprintf(window_layout, "%s %d", text_to_find, lang);
-		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layout, BY_PLAIN))
+		if (!p->window_layouts->exist(p->window_layouts, window_layout, BY_PLAIN))
 			continue;
 
 		set_keyboard_group(lang);
@@ -3064,6 +3064,7 @@ static void program_uninit(struct _program *p)
 	p->buffer->uninit(p->buffer);
 	p->correction_buffer->uninit(p->correction_buffer);
 	p->plugin->uninit(p->plugin);
+	p->window_layouts->uninit(p->window_layouts);
 
 	main_window->uninit(main_window);
 
@@ -3108,6 +3109,7 @@ struct _program* program_init(void)
 
 	p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
 	p->correction_action = CORRECTION_NONE;
+	p->window_layouts    = list_char_init();
 
 	// Function mapping
 	p->uninit			= program_uninit;
