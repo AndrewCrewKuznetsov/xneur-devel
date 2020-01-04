@@ -247,18 +247,18 @@ static void fetch_window_name(char *text_to_find, Window window) {
 	free(app_name);
 }
 
-static void program_layout_update(struct _program *p)
+static void program_layout_update(struct _program *p, int layout, Window old_window, Window new_window)
 {
 	if (!xconfig->remember_layout)
 		return;
 
-	if ((Window) p->last_window == p->focus->owner_window)
+	if (old_window == new_window)
 		return;
 
 	char text_to_find[1024];
 	char window_layout[1024];
 
-	fetch_window_name(text_to_find, p->last_window);
+	fetch_window_name(text_to_find, old_window);
 	// Remove layout for old window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
 	{
@@ -271,10 +271,10 @@ static void program_layout_update(struct _program *p)
 	}
 
 	// Save layout for old window
-	sprintf(window_layout, "%s %d", text_to_find, p->last_layout);
+	sprintf(window_layout, "%s %d", text_to_find, layout);
 	xconfig->window_layouts->add(xconfig->window_layouts, window_layout);
 
-	fetch_window_name(text_to_find, p->focus->owner_window);
+	fetch_window_name(text_to_find, new_window);
 
 	// Restore layout for new window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
@@ -283,7 +283,6 @@ static void program_layout_update(struct _program *p)
 		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layout, BY_PLAIN))
 			continue;
 
-		//XkbLockGroup(main_window->display, XkbUseCoreKbd, lang);
 		set_keyboard_group(lang);
 		log_message(DEBUG, _("Restore layout group to %d"), lang);
 		return;
@@ -309,7 +308,7 @@ static void program_update(struct _program *p)
 
 	p->focus->update_grab_events(p->focus, listen_mode);
 
-	program_layout_update(p);
+	program_layout_update(p, p->last_layout, p->last_window, p->focus->owner_window);
 
 	p->buffer->save_and_clear(p->buffer, p->last_window);
 	p->correction_buffer->clear(p->correction_buffer);
