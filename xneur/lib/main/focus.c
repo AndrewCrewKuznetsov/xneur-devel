@@ -275,6 +275,19 @@ static void focus_update_grab_events(struct _focus *p, int grab)
 	}
 }
 
+static void focus_click_key(struct _focus *p, KeySym keysym)
+{
+	focus_update_grab_events(p, FALSE);
+
+	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
+
+	XTestFakeKeyEvent(main_window->display, keycode, TRUE,  0); // key press event
+	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
+	XFlush(main_window->display);
+
+	focus_update_grab_events(p, TRUE);
+}
+
 static void focus_uninit(struct _focus *p)
 {
 	free(p);
@@ -291,6 +304,7 @@ struct _focus* focus_init(void)
 	p->get_focus_status	= focus_get_focus_status;
 	p->is_focus_changed = focus_is_focus_changed;
 	p->update_grab_events	= focus_update_grab_events;
+	p->click_key	= focus_click_key;
 	p->uninit		= focus_uninit;
 
 	return p;

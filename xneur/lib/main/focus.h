@@ -38,6 +38,7 @@ struct _focus
 	int  (*get_focus_status) (struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode);
 	int  (*is_focus_changed) (struct _focus *p);
 	void (*update_grab_events) (struct _focus *p, int grab);
+	void (*click_key) (struct _focus *p, KeySym keysym);
 	void (*uninit) (struct _focus *p);
 };
 

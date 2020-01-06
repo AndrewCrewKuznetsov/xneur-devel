@@ -269,17 +269,6 @@ static Bool is_modifier(KeySym key_sym)
 	return False;
 }
 
-static void click_key(KeySym keysym)
-{
-	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
-
-	XTestFakeKeyEvent(main_window->display, keycode, TRUE, 0); // key press event
-	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
-	XFlush(main_window->display);
-
-	return;
-}
-
 static void toggle_lock(int mask, int state)
 {
 	int xkb_opcode, xkb_event, xkb_error;
@@ -841,29 +830,11 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 
 		if ((p->user_action >= 0) || (p->action != ACTION_NONE))
 		{
-			unsigned state;
-			XkbGetIndicatorState(main_window->display, XkbUseCoreKbd, &state);
-			if (key == XK_Caps_Lock)
-			{
-				//log_message(ERROR, "	Set Caps to %d", (state & 0x01)?0:1);
-				p->focus->update_grab_events(p->focus, FALSE);
-				//toggle_lock (main_window->keymap->capslock_mask, (state & 0x01)?0:1);
-				click_key (XK_Caps_Lock);
-				p->focus->update_grab_events(p->focus, TRUE);
-			}
-			if (key == XK_Num_Lock)
-			{
-				//log_message (ERROR, "Need reset Num");
-				p->focus->update_grab_events(p->focus, FALSE);
-				click_key (XK_Num_Lock);
-				p->focus->update_grab_events(p->focus, TRUE);
-			}
-			if (key == XK_Scroll_Lock)
-			{
-				//log_message (ERROR, "Need reset Scroll");
-				p->focus->update_grab_events(p->focus, FALSE);
-				click_key (XK_Scroll_Lock);
-				p->focus->update_grab_events(p->focus, TRUE);
+			if (key == XK_Caps_Lock
+			 || key == XK_Num_Lock
+			 || key == XK_Scroll_Lock
+			) {
+				p->focus->click_key(p->focus, key);
 			}
 		}
 
