@@ -347,12 +347,7 @@ static void program_update(struct _program *p)
 		return;
 
 	p->event->set_owner_window(p->event, p->focus->owner_window);
-
-	int listen_mode = LISTEN_GRAB_INPUT;
-	if (p->app_focus_mode == FOCUS_EXCLUDED)
-		listen_mode = LISTEN_DONTGRAB_INPUT;
-
-	p->focus->update_grab_events(p->focus, listen_mode);
+	p->focus->update_grab_events(p->focus, p->app_focus_mode != FOCUS_EXCLUDED);
 
 	program_layout_update(p, p->last_layout, p->last_window, p->focus->owner_window);
 
@@ -852,24 +847,24 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 			if (key == XK_Caps_Lock)
 			{
 				//log_message(ERROR, "	Set Caps to %d", (state & 0x01)?0:1);
-				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
+				p->focus->update_grab_events(p->focus, FALSE);
 				//toggle_lock (main_window->keymap->capslock_mask, (state & 0x01)?0:1);
 				click_key (XK_Caps_Lock);
-				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+				p->focus->update_grab_events(p->focus, TRUE);
 			}
 			if (key == XK_Num_Lock)
 			{
 				//log_message (ERROR, "Need reset Num");
-				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
+				p->focus->update_grab_events(p->focus, FALSE);
 				click_key (XK_Num_Lock);
-				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+				p->focus->update_grab_events(p->focus, TRUE);
 			}
 			if (key == XK_Scroll_Lock)
 			{
 				//log_message (ERROR, "Need reset Scroll");
-				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
+				p->focus->update_grab_events(p->focus, FALSE);
 				click_key (XK_Scroll_Lock);
-				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+				p->focus->update_grab_events(p->focus, TRUE);
 			}
 		}
 
@@ -1019,9 +1014,6 @@ static void program_perform_auto_action(struct _program *p, int action)
 
 				return;
 			}
-
-			// Block events of keyboard (push to event queue)
-			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 			// Check two capital letter
 			program_check_tcl_last_word(p);
@@ -2310,8 +2302,6 @@ static void program_check_misprint(struct _program *p)
 	{
 		p->correction_action = CORRECTION_NONE;
 
-		//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 		log_message (DEBUG, _("Found a misprint , correction '%s' to '%s'..."), word+offset, possible_word);
 
 		p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
@@ -2364,8 +2354,6 @@ static void program_check_misprint(struct _program *p)
 		p->buffer->set_offset(p->buffer, new_offset);
 		program_send_string_silent(p, 0);
 		p->buffer->unset_offset(p->buffer, new_offset);
-
-		//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 		int notify_text_len = strlen(_("Correction '%s' to '%s'")) + strlen(word+offset) + 1 + possible_word_len;
 		char *notify_text = (char *) malloc(notify_text_len * sizeof(char));
@@ -2775,8 +2763,6 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		case CHANGE_STRING_TO_LAYOUT_3:
 		{
 			program_change_lang(p, action - CHANGE_STRING_TO_LAYOUT_0);
-			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
-
 			program_send_string_silent(p, p->buffer->cur_pos);
 			break;
 		}

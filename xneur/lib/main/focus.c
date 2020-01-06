@@ -63,7 +63,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	char *new_app_name = NULL;
 
 	// Clear masking on unfocused window
-	//p->update_grab_events(p, LISTEN_DONTGRAB_INPUT);
+	//p->update_grab_events(p, FALSE);
 
 	Window new_window;
 	int show_message = TRUE;
@@ -261,9 +261,9 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 	XSelectInput(display, window, FOCUS_CHANGE_MASK);
 }
 
-static void focus_update_grab_events(struct _focus *p, int mode)
+static void focus_update_grab_events(struct _focus *p, int grab)
 {
-	if ((mode == LISTEN_DONTGRAB_INPUT) || (p->last_focus == FOCUS_EXCLUDED))
+	if (!grab || (p->last_focus == FOCUS_EXCLUDED))
 	{
 		grab_button(main_window->display, FALSE);
 		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, FALSE);
