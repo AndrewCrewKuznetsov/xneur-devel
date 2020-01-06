@@ -520,12 +520,12 @@ static void program_process_input(struct _program *p)
 				log_message(TRACE, _("Received MotionNotify (event type %d)"), type);
 				break;
 			}
-			case FocusIn:
 			case LeaveNotify:
 			case EnterNotify:
+				break;
+			case FocusIn:
 			{
-				if (((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
-				    && (type == FocusIn))
+				if (p->focus->is_focus_changed(p->focus))
 				{
 					log_message(TRACE, _("Received FocusIn on window %d (event type %d)"), p->event->event.xfocus.window, type);
 				}
@@ -533,8 +533,7 @@ static void program_process_input(struct _program *p)
 			}
 			case FocusOut:
 			{
-				if (((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
-				    && (type == FocusOut))
+				if (p->focus->is_focus_changed(p->focus))
 				{
 					log_message(TRACE, _("Received FocusOut on window %d (event type %d)"), p->event->event.xfocus.window, type);
 					program_update(p);
@@ -576,7 +575,7 @@ static void program_process_input(struct _program *p)
 							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 							p->correction_buffer->clear(p->correction_buffer);
 							p->correction_action = CORRECTION_NONE;
-							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+							if (p->focus->is_focus_changed(p->focus))
 							{
 								program_update(p);
 							}

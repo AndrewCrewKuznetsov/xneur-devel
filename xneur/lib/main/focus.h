@@ -36,7 +36,7 @@ struct _focus
 	int last_excluded;			// Last focus status
 
 	int  (*get_focus_status) (struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode);
-	int  (*get_focused_window) (struct _focus *p);
+	int  (*is_focus_changed) (struct _focus *p);
 	void (*update_grab_events) (struct _focus *p, int grab);
 	void (*uninit) (struct _focus *p);
 };
