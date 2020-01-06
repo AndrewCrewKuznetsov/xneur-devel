@@ -321,6 +321,27 @@ static void program_update(struct _program *p)
 	p->changed_manual = MANUAL_FLAG_UNSET;
 }
 
+static void process_key(struct _program *p, int main_type, int type, const char* message) {
+	KeyCode keycode = p->event->event.xkey.keycode;
+	KeySym  key_sym = p->event->get_cur_keysym(p->event);
+
+	log_message(TRACE, message, XKeysymToString(key_sym), keycode, main_type);
+
+	Window wDummy;
+	int iDummy;
+	unsigned int mask;
+	XQueryPointer(main_window->display, p->focus->owner_window,
+		&wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+		&mask
+	);
+	mask = mask & get_languages_mask();
+
+	// Save received event
+	p->event->default_event = p->event->event;
+
+	program_on_key_action(p, type, key_sym, mask);
+}
+
 static void program_process_input(struct _program *p)
 {
 	program_update(p);
@@ -484,10 +505,6 @@ static void program_process_input(struct _program *p)
 			}
 			default:
 			{
-				Window wDummy;
-				int iDummy;
-				unsigned int mask;
-
 				if (has_x_input_extension)
 				{
 					XGenericEventCookie *cookie = &p->event->event.xcookie;
@@ -499,50 +516,18 @@ static void program_process_input(struct _program *p)
 						switch (xi_event->evtype) {
 						case XI_KeyPress:
 						{
-							KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
-							if (key_sym == NoSymbol)
-								key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-							XQueryPointer(main_window->display,
-										  (Window)p->focus->owner_window,
-										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-										  &mask);
-							mask = mask & get_languages_mask();
-							log_message(TRACE, _("Received XI_KeyPress '%s' == %u (event type %d)"),
-										XKeysymToString(key_sym),
-										xi_event->detail,
-										type);
-							//log_message(TRACE, _("    Mask %d"), mask);
-
 							// Processing received event
 							p->event->event.xkey.state   = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
-							p->event->default_event = p->event->event;
-							program_on_key_action(p, KeyPress, key_sym, mask);
-
+							process_key(p, type, KeyPress, _("Received XI_KeyPress '%s' == %u (event type %d)"));
 							break;
 						}
 						case XI_KeyRelease:
 						{
-							KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
-							if (key_sym == NoSymbol)
-								key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-							XQueryPointer(main_window->display,
-										  (Window)p->focus->owner_window,
-										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-										  &mask);
-							mask = mask & get_languages_mask();
-							log_message(TRACE, _("Received XI_KeyRelease '%s' == %u (event type %d)"),
-										XKeysymToString(key_sym),
-										xi_event->detail,
-										type);
-							//log_message(TRACE, _("    Mask %d"), mask);
-
 							// Processing received event
 							p->event->event.xkey.state   = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
-							p->event->default_event = p->event->event;
-							program_on_key_action(p, KeyRelease, key_sym, mask);
-
+							process_key(p, type, KeyRelease, _("Received XI_KeyRelease '%s'== %u (event type %d)"));
 							break;
 						}
 						case XI_RawButtonPress:
@@ -569,23 +554,7 @@ static void program_process_input(struct _program *p)
 					switch (type) {
 					case KeyPress:
 					{
-						KeySym key_sym = p->event->get_cur_keysym(p->event);
-
-						XQueryPointer(main_window->display,
-									  (Window)p->focus->owner_window,
-									  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-									  &mask);
-						mask = mask & get_languages_mask();
-						log_message(TRACE, _("Received KeyPress '%s' == %u (event type %d)"),
-									XKeysymToString(key_sym),
-									p->event->event.xkey.keycode,
-									type);
-						//log_message(TRACE, _("    Mask %d %d"), mask, p->event->event.xkey.state);
-
-						// Save received event
-						p->event->default_event = p->event->event;
-						// Processing received event
-						program_on_key_action(p, KeyPress, key_sym, mask);
+						process_key(p, type, KeyPress, _("Received KeyPress '%s' == %u (event type %d)"));
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
@@ -597,23 +566,7 @@ static void program_process_input(struct _program *p)
 					}
 					case KeyRelease:
 					{
-						KeySym key_sym = p->event->get_cur_keysym(p->event);
-
-						XQueryPointer(main_window->display,
-									  (Window)p->focus->owner_window,
-									  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-									  &mask);
-						mask = mask & get_languages_mask();
-						log_message(TRACE, _("Received KeyRelease '%s' == %u (event type %d)"),
-									XKeysymToString(key_sym),
-									p->event->event.xkey.keycode,
-									type);
-						//log_message(TRACE, _("    Mask %d"), mask);
-
-						// Save received event
-						p->event->default_event = p->event->event;
-						// Processing received event
-						program_on_key_action(p, KeyRelease, key_sym, mask);
+						process_key(p, type, KeyRelease, _("Received KeyRelease '%s' == %u (event type %d)"));
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
