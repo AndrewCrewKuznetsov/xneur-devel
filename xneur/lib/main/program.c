@@ -331,6 +331,7 @@ static void program_update(struct _program *p)
 
 	// Can update `p->focus->owner_window`
 	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_excluded, &p->app_autocompletion_mode);
+	p->focus->last_excluded = xconfig->tracking_input ? p->app_excluded : TRUE;
 
 	if (!changed)
 		return;

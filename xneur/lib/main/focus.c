@@ -53,7 +53,7 @@ static int focus_is_focus_changed(struct _focus *p)
 	return new_window != p->owner_window;
 }
 
-static int get_focus(struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode)
+static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode)
 {
 	*forced_mode	= FORCE_MODE_NORMAL;
 	*excluded	= FALSE;
@@ -200,15 +200,6 @@ static int get_focus(struct _focus *p, int *forced_mode, int *excluded, int *aut
 
 	free(new_app_name);
 	return TRUE;
-}
-
-static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode)
-{
-	int focus = get_focus(p, forced_mode, excluded, autocompletion_mode);
-
-	p->last_excluded = xconfig->tracking_input ? *excluded : TRUE;
-
-	return focus;
 }
 
 static void grab_button(Display* display, int is_grab)
