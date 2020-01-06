@@ -38,7 +38,6 @@ struct _program
 	int  action_mode;
 
 	int  last_layout;
-	Window  last_window;
 
 	int user_action;
 	enum _hotkey_action action;

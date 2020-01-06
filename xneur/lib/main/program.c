@@ -325,28 +325,27 @@ static void program_layout_update(struct _program *p, int layout, Window old_win
 	log_message(DEBUG, _("Store default layout group to %d"), xconfig->default_group);
 }
 
-static void program_update(struct _program *p)
+static Window program_update(struct _program *p)
 {
-	p->last_window = p->focus->owner_window;
+	Window prev = p->focus->owner_window;
 
 	// Can update `p->focus->owner_window`
 	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_excluded, &p->app_autocompletion_mode);
+	if (changed) {
+		p->event->set_owner_window(p->event, p->focus->owner_window);
+		// If application is excluded from tracking, disable grabbing input, otherwise enable
+		p->focus->update_grab_events(p->focus, !p->app_excluded);
 
-	if (!changed)
-		return;
+		program_layout_update(p, p->last_layout, prev, p->focus->owner_window);
 
-	p->event->set_owner_window(p->event, p->focus->owner_window);
-	// If application is excluded from tracking, disable grabbing input, otherwise enable
-	p->focus->update_grab_events(p->focus, !p->app_excluded);
+		p->buffer->save_and_clear(p->buffer, prev);
+		p->correction_buffer->clear(p->correction_buffer);
+		p->correction_action = CORRECTION_NONE;
 
-	program_layout_update(p, p->last_layout, p->last_window, p->focus->owner_window);
-
-	p->buffer->save_and_clear(p->buffer, p->last_window);
-	p->correction_buffer->clear(p->correction_buffer);
-	p->correction_action = CORRECTION_NONE;
-
-	// Сброс признака "ручное переключение" после смены фокуса.
-	p->changed_manual = MANUAL_FLAG_UNSET;
+		// Сброс признака "ручное переключение" после смены фокуса.
+		p->changed_manual = MANUAL_FLAG_UNSET;
+	}
+	return prev;
 }
 
 static void process_key(struct _program *p, int main_type, int type, const char* message) {
@@ -372,14 +371,14 @@ static void process_key(struct _program *p, int main_type, int type, const char*
 
 static void program_process_input(struct _program *p)
 {
-	program_update(p);
+	Window prev = program_update(p);
 
 	while (1)
 	{
 		int type = p->event->get_next_event(p->event);
 
 		int curr_layout = get_curr_keyboard_group();
-		if ((p->last_layout != curr_layout) && (p->last_window == p->focus->owner_window))
+		if ((p->last_layout != curr_layout) && prev == p->focus->owner_window)
 		{
 			if (xconfig->troubleshoot_switch)
 			{
@@ -526,7 +525,7 @@ static void program_process_input(struct _program *p)
 				if (p->focus->is_focus_changed(p->focus))
 				{
 					log_message(TRACE, _("Received FocusOut on window %d (event type %d)"), p->event->event.xfocus.window, type);
-					program_update(p);
+					prev = program_update(p);
 				}
 				break;
 			}
@@ -567,9 +566,9 @@ static void program_process_input(struct _program *p)
 							p->correction_action = CORRECTION_NONE;
 							if (p->focus->is_focus_changed(p->focus))
 							{
-								program_update(p);
+								prev = program_update(p);
 							}
-							log_message(TRACE, _("Received XI_ButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
+							log_message(TRACE, _("Received XI_RawButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
 							//}
 							break;
 						}
