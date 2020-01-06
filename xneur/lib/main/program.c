@@ -340,9 +340,10 @@ static void program_update(struct _program *p)
 {
 	p->last_window = p->focus->owner_window;
 
-	int status = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
+	// Can update `p->focus->owner_window`
+	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
 
-	if (status == FOCUS_UNCHANGED)
+	if (!changed)
 		return;
 
 	p->event->set_owner_window(p->event, p->focus->owner_window);
@@ -358,9 +359,6 @@ static void program_update(struct _program *p)
 	p->buffer->save_and_clear(p->buffer, p->last_window);
 	p->correction_buffer->clear(p->correction_buffer);
 	p->correction_action = CORRECTION_NONE;
-
-	if (status == FOCUS_NONE)
-		return;
 
 	// Сброс признака "ручное переключение" после смены фокуса.
 	p->changed_manual = MANUAL_FLAG_UNSET;

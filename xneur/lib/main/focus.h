@@ -22,10 +22,8 @@
 
 #include <X11/XKBlib.h>
 
-#define FOCUS_NONE		0
-#define FOCUS_CHANGED		1
-#define FOCUS_UNCHANGED		2
-#define FOCUS_EXCLUDED		3
+#define FOCUS_PROCESSED		0
+#define FOCUS_EXCLUDED		1
 
 #define LISTEN_FLUSH		0
 #define LISTEN_GRAB_INPUT	1
