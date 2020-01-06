@@ -54,10 +54,10 @@ int focus_get_focused_window(struct _focus *p)
 	return new_window;
 }
 
-static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode)
+static int get_focus(struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode)
 {
 	*forced_mode	= FORCE_MODE_NORMAL;
-	*focus_status	= FOCUS_PROCESSED;
+	*excluded	= FALSE;
 	*autocompletion_mode	= AUTOCOMPLETION_INCLUDED;
 
 	char *new_app_name = NULL;
@@ -115,15 +115,15 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	//if (new_app_name != NULL)
 	//{
 		if (xconfig->excluded_apps->exist(xconfig->excluded_apps, new_app_name, BY_PLAIN))
-			*focus_status = FOCUS_EXCLUDED;
+			*excluded = TRUE;
 
 		if (new_app_name != NULL)
 		{
 			if (strcmp("Gxneur", new_app_name) == 0)
-				*focus_status = FOCUS_EXCLUDED;
+				*excluded = TRUE;
 
 			if (strcmp("Kdeneur", new_app_name) == 0)
-				*focus_status = FOCUS_EXCLUDED;
+				*excluded = TRUE;
 		}
 
 		if (xconfig->auto_apps->exist(xconfig->auto_apps, new_app_name, BY_PLAIN))
@@ -135,7 +135,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			*autocompletion_mode	= AUTOCOMPLETION_EXCLUDED;
 	//}
 	//else
-	//	*focus_status = FOCUS_EXCLUDED;
+	//	*excluded = TRUE;
 
 	Window old_window = p->owner_window;
 	if (new_window == old_window)
@@ -197,17 +197,17 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			*forced_mode = FORCE_MODE_MANUAL;
 	}
 
-	log_message(DEBUG, _("Process new window (ID %d) with name '%s' (status %s, mode %s)"), new_window, new_app_name, _(verbose_focus_status[*focus_status]), _(verbose_forced_mode[*forced_mode]));
+	log_message(DEBUG, _("Process new window (ID %d) with name '%s' (status %s, mode %s)"), new_window, new_app_name, _(verbose_focus_status[*excluded]), _(verbose_forced_mode[*forced_mode]));
 
 	free(new_app_name);
 	return TRUE;
 }
 
-static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode)
+static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode)
 {
-	int focus = get_focus(p, forced_mode, focus_status, autocompletion_mode);
+	int focus = get_focus(p, forced_mode, excluded, autocompletion_mode);
 
-	p->last_focus = xconfig->tracking_input ? *focus_status : FOCUS_EXCLUDED;
+	p->last_excluded = xconfig->tracking_input ? *excluded : TRUE;
 
 	return focus;
 }
@@ -263,7 +263,7 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 
 static void focus_update_grab_events(struct _focus *p, int grab)
 {
-	if (!grab || (p->last_focus == FOCUS_EXCLUDED))
+	if (!grab || p->last_excluded)
 	{
 		grab_button(main_window->display, FALSE);
 		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, FALSE);

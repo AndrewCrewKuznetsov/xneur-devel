@@ -341,13 +341,13 @@ static void program_update(struct _program *p)
 	p->last_window = p->focus->owner_window;
 
 	// Can update `p->focus->owner_window`
-	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
+	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_excluded, &p->app_autocompletion_mode);
 
 	if (!changed)
 		return;
 
 	p->event->set_owner_window(p->event, p->focus->owner_window);
-	p->focus->update_grab_events(p->focus, p->app_focus_mode != FOCUS_EXCLUDED);
+	p->focus->update_grab_events(p->focus, !p->app_excluded);
 
 	program_layout_update(p, p->last_layout, p->last_window, p->focus->owner_window);
 
@@ -910,7 +910,7 @@ static void program_perform_user_action(struct _program *p, int action)
 
 static void program_perform_auto_action(struct _program *p, int action)
 {
-	if (p->focus->last_focus == FOCUS_EXCLUDED)
+	if (p->focus->last_excluded)
 		return;
 
 	struct _buffer *string = p->buffer;
