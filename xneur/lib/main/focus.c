@@ -265,8 +265,6 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 
 static void focus_update_grab_events(struct _focus *p, int mode)
 {
-	char *owner_window_name = get_wm_class_name(p->owner_window);
-
 	if ((mode == LISTEN_DONTGRAB_INPUT) || (p->last_focus == FOCUS_EXCLUDED))
 	{
 		grab_button(main_window->display, FALSE);
@@ -278,39 +276,6 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 			grab_button(main_window->display, TRUE);
 		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, TRUE);
 	}
-
-	/*
-	if (mode == LISTEN_DONTGRAB_INPUT)
-	{
-		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' OFF"), p->owner_window, owner_window_name);
-
-		// Event unmasking
-		grab_button(p->owner_window, FALSE);
-		grab_all_keys(p->owner_window, FALSE);
-	}
-	else
-	{
-		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' ON"), p->owner_window, owner_window_name);
-
-		// Event masking
-		// Grabbing key and button
-		if (p->last_focus != FOCUS_EXCLUDED)
-		{
-			if (xconfig->tracking_mouse)
-			  grab_button(p->parent_window, TRUE);
-			grab_all_keys(p->owner_window, TRUE);
-		}
-		else
-		{
-			grab_button(p->owner_window, FALSE);
-			grab_all_keys(p->owner_window, FALSE);
-		}
-	}
-	*/
-
-	p->last_parent_window = p->parent_window;
-
-	free(owner_window_name);
 }
 
 static void focus_uninit(struct _focus *p)

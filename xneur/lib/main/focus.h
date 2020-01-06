@@ -42,7 +42,6 @@ struct _focus
 {
 	Window owner_window;		// Input focus window
 	Window parent_window;		// Parent widget in window
-	Window last_parent_window;	// Last grab parent window
 	int last_focus;			// Last focus status
 
 	int  (*get_focus_status) (struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode);
