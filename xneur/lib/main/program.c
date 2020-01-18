@@ -2508,7 +2508,7 @@ static void correct_word(struct _program *p, KeySym keysym, int keycount, enum _
 		p->buffer->clear(p->buffer);
 		p->event->default_event.xkey.keycode = 0;
 	} else
-	if (p->correction_action == action)
+	if (p->correction_action == action)// undo correction
 	{
 		p->event->send_spaces(p->event, keycount);
 
@@ -2549,7 +2549,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
 			}
-			else if (p->correction_action == CORRECTION_INCIDENTAL_CAPS)
+			else if (p->correction_action == CORRECTION_INCIDENTAL_CAPS)// undo correction
 			{
 				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
@@ -2588,7 +2588,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
 			}
-			else if (p->correction_action == CORRECTION_TWO_CAPITAL_LETTER)
+			else if (p->correction_action == CORRECTION_TWO_CAPITAL_LETTER)// undo correction
 			{
 				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
@@ -2625,7 +2625,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				p->event->send_xkey(p->event, kc, modifier);
 				p->buffer->add_symbol(p->buffer, ',', kc, modifier);
 			}
-			else if (p->correction_action == CORRECTION_TWO_SPACE)
+			else if (p->correction_action == CORRECTION_TWO_SPACE)// undo correction
 			{
 				p->event->send_backspaces(p->event, 2);
 				p->buffer->del_symbol(p->buffer);
@@ -2681,7 +2681,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 
 				p->buffer->clear(p->buffer);
 			}
-			else if (p->correction_action == CORRECTION_TWO_MINUS)
+			else if (p->correction_action == CORRECTION_TWO_MINUS)// undo correction
 			{
 				p->event->send_backspaces(p->event, 2);
 
@@ -2691,17 +2691,12 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				KeyCode kc = 0;
 				int modifier = 0;
 				size_t sym_size = 0;
-				int lang = get_curr_keyboard_group ();
+				int lang = get_curr_keyboard_group();
 				p->buffer->keymap->get_ascii(p->buffer->keymap, "-", &lang, &kc, &modifier, &sym_size);
+				// send '-- '
 				p->event->send_xkey(p->event, kc, modifier);
 				p->event->send_xkey(p->event, kc, modifier);
-
 				p->event->send_spaces(p->event, 1);
-
-				kc = 0;
-				modifier = 0;
-				sym_size = 0;
-				p->buffer->keymap->get_ascii(p->buffer->keymap, " ", &lang, &kc, &modifier, &sym_size);
 
 				p->correction_buffer->clear(p->correction_buffer);
 				p->correction_action = CORRECTION_NONE;
@@ -2859,7 +2854,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_MISPRINT:
 		{
-			if (p->correction_action == CORRECTION_MISPRINT)
+			if (p->correction_action == CORRECTION_MISPRINT)// undo correction
 			{
 				int backspaces_count = p->buffer->cur_pos - p->correction_buffer->get_last_word_offset(p->correction_buffer, p->correction_buffer->content, p->correction_buffer->cur_pos);
 				int offset = p->buffer->cur_pos - p->correction_buffer->cur_pos;
