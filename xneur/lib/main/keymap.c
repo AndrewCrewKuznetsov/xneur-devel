@@ -57,7 +57,7 @@ struct keycode_to_symbol_pair
 #define NumlockMask 0x10
 
 static const int keyboard_groups[]	= {0x00000000, 0x00002000, 0x00004000, 0x00006000};
-static const int state_masks[]		= {0x00, 0x01, 0x80, 0x10}; // None, NumLock, Alt, Shift
+static const int STATE_MASKS[]		= {0x00, 0x01, 0x80}; // None, NumLock, Alt
 
 static int locale_create(void)
 {
@@ -277,21 +277,28 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 				if (keymap[j] == NoSymbol)
 					continue;
 
-				for (int n = 0; n < 3; n++)
+				// TODO: Why Shift and Ctrl not checked in the original code?
+				const size_t MOD_COUNT = sizeof(STATE_MASKS) / sizeof(STATE_MASKS[0]);
+				// Check all modifier pairs
+				for (size_t n = 0; n < MOD_COUNT; ++n)
 				{
-					for (int m = 0; m < 3; m++) // Modifiers
+					for (size_t m = 0; m < MOD_COUNT; ++m) // Modifiers
 					{
+						// No need to check "<X> + Alt + Alt" and so on
+						if (n == m) continue;
+
+						int mask = STATE_MASKS[n] | STATE_MASKS[m];
 						event.keycode	= i;
 
-						event.state = get_keycode_mod(lang);
-						event.state |= state_masks[m];
-						event.state |= state_masks[n];
+						// Get text on the key produced by pressing key with specified modifiers in the specified keyboard layout
+						event.state = get_keycode_mod(lang) | mask;
 						int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
 
 						symbol[nbytes] = NULLSYM;
 
+						// If such symbol already produced by the another combination, go next
 						if (strstr(prev_symbols, symbol) != NULL)
 							continue;
 
@@ -299,12 +306,14 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						strncat(prev_symbols, symbol, avail_space);
 						avail_space -= _symbol_len;
 
+						// If that is not the searched symbol, go next
 						if (strncmp(sym, symbol, _symbol_len) != 0)
 							continue;
 
-						event.state = get_keycode_mod(p->latin_group);
-						event.state |= state_masks[m];
-						event.state |= state_masks[n];
+						// Symbol `sym` is produced by that key combination. Check that symbol exists
+						// in the layout with latin symbols that and return it if true. If symbol doesn't
+						// exists in the latin layout, go next
+						event.state = get_keycode_mod(p->latin_group) | mask;
 						nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
@@ -314,10 +323,7 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						free(prev_symbols);
 						free(symbol);
 						*kc = event.keycode;
-						event.state = 0;
-						event.state |= state_masks[m];
-						event.state |= state_masks[n];
-						*modifier = get_keycode_mod(lang) | event.state;
+						*modifier = get_keycode_mod(lang) | mask;
 						if (symbol_len)
 							*symbol_len = _symbol_len;
 						if (preferred_lang)
