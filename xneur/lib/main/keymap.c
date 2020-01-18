@@ -56,7 +56,7 @@ struct keycode_to_symbol_pair
 
 #define NumlockMask 0x10
 
-static const int keyboard_groups[]	= {0x00000000, 0x00002000, 0x00004000, 0x00006000};
+static const int KEYBOARD_GROUPS[]	= {0x00000000, 0x00002000, 0x00004000, 0x00006000};
 static const int STATE_MASKS[]		= {0x00, 0x01, 0x80}; // None, NumLock, Alt
 
 static int locale_create(void)
@@ -78,9 +78,13 @@ static int locale_create(void)
 int get_languages_mask(void)
 {
 	int languages_mask = 0;
-	for (int group = 0; group < 4; group++)
-		languages_mask = languages_mask | keyboard_groups[group];
+	for (int group = 0; group < sizeof(KEYBOARD_GROUPS) / sizeof(KEYBOARD_GROUPS[0]); ++group)
+		languages_mask = languages_mask | KEYBOARD_GROUPS[group];
 	return ~languages_mask;
+}
+int get_keycode_mod(int group)
+{
+	return KEYBOARD_GROUPS[group];
 }
 
 static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int state)
@@ -154,7 +158,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	}
 
 	/* Miss. */
-	char *symbol = keymap_keycode_to_symbol_real(p, kc, group >= 0 ? (state | keyboard_groups[group]) : state);
+	char *symbol = keymap_keycode_to_symbol_real(p, kc, group >= 0 ? (state | KEYBOARD_GROUPS[group]) : state);
 
 	/* Just use next cache entry. LRU makes no sense here. */
 	p->keycode_to_symbol_cache_pos = (p->keycode_to_symbol_cache_pos + 1) % keycode_to_symbol_cache_size;
@@ -174,11 +178,6 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	symbol = (char *) malloc(pr->symbol_size);
 	memcpy(symbol, pr->symbol, pr->symbol_size);
 	return symbol;
-}
-
-int get_keycode_mod(int group)
-{
-	return keyboard_groups[group];
 }
 
 static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySym *lower, KeySym *upper)
@@ -261,7 +260,7 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						if (n == m) continue;
 
 						int mask = STATE_MASKS[n] | STATE_MASKS[m];
-						int mod = get_keycode_mod(lang) | mask;
+						int mod = KEYBOARD_GROUPS[lang] | mask;
 
 						XKeyEvent event;
 						event.type        = KeyPress;
@@ -294,7 +293,7 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						// Symbol `sym` is produced by that key combination. Check that symbol exists
 						// in the layout with latin symbols that and return it if true. If symbol doesn't
 						// exists in the latin layout, go next
-						event.state = get_keycode_mod(p->latin_group) | mask;
+						event.state = KEYBOARD_GROUPS[p->latin_group] | mask;
 						if (XLookupString(&event, symbol, 256, NULL, NULL) <= 0) {
 							continue;
 						}
@@ -394,7 +393,7 @@ static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent *e)
 
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 
-	ke->state = get_keycode_mod(p->latin_group);
+	ke->state = KEYBOARD_GROUPS[p->latin_group];
 	ke->state |= mod;
 
 	int nbytes = XLookupString(ke, symbol, 256, NULL, NULL);
