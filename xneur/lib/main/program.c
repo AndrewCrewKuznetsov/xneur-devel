@@ -1395,21 +1395,15 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 
 				if (xconfig->abbr_ignore_layout)
 				{
-					KeyCode *dummy_kc = malloc((strlen(replacement)+1) * sizeof(KeyCode));
-					int *dummy_kc_mod = malloc((strlen(replacement)+1) * sizeof(int));
+					size_t rlen  = strlen(replacement);
+					size_t wlen  = strlen(word);
+					size_t count = (rlen > wlen ? rlen : wlen) + 1;
+					KeyCode *dummy_kc = malloc(count * sizeof(KeyCode));
+					int *dummy_kc_mod = malloc(count * sizeof(int));
 					main_window->keymap->convert_text_to_ascii(main_window->keymap, replacement, dummy_kc, dummy_kc_mod);
-					if (dummy_kc != NULL)
-						free(dummy_kc);
-					if (dummy_kc_mod != NULL)
-						free(dummy_kc_mod);
-
-					dummy_kc = malloc((strlen(word)+1) * sizeof(KeyCode));
-					dummy_kc_mod = malloc((strlen(word)+1) * sizeof(int));
 					main_window->keymap->convert_text_to_ascii(main_window->keymap, word, dummy_kc, dummy_kc_mod);
-					if (dummy_kc != NULL)
-						free(dummy_kc);
-					if (dummy_kc_mod != NULL)
-						free(dummy_kc_mod);
+					free(dummy_kc);
+					free(dummy_kc_mod);
 				}
 
 				if (strcmp(replacement, word) != 0)
