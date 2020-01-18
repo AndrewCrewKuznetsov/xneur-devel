@@ -201,9 +201,7 @@ static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySy
 
 	for (int i = p->min_keycode; i <= p->max_keycode; i++)
 	{
-		int max = p->keysyms_per_keycode - 1;
-
-		for (int j = 0; j <= max; j++)
+		for (int j = 0; j < p->keysyms_per_keycode; j++)
 		{
 			if (p->keymap[j] == NoSymbol)
 				continue;
