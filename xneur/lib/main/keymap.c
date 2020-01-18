@@ -229,7 +229,8 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 	}
 
 	char *symbol		= (char *) malloc((256 + 1) * sizeof(char));
-	char *prev_symbols	= (char *) malloc((256 + 1) * sizeof(char));
+	// Symbols, that has text in one language, but doesn't have in `p->latin_group`
+	char *no_text_in_latin_lang = (char *) malloc((256 + 1) * sizeof(char));
 
 	int count = p->handle->total_languages;
 	int lang = *preferred_lang;
@@ -239,7 +240,7 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 		// Check all physical keys of the keyboard
 		for (int keycode = p->min_keycode; keycode <= p->max_keycode; ++keycode)
 		{
-			prev_symbols[0] = NULLSYM;
+			no_text_in_latin_lang[0] = NULLSYM;
 			// Available space in prev_symbols
 			size_t avail_space = 256;
 
@@ -279,16 +280,16 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 
 						symbol[nbytes] = NULLSYM;
 
-						// If such symbol already produced by the another combination, go next
-						if (strstr(prev_symbols, symbol) != NULL)
-							continue;
-
-						strncat(prev_symbols, symbol, avail_space);
-						avail_space -= nbytes;
 
 						// If that is not the searched symbol, go next
 						if (strncmp(sym, symbol, nbytes) != 0)
 							continue;
+
+						// If such symbol already produced by the another combination, go next
+						if (strstr(no_text_in_latin_lang, symbol) != NULL)
+							continue;
+						strncat(no_text_in_latin_lang, symbol, avail_space);
+						avail_space -= nbytes;
 
 						// Symbol `sym` is produced by that key combination. Check that symbol exists
 						// in the layout with latin symbols that and return it if true. If symbol doesn't
@@ -300,7 +301,7 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 
 						char sym = symbol[0];
 
-						free(prev_symbols);
+						free(no_text_in_latin_lang);
 						free(symbol);
 						*kc = keycode;
 						*modifier = mod;
@@ -316,7 +317,7 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 		lang = (lang + 1) % p->handle->total_languages;
 	}
 
-	free(prev_symbols);
+	free(no_text_in_latin_lang);
 	free(symbol);
 	return NULLSYM;
 }
