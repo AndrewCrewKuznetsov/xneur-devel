@@ -83,7 +83,7 @@ int get_languages_mask(void)
 	return ~languages_mask;
 }
 
-static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int group, int state)
+static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int state)
 {
 	XKeyEvent event;
 	event.type        = KeyPress;
@@ -92,12 +92,8 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 	event.same_screen = True;
 	event.display     = p->display;
 	event.keycode     = kc;
-	event.state       = 0;
+	event.state       = state;
 	event.time        = CurrentTime;
-
-	if (group >= 0)
-		event.state = keyboard_groups[group];
-	event.state |= state;
 
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 	symbol[0] = NULLSYM;
@@ -158,8 +154,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	}
 
 	/* Miss. */
-	//log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
-	char *symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
+	char *symbol = keymap_keycode_to_symbol_real(p, kc, group >= 0 ? (state | keyboard_groups[group]) : state);
 
 	/* Just use next cache entry. LRU makes no sense here. */
 	p->keycode_to_symbol_cache_pos = (p->keycode_to_symbol_cache_pos + 1) % keycode_to_symbol_cache_size;
