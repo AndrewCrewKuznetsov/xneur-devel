@@ -136,8 +136,7 @@ void error_msg(const char *msg, ...)
 	va_list ap;
 	va_start(ap, msg);
 
-	char *buffer = (char *) malloc(sizeof(char)*1024*10);
-	memset(buffer, 0, sizeof(char)*1024*10);
+	char buffer[1024*10] = {0};
 	vsprintf(buffer, msg, ap);
 
 	GtkWidget *dialog = gtk_message_dialog_new (NULL,
@@ -148,8 +147,6 @@ void error_msg(const char *msg, ...)
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 
-	if (buffer != NULL)
-		g_free(buffer);
 	va_end(ap);
 }
 

@@ -336,13 +336,11 @@ gboolean clock_check(gpointer dummy)
 	if (dummy) {};
 
 	int xneur_pid = -1;
-	char *ps_command = (char *) malloc(1024 * sizeof(char));
 	if (xneur_old_pid == -1)
 		xneur_old_pid = 1;
-	snprintf(ps_command, 1024, "ps -p %d | grep xneur", xneur_old_pid);
+	char ps_command[20 + 30];// 20 - length of format string, 30 - more, than maximum length of int in decimal format
+	snprintf(ps_command, sizeof(ps_command)/sizeof(ps_command[0]), "ps -p %d | grep xneur", xneur_old_pid);
 	FILE *fp = popen(ps_command, "r");
-	if (ps_command != NULL)
-		g_free (ps_command);
 	if (fp != NULL)
 	{
 		char buffer[NAME_MAX];

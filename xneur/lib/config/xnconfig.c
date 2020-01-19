@@ -1263,12 +1263,9 @@ static int xneur_config_get_pid(struct _xneur_config *p)
 	if (getsid(process_id) == -1)
 		return -1;
 
-	char *ps_command = (char *) malloc(1024 * sizeof(char));
-	if (ps_command == NULL)
-		return -1;
-	snprintf(ps_command, 1024, "ps -p %d | grep xneur", process_id);
+	char ps_command[20 + 30];// 20 - length of format string, 30 - more, than maximum length of int in decimal format
+	snprintf(ps_command, sizeof(ps_command)/sizeof(ps_command[0]), "ps -p %d | grep xneur", process_id);
 	FILE *fp = popen(ps_command, "r");
-	free (ps_command);
 	if (fp != NULL)
 	{
 		char buffer[1024];

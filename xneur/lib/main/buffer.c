@@ -112,27 +112,16 @@ static void buffer_mail_and_archive(char *file_path_name)
 	if (loctime == NULL)
 		return;
 
-	char *date = malloc(256 * sizeof(char));
-	if (date == NULL)
-		return;
-	char *time = malloc(256 * sizeof(char));
-	if (time == NULL)
-	{
-		free(date);
-		return;
-	}
-	strftime(date, 256, "%x", loctime);
-	strftime(time, 256, "%X", loctime);
+	char date[64];
+	strftime(date, sizeof(date)/sizeof(date[0]), "%x %X", loctime);
 
-	int len = strlen(file_path_name) + strlen(date) + strlen(time) + 4;
+	int len = strlen(file_path_name) + strlen(date) + 2;// space + \0
 	char *arch_file_path_name = malloc(len * sizeof (char));
 	if (arch_file_path_name == NULL)
 	{
-		free(date);
-		free(time);
 		return;
 	}
-	snprintf(arch_file_path_name, len, "%s %s %s", file_path_name, date, time);
+	snprintf(arch_file_path_name, len, "%s %s", file_path_name, date);
 
 	if (rename(file_path_name, arch_file_path_name) == 0)
 	{
@@ -140,8 +129,6 @@ static void buffer_mail_and_archive(char *file_path_name)
 		char *gz_arch_file_path_name = malloc(len+3 * sizeof (char));
 		if (gz_arch_file_path_name == NULL)
 		{
-			free(date);
-			free(time);
 			free(arch_file_path_name);
 			return;
 		}
@@ -160,8 +147,6 @@ static void buffer_mail_and_archive(char *file_path_name)
 		if (remove(arch_file_path_name) == -1)
 		{
 			free(file_path_name);
-			free(time);
-			free(date);
 			free(arch_file_path_name);
 			free(gz_arch_file_path_name);
 			return;
@@ -179,8 +164,6 @@ static void buffer_mail_and_archive(char *file_path_name)
 		log_message (ERROR, _("Error rename file \"%s\" to \"%s\""), file_path_name, arch_file_path_name);
 
 	free(file_path_name);
-	free(time);
-	free(date);
 	free(arch_file_path_name);
 }
 
@@ -216,13 +199,6 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		return;
 	}
 
-	char *buffer = malloc(256 * sizeof(char));
-	if (buffer == NULL)
-	{
-		free(file_path_name);
-		return;
-	}
-
 	// Check existing log file
 	FILE *stream = fopen(file_path_name, "r");
 	if (stream == NULL) // File not exist
@@ -231,7 +207,6 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		if (stream == NULL)
 		{
 			free(file_path_name);
-			free(buffer);
 			return;
 		}
 		fprintf(stream, "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"><title>X Neural Switcher Log</title></head><body>\n");
@@ -265,19 +240,17 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 	free(file_path_name);
 	if (stream == NULL)
 	{
-		free(buffer);
 		return;
 	}
 
 	if (fseek(stream, -20, SEEK_END) == -1)
 	{
-		free(buffer);
 		fclose(stream);
 		return;
 	}
 
-	memset(buffer, 0, 256 * sizeof(char));
-	strftime(buffer, 256, "%x", loctime);
+	char buffer[32] = {0};
+	strftime(buffer, sizeof(buffer)/sizeof(buffer[0]), "%x", loctime);
 
 	if (window != last_log_window)
 	{
@@ -285,18 +258,16 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		last_log_time = 0;
 		char *app_name = get_wm_class_name(window);
 		fprintf(stream, "</ul>\n<br><font color=\"#FF0000\"><b>%s <font size=\"2\">[%s]</font></font></b><br><ul>\n", app_name, buffer);
-		if (app_name != NULL)
-			free(app_name);
+		free(app_name);
 	}
 
 	if (difftime(curtime, last_log_time) > 300)
 	{
 		last_log_time = curtime;
-		memset(buffer, 0, 256 * sizeof(char));
-		strftime(buffer, 256, "%X", loctime);
+		memset(buffer, 0, sizeof(buffer));
+		strftime(buffer, sizeof(buffer)/sizeof(buffer[0]), "%X", loctime);
 		fprintf(stream, "</ul><ul>\n<font color=\"#0000FF\" size=\"2\">(%s): </font>", buffer);
 	}
-	free(buffer);
 
 	for (int i = 0; i < p->cur_pos; i++)
 	{
@@ -423,7 +394,6 @@ static void buffer_set_content(struct _buffer *p, const char *new_content)
 
 static void buffer_change_case(struct _buffer *p)
 {
-	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 
 	Display *display = XOpenDisplay(NULL);
 	XKeyEvent event;
@@ -441,13 +411,12 @@ static void buffer_change_case(struct _buffer *p)
 		event.keycode = p->keycode[i];
 		event.state   = p->keycode_modifiers[i];
 
-		int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
+		char symbol[256 + 1];
+		int nbytes = XLookupString(&event, symbol, sizeof(symbol)/sizeof(symbol[0]) - 1, NULL, NULL);
 		if (nbytes <= 0)
 			continue;
-		if (symbol == NULL)
-			continue;
 
-		symbol[nbytes] = NULLSYM;
+		symbol[nbytes] = '\0';
 
 		if (ispunct(symbol[0]) || isdigit(symbol[0]))
 			continue;
@@ -458,8 +427,6 @@ static void buffer_change_case(struct _buffer *p)
 			p->keycode_modifiers[i] = (p->keycode_modifiers[i] | ShiftMask);
 	}
 
-	if (symbol != NULL)
-		free(symbol);
 	XCloseDisplay(display);
 }
 
@@ -522,8 +489,6 @@ static void buffer_del_symbol(struct _buffer *p)
 
 static char *buffer_get_utf_string(struct _buffer *p)
 {
-	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
-
 	char *utf_string = (char *) malloc(1 * sizeof(char));
 	utf_string[0] = NULLSYM;
 
@@ -543,13 +508,12 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		event.keycode = p->keycode[i];
 		event.state   = p->keycode_modifiers[i];
 
-		int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
+		char symbol[256 + 1];
+		int nbytes = XLookupString(&event, symbol, sizeof(symbol)/sizeof(symbol[0]) - 1, NULL, NULL);
 		if (nbytes <= 0)
 			continue;
-		if (symbol == NULL)
-			continue;
 
-		symbol[nbytes] = NULLSYM;
+		symbol[nbytes] = '\0';
 
 		char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + nbytes + 1);
 		if (tmp != NULL)
@@ -559,8 +523,6 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		}
 	}
 
-	if (symbol != NULL)
-		free(symbol);
 	XCloseDisplay(display);
 
 	return utf_string;

@@ -255,52 +255,39 @@ static void program_layout_update(struct _program *p)
 	if ((Window) p->last_window == p->focus->owner_window)
 		return;
 
-	char *text_to_find	= (char *) malloc(1024 * sizeof(char));
-	if (text_to_find == NULL)
-		return;
-	char *window_layouts	= (char *) malloc(1024 * sizeof(char));
-	if (window_layouts == NULL)
-	{
-		free(text_to_find);
-		return;
-	}
+	char text_to_find[1024];
+	char window_layout[1024];
 
 	fetch_window_name(text_to_find, p->last_window);
 	// Remove layout for old window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
 	{
-		sprintf(window_layouts, "%s %d", text_to_find, lang);
+		sprintf(window_layout, "%s %d", text_to_find, lang);
 
-		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layouts, BY_PLAIN))
+		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layout, BY_PLAIN))
 			continue;
 
-		xconfig->window_layouts->rem(xconfig->window_layouts, window_layouts);
+		xconfig->window_layouts->rem(xconfig->window_layouts, window_layout);
 	}
 
 	// Save layout for old window
-	sprintf(window_layouts, "%s %d", text_to_find, p->last_layout);
-	xconfig->window_layouts->add(xconfig->window_layouts, window_layouts);
+	sprintf(window_layout, "%s %d", text_to_find, p->last_layout);
+	xconfig->window_layouts->add(xconfig->window_layouts, window_layout);
 
 	fetch_window_name(text_to_find, p->focus->owner_window);
 
 	// Restore layout for new window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
 	{
-		sprintf(window_layouts, "%s %d", text_to_find, lang);
-		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layouts, BY_PLAIN))
+		sprintf(window_layout, "%s %d", text_to_find, lang);
+		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layout, BY_PLAIN))
 			continue;
-
-		free(text_to_find);
-		free(window_layouts);
 
 		//XkbLockGroup(main_window->display, XkbUseCoreKbd, lang);
 		set_keyboard_group(lang);
 		log_message(DEBUG, _("Restore layout group to %d"), lang);
 		return;
 	}
-
-	free(text_to_find);
-	free(window_layouts);
 
 	log_message(DEBUG, _("Store default layout group to %d"), xconfig->default_group);
 }
@@ -1344,10 +1331,8 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			if (loctime == NULL)
 				break;
 
-			char *date = malloc(256 * sizeof(char));
-			if (date == NULL)
-				break;
-			strftime(date, 256, "%x", loctime);
+			char date[32];
+			strftime(date, sizeof(date)/sizeof(date[0]), "%x", loctime);
 
 			// Insert Date
 			log_message(DEBUG, _("Insert date '%s'."), date);
@@ -1360,8 +1345,6 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			p->correction_buffer->clear(p->correction_buffer);
 
 			p->event->default_event.xkey.keycode = 0;
-
-			free (date);
 			break;
 		}
 		case ACTION_REPLACE_ABBREVIATION: // User needs to replace acronym

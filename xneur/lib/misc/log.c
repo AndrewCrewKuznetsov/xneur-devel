@@ -79,23 +79,12 @@ void log_message(int level, const char *string, ...)
 
 	time_t curtime = time(NULL);
 	struct tm *loctime = localtime(&curtime);
-	char *time_buffer = NULL; 
-	if (loctime != NULL)
-	{
-		char *tb = malloc(256 * sizeof(char));
-		strftime(tb, 256, "%T", loctime);
-		time_buffer = malloc((strlen(tb) + 1) * sizeof(char));
-		time_buffer[0] = 0;
-		sprintf(time_buffer, "%s ", tb);
-		free(tb);
-	}
-
-	if (time_buffer == NULL)
-	{
-		time_buffer = malloc(sizeof(char));
-		time_buffer[0] = 0;
-	}
-	int len = strlen(string) + strlen(modifier) + strlen(time_buffer) + 3;
+	char time_buffer[64];
+	time_buffer[0] = 0;
+	size_t time_len = loctime != NULL
+		? strftime(time_buffer, sizeof(time_buffer)/sizeof(time_buffer[0]), "%T ", loctime)
+		: 0;
+	int len = strlen(modifier) + time_len + strlen(string) + 2;// \n + \0
 
 	char *buffer = (char *) malloc(len + 1);
 	snprintf(buffer, len, "%s%s%s\n", modifier, time_buffer, string);
@@ -107,6 +96,5 @@ void log_message(int level, const char *string, ...)
 	vfprintf(stream, buffer, ap);
 
 	free(buffer);
-	free(time_buffer);
 	va_end(ap);
 }

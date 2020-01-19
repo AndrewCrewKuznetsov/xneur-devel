@@ -70,7 +70,7 @@ void generate_protos(void)
 	struct _list_char *proto  = list_char_init();//-V656
 	struct _list_char *proto3 = list_char_init();//-V656
 
-	char *syll = (char *) malloc((256 + 1) * sizeof(char));
+	char syll[256 + 1];
 
 	for (int i = 0; i < 100; i++)
 	{
@@ -164,7 +164,6 @@ void generate_protos(void)
 	FILE *stream = fopen(proto_file_path, "w");
 	if (stream == NULL)
 	{
-		free(syll);
 		free(proto_file_path);
 		proto->uninit(proto);
 		proto3->uninit(proto3);
@@ -179,7 +178,6 @@ void generate_protos(void)
 	stream = fopen(proto3_file_path, "w");
 	if (stream == NULL)
 	{
-		free(syll);
 		free(proto3_file_path);
 		proto->uninit(proto);
 		proto3->uninit(proto3);
@@ -192,8 +190,6 @@ void generate_protos(void)
 
 	proto->uninit(proto);
 	proto3->uninit(proto3);
-
-	free(syll);
 
 	printf("End of generation!\n");
 }

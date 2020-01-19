@@ -44,7 +44,7 @@ struct _xneur_statistic
 	time_t end_time;
 
 	int key_count;
-	
+
 	int change_incidental_caps;
 	int change_two_capital_letter;
 	int change_word_to_0;
@@ -85,7 +85,7 @@ struct _xneur_statistic
 int on_init(void)
 {
 	statistic.key_count = 0;
-	
+
 	statistic.change_incidental_caps = 0;
 	statistic.change_two_capital_letter = 0;
 	statistic.change_word_to_0 = 0;
@@ -121,7 +121,7 @@ int on_init(void)
 	statistic.action_rotate_layout = 0;
 	statistic.action_replace_abbreviation = 0;
 	statistic.action_autocompletion = 0;
-	
+
 	printf("[PLG] Plugin for keyboard statistic initialized\n");
 	return (0);
 }
@@ -129,7 +129,7 @@ int on_init(void)
 int on_xneur_start(void)
 {
 	statistic.start_time = time(NULL);
-	
+
 	printf("[PLG] Plugin for keyboard statistic receive xneur start\n");
 	return (0);
 }
@@ -149,30 +149,24 @@ int on_xneur_stop(void)
 		return 0;
 
 	statistic.end_time = time(NULL);
-	
-	char *start_time = malloc(256 * sizeof(char));
-	char *end_time = malloc(256 * sizeof(char));
-	
+
 	struct tm *loctime = localtime(&statistic.start_time);
 	if (loctime == NULL)
 	{
 		fclose(stream);
-		free(start_time);
-		free(end_time);
 		return 0;
 	}
-	strftime(start_time, 256, "%c", loctime);
+	char start_time[128];
+	strftime(start_time, sizeof(start_time)/sizeof(start_time[0]), "%c", loctime);
 
 	loctime = localtime(&statistic.end_time);
 	if (loctime == NULL)
 	{
 		fclose(stream);
-		free(start_time);
-		free(end_time);
 		return 0;
 	}
-	strftime(end_time, 256, "%c", loctime);
-	
+	char end_time[128];
+	strftime(end_time, sizeof(end_time)/sizeof(end_time[0]), "%c", loctime);
 
 	fprintf(stream, "XNeur statistic (from %s to %s)\n", start_time, end_time);
 	fprintf(stream, "Count:\n");
@@ -190,7 +184,7 @@ int on_xneur_stop(void)
 		fprintf(stream, "	Change two capital letter count = %d\n", statistic.change_two_capital_letter);
 	}
 	if (statistic.change_word_to_0 != 0)
-	{	
+	{
 		fprintf(stream, "	Change word to layout 0 count = %d\n", statistic.change_word_to_0);
 	}
 	if (statistic.change_word_to_1 != 0)
@@ -319,20 +313,18 @@ int on_xneur_stop(void)
 		fprintf(stream, "	Autocompletion count = %d\n", statistic.action_autocompletion);
 	}
 	fprintf(stream, "\n");
-	
+
 	printf("[PLG] Plugin for keyboard statistic receive xneur stop\n");
-	
+
 	fclose(stream);
-	free(start_time);
-	free(end_time);
-	
+
 	return (0);
 }
 
 int on_key_press(KeySym key, int modifier_mask)
 {
 	statistic.key_count++;
-	
+
 	printf("[PLG] Plugin for keyboard statistic receive KeyPress '%s' with mask %d\n", XKeysymToString(key), modifier_mask);
 	return (0);
 }
@@ -440,14 +432,14 @@ int on_hotkey_action(enum _hotkey_action ha)
 			break;
 		}
 	}*/
-	
+
 	return (0);
 }
 
 int on_change_action(enum _change_action ca)
 {
 	if (ca) {};
-	
+
 	/*switch (ca)
 	{
 		case CHANGE_INCIDENTAL_CAPS:
@@ -531,7 +523,7 @@ int on_change_action(enum _change_action ca)
 			break;
 		}
 	}*/
-	
+
 	return (0);
 }
 

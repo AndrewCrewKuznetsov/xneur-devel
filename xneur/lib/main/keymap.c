@@ -227,10 +227,6 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 		return *sym;
 	}
 
-	char *symbol		= (char *) malloc((256 + 1) * sizeof(char));
-	// Symbols, that has text in one language, but doesn't have in `p->latin_group`
-	char *no_text_in_latin_lang = (char *) malloc((256 + 1) * sizeof(char));
-
 	int count = p->handle->total_languages;
 	int lang = *preferred_lang;
 	// Loop through all languages, starting from `preferred_lang`
@@ -239,9 +235,11 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 		// Check all physical keys of the keyboard
 		for (int keycode = p->min_keycode; keycode <= p->max_keycode; ++keycode)
 		{
-			no_text_in_latin_lang[0] = NULLSYM;
+			// Symbols, that has text in one language, but doesn't have in `p->latin_group`
+			char no_text_in_latin_lang[256 + 1];
+			no_text_in_latin_lang[0] = '\0';
 			// Available space in prev_symbols
-			size_t avail_space = 256;
+			size_t avail_space = sizeof(no_text_in_latin_lang) / sizeof(no_text_in_latin_lang[0]) - 1;
 
 			// Loop through all symbols on the physical key
 			for (int j = 0; j <= p->keysyms_per_keycode; j++)
@@ -273,11 +271,12 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 
 						// Get text on the key produced by pressing key with specified modifiers in the specified keyboard layout
 						event.state = mod;
-						int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
+						char symbol[256 + 1];
+						int nbytes = XLookupString(&event, symbol, sizeof(symbol)/sizeof(symbol[0]) - 1, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
 
-						symbol[nbytes] = NULLSYM;
+						symbol[nbytes] = '\0';
 
 
 						// If that is not the searched symbol, go next
@@ -294,19 +293,15 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						// in the layout with latin symbols that and return it if true. If symbol doesn't
 						// exists in the latin layout, go next
 						event.state = KEYBOARD_GROUPS[p->latin_group] | mask;
-						if (XLookupString(&event, symbol, 256, NULL, NULL) <= 0) {
+						if (XLookupString(&event, symbol, sizeof(symbol)/sizeof(symbol[0]) - 1, NULL, NULL) <= 0) {
 							continue;
 						}
 
-						char sym = symbol[0];
-
-						free(no_text_in_latin_lang);
-						free(symbol);
 						*kc = keycode;
 						*modifier = mod;
 						*symbol_len = nbytes;
 						*preferred_lang = lang;
-						return sym;
+						return symbol[0];
 					}
 				}
 			}
@@ -316,8 +311,6 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 		lang = (lang + 1) % p->handle->total_languages;
 	}
 
-	free(no_text_in_latin_lang);
-	free(symbol);
 	return NULLSYM;
 }
 
@@ -391,21 +384,12 @@ static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent *e)
 	if (ke->state & LockMask)
 		mod = LockMask;
 
-	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
-
 	ke->state = KEYBOARD_GROUPS[p->latin_group];
 	ke->state |= mod;
 
-	int nbytes = XLookupString(ke, symbol, 256, NULL, NULL);
-	if (nbytes > 0)
-	{
-		char sym = symbol[0];
-		free(symbol);
-		return sym;
-	}
-
-	free(symbol);
-	return ' ';
+	char symbol[256 + 1];
+	int nbytes = XLookupString(ke, symbol, sizeof(symbol)/sizeof(symbol[0]) - 1, NULL, NULL);
+	return nbytes > 0 ? symbol[0] : ' ';
 }
 
 static void keymap_convert_text_to_ascii(struct _keymap *p, char *text, KeyCode *kc, int *kc_mod)
