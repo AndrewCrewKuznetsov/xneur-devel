@@ -238,8 +238,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 
 	if (param == NULL)
 	{
-		if (full_string != NULL)
-			free(full_string);
+		free(full_string);
 		log_message(WARNING, _("Param mismatch for option %s"), option);
 		return;
 	}
@@ -585,8 +584,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 				cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
 				if (cmd == NULL)
 				{
-					if (new_user_action->command != NULL)
-						free(new_user_action->command);
+					free(new_user_action->command);
 					new_user_action->command = NULL;
 					break;
 				}
@@ -1130,22 +1128,16 @@ static void free_structures(struct _xneur_config *p)
 
 	for (int notify = 0; notify < MAX_NOTIFIES; notify++)
 	{
-		if (p->sounds[notify].file != NULL)
-			free(p->sounds[notify].file);
-
-		if (p->osds[notify].file != NULL)
-			free(p->osds[notify].file);
-
-		if (p->popups[notify].file != NULL)
-			free(p->popups[notify].file);
+		free(p->sounds[notify].file);
+		free(p->osds[notify].file);
+		free(p->popups[notify].file);
 	}
 
 	if (p->actions != NULL)
 	{
 		for (int action = 0; action < p->actions_count; action++)
 		{
-			if (p->actions[action].hotkey.key != NULL)
-				free(p->actions[action].hotkey.key);
+			free(p->actions[action].hotkey.key);
 		}
 	}
 
@@ -1153,12 +1145,9 @@ static void free_structures(struct _xneur_config *p)
 	{
 		for (int action = 0; action < p->user_actions_count; action++)
 		{
-			if (p->user_actions[action].hotkey.key != NULL)
-				free(p->user_actions[action].hotkey.key);
-			if (p->user_actions[action].name != NULL)
-				free(p->user_actions[action].name);
-			if (p->user_actions[action].command != NULL)
-				free(p->user_actions[action].command);
+			free(p->user_actions[action].hotkey.key);
+			free(p->user_actions[action].name);
+			free(p->user_actions[action].command);
 		}
 	}
 
@@ -1170,17 +1159,10 @@ static void free_structures(struct _xneur_config *p)
 	memset(p->popups, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 
 
-	if (p->version != NULL)
-		free(p->version);
-
-	if (p->osd_font != NULL)
-		free(p->osd_font);
-
-	//if (p->actions != NULL)
-	//	free(p->actions);
-
-	//if (p->user_actions != NULL)
-	//	free(p->user_actions);
+	free(p->version);
+	free(p->osd_font);
+	//free(p->actions);
+	//free(p->user_actions);
 }
 
 static void xneur_config_reload(struct _xneur_config *p)
@@ -1764,8 +1746,7 @@ static void xneur_config_save_dict(struct _xneur_config *p, int lang)
 	char *lang_dir = (char *) malloc(path_len * sizeof(char));
 	snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, p->handle->languages[lang].dir);
 	save_list(p->handle->languages[lang].dictionary, lang_dir, DICT_NAME);
-	if (lang_dir != NULL)
-		free (lang_dir);
+	free(lang_dir);
 }
 
 static void xneur_config_save_pattern(struct _xneur_config *p, int lang)
@@ -1779,8 +1760,7 @@ static void xneur_config_save_pattern(struct _xneur_config *p, int lang)
 	char *lang_dir = (char *) malloc(path_len * sizeof(char));
 	snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, p->handle->languages[lang].dir);
 	save_list(p->handle->languages[lang].pattern, lang_dir, PATTERN_NAME);
-	if (lang_dir != NULL)
-		free(lang_dir);
+	free(lang_dir);
 }
 
 static const char* xneur_config_get_log_level_name(struct _xneur_config *p)
@@ -1802,16 +1782,12 @@ static void xneur_config_uninit(struct _xneur_config *p)
 	free(p->osds);
 	free(p->popups);
 
-	if (p->delimeters != NULL)
-		free(p->delimeters);
-	if (p->delimeters_string != NULL)
-		free(p->delimeters_string);
+	free(p->delimeters);
+	free(p->delimeters_string);
 	p->delimeters_count = 0;
 
-	if (p->mail_keyboard_log != NULL)
-		free(p->mail_keyboard_log);
-	if (p->host_keyboard_log != NULL)
-		free(p->host_keyboard_log);
+	free(p->mail_keyboard_log);
+	free(p->host_keyboard_log);
 
 	xneur_handle_destroy(p->handle);
 

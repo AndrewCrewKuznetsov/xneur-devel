@@ -705,8 +705,7 @@ static void program_process_selection_notify(struct _program *p)
 		convert_text_to_translit(&event_text);
 
 	p->buffer->set_content(p->buffer, event_text);
-	if (event_text != NULL)
-		free(event_text);
+	free(event_text);
 
 	switch (p->action_mode)
 	{
@@ -763,8 +762,7 @@ static void program_process_selection_notify(struct _program *p)
 
 			char *string = p->buffer->get_utf_string(p->buffer);
 			show_notify(NOTIFY_PREVIEW_CHANGE_SELECTED, string);
-			if (string)
-				free (string);
+			free(string);
 			break;
 		}
 		case ACTION_PREVIEW_CHANGE_CLIPBOARD:
@@ -773,8 +771,7 @@ static void program_process_selection_notify(struct _program *p)
 
 			char *string = p->buffer->get_utf_string(p->buffer);
 			show_notify(NOTIFY_PREVIEW_CHANGE_CLIPBOARD, string);
-			if (string)
-				free (string);
+			free(string);
 			break;
 		}
 	}
@@ -1356,8 +1353,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 			char *word = p->buffer->get_last_word(p->buffer, utf_string);
 			if (!word)
 			{
-				if (utf_string != NULL)
-					free(utf_string);
+				free(utf_string);
 				return FALSE;
 			}
 
@@ -1368,8 +1364,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 
 				if (string == NULL)
 				{
-					if (replacement != NULL)
-						free(replacement);
+					free(replacement);
 					continue;
 				}
 
@@ -1414,13 +1409,11 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 				p->event->default_event.xkey.keycode = 0;
 
 				free(replacement);
-				if (utf_string != NULL)
-					free(utf_string);
+				free(utf_string);
 				return TRUE;
 			}
 
-			if (utf_string != NULL)
-				free(utf_string);
+			free(utf_string);
 			return FALSE;
 		}
 	}
@@ -1924,7 +1917,7 @@ static void program_check_brackets_with_symbols(struct _program *p)
 	if (pos < 0 || text[pos] != '(')
 	{
 		free(text);
-	    return;
+		return;
 	}
 
 	log_message(DEBUG, _("Find spaces after left bracket, correction..."));
@@ -1981,11 +1974,11 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 		case ',':
 		case '.':
 		{
-			free (symbol);
+			free(symbol);
 			return;
 		}
 	}
-	free (symbol);
+	free(symbol);
 
 	char *text = strdup(p->buffer->content);
 	if (text == NULL)
@@ -1997,7 +1990,7 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 		free(text);
 		return;
 	}
-	free (text);
+	free(text);
 
 	text = p->buffer->get_utf_string_on_kbd_group(p->buffer, get_curr_keyboard_group());
 	if (text == NULL)
@@ -2045,7 +2038,7 @@ static void program_check_pattern(struct _program *p)
 	int len = trim_word(word, strlen(tmp));
 	if (len == 0)
 	{
-		free (word);
+		free(word);
 		return;
 	}
 
@@ -2074,7 +2067,7 @@ static void program_check_pattern(struct _program *p)
 	if (pattern_data == NULL)
 	{
 		p->last_action = ACTION_NONE;
-		free (word);
+		free(word);
 		return;
 	}
 
@@ -2088,7 +2081,7 @@ static void program_check_pattern(struct _program *p)
 	{
 		tmp_buffer->uninit(tmp_buffer);
 		p->last_action = ACTION_NONE;
-		free (word);
+		free(word);
 		return;
 	}
 
@@ -2105,7 +2098,7 @@ static void program_check_pattern(struct _program *p)
 	p->last_action = ACTION_AUTOCOMPLETION;
 	p->last_pattern_id = 0;
 
-	free (word);
+	free(word);
 }
 
 static void program_rotate_pattern(struct _program *p)
@@ -2136,14 +2129,14 @@ static void program_rotate_pattern(struct _program *p)
 	int len = trim_word(word, strlen(tmp));
 	if (len == 0)
 	{
-		free (word);
+		free(word);
 		return;
 	}
 
 	struct _list_char* list_alike = xconfig->handle->languages[lang].pattern->alike(xconfig->handle->languages[lang].pattern, word);
 	if (list_alike == NULL)
 	{
-		free (word);
+		free(word);
 		return;
 	}
 
@@ -2156,7 +2149,7 @@ static void program_rotate_pattern(struct _program *p)
 	{
 		list_alike->uninit(list_alike);
 		list_alike  =  NULL;
-		free (word);
+		free(word);
 		return;
 	}
 
@@ -2175,7 +2168,7 @@ static void program_rotate_pattern(struct _program *p)
 		list_alike->uninit(list_alike);
 		tmp_buffer->uninit(tmp_buffer);
 		p->last_action = ACTION_NONE;
-		free (word);
+		free(word);
 		return;
 	}
 
@@ -2191,7 +2184,7 @@ static void program_rotate_pattern(struct _program *p)
 
 	p->last_action = ACTION_AUTOCOMPLETION;
 
-	free (word);
+	free(word);
 
 	list_alike->uninit(list_alike);
 	list_alike  =  NULL;
@@ -2341,8 +2334,7 @@ static void program_check_misprint(struct _program *p)
 		if (possible_word == NULL)
 			possible_word = first_sugg;
 		else
-			if (first_sugg != NULL)
-				free(first_sugg);
+			free(first_sugg);
 	}
 
 
@@ -2414,8 +2406,7 @@ static void program_check_misprint(struct _program *p)
 		char *notify_text = (char *) malloc(notify_text_len * sizeof(char));
 		snprintf(notify_text , notify_text_len, _("Correction '%s' to '%s'"), word+offset, possible_word);
 		show_notify(NOTIFY_CORR_MISPRINT, notify_text);
-		if (notify_text != NULL)
-			free(notify_text);
+		free(notify_text);
 
 		p->correction_action = CORRECTION_MISPRINT;
 		//p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
@@ -2737,8 +2728,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 			convert_text_to_translit(&text);
 			p->buffer->set_content(p->buffer, text);
 
-			if (text != NULL)
-				free(text);
+			free(text);
 
 			int len = p->buffer->cur_pos;
 			if (p->last_action == ACTION_AUTOCOMPLETION)
@@ -2783,8 +2773,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 
 			char *string = p->buffer->get_utf_string(p->buffer);
 			show_notify(NOTIFY_MANUAL_PREVIEW_CHANGE_WORD, string);
-			if (string != NULL)
-				free(string);
+			free(string);
 			p->buffer->unset_offset(p->buffer, offset);
 
 			break;
@@ -3085,7 +3074,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 		len = trim_word(old_word, strlen(tmp));
 		if (len == 0)
 		{
-			free (old_word);
+			free(old_word);
 			continue;
 		}
 		unsigned int offset = 0;
@@ -3102,7 +3091,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 			old_pattern->rem(old_pattern, old_word+offset);
 			xconfig->save_pattern(xconfig, i);
 		}
-		free (old_word);
+		free(old_word);
 	}
 
 #ifdef WITH_ASPELL

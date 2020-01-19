@@ -218,10 +218,8 @@ void xneur_get_logfile()
 	strncat(command, TO_STDOUT, sizeof(TO_STDOUT)-1);
 
 	FILE *fp = popen(command, "r");
-	if (log_home_path != NULL)
-		g_free(log_home_path);
-	if (command != NULL)
-		g_free(command);
+	g_free(log_home_path);
+	g_free(command);
 	if (fp == NULL)
 		return;
 
@@ -297,8 +295,7 @@ static void save_list(GtkListStore *store, struct _list_char *list, GtkTreeIter 
 
 	list->add(list, ptr);
 
-	if (ptr != NULL)
-		g_free(ptr);
+	g_free(ptr);
 }
 
 static void init_libxnconfig(void)
@@ -453,15 +450,14 @@ static void xneur_edit_icons_directory(GtkBuilder* parent_builder)
 
 	res = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (res == GTK_RESPONSE_ACCEPT)
-	  {
+	{
 		char *dirname;
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
 		dirname = gtk_file_chooser_get_filename (chooser);
 		tmp_widget = GTK_WIDGET(gtk_builder_get_object (parent_builder, "entry1"));
 		gtk_entry_set_text(GTK_ENTRY(tmp_widget), dirname);
-		if (dirname != NULL)
-			g_free (dirname);
-	  }
+		g_free(dirname);
+	}
 
 	gtk_widget_destroy (dialog);
 }
@@ -494,8 +490,7 @@ void xneur_kb_preference(void)
 	gchar *string_value = NULL;
 	gxneur_config_read_str("keyboard-properties", &string_value);
 	if (arg_keyboard_properties) {
-		if (string_value != NULL)
-			g_free(string_value);
+		g_free(string_value);
 		string_value = g_strdup(arg_keyboard_properties);
 	}
 
@@ -507,8 +502,7 @@ void xneur_kb_preference(void)
 		fprintf(stderr, _("Couldn't start %s\nVerify that it installed\n"), cmd);
 	}
 
-	if (string_value != NULL)
-		g_free(string_value);
+	g_free(string_value);
 }
 
 void xneur_preference(void)
@@ -909,8 +903,7 @@ void xneur_preference(void)
 												0, replacement,
 												1, string,
 												-1);
-		if (replacement != NULL)
-			g_free(replacement);
+		g_free(replacement);
 	}
 
 	cell = gtk_cell_renderer_text_new();
@@ -1075,8 +1068,7 @@ void xneur_preference(void)
 												1, text,
 												2, xconfig->user_actions[action].command,
 												-1);
-		if (text != NULL)
-			g_free(text);
+		g_free(text);
 	}
 
 	cell = gtk_cell_renderer_text_new();
@@ -1295,8 +1287,7 @@ void xneur_preference(void)
 			char * plugin_file = malloc(sizeof(char)*len);
 			snprintf(plugin_file, len, "%s/%s", XNEUR_PLUGIN_DIR, ep->d_name);
 			void *module = dlopen(plugin_file, RTLD_NOW);
-			if (plugin_file != NULL)
-				g_free(plugin_file);
+			g_free(plugin_file);
 			if(!module)
 			{
 				ep = readdir (dp);
@@ -1340,8 +1331,7 @@ void xneur_preference(void)
 	// Autostart
 	gchar *path_file = g_build_filename(getenv("HOME"), AUTOSTART_PATH, AUTOSTART_FILE, NULL);
 	FILE *stream = fopen(path_file, "r");
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 	if (stream != NULL)
 	{
 		fclose(stream);
@@ -1356,8 +1346,7 @@ void xneur_preference(void)
 	{
 	    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
 	}
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 	g_signal_connect_swapped(G_OBJECT(widget), "clicked", G_CALLBACK(on_extension_install_check), G_OBJECT(widget));
 
 	// Delay before start
@@ -1376,8 +1365,7 @@ void xneur_preference(void)
 	if (gxneur_config_read_str("show-in-the-tray", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
 	if (arg_show_in_the_tray) {
-		if (string_value != NULL)
-			g_free(string_value);
+		g_free(string_value);
 		string_value = g_strdup(arg_show_in_the_tray);
 	}
 	if (!string_value)
@@ -1391,8 +1379,7 @@ void xneur_preference(void)
 	else
 		show_in_the_tray = 3;
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), show_in_the_tray);
-	if (string_value != NULL)
-		g_free(string_value);
+	g_free(string_value);
 
 	// Define icons directory
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "entry1"));
@@ -1401,8 +1388,7 @@ void xneur_preference(void)
 	if (gxneur_config_read_str("icons-directory", &string_value) == CONFIG_NOT_SUPPORTED)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE), icons_directory_config_not_supported = 1;
 	gtk_entry_set_text(GTK_ENTRY(widget), string_value ? string_value : "");
-	if (string_value != NULL)
-		g_free(string_value);
+	g_free(string_value);
 
 	// Button Icons Directory Edit
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button18"));
@@ -1419,8 +1405,7 @@ void xneur_preference(void)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE);
 
 	if (arg_rendering_engine) {
-		if (string_value != NULL)
-			g_free(string_value);
+		g_free(string_value);
 		string_value = g_strdup(arg_rendering_engine);
 	}
 	if (!string_value)
@@ -1441,13 +1426,11 @@ void xneur_preference(void)
 		gtk_widget_set_sensitive(GTK_WIDGET(widget), FALSE),
 		keyboard_properties_config_not_supported = 1;
 	if (arg_keyboard_properties) {
-		if (string_value != NULL)
-			g_free(string_value);
+		g_free(string_value);
 		string_value = g_strdup(arg_keyboard_properties);
 	}
 	gtk_entry_set_text(GTK_ENTRY(widget), string_value ? string_value : DEFAULT_KEYBOARD_PROPERTIES);
-	if (string_value != NULL)
-		g_free(string_value);
+	g_free(string_value);
 
 	// Button Keyboard properties Edit
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button15"));
@@ -1930,10 +1913,8 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 
 		if (text == NULL)
 		{
-			if (text_home_path != NULL)
-				g_free(text_home_path);
-			if (text_path != NULL)
-				g_free(text_path);
+			g_free(text_home_path);
+			g_free(text_path);
 			return;
 		}
 
@@ -2025,12 +2006,9 @@ void xneur_edit_dictionary(GtkWidget *treeview)
 		widget = GTK_WIDGET(gtk_builder_get_object (builder, "cancelbutton"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (on_cancelbutton_clicked), ud);
 
-		if (text != NULL)
-			g_free(text);
-		if (text_home_path != NULL)
-			g_free(text_home_path);
-		if (text_path != NULL)
-			g_free(text_path);
+		g_free(text);
+		g_free(text_home_path);
+		g_free(text_path);
 	}
 }
 
@@ -2165,12 +2143,9 @@ gboolean save_abbreviation(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *
 		xconfig->abbreviations->add(xconfig->abbreviations, ptr);
 	}
 
-	if (abbreviation != NULL)
-		g_free(abbreviation);
-	if (full_text != NULL)
-		g_free(full_text);
-	if (ptr != NULL)
-		g_free(ptr);
+	g_free(abbreviation);
+	g_free(full_text);
+	g_free(ptr);
 
 	return FALSE;
 }
@@ -2227,12 +2202,9 @@ gboolean save_user_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i
 
 	g_strfreev(key_stat);
 
-	if (key_bind != NULL)
-		g_free(key_bind);
-	if (action_text != NULL)
-		g_free(action_text);
-	if (action_name != NULL)
-		g_free(action_name);
+	g_free(key_bind);
+	g_free(action_text);
+	g_free(action_name);
 
 	return FALSE;
 }
@@ -2284,10 +2256,8 @@ gboolean save_action(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, 
 
 	g_strfreev(key_stat);
 
-	if (key_bind != NULL)
-		g_free(key_bind);
-	if (action_text != NULL)
-		g_free(action_text);
+	g_free(key_bind);
+	g_free(action_text);
 
 	return FALSE;
 }
@@ -2301,8 +2271,8 @@ gboolean save_sound(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, g
 	gtk_tree_model_get(GTK_TREE_MODEL(store_sound), iter, 1, &file_path, 2, &enabled, -1);
 
 	int i = atoi(gtk_tree_path_to_string(path));
-	if (xconfig->sounds[i].file != NULL)
-		g_free(xconfig->sounds[i].file);
+	g_free(xconfig->sounds[i].file);
+	xconfig->sounds[i].file = NULL;
 
 	if (file_path != NULL)
 	{
@@ -2324,8 +2294,8 @@ gboolean save_osd(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpo
 	gtk_tree_model_get(GTK_TREE_MODEL(store_osd), iter, 1, &string, 2, &enabled, -1);
 
 	int i = atoi(gtk_tree_path_to_string(path));
-	if (xconfig->osds[i].file != NULL)
-		g_free(xconfig->osds[i].file);
+	g_free(xconfig->osds[i].file);
+	xconfig->osds[i].file = NULL;
 
 	if (string != NULL)
 	{
@@ -2347,8 +2317,8 @@ gboolean save_popup(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, g
 	gtk_tree_model_get(GTK_TREE_MODEL(store_popup), iter, 1, &string, 2, &enabled, -1);
 
 	int i = atoi(gtk_tree_path_to_string(path));
-	if (xconfig->popups[i].file != NULL)
-		g_free(xconfig->popups[i].file);
+	g_free(xconfig->popups[i].file);
+	xconfig->popups[i].file = NULL;
 
 	if (string != NULL)
 	{
@@ -2451,14 +2421,12 @@ void xneur_save_preference(GtkBuilder* builder)
 
 	// Log send to e-mail
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry3"));
-	if (xconfig->mail_keyboard_log != NULL)
-		g_free(xconfig->mail_keyboard_log);
+	g_free(xconfig->mail_keyboard_log);
 	xconfig->mail_keyboard_log = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Log send via host
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry4"));
-	if (xconfig->host_keyboard_log != NULL)
-		g_free(xconfig->host_keyboard_log);
+	g_free(xconfig->host_keyboard_log);
 	xconfig->host_keyboard_log = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Log port
@@ -2544,8 +2512,7 @@ void xneur_save_preference(GtkBuilder* builder)
 	xconfig->popup_expire_timeout = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widgetPtrToBefound));
 
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "entry2"));
-	if (xconfig->osd_font != NULL)
-		g_free(xconfig->osd_font);
+	g_free(xconfig->osd_font);
 	xconfig->osd_font = strdup((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)));
 
 	// Troubleshooting
@@ -2590,8 +2557,7 @@ void xneur_save_preference(GtkBuilder* builder)
 	gchar *path_file = g_build_filename(getenv("HOME"), AUTOSTART_PATH, NULL);
 	if (!g_file_test(path_file, G_FILE_TEST_IS_DIR))
 		g_mkdir_with_parents(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 
 	path_file = g_build_filename(getenv("HOME"), AUTOSTART_PATH, AUTOSTART_FILE, NULL);
 	FILE *stream = fopen(path_file, "r");
@@ -2619,8 +2585,7 @@ void xneur_save_preference(GtkBuilder* builder)
 			remove(path_file);
 		}
 	}
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 
 	// Gnome 3 Shell Area
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton36"));
@@ -2628,8 +2593,7 @@ void xneur_save_preference(GtkBuilder* builder)
 	path_file = g_build_filename(getenv("HOME"), GNOME3_EXT_PATH, NULL);
 	if (!g_file_test(path_file, G_FILE_TEST_IS_DIR))
 		g_mkdir_with_parents(path_file, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 
 	path_file = g_build_filename(getenv("HOME"), GNOME3_EXT_PATH, GNOME3_EXT_JS_FILE, NULL);
 	stream = fopen(path_file, "r");
@@ -2668,8 +2632,7 @@ void xneur_save_preference(GtkBuilder* builder)
 			remove(path_file);
 		}
 	}
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 
 	path_file = g_build_filename(getenv("HOME"), GNOME3_EXT_PATH, GNOME3_EXT_JSON_FILE, NULL);
 	stream = fopen(path_file, "r");
@@ -2701,16 +2664,14 @@ void xneur_save_preference(GtkBuilder* builder)
 			remove(path_file);
 		}
 	}
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 
 	path_file = g_build_filename(getenv("HOME"), GNOME3_EXT_PATH, NULL);
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound)))
 	{
 		g_rmdir(path_file);
 	}
-	if (path_file != NULL)
-		g_free(path_file);
+	g_free(path_file);
 
 	// Delay
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "spinbutton5"));
@@ -2782,8 +2743,7 @@ char* xneur_get_file_content(const char *path)
 	char *content = (char *) malloc((file_len + 2) * sizeof(char)); // + '\n' + '\0'
 	if (fread(content, 1, file_len, stream) != file_len)
 	{
-		if (content != NULL)
-			g_free(content);
+		g_free(content);
 		fclose(stream);
 		return NULL;
 	}

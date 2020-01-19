@@ -256,9 +256,6 @@ struct _xneur_handle *xneur_handle_create (void)
 		handle->languages[handle->total_languages].disable_auto_detection	= FALSE;
 		handle->total_languages++;
 
-		//if (group_name != NULL)
-			//free(group_name);
-
 		if (prop_value == NULL)
 			break;
 		function_end:;
@@ -446,28 +443,22 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 		if (handle->languages[lang].pattern != NULL)
 			handle->languages[lang].pattern->uninit(handle->languages[lang].pattern);
 
-		if (handle->languages[lang].name != NULL)
-			free(handle->languages[lang].name);
-		if (handle->languages[lang].dir != NULL)
-			free(handle->languages[lang].dir);
+		free(handle->languages[lang].name);
+		free(handle->languages[lang].dir);
 	}
 	handle->total_languages = 0;
 	free(handle->languages);
 
 #ifdef WITH_ASPELL
 	delete_aspell_config(handle->spell_config);
-	if (handle->spell_checkers != NULL)
-		free(handle->spell_checkers);
-	if (handle->has_spell_checker != NULL)
-		free(handle->has_spell_checker);
+	free(handle->spell_checkers);
+	free(handle->has_spell_checker);
 #endif
 
 #ifdef WITH_ENCHANT
 	enchant_broker_free (handle->enchant_broker);
-	if (handle->enchant_dicts != NULL)
-		free(handle->enchant_dicts);
-	if (handle->has_enchant_checker != NULL)
-		free(handle->has_enchant_checker);
+	free(handle->enchant_dicts);
+	free(handle->has_enchant_checker);
 #endif
 
 	free(handle);

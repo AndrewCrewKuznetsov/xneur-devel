@@ -166,8 +166,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	pr = p->keycode_to_symbol_cache + p->keycode_to_symbol_cache_pos;
 
 	pr->symbol_size = (strlen(symbol) + 1) * sizeof(char);
-	if (pr->symbol)
-		free(pr->symbol);
+	free(pr->symbol);
 	pr->symbol = symbol;
 	pr->kc     = kc;
 	pr->group  = group;
@@ -454,19 +453,17 @@ static void keymap_purge_caches(struct _keymap *p)
 	for (int i = 0; i < keycode_to_symbol_cache_size; i++)
 	{
 		struct keycode_to_symbol_pair* pr = p->keycode_to_symbol_cache + i;
-		if (pr->symbol)
-			free(pr->symbol),
-			pr->symbol = NULL,
-			pr->symbol_size = 0;
+		free(pr->symbol);
+		pr->symbol = NULL;
+		pr->symbol_size = 0;
 	}
 
 	for (int i = 0; i < symbol_to_keycode_cache_size; i++)
 	{
 		struct symbol_to_keycode_pair* pr = p->symbol_to_keycode_cache + i;
-		if (pr->symbol)
-			free(pr->symbol),
-			pr->symbol = NULL,
-			pr->symbol_size = 0;
+		free(pr->symbol);
+		pr->symbol = NULL;
+		pr->symbol_size = 0;
 	}
 
 }

@@ -16,7 +16,7 @@
  *  Copyright (C) 2006-2010 XNeur Team
  *
  */
- 
+
 
 #include <string.h>
 #include <stdio.h>
@@ -27,7 +27,7 @@
 
 int isXkbLayoutSymbol(char *symbol)
 {
-	if ((strcmp(symbol, "group") == 0) || 
+	if ((strcmp(symbol, "group") == 0) ||
 	    (strcmp(symbol, "inet") == 0) ||
 	    (strcmp(symbol, "pc") == 0))
 	{
@@ -38,46 +38,44 @@ int isXkbLayoutSymbol(char *symbol)
 void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 {
 	int inSymbol = 0;
-	
+
 	char *curSymbol = (char *) malloc (sizeof(char));
 	char *curVariant = (char *) malloc (sizeof(char));
 	curSymbol[0] = '\0';
 	curVariant[0] = '\0';
-	
+
 	int curLayout = 0;
-	
+
 	//printf("%s", symbols);
 	// A sample line:
 	// pc+fi(dvorak)+fi:2+ru:3+inet(evdev)+group(menu_toggle)
-    
-	for (size_t i = 0; i < strlen(symbols); i++) 
+
+	for (size_t i = 0; i < strlen(symbols); i++)
 	{
 		char ch = symbols[i];
-		if (ch == '+' || ch == '_') 
+		if (ch == '+' || ch == '_')
 		{
-			if (inSymbol) 
+			if (inSymbol)
 			{
-				if (isXkbLayoutSymbol(curSymbol)) 
+				if (isXkbLayoutSymbol(curSymbol))
 				{
 					symbolList[curLayout].symbol = (char *)strdup(curSymbol);
 					symbolList[curLayout].variant = (char *)strdup(curVariant);
 					curLayout++;
 				}
-				if (curSymbol != NULL)
-					free(curSymbol);
+				free(curSymbol);
 				curSymbol = (char *) malloc (sizeof(char));
-				if (curVariant != NULL)
-					free(curVariant);
+				free(curVariant);
 				curVariant = (char *) malloc (sizeof(char));
 				curSymbol[0] = '\0';
 				curVariant[0] = '\0';
-			} 
-			else 
+			}
+			else
 			{
 				inSymbol = 1;
 			}
-		} 
-		else if (inSymbol && (isalpha(ch) || ch == '_')) 
+		}
+		else if (inSymbol && (isalpha(ch) || ch == '_'))
 		{
 			int len = strlen(curSymbol);
 			char *tmpSymbol = (char *) realloc (curSymbol, sizeof(char)*(len+2));
@@ -87,10 +85,10 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 				curSymbol[len] = ch;
 				curSymbol[len+1] = '\0';
 			}
-		} 
-		else if (inSymbol && ch == '(') 
+		}
+		else if (inSymbol && ch == '(')
 		{
-			while (++i < strlen(symbols)) 
+			while (++i < strlen(symbols))
 			{
 				ch = symbols[i];
 				if (ch == ')')
@@ -109,34 +107,30 @@ void XkbSymbolParse(const char *symbols, struct _xkb_name *symbolList)
 					}
 				}
 			}
-		} 
-		else 
+		}
+		else
 		{
-			if (inSymbol) 
+			if (inSymbol)
 			{
-				if (isXkbLayoutSymbol(curSymbol)) 
+				if (isXkbLayoutSymbol(curSymbol))
 				{
 					symbolList[curLayout].symbol = (char *)strdup(curSymbol);
 					symbolList[curLayout].variant = (char *)strdup(curVariant);
 					curLayout++;
 				}
-				
-				if (curSymbol != NULL)
-					free(curSymbol);
+
+				free(curSymbol);
 				curSymbol = (char *) malloc (sizeof(char));
-				if (curVariant != NULL)
-					free(curVariant);
-				curVariant = (char *) malloc (sizeof(char));				
+				free(curVariant);
+				curVariant = (char *) malloc (sizeof(char));
 				curSymbol[0] = '\0';
 				curVariant[0] = '\0';
 				inSymbol = 0;
 			}
 		}
 	}
-	if (curSymbol != NULL)
-		free(curSymbol);
-	if (curVariant != NULL)
-		free(curVariant);
+	free(curSymbol);
+	free(curVariant);
 }
 
 char *get_active_kbd_symbol(Display *dpy)
@@ -150,19 +144,17 @@ char *get_active_kbd_symbol(Display *dpy)
 	XkbGetControls(dpy, XkbGroupsWrapMask, desc);
 	XkbGetNames(dpy, XkbGroupNamesMask, desc);
 	XkbGetNames(dpy, XkbSymbolsNameMask, desc);
-	
+
 	struct _xkb_name *xkb_names = (struct _xkb_name *) malloc(sizeof(struct _xkb_name) * desc->ctrls->num_groups);
-	
+
 	XkbSymbolParse(XGetAtomName(dpy, desc->names->symbols), xkb_names);
 	//printf("gxneur active group symbol: %s, variant: %s\n",xkb_names[get_active_kbd_group(dpy)].symbol,xkb_names[get_active_kbd_group(dpy)].variant);
 	char *symbol = strdup(xkb_names[get_active_kbd_group(dpy)].symbol);
-	
+
 	for (int i = 0; i < desc->ctrls->num_groups; i++)
 	{
-		if (xkb_names[i].symbol != NULL)
-			free(xkb_names[i].symbol);
-		if (xkb_names[i].variant != NULL)
-			free(xkb_names[i].variant);
+		free(xkb_names[i].symbol);
+		free(xkb_names[i].variant);
 	}
 	XkbFreeControls(desc, XkbGroupsWrapMask, True);
 	XkbFreeNames(desc, XkbSymbolsNameMask, True);
@@ -180,7 +172,7 @@ int get_active_kbd_group(Display *dpy)
 	return xkbState.group;
 }
 
-int get_kbd_group_count(Display *dpy) 
+int get_kbd_group_count(Display *dpy)
 {
 	if (dpy == NULL)
 		return -1;
@@ -205,7 +197,7 @@ int set_next_kbd_group(Display *dpy)
 		return -1;
 
 	int active_layout_group = get_active_kbd_group(dpy);
-	
+
 	int new_layout_group = active_layout_group + 1;
 	if (new_layout_group == get_kbd_group_count(dpy))
 		new_layout_group = 0;

@@ -653,25 +653,18 @@ static void buffer_uninit(struct _buffer *p)
 	if (p == NULL)
 		return;
 
-	if (p->keycode_modifiers != NULL)
-		free(p->keycode_modifiers);
-	if (p->keycode != NULL)
-		free(p->keycode);
-	if (p->content != NULL)
-		free(p->content);
+	free(p->keycode_modifiers);
+	free(p->keycode);
+	free(p->content);
 
 	if (p->i18n_content != NULL)
 	{
 		for (int i = 0; i < p->handle->total_languages; i++)
 		{
-			if (p->i18n_content[i].content != NULL)
-				free(p->i18n_content[i].content);
-			if (p->i18n_content[i].symbol_len != NULL)
-				free(p->i18n_content[i].symbol_len);
-			if (p->i18n_content[i].content_unchanged != NULL)
-				free(p->i18n_content[i].content_unchanged);
-			if (p->i18n_content[i].symbol_len_unchanged != NULL)
-				free(p->i18n_content[i].symbol_len_unchanged);
+			free(p->i18n_content[i].content);
+			free(p->i18n_content[i].symbol_len);
+			free(p->i18n_content[i].content_unchanged);
+			free(p->i18n_content[i].symbol_len_unchanged);
 		}
 
 		free(p->i18n_content);

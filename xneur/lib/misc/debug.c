@@ -71,10 +71,12 @@ void* xndebug_calloc(int n, int size, char *file, int line)
 	data->debug_string = file;
 
 	return mem;
-}	
+}
 
 void xndebug_free(void *mem, char *file, int line)
 {
+	if (mem == NULL) return;
+
 	xndebug_init();
 
 	char pointer[POINTER_LEN];
