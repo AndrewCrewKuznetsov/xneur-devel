@@ -231,28 +231,20 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 	char *symbol		= (char *) malloc((256 + 1) * sizeof(char));
 	char *prev_symbols	= (char *) malloc((256 + 1) * sizeof(char));
 
-	int _preferred_lang = *preferred_lang;
-
-	for (int _lang = 0; _lang < p->handle->total_languages; _lang++)
-	{
-		int lang = _lang;
-		if (lang == 0)
-			lang = _preferred_lang;
-		else if (lang <= _preferred_lang)
-			lang--;
-
+	int count = p->handle->total_languages;
+	int lang = *preferred_lang;
+	// Loop through all languages, starting from `preferred_lang`
+	while (count-- > 0) {
 		KeySym *keymap = p->keymap;
+		// Check all physical keys of the keyboard
 		for (int keycode = p->min_keycode; keycode <= p->max_keycode; ++keycode)
 		{
-			int max = p->keysyms_per_keycode - 1;
-			while (max >= 0 && keymap[max] == NoSymbol)
-				max--;
-
 			prev_symbols[0] = NULLSYM;
 			// Available space in prev_symbols
 			size_t avail_space = 256;
 
-			for (int j = 0; j <= max; j++)
+			// Loop through all symbols on the physical key
+			for (int j = 0; j <= p->keysyms_per_keycode; j++)
 			{
 				if (keymap[j] == NoSymbol)
 					continue;
@@ -320,6 +312,8 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 			}
 			keymap += p->keysyms_per_keycode;
 		}
+		// Try to check next keyboard layout
+		lang = (lang + 1) % p->handle->total_languages;
 	}
 
 	free(prev_symbols);
