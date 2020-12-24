@@ -278,7 +278,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		return;
 	}
 
-	bzero(buffer, 256 * sizeof(char));
+	memset(buffer, 0, 256 * sizeof(char));
 	strftime(buffer, 256, "%x", loctime);
 
 	if (window != last_log_window)
@@ -294,7 +294,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 	if (difftime(curtime, last_log_time) > 300)
 	{
 		last_log_time = curtime;
-		bzero(buffer, 256 * sizeof(char));
+		memset(buffer, 0, 256 * sizeof(char));
 		strftime(buffer, 256, "%X", loctime);
 		fprintf(stream, "</ul><ul>\n<font color=\"#0000FF\" size=\"2\">(%s): </font>", buffer);
 	}
@@ -792,7 +792,7 @@ static void buffer_uninit(struct _buffer *p)
 struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap)
 {
 	struct _buffer *p = (struct _buffer *) malloc(sizeof(struct _buffer));
-	bzero(p, sizeof(struct _buffer));
+	memset(p, 0, sizeof(struct _buffer));
 
 	p->handle = handle;
 
@@ -804,9 +804,9 @@ struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap
 	p->keycode		= (KeyCode *) malloc(p->cur_size * sizeof(KeyCode));
 	p->keycode_modifiers	= (int *) malloc(p->cur_size * sizeof(int));
 
-	bzero(p->content, p->cur_size * sizeof(char));
-	bzero(p->keycode, p->cur_size * sizeof(KeyCode));
-	bzero(p->keycode_modifiers, p->cur_size * sizeof(int));
+	memset(p->content, 0, p->cur_size * sizeof(char));
+	memset(p->keycode, 0, p->cur_size * sizeof(KeyCode));
+	memset(p->keycode_modifiers, 0, p->cur_size * sizeof(int));
 
 	p->i18n_content = (struct _buffer_content *) malloc((handle->total_languages) * sizeof(struct _buffer_content));
 	for (int i=0; i<p->handle->total_languages; i++)

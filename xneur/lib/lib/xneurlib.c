@@ -239,7 +239,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		if (tmp == NULL)
 			continue;
 		handle->languages = (struct _xneur_language *) tmp;
-		bzero(&(handle->languages[handle->total_languages]), sizeof(struct _xneur_language));
+		memset(&(handle->languages[handle->total_languages]), 0, sizeof(struct _xneur_language));
 
 		handle->languages[handle->total_languages].name	= strdup(group_name);
 		handle->languages[handle->total_languages].dir	= strdup(short_name);

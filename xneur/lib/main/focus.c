@@ -60,7 +60,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	*autocompletion_mode	= AUTOCOMPLETION_INCLUDED;
 
 	char *new_app_name = NULL;
-		
+
 	// Clear masking on unfocused window
 	//p->update_grab_events(p, LISTEN_DONTGRAB_INPUT);
 
@@ -70,8 +70,8 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	{
 		// Wait for new window was focused.
 		usleep(500000);
-		
-		// This code commented be cause function XGrabKey for _NET_ACTIVE_WINDOW 
+
+		// This code commented be cause function XGrabKey for _NET_ACTIVE_WINDOW
 		// dont process modifier keys (see utils.h)
 		/*if (main_window->_NET_SUPPORTED)
 		{
@@ -83,9 +83,9 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			Window root = XDefaultRootWindow(main_window->display);
 			unsigned char *data = get_win_prop(root, request, &nitems, &type, &size);
 
-			if (nitems > 0) 
+			if (nitems > 0)
 				new_window = *((Window*)data);
-			else 
+			else
 				new_window = None;
 
 			free(data);
@@ -103,7 +103,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			if (new_app_name != NULL)
 				break;
 		}
-		
+
 		if (show_message)
 		{
 			log_message(DEBUG, _("New window empty"));
@@ -150,11 +150,11 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			unsigned int width_return, height_return, root_width_return, root_height_return;
 			unsigned int border_width_return;
 			unsigned int depth_return;
-			XGetGeometry(main_window->display, p->parent_window, &root_return, &x_return, &y_return, &width_return, 
+			XGetGeometry(main_window->display, p->parent_window, &root_return, &x_return, &y_return, &width_return,
 							&height_return, &border_width_return, &depth_return);
-			XGetGeometry(main_window->display, root_return, &root_return, &root_x_return, &root_y_return, &root_width_return, 
+			XGetGeometry(main_window->display, root_return, &root_return, &root_x_return, &root_y_return, &root_width_return,
 							&root_height_return, &border_width_return, &depth_return);
-			if ((x_return == 0) && (y_return == 0) && 
+			if ((x_return == 0) && (y_return == 0) &&
 			    (width_return == root_width_return) && (height_return == root_height_return))
 				*forced_mode = FORCE_MODE_MANUAL;
 		}
@@ -190,17 +190,17 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 		unsigned int width_return, height_return, root_width_return, root_height_return;
 		unsigned int border_width_return;
 		unsigned int depth_return;
-		XGetGeometry(main_window->display, p->parent_window, &root_return, &x_return, &y_return, &width_return, 
+		XGetGeometry(main_window->display, p->parent_window, &root_return, &x_return, &y_return, &width_return,
 						&height_return, &border_width_return, &depth_return);
-		XGetGeometry(main_window->display, root_return, &root_return, &root_x_return, &root_y_return, &root_width_return, 
+		XGetGeometry(main_window->display, root_return, &root_return, &root_x_return, &root_y_return, &root_width_return,
 						&root_height_return, &border_width_return, &depth_return);
-		if ((x_return == 0) && (y_return == 0) && 
+		if ((x_return == 0) && (y_return == 0) &&
 			(width_return == root_width_return) && (height_return == root_height_return))
 			*forced_mode = FORCE_MODE_MANUAL;
 	}
-	
+
 	log_message(DEBUG, _("Process new window (ID %d) with name '%s' (status %s, mode %s)"), new_window, new_app_name, _(verbose_focus_status[*focus_status]), _(verbose_forced_mode[*forced_mode]));
-	
+
 	if (new_app_name != NULL)
 		free(new_app_name);
 	return FOCUS_CHANGED;
@@ -209,11 +209,11 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode)
 {
 	int focus = get_focus(p, forced_mode, focus_status, autocompletion_mode);
-	
+
 	p->last_focus = *focus_status;
 	if (!xconfig->tracking_input)
 		p->last_focus = FOCUS_EXCLUDED;
-	
+
 	return focus;
 }
 
@@ -232,12 +232,12 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 			grab_button(TRUE);
 		grab_all_keys(p->owner_window, TRUE);
 	}
-	
+
 	/*
 	if (mode == LISTEN_DONTGRAB_INPUT)
 	{
 		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' OFF"), p->owner_window, owner_window_name);
-		
+
 		// Event unmasking
 		grab_button(p->owner_window, FALSE);
 		grab_all_keys(p->owner_window, FALSE);
@@ -245,7 +245,7 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 	else
 	{
 		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' ON"), p->owner_window, owner_window_name);
-		
+
 		// Event masking
 		// Grabbing key and button
 		if (p->last_focus != FOCUS_EXCLUDED)
@@ -261,9 +261,9 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 		}
 	}
 	*/
-	
+
 	p->last_parent_window = p->parent_window;
-	
+
 	if (owner_window_name != NULL)
 		free(owner_window_name);
 }
@@ -279,7 +279,7 @@ static void focus_uninit(struct _focus *p)
 struct _focus* focus_init(void)
 {
 	struct _focus *p = (struct _focus *) malloc(sizeof(struct _focus));
-	bzero(p, sizeof(struct _focus));
+	memset(p, 0, sizeof(struct _focus));
 
 	// Functions mapping
 	p->get_focus_status	= focus_get_focus_status;

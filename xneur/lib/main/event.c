@@ -302,7 +302,7 @@ static void event_uninit(struct _event *p)
 struct _event* event_init(void)
 {
 	struct _event *p = (struct _event *) malloc(sizeof(struct _event));
-	bzero(p, sizeof(struct _event));
+	memset(p, 0, sizeof(struct _event));
 
 	p->backspace		= XKeysymToKeycode(main_window->display, XK_BackSpace);
 	p->left			= XKeysymToKeycode(main_window->display, XK_Left);

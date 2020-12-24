@@ -534,7 +534,7 @@ static void keymap_uninit(struct _keymap *p)
 struct _keymap* keymap_init(struct _xneur_handle *handle, Display *display)
 {
 	struct _keymap *p = (struct _keymap *) malloc(sizeof(struct _keymap));
-	bzero(p, sizeof(struct _keymap));
+	memset(p, 0, sizeof(struct _keymap));
 
 	p->handle = handle;
 	p->display = display;

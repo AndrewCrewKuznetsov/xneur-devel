@@ -27,7 +27,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
@@ -146,7 +145,7 @@ static struct _xneur_user_action * one_more_user_action(struct _xneur_config *p)
 	if (tmp == NULL)
 		return NULL;
 	p->user_actions = (struct _xneur_user_action *)tmp;
-	bzero(&p->user_actions[p->user_actions_count], sizeof(struct _xneur_user_action));
+	memset(&p->user_actions[p->user_actions_count], 0, sizeof(struct _xneur_user_action));
 	p->user_actions_count++;
 	return &(p->user_actions[p->user_actions_count - 1]);
 }
@@ -157,7 +156,7 @@ static struct _xneur_action * one_more_action(struct _xneur_config *p)
 	if (tmp == NULL)
 		return NULL;
 	p->actions = (struct _xneur_action *)tmp;
-	bzero(&p->actions[p->actions_count], sizeof(struct _xneur_action));
+	memset(&p->actions[p->actions_count], 0, sizeof(struct _xneur_action));
 	p->actions_count++;
 	return &(p->actions[p->actions_count - 1]);
 }
@@ -1166,9 +1165,9 @@ static void free_structures(struct _xneur_config *p)
 	p->actions_count = 0;
 	p->user_actions_count = 0;
 
-	bzero(p->sounds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
-	bzero(p->osds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
-	bzero(p->popups, MAX_NOTIFIES * sizeof(struct _xneur_notify));
+	memset(p->sounds, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
+	memset(p->osds, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
+	memset(p->popups, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 
 
 	if (p->version != NULL)
@@ -1825,7 +1824,7 @@ static void xneur_config_uninit(struct _xneur_config *p)
 struct _xneur_config* xneur_config_init(void)
 {
 	struct _xneur_config *p = (struct _xneur_config *) malloc(sizeof(struct _xneur_config));
-	bzero(p, sizeof(struct _xneur_config));
+	memset(p, 0, sizeof(struct _xneur_config));
 
 	p->pid = -1;
 
@@ -1838,13 +1837,13 @@ struct _xneur_config* xneur_config_init(void)
 	p->delimeters_count++;
 
 	p->sounds = (struct _xneur_notify *) malloc(MAX_NOTIFIES * sizeof(struct _xneur_notify));
-	bzero(p->sounds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
+	memset(p->sounds, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 
 	p->osds = (struct _xneur_notify *) malloc(MAX_NOTIFIES * sizeof(struct _xneur_notify));
-	bzero(p->osds, MAX_NOTIFIES * sizeof(struct _xneur_notify));
+	memset(p->osds, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 
 	p->popups = (struct _xneur_notify *) malloc(MAX_NOTIFIES * sizeof(struct _xneur_notify));
-	bzero(p->popups, MAX_NOTIFIES * sizeof(struct _xneur_notify));
+	memset(p->popups, 0, MAX_NOTIFIES * sizeof(struct _xneur_notify));
 
 	p->mail_keyboard_log = NULL;
 	p->host_keyboard_log = NULL;

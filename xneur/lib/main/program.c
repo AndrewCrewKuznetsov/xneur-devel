@@ -28,7 +28,6 @@
 #include <X11/extensions/XInput2.h>
 
 #include <stdlib.h>
-#include <strings.h>
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
@@ -3472,7 +3471,7 @@ static void program_uninit(struct _program *p)
 struct _program* program_init(void)
 {
 	struct _program *p = (struct _program*) malloc(sizeof(struct _program));
-	bzero(p, sizeof(struct _program));
+	memset(p, 0, sizeof(struct _program));
 
 	main_window = window_init(xconfig->handle);
 
