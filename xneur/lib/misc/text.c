@@ -132,7 +132,8 @@ char* str_replace(const char *source, const char *search, const char *replace)
 
 	int max_multiplier = replace_len / search_len + 1;
 
-	char *result = (char *) malloc((source_len * max_multiplier + 1) * sizeof(char));
+	size_t avail_space = source_len * max_multiplier;
+	char *result = (char *) malloc((avail_space + 1) * sizeof(char));
 	result[0] = NULLSYM;
 
 	char *result_orig = result;
@@ -141,17 +142,22 @@ char* str_replace(const char *source, const char *search, const char *replace)
 		char *found = strstr(source, search);
 		if (found == NULL)
 		{
-			strcat(result, source);
+			strncat(result, source, avail_space);
 			break;
 		}
 
-		if (found != source)
-			strncat(result, source, (found - source)/sizeof(char));
+		// Copy to result all data from source to found
+		if (found != source) {
+			size_t len = found - source;
+			strncat(result, source, len);
+			avail_space -= len;
+		}
 
-		strcat(result, replace);
+		strncat(result, replace, avail_space);
 		source = found + search_len;
+		avail_space -= replace_len;
 	}
-	
+
 	return result_orig;
 }
 
@@ -284,14 +290,14 @@ int levenshtein(const char *s, const char *t)
 {
 	int ls = strlen(s), lt = strlen(t);
 	int d[ls + 1][lt + 1];
- 
+
 	for (int i = 0; i <= ls; i++)
 		for (int j = 0; j <= lt; j++)
 			d[i][j] = -1;
- 
+
 	int dist(int i, int j) {
 		if (d[i][j] >= 0) return d[i][j];
- 
+
 		int x;
 		if (i == ls)
 			x = lt - j;
@@ -301,7 +307,7 @@ int levenshtein(const char *s, const char *t)
 			x = dist(i + 1, j + 1);
 		else {
 			x = dist(i + 1, j + 1);
- 
+
 			int y;
 			if ((y = dist(i, j + 1)) < x) x = y;
 			if ((y = dist(i + 1, j)) < x) x = y;

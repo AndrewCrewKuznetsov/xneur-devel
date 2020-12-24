@@ -155,7 +155,8 @@ void error_msg(const char *msg, ...)
 
 static char* concat_bind(int action)
 {
-	char *text = (char *) malloc((24 + 1 + strlen(xconfig->actions[action].hotkey.key)) * sizeof(char));
+	size_t len = strlen(xconfig->actions[action].hotkey.key);
+	char *text = (char *) malloc((24 + 1 + len) * sizeof(char));
 	text[0] = '\0';
 
 	for (int i = 0; i < total_modifiers; i++)
@@ -163,11 +164,11 @@ static char* concat_bind(int action)
 		if ((xconfig->actions[action].hotkey.modifiers & (0x1 << i)) == 0)
 			continue;
 
-		strcat(text, modifier_names[i]);
-		strcat(text, "+");
+		strncat(text, modifier_names[i], sizeof(modifier_names[i])-1);
+		strncat(text, "+", 1);
 	}
 
-	strcat(text, xconfig->actions[action].hotkey.key);
+	strncat(text, xconfig->actions[action].hotkey.key, len);
 
 	return text;
 }
@@ -207,12 +208,17 @@ static void get_xprop_name(GtkBuilder* builder)
 
 void xneur_get_logfile()
 {
+	static const char[] OPEN = "xdg-open ";
+	static const char[] TO_STDOUT = " 2> /dev/stdout";
+
 	char *log_home_path	= xconfig->get_home_dict_path(NULL, "xneurlog.html");
-	char *command = malloc ((strlen("xdg-open ") + strlen(log_home_path) + strlen(" 2> /dev/stdout") + 1) * sizeof(char));
+	size_t len = strlen(log_home_path);
+	// sizeof(OPEN/TO_STDOUT) already includes trailing zero, so -1 to remove one of them
+	char *command = malloc((sizeof(OPEN) + len + sizeof(TO_STDOUT) - 1) * sizeof(char));
 	command[0] = '\0';
-	strcat(command, "xdg-open ");
-	strcat(command, log_home_path);
-	strcat(command, " 2> /dev/stdout");
+	strncat(command, OPEN, sizeof(OPEN)-1);
+	strncat(command, log_home_path, len);
+	strncat(command, TO_STDOUT, sizeof(TO_STDOUT)-1);
 
 	FILE *fp = popen(command, "r");
 	if (log_home_path != NULL)
@@ -1052,7 +1058,8 @@ void xneur_preference(void)
 		GtkTreeIter iter;
 		gtk_list_store_append(GTK_LIST_STORE(store_user_action), &iter);
 
-		char *text = (char *) malloc((24 + 1 + strlen(xconfig->user_actions[action].hotkey.key)) * sizeof(char));
+		size_t len = strlen(xconfig->user_actions[action].hotkey.key);
+		char *text = (char *) malloc((24 + 1 + len) * sizeof(char));
 		text[0] = '\0';
 
 		for (int i = 0; i < total_modifiers; i++)
@@ -1060,11 +1067,11 @@ void xneur_preference(void)
 			if ((xconfig->user_actions[action].hotkey.modifiers & (0x1 << i)) == 0)
 				continue;
 
-			strcat(text, modifier_names[i]);
-			strcat(text, "+");
+			strncat(text, modifier_names[i], sizeof(modifier_names[i])-1);
+			strncat(text, "+", 1);
 		}
 
-		strcat(text, xconfig->user_actions[action].hotkey.key);
+		strncat(text, xconfig->user_actions[action].hotkey.key, len);
 
 		gtk_list_store_set(GTK_LIST_STORE(store_user_action), &iter,
 												0, xconfig->user_actions[action].name,
@@ -2798,26 +2805,26 @@ char* modifiers_to_string(unsigned int modifiers)
 
 	if (modifiers & ShiftMask)
 	{
-		strcat(text, modifier_names[0]);
-		strcat(text, "+");
+		strncat(text, modifier_names[0], sizeof(modifier_names[0])-1);
+		strncat(text, "+", 1);
 	}
 
 	if (modifiers & ControlMask)
 	{
-		strcat(text, modifier_names[1]);
-		strcat(text, "+");
+		strncat(text, modifier_names[1], sizeof(modifier_names[1])-1);
+		strncat(text, "+", 1);
 	}
 
 	if (modifiers & Mod1Mask)
 	{
-		strcat(text, modifier_names[2]);
-		strcat(text, "+");
+		strncat(text, modifier_names[2], sizeof(modifier_names[2])-1);
+		strncat(text, "+", 1);
 	}
 
 	if (modifiers & Mod4Mask)
 	{
-		strcat(text, modifier_names[3]);
-		strcat(text, "+");
+		strncat(text, modifier_names[3], sizeof(modifier_names[3])-1);
+		strncat(text, "+", 1);
 	}
 
 	return text;

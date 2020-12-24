@@ -388,25 +388,25 @@ static void buffer_set_i18n_content(struct _buffer *p)
 				continue;
 			}
 
-			char *tmp = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
+			size_t len = strlen(symbol);
+			char *tmp = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + len + 1) * sizeof(char));
 			assert(tmp != NULL);
-			p->i18n_content[i].content = tmp;
-			p->i18n_content[i].content = strcat(p->i18n_content[i].content, symbol);
+			p->i18n_content[i].content = strncat(tmp, symbol, len);
 
-			tmp = (char *) realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + strlen(symbol_unchanged) + 1) * sizeof(char));
+			size_t len_unchanged = strlen(symbol_unchanged);
+			tmp = (char *) realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + len_unchanged + 1) * sizeof(char));
 			assert(tmp != NULL);
-			p->i18n_content[i].content_unchanged = tmp;
-			p->i18n_content[i].content_unchanged = strcat(p->i18n_content[i].content_unchanged, symbol_unchanged);
+			p->i18n_content[i].content_unchanged = strncat(tmp, symbol_unchanged, len_unchanged);
 
 			tmp = (char *)realloc(p->i18n_content[i].symbol_len, (k + 1) * sizeof(int));
 			assert(tmp != NULL);
 			p->i18n_content[i].symbol_len = (int *) tmp;
-			p->i18n_content[i].symbol_len[k] = strlen(symbol);
+			p->i18n_content[i].symbol_len[k] = len;
 
 			tmp = (char *)realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
 			assert(tmp != NULL);
 			p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
-			p->i18n_content[i].symbol_len_unchanged[k] = strlen(symbol_unchanged);
+			p->i18n_content[i].symbol_len_unchanged[k] = len_unchanged;
 
 			free(symbol);
 			free(symbol_unchanged);
@@ -542,25 +542,25 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 			continue;
 		}
 
-		char *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
+		size_t len = strlen(symbol);
+		char *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + len + 1) * sizeof(char));
 		assert(tmp != NULL);
-		p->i18n_content[i].content = tmp;
-		p->i18n_content[i].content = strcat(p->i18n_content[i].content, symbol);
+		p->i18n_content[i].content = strncat(tmp, symbol, len);
 
-		tmp = realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + strlen(symbol_unchanged) + 1) * sizeof(char));
+		size_t len_unchanged = strlen(symbol_unchanged);
+		tmp = realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + len_unchanged + 1) * sizeof(char));
 		assert(tmp != NULL);
-		p->i18n_content[i].content_unchanged = tmp;
-		p->i18n_content[i].content_unchanged = strcat(p->i18n_content[i].content_unchanged, symbol_unchanged);
+		p->i18n_content[i].content_unchanged = strncat(tmp, symbol_unchanged, len_unchanged);
 
 		tmp = realloc(p->i18n_content[i].symbol_len, (p->cur_pos + 1) * sizeof(int));
 		assert(tmp != NULL);
 		p->i18n_content[i].symbol_len = (int *)tmp;
-		p->i18n_content[i].symbol_len[p->cur_pos] = strlen(symbol);
+		p->i18n_content[i].symbol_len[p->cur_pos] = len;
 
 		tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (p->cur_pos + 1) * sizeof(int));
 		assert(tmp != NULL);
 		p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
-		p->i18n_content[i].symbol_len_unchanged[p->cur_pos] = strlen(symbol_unchanged);
+		p->i18n_content[i].symbol_len_unchanged[p->cur_pos] = len_unchanged;
 
 		free(symbol);
 		free(symbol_unchanged);
@@ -621,8 +621,7 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		if (tmp != NULL)
 		{
 			utf_string = tmp;
-			strcat(utf_string, symbol);
-			//free(tmp);
+			strncat(utf_string, symbol, nbytes);
 		}
 	}
 
@@ -648,11 +647,12 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 		char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[i], group, state);
 		if (symbol != NULL)
 		{
-			char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + strlen(symbol) + 1);
+			size_t len = strlen(symbol);
+			char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + len + 1);
 			if (tmp != NULL)
 			{
 				utf_string = tmp;
-				strcat(utf_string, symbol);
+				strncat(utf_string, symbol, len);
 			}
 			free(symbol);
 		}
@@ -694,7 +694,7 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 		{
 			char *symbol = p->keymap->keycode_to_symbol(p->keymap, XKeysymToKeycode(p->keymap->display, xconfig->delimeters[i]), -1, 0);
 			if (strlen(symbol) == 1)
-				strcat(xconfig->delimeters_string, symbol);
+				strncat(xconfig->delimeters_string, symbol, 1);
 			free(symbol);
 		}
 		//log_message (DEBUG,"'%s'", xconfig->delimeters_string);

@@ -2405,12 +2405,10 @@ static void program_check_misprint(struct _program *p)
 
 		int new_offset = p->buffer->cur_pos;
 		int possible_word_len = strlen(possible_word);
-		char *new_content = malloc((p->buffer->cur_pos + possible_word_len + backspaces_count + 1) * sizeof(char));
-		memset(new_content, 0, (p->buffer->cur_pos + possible_word_len + backspaces_count + 1) * sizeof(char));
-		//char *new_content = malloc(1024 * sizeof(char));
-		//memset(new_content, 0, 1024 * sizeof(char));
-		new_content = strcat(new_content, p->buffer->content);
-		new_content = strcat(new_content, possible_word);
+		char *new_content = malloc((new_offset + possible_word_len + backspaces_count + 1) * sizeof(char));
+		memset(new_content, 0, (new_offset + possible_word_len + backspaces_count + 1) * sizeof(char));
+		new_content = strncat(new_content, p->buffer->content, new_offset);
+		new_content = strncat(new_content, possible_word, possible_word_len);
 		// после исправления опечатки, добавляем запятые и прочее, идущее после слова >>>
 		size_t size = 0;
 		const char* content_unchanged = p->correction_buffer->i18n_content[lang].content_unchanged;

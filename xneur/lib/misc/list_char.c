@@ -114,12 +114,13 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 
 	if (mode == BY_REGEXP)
 	{
-		int len = 0;
+		// Initial: delimiters (|) count (data_count - 1) + trailing zero
+		int len = list->data_count;
 
 		for (int i = 0; i < list->data_count; i++)
 		{
 			struct _list_char_data *data = &list->data[i];
-			len += strlen(data->string) + 2;
+			len += strlen(data->string);
 		}
 
 		char *full_str = malloc(len * sizeof(char));
@@ -131,13 +132,12 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 		{
 			struct _list_char_data *data = &list->data[i];
 			//data = &list->data[i];
-			strcat(full_str, data->string);
-			strcat(full_str, "|");
+			strncat(full_str, data->string, strlen(data->string));
+			strncat(full_str, "|", 1);
 		}
 
-		struct _list_char_data *data;
-		data = &list->data[list->data_count - 1];
-		strcat(full_str, data->string);
+		struct _list_char_data *data = &list->data[list->data_count - 1];
+		strncat(full_str, data->string, strlen(data->string));
 
 		if (check_regexp_match(string, full_str))
 		{

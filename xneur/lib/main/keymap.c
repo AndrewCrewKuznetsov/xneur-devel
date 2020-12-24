@@ -134,7 +134,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 		log_message(ERROR, _("Failed to look up symbol for keycode %d and modifier 0x%x!"), event.xkey.keycode, event.xkey.state);
 		log_message(ERROR, _("Try run the program with command \"env LC_ALL=<LOCALE> %s\", \nwhere LOCALE available over command \"locale -a\""), PACKAGE);
 		symbol[0] = NULLSYM;
-		strcat(symbol, " ");
+		strncat(symbol, " ", 1);
 
 		locales->uninit(locales);
 
@@ -288,6 +288,8 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 				max--;
 
 			prev_symbols[0] = NULLSYM;
+			// Available space in prev_symbols
+			size_t avail_space = 256;
 
 			for (int j = 0; j <= max; j++)
 			{
@@ -311,12 +313,13 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 
 						if (strstr(prev_symbols, symbol) != NULL)
 							continue;
-						strcat(prev_symbols, symbol);
-
-						if (strncmp(sym, symbol, strlen(symbol)) != 0)
-							continue;
 
 						size_t _symbol_len = strlen(symbol);
+						strncat(prev_symbols, symbol, avail_space);
+						avail_space -= _symbol_len;
+
+						if (strncmp(sym, symbol, _symbol_len) != 0)
+							continue;
 
 						event.xkey.state = get_keycode_mod(p->latin_group);
 						event.xkey.state |= state_masks[m];
