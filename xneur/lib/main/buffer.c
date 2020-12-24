@@ -358,30 +358,20 @@ static void buffer_clear(struct _buffer *p)
 
 static void buffer_set_i18n_content(struct _buffer *p)
 {
-	// i18n_content
-	/*for (int i = 0; i < p->handle->total_languages; i++)
-	{
-		p->i18n_content[i].content = (char *) realloc(p->i18n_content[i].content, 1);
-		p->i18n_content[i].content[0] = NULLSYM;
-		p->i18n_content[i].symbol_len = (int *) realloc(p->i18n_content[i].symbol_len, 1);
-		p->i18n_content[i].content_unchanged = (char *) realloc(p->i18n_content[i].content_unchanged, 1);
-		p->i18n_content[i].content_unchanged[0] = NULLSYM;
-		p->i18n_content[i].symbol_len_unchanged = (int *) realloc(p->i18n_content[i].symbol_len_unchanged, 1);
-	}*/
-
 	int languages_mask = get_languages_mask();
-	for (int k = 0; k < p->cur_size-1; k++)
+	for (int pos = 0; pos < p->cur_size-1; pos++)
 	{
-		int modifier = p->keycode_modifiers[k] & (~languages_mask);
+		KeyCode keycode = p->keycode[pos];
+		int modifier    = p->keycode_modifiers[pos] & (~languages_mask);
 
 		for (int i = 0; i < p->handle->total_languages; i++)
 		{
-
-			char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[k], i, modifier & (~ShiftMask));
+			char *symbol = p->keymap->keycode_to_symbol(p->keymap, keycode, i, modifier & (~ShiftMask));
 			if (symbol == NULL)
+			{
 				continue;
-
-			char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, p->keycode[k], i, modifier);
+			}
+			char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, keycode, i, modifier);
 			if (symbol_unchanged == NULL)
 			{
 				free(symbol);
@@ -398,15 +388,15 @@ static void buffer_set_i18n_content(struct _buffer *p)
 			assert(tmp != NULL);
 			p->i18n_content[i].content_unchanged = strncat((char *)tmp, symbol_unchanged, len_unchanged);
 
-			tmp = realloc(p->i18n_content[i].symbol_len, (k + 1) * sizeof(int));
+			tmp = realloc(p->i18n_content[i].symbol_len, (pos + 1) * sizeof(int));
 			assert(tmp != NULL);
-			p->i18n_content[i].symbol_len = (int *) tmp;
-			p->i18n_content[i].symbol_len[k] = len;
+			p->i18n_content[i].symbol_len = (int *)tmp;
+			p->i18n_content[i].symbol_len[pos] = len;
 
-			tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
+			tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (pos + 1) * sizeof(int));
 			assert(tmp != NULL);
 			p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
-			p->i18n_content[i].symbol_len_unchanged[k] = len_unchanged;
+			p->i18n_content[i].symbol_len_unchanged[pos] = len_unchanged;
 
 			free(symbol);
 			free(symbol_unchanged);
@@ -529,6 +519,7 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 	int languages_mask = get_languages_mask();
 	modifier = modifier & (~languages_mask);
 
+	size_t pos = p->cur_pos;
 	for (int i = 0; i < p->handle->total_languages; i++)
 	{
 		char *symbol = p->keymap->keycode_to_symbol(p->keymap, keycode, i, modifier & (~ShiftMask));
@@ -552,15 +543,15 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 		assert(tmp != NULL);
 		p->i18n_content[i].content_unchanged = strncat(tmp, symbol_unchanged, len_unchanged);
 
-		tmp = realloc(p->i18n_content[i].symbol_len, (p->cur_pos + 1) * sizeof(int));
+		tmp = realloc(p->i18n_content[i].symbol_len, (pos + 1) * sizeof(int));
 		assert(tmp != NULL);
 		p->i18n_content[i].symbol_len = (int *)tmp;
-		p->i18n_content[i].symbol_len[p->cur_pos] = len;
+		p->i18n_content[i].symbol_len[pos] = len;
 
-		tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (p->cur_pos + 1) * sizeof(int));
+		tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (pos + 1) * sizeof(int));
 		assert(tmp != NULL);
 		p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
-		p->i18n_content[i].symbol_len_unchanged[p->cur_pos] = len_unchanged;
+		p->i18n_content[i].symbol_len_unchanged[pos] = len_unchanged;
 
 		free(symbol);
 		free(symbol_unchanged);
