@@ -2412,12 +2412,11 @@ static void program_check_misprint(struct _program *p)
 		new_content = strcat(new_content, p->buffer->content);
 		new_content = strcat(new_content, possible_word);
 		// после исправления опечатки, добавляем запятые и прочее, идущее после слова >>>
-		int finish_offset = 0;
+		size_t size = 0;
 		const char* content_unchanged = p->correction_buffer->i18n_content[lang].content_unchanged;
 		size_t len_unchanged = strlen(content_unchanged);
-		for (int i = len_unchanged - 1; i >= 0 ; i--)
+		for (int i = len_unchanged - 1; i >= 0; i--, ++size)
 		{
-			finish_offset++;
 			if (!(ispunct(content_unchanged[i])
 			   || isdigit(content_unchanged[i])
 			   || isspace(content_unchanged[i]))
@@ -2425,7 +2424,19 @@ static void program_check_misprint(struct _program *p)
 				break;
 			}
 		}
-		new_content = strcat(new_content, content_unchanged + len_unchanged - finish_offset + 1);
+		// Concat unchanged string with offset (len_unchanged - size)
+		// Examples:
+		// If len=0 => size in range [0; 0]:
+		//   "" => size=0, append ""
+		// If len=1 => size in range [0; 1]:
+		//   "," => size=1, append ","
+		//   "a" => size=0, append ""
+		// If len=2 => size in range [0; 2]:
+		//   ",," => size=2, append ",,"
+		//   "a," => size=1, append ","
+		//   ",a" => size=0, append ""
+		//   "aa" => size=0, append ""
+		new_content = strncat(new_content, content_unchanged + len_unchanged - size, size);
 		// <<<
 
 		p->buffer->set_content(p->buffer, new_content);
