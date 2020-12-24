@@ -251,7 +251,7 @@ char* get_file_path_name(const char *dir_name, const char *file_name)
 	char *path_file = (char *) malloc((max_path_len + 1) * sizeof(char));
 
 	// Search by only full path
-	strcpy(path_file, file_name);
+	strncpy(path_file, file_name, max_path_len);
 
 	FILE *stream = fopen(path_file, "r");
 	if (stream != NULL)
