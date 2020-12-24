@@ -1125,7 +1125,7 @@ static void free_structures(struct _xneur_config *p)
 	p->dont_send_key_release_apps->uninit(p->dont_send_key_release_apps);
 	p->delay_send_key_apps->uninit(p->delay_send_key_apps);
 	p->abbreviations->uninit(p->abbreviations);
-	
+
 	p->plugins->uninit(p->plugins);
 
 
@@ -1179,7 +1179,7 @@ static void free_structures(struct _xneur_config *p)
 
 	//if (p->actions != NULL)
 	//	free(p->actions);
-	
+
 	//if (p->user_actions != NULL)
 	//	free(p->user_actions);
 }
@@ -1394,7 +1394,7 @@ static int xneur_config_save(struct _xneur_config *p)
 		fprintf(stream, "SetManualApp %s\n", p->manual_apps->data[i].string);
 	fprintf(stream, "\n");
 
-	
+
 	fprintf(stream, "# Binds hotkeys for some actions\n");
 	for (int action = 0; action < p->actions_count; action++)
 	{
@@ -1787,18 +1787,6 @@ static void xneur_config_save_pattern(struct _xneur_config *p, int lang)
 		free(lang_dir);
 }
 
-static char* xneur_config_get_lang_dir(struct _xneur_config *p, int lang)
-{
-	if (lang < 0 || lang >= p->handle->total_languages)
-		return NULL;
-
-	int path_len = strlen(LANGUAGEDIR) + strlen(p->handle->languages[lang].dir) + 2;
-	char *path_file = (char *) malloc(path_len * sizeof(char));
-	snprintf(path_file, path_len, "%s/%s", LANGUAGEDIR, p->handle->languages[lang].dir);
-
-	return path_file;
-}
-
 static const char* xneur_config_get_log_level_name(struct _xneur_config *p)
 {
 	return log_levels[p->log_level];
@@ -1813,7 +1801,7 @@ static void xneur_config_uninit(struct _xneur_config *p)
 
 	free(p->actions);
 	free(p->user_actions);
-	
+
 	free(p->sounds);
 	free(p->osds);
 	free(p->popups);
@@ -1824,13 +1812,13 @@ static void xneur_config_uninit(struct _xneur_config *p)
 		free(p->delimeters_string);
 	p->delimeters_count = 0;
 
-	if (p->mail_keyboard_log != NULL) 
+	if (p->mail_keyboard_log != NULL)
 		free(p->mail_keyboard_log);
-	if (p->host_keyboard_log != NULL) 
+	if (p->host_keyboard_log != NULL)
 		free(p->host_keyboard_log);
 
 	xneur_handle_destroy(p->handle);
-	
+
 	free(p);
 }
 
@@ -1908,7 +1896,6 @@ struct _xneur_config* xneur_config_init(void)
 	p->save_pattern			= xneur_config_save_pattern;
 	p->set_pid			= xneur_config_set_pid;
 	p->get_pid			= xneur_config_get_pid;
-	p->get_lang_dir		= xneur_config_get_lang_dir;
 	p->get_log_level_name		= xneur_config_get_log_level_name;
 
 	p->uninit			= xneur_config_uninit;

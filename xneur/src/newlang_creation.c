@@ -57,7 +57,7 @@ void generate_protos(void)
 
 	printf("\nSpecified new language group: %d\n", new_lang_group);
 	char *path = get_file_path_name(NEW_LANG_DIR, NEW_LANG_TEXT);
-	if (path == NULL) 
+	if (path == NULL)
 		return;
 	char *text = get_file_content(path);
 	free(path);
@@ -92,7 +92,7 @@ void generate_protos(void)
 			strcpy(syll, sym_i);
 			strcat(syll, sym_j);
 
-			if (proto->find(proto, syll, BY_PLAIN))
+			if (proto->exist(proto, syll, BY_PLAIN))
 				continue;
 
 			if (strstr(text, syll) == NULL)
@@ -111,7 +111,7 @@ void generate_protos(void)
 
 				sprintf(syll, "%s%s%s", sym_i, sym_j, sym_k);
 
-				if (proto3->find(proto3, syll, BY_PLAIN))
+				if (proto3->exist(proto3, syll, BY_PLAIN))
 					continue;
 
 				if (strstr(text, syll) != NULL)
@@ -140,7 +140,7 @@ void generate_protos(void)
 			strcpy(syll, sym_i);
 			strcat(syll, sym_j);
 
-			if (proto->find(proto, syll, BY_PLAIN))
+			if (proto->exist(proto, syll, BY_PLAIN))
 				continue;
 
 			if (strstr(text, syll) == NULL)
@@ -159,7 +159,7 @@ void generate_protos(void)
 
 				sprintf(syll, "%s%s%s", sym_i, sym_j, sym_k);
 
-				if (proto3->find(proto3, syll, BY_PLAIN))
+				if (proto3->exist(proto3, syll, BY_PLAIN))
 					continue;
 
 				if (strstr(text, syll) != NULL)

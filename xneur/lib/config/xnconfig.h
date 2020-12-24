@@ -205,11 +205,11 @@ struct _xneur_config
 	struct _list_char *plugins;
 
 	struct _xneur_handle *handle;		// Array of languages used in program
-	
+
 	struct _xneur_notify *sounds;			// Array of sounds for actions
 	struct _xneur_notify *osds;			// Array of OSDs for actions
 	struct _xneur_notify *popups;			// Array of popups for actions
-	
+
 	struct _xneur_action *actions;			// Array of hotkeys used in program
 	int actions_count;				// Count of hotkeys
 
@@ -302,7 +302,6 @@ struct _xneur_config
 	void  (*save_pattern) (struct _xneur_config *p, int lang);
 	pid_t (*set_pid) (struct _xneur_config *p, pid_t pid);
 	pid_t (*get_pid) (struct _xneur_config *p);
-	char* (*get_lang_dir) (struct _xneur_config *p, int lang);
 	const char* (*get_log_level_name) (struct _xneur_config *p);
 	void  (*uninit) (struct _xneur_config *p);
 };
