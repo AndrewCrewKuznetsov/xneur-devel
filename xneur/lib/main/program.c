@@ -2418,10 +2418,10 @@ static void program_check_misprint(struct _program *p)
 		for (int i = len_unchanged - 1; i >= 0 ; i--)
 		{
 			finish_offset++;
-			if (  (!ispunct(content_unchanged[i])) &&
-			      (!isdigit(content_unchanged[i])) &&
-			      (!isspace(content_unchanged[i])))
-			{
+			if (!(ispunct(content_unchanged[i])
+			   || isdigit(content_unchanged[i])
+			   || isspace(content_unchanged[i]))
+			) {
 				break;
 			}
 		}
