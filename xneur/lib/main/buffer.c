@@ -61,7 +61,7 @@ time_t last_log_time = 0;
 
 // Private
 static void set_new_size(struct _buffer *p, int new_size)
-{	
+{
 	char *tmp_char = (char *) realloc(p->content, new_size * sizeof(char));
 	if (tmp_char == NULL)
 		return;
@@ -108,12 +108,12 @@ static void buffer_mail_and_archive(char *file_path_name)
 {
 	if (file_path_name == NULL)
 		return;
-	
+
 	time_t curtime = time(NULL);
 	struct tm *loctime = localtime(&curtime);
 	if (loctime == NULL)
 		return;
-	
+
 	char *date = malloc(256 * sizeof(char));
 	if (date == NULL)
 		return;
@@ -125,7 +125,7 @@ static void buffer_mail_and_archive(char *file_path_name)
 	}
 	strftime(date, 256, "%x", loctime);
 	strftime(time, 256, "%X", loctime);
-	
+
 	int len = strlen(file_path_name) + strlen(date) + strlen(time) + 4;
 	char *arch_file_path_name = malloc(len * sizeof (char));
 	if (arch_file_path_name == NULL)
@@ -135,7 +135,7 @@ static void buffer_mail_and_archive(char *file_path_name)
 		return;
 	}
 	snprintf(arch_file_path_name, len, "%s %s %s", file_path_name, date, time);
-		
+
 	if (rename(file_path_name, arch_file_path_name) == 0)
 	{
 		// Compress the file
@@ -148,7 +148,7 @@ static void buffer_mail_and_archive(char *file_path_name)
 			return;
 		}
 		snprintf(gz_arch_file_path_name, len+3, "%s%s", arch_file_path_name, ".gz");
-	
+
 		FILE *source = fopen(arch_file_path_name, "r");
 		FILE *dest = fopen(gz_arch_file_path_name, "w");
 		if ((source != NULL) && (dest != NULL))
@@ -179,7 +179,7 @@ static void buffer_mail_and_archive(char *file_path_name)
 	}
 	else
 		log_message (ERROR, _("Error rename file \"%s\" to \"%s\""), file_path_name, arch_file_path_name);
-		
+
 	free(file_path_name);
 	free(time);
 	free(date);
@@ -190,12 +190,12 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 {
 #ifdef WITH_KEYLOGGER
 	if (!xconfig->save_keyboard_log || p->cur_pos == 0 || file_name == NULL)
-#endif		
+#endif
 		return;
 
 	if (strlen (p->content) < 4)
 		return;
-	
+
 	int save = FALSE;
 	for (int i = 0; i < p->cur_pos; i++)
 		if (isgraph (p->content[i]))
@@ -205,11 +205,11 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		}
 	if (!save)
 		return;
-	
+
 	char *file_path_name = get_home_file_path_name(NULL, file_name);
 	if (file_path_name == NULL)
 		return;
-	
+
 	time_t curtime = time(NULL);
 	struct tm *loctime = localtime(&curtime);
 	if (loctime == NULL)
@@ -217,7 +217,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		free(file_path_name);
 		return;
 	}
-	
+
 	char *buffer = malloc(256 * sizeof(char));
 	if (buffer == NULL)
 	{
@@ -261,8 +261,8 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 	}
 	//
 	fclose (stream);
-	
-	
+
+
 	stream = fopen(file_path_name, "r+");
 	free(file_path_name);
 	if (stream == NULL)
@@ -277,7 +277,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		fclose(stream);
 		return;
 	}
-	
+
 	bzero(buffer, 256 * sizeof(char));
 	strftime(buffer, 256, "%x", loctime);
 
@@ -299,7 +299,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		fprintf(stream, "</ul><ul>\n<font color=\"#0000FF\" size=\"2\">(%s): </font>", buffer);
 	}
 	free(buffer);
-	
+
 	for (int i = 0; i < p->cur_pos; i++)
 	{
 		if (p->keycode[i] == 36)			// Return
@@ -322,7 +322,7 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 
 		if (symbol[0] == ' ')
 			fprintf(stream, "&nbsp;");
-		else	
+		else
 			fprintf(stream, "%s", symbol);
 
 		free(symbol);
@@ -356,17 +356,6 @@ static void buffer_clear(struct _buffer *p)
 	}
 }
 
-static int buffer_is_space_last(struct _buffer *p)
-{
-	if (p->cur_pos <= 0)
-		return FALSE;
-
-	if (isspace(p->content[p->cur_pos - 1]))
-		return TRUE;
-
-	return FALSE;
-}
-
 static void buffer_set_i18n_content(struct _buffer *p)
 {
 	// i18n_content
@@ -379,7 +368,7 @@ static void buffer_set_i18n_content(struct _buffer *p)
 		p->i18n_content[i].content_unchanged[0] = NULLSYM;
 		p->i18n_content[i].symbol_len_unchanged = (int *) realloc(p->i18n_content[i].symbol_len_unchanged, 1);
 	}*/
-	
+
 	int languages_mask = get_languages_mask();
 	for (int k = 0; k < p->cur_size-1; k++)
 	{
@@ -387,18 +376,18 @@ static void buffer_set_i18n_content(struct _buffer *p)
 
 		for (int i = 0; i < p->handle->total_languages; i++)
 		{
-		
+
 			char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[k], i, modifier & (~ShiftMask));
 			if (symbol == NULL)
 				continue;
-			
+
 			char *symbol_unchanged = p->keymap->keycode_to_symbol(p->keymap, p->keycode[k], i, modifier);
 			if (symbol_unchanged == NULL)
 			{
 				free(symbol);
 				continue;
 			}
-			
+
 			char *tmp = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + strlen(symbol) + 1) * sizeof(char));
 			assert(tmp != NULL);
 			p->i18n_content[i].content = tmp;
@@ -416,7 +405,7 @@ static void buffer_set_i18n_content(struct _buffer *p)
 
 			tmp = (char *)realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
 			assert(tmp != NULL);
-			p->i18n_content[i].symbol_len_unchanged = (int *)tmp; 
+			p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
 			p->i18n_content[i].symbol_len_unchanged[k] = strlen(symbol_unchanged);
 
 			free(symbol);
@@ -432,9 +421,9 @@ static void buffer_set_content(struct _buffer *p, const char *new_content)
 	char *content = strdup(new_content);
 	if (content == NULL)
 		return;
-	
+
 	p->clear(p);
-	
+
 	p->cur_pos = strlen(content);
 	if (p->cur_pos >= p->cur_size)
 		set_new_size(p, p->cur_pos + 1);
@@ -460,7 +449,7 @@ static void buffer_set_content(struct _buffer *p, const char *new_content)
 static void buffer_change_case(struct _buffer *p)
 {
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
-	
+
 	Display *display = XOpenDisplay(NULL);
 	XEvent event;
 	event.type		= KeyPress;
@@ -472,7 +461,7 @@ static void buffer_change_case(struct _buffer *p)
 	event.xkey.state	= 0;
 	event.xkey.keycode	= XKeysymToKeycode(display, XK_space);
 	event.xkey.time		= CurrentTime;
-	
+
 	for (int i = 0; i < p->cur_pos; i++)
 	{
 		event.xkey.keycode	= p->keycode[i];
@@ -483,12 +472,12 @@ static void buffer_change_case(struct _buffer *p)
 			continue;
 		if (symbol == NULL)
 			continue;
-		
-		symbol[nbytes] = NULLSYM;	
+
+		symbol[nbytes] = NULLSYM;
 
 		if (ispunct(symbol[0]) || isdigit(symbol[0]))
 			continue;
-		
+
 		if (p->keycode_modifiers[i] & ShiftMask)
 			p->keycode_modifiers[i] = (p->keycode_modifiers[i] & ~ShiftMask);
 		else
@@ -535,7 +524,7 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 	p->content[p->cur_pos] = sym;
 	p->keycode[p->cur_pos] = keycode;
 	p->keycode_modifiers[p->cur_pos] = modifier;
-	
+
 	// i18n_content
 	int languages_mask = get_languages_mask();
 	modifier = modifier & (~languages_mask);
@@ -570,7 +559,7 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 
 		tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (p->cur_pos + 1) * sizeof(int));
 		assert(tmp != NULL);
-		p->i18n_content[i].symbol_len_unchanged = (int *)tmp; 
+		p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
 		p->i18n_content[i].symbol_len_unchanged[p->cur_pos] = strlen(symbol_unchanged);
 
 		free(symbol);
@@ -614,7 +603,7 @@ static char *buffer_get_utf_string(struct _buffer *p)
 	event.xkey.state	= 0;
 	event.xkey.keycode	= XKeysymToKeycode(display, XK_space);
 	event.xkey.time		= CurrentTime;
-	
+
 	for (int i = 0; i < p->cur_pos; i++)
 	{
 		event.xkey.keycode	= p->keycode[i];
@@ -625,7 +614,7 @@ static char *buffer_get_utf_string(struct _buffer *p)
 			continue;
 		if (symbol == NULL)
 			continue;
-		
+
 		symbol[nbytes] = NULLSYM;
 
 		char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + nbytes + 1);
@@ -640,7 +629,7 @@ static char *buffer_get_utf_string(struct _buffer *p)
 	if (symbol != NULL)
 		free(symbol);
 	XCloseDisplay(display);
-	
+
 	return utf_string;
 }
 
@@ -648,7 +637,7 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 {
 	char *utf_string = (char *) malloc(1 * sizeof(char));
 	utf_string[0] = NULLSYM;
-	
+
 	for (int i = 0; i < p->cur_pos; i++)
 	{
 		int state = p->keycode_modifiers[i];
@@ -663,14 +652,14 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 			if (tmp != NULL)
 			{
 				utf_string = tmp;
-				strcat(utf_string, symbol);	
+				strcat(utf_string, symbol);
 			}
 			free(symbol);
 		}
 	}
-	
+
 	return utf_string;
-}		
+}
 
 static void buffer_save_and_clear(struct _buffer *p, Window window)
 {
@@ -699,11 +688,11 @@ static void buffer_unset_offset(struct _buffer *p, int offset)
 int buffer_get_last_word_offset(struct _buffer *p, const char *string, int string_len)
 {
 	// Initial delimeters string concatenation
-	if (strlen(xconfig->delimeters_string) == 0) 
+	if (strlen(xconfig->delimeters_string) == 0)
 	{
 		for (int i = 0; i < xconfig->delimeters_count; i++)
 		{
-			char *symbol = p->keymap->keycode_to_symbol(p->keymap, XKeysymToKeycode(p->keymap->display, xconfig->delimeters[i]), -1, 0); 
+			char *symbol = p->keymap->keycode_to_symbol(p->keymap, XKeysymToKeycode(p->keymap->display, xconfig->delimeters[i]), -1, 0);
 			if (strlen(symbol) == 1)
 				strcat(xconfig->delimeters_string, symbol);
 			free(symbol);
@@ -711,18 +700,18 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 		//log_message (DEBUG,"'%s'", xconfig->delimeters_string);
 	}
 	// End of initial delimeters string concatenation
-	
+
 	int len = string_len;
 	while (len != 0 && ((isspace(string[len - 1]) || (strchr(xconfig->delimeters_string, string[len - 1]) != NULL))))
 		len--;
 
 	/*int is_delim;
-	do 
-	{	
+	do
+	{
 		log_message (DEBUG, "code 0x%x", p->keycode[len - 1]);
 		is_delim = FALSE;
 		for (int i = 0; i < xconfig->delimeters_count; i++)
-		{			
+		{
 			if (xconfig->delimeters[i] == p->keycode[len - 1])
 			{
 				is_delim = TRUE;
@@ -731,7 +720,7 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 		if (is_delim)
 			len--;
 	} while ((len != 0) && (is_delim));*/
-	
+
 	if (len == 0)
 		return string_len;
 
@@ -739,7 +728,7 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 		len--;
 
 	/*int is_symbol;
-	do 
+	do
 	{
 		is_symbol = TRUE;
 		for (int i = 0; i < xconfig->delimeters_count; i++)
@@ -748,10 +737,10 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 				is_symbol = FALSE;
 		}
 		if (is_symbol)
-			len--;		
+			len--;
 	} while ((len != 0) && (is_symbol));
 	log_message (DEBUG, "len2 %d", len);*/
-	
+
 	return len;
 }
 
@@ -770,7 +759,7 @@ static void buffer_uninit(struct _buffer *p)
 {
 	if (p == NULL)
 		return;
-	
+
 	if (p->keycode_modifiers != NULL)
 		free(p->keycode_modifiers);
 	if (p->keycode != NULL)
@@ -794,7 +783,7 @@ static void buffer_uninit(struct _buffer *p)
 
 		free(p->i18n_content);
 	}
-	
+
 	free(p);
 
 	log_message(DEBUG, _("String is freed"));
@@ -808,7 +797,7 @@ struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap
 	p->handle = handle;
 
 	p->keymap = keymap;
-	
+
 	p->cur_size		= INIT_STRING_LENGTH;
 
 	p->content		= (char *) malloc(p->cur_size * sizeof(char));
@@ -834,7 +823,6 @@ struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap
 	p->clear		= buffer_clear;
 	p->save			= buffer_save;
 	p->save_and_clear	= buffer_save_and_clear;
-	p->is_space_last	= buffer_is_space_last;
 	p->set_lang_mask	= buffer_set_lang_mask;
 	p->set_uncaps_mask	= buffer_set_uncaps_mask;
 	p->set_caps_mask	= buffer_set_caps_mask;

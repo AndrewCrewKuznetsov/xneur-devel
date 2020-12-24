@@ -36,11 +36,11 @@ struct _buffer_content
 struct _buffer
 {
 	struct _xneur_handle *handle;
-	
+
 	struct _buffer_content *i18n_content;
 
 	struct _keymap *keymap;
-	
+
 	char *content;		// String itself
 	KeyCode *keycode;	// Array of string chars keycodes
 	int *keycode_modifiers;	// Array of string chars keycodes modifiers
@@ -51,7 +51,6 @@ struct _buffer
 	void (*clear) (struct _buffer *p);
 	void (*save) (struct _buffer *p, char *path, Window window);
 	void (*save_and_clear) (struct _buffer *p, Window window);
-	int  (*is_space_last) (struct _buffer *p);
 	void (*set_lang_mask) (struct _buffer *p, int group);
 	void (*set_uncaps_mask) (struct _buffer *p);
 	void (*set_caps_mask) (struct _buffer *p);

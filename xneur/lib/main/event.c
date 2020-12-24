@@ -49,7 +49,7 @@ int get_key_state(int key)
 {
 	if (main_window->display == NULL)
 		return 0;
-	
+
 	KeyCode key_code = XKeysymToKeycode(main_window->display, key);
 	if (key_code == NoSymbol)
 		return 0;
@@ -67,7 +67,7 @@ int get_key_state(int key)
 
 	if (key_mask == 0)
 		return 0;
-	
+
 	Window wDummy;
 	int iDummy;
 	unsigned int mask;
@@ -226,7 +226,7 @@ static void event_set_owner_window(struct _event *p, Window window)
 static KeySym event_get_cur_keysym(struct _event *p)
 {
 	//return XLookupKeysym(&p->event.xkey, 0);
-	
+
 	KeySym ks;
 
 	/*int nbytes = 0;
@@ -238,7 +238,7 @@ static KeySym event_get_cur_keysym(struct _event *p)
 
 	XKeyEvent *e = (XKeyEvent *) &p->event;
 	ks = XkbKeycodeToKeysym(main_window->display, e->keycode, main_window->keymap->latin_group, 0);
-	if (ks == NoSymbol) 
+	if (ks == NoSymbol)
 		ks = XkbKeycodeToKeysym(main_window->display, e->keycode, 0, 0);
 	return ks;
 }
@@ -275,31 +275,6 @@ static int event_get_cur_modifiers(struct _event *p)
 		mask += (1 << 6); // 64
 	if (p->event.xkey.state & Mod5Mask)   // ISO_Level3_Shift
 		mask += (1 << 7); // 128
-	
-	return mask;
-}
-
-static int event_get_cur_modifiers_by_keysym(struct _event *p)
-{
-	unsigned int mask = 0;
-	int key_sym = p->get_cur_keysym(p);
-	
-	if (key_sym == XK_Shift_L || key_sym == XK_Shift_R)
-		mask += (1 << 0);
-	if (key_sym == XK_Caps_Lock)
-		mask += (1 << 1);
-	if (key_sym == XK_Control_L || key_sym == XK_Control_R)
-		mask += (1 << 2);
-	if (key_sym == XK_Alt_L || key_sym == XK_Alt_R)
-		mask += (1 << 3);
-	if (key_sym == XK_Meta_L || key_sym == XK_Meta_R)
-		mask += (1 << 4);
-	if (key_sym == XK_Num_Lock)
-		mask += (1 << 5);
-	if (key_sym == XK_Super_L || key_sym == XK_Super_R)
-		mask += (1 << 6);
-	if (key_sym == XK_Hyper_L || key_sym == XK_Hyper_R || key_sym == XK_ISO_Level3_Shift)
-		mask += (1 << 7);
 
 	return mask;
 }
@@ -333,7 +308,7 @@ struct _event* event_init(void)
 	p->left			= XKeysymToKeycode(main_window->display, XK_Left);
 	p->right		= XKeysymToKeycode(main_window->display, XK_Right);
 	p->space		= XKeysymToKeycode(main_window->display, XK_space);
-	
+
 	// Functions mapping
 	p->get_next_event	= event_get_next_event;
 	p->send_next_event	= event_send_next_event;
@@ -342,7 +317,6 @@ struct _event* event_init(void)
 	p->send_string		= event_send_string;
 	p->get_cur_keysym	= event_get_cur_keysym;
 	p->get_cur_modifiers	= event_get_cur_modifiers;
-	p->get_cur_modifiers_by_keysym	= event_get_cur_modifiers_by_keysym;
 	p->send_backspaces	= event_send_backspaces;
 	p->send_selection	= event_send_selection;
 	p->send_spaces	= event_send_spaces;

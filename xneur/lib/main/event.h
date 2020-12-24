@@ -38,7 +38,6 @@ struct _event
 
 	KeySym (*get_cur_keysym) (struct _event *p);
 	int (*get_cur_modifiers) (struct _event *p);
-	int (*get_cur_modifiers_by_keysym) (struct _event *p);
 
 	int  (*get_next_event) (struct _event *p);
 	void (*send_next_event) (struct _event *p);
