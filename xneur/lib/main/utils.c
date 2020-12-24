@@ -114,7 +114,7 @@ void grab_button(int is_grab)
 		XIEventMask mask;
 		mask.deviceid = XIAllMasterDevices;
 		mask.mask_len = XIMaskLen(XI_RawButtonPress);
-		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+		mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 		XISetMask(mask.mask, XI_RawButtonPress);
 		XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
 		free(mask.mask);
@@ -124,7 +124,7 @@ void grab_button(int is_grab)
 		XIEventMask mask;
 		mask.deviceid = XIAllMasterDevices;
 		mask.mask_len = XIMaskLen(XI_RawButtonPress);
-		mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+		mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 		XISetMask(mask.mask, 0);
 		XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
 		free(mask.mask);
@@ -141,7 +141,7 @@ void grab_all_keys(Window window, int is_grab)
 			mask.deviceid = XIAllDevices;
 			mask.mask_len = XIMaskLen(XI_KeyPress)+
 							XIMaskLen(XI_KeyRelease);
-			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 			XISetMask(mask.mask, XI_KeyPress);
 			XISetMask(mask.mask, XI_KeyRelease);
 			XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
@@ -157,7 +157,7 @@ void grab_all_keys(Window window, int is_grab)
 			XIEventMask mask;
 			mask.deviceid = XIAllMasterDevices;
 			mask.mask_len = XIMaskLen(XI_KeyPress);
-			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 			XISetMask(mask.mask, 0);
 			XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
 			free(mask.mask);
@@ -167,11 +167,11 @@ void grab_all_keys(Window window, int is_grab)
 			XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
 		}
 	}
-	
+
 	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
 }
 
-unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size) 
+unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, int *size)
 {
 	Atom actual_type;
 	int actual_format;
@@ -184,10 +184,10 @@ unsigned char *get_win_prop(Window window, Atom atom, long *nitems, Atom *type, 
                               FALSE, AnyPropertyType, &actual_type,
                               &actual_format, &_nitems, &bytes_after,
                               &prop);
-	if (status != Success) 
+	if (status != Success)
 		return NULL;
 
-	
+
 	*nitems = _nitems;
 	*type = actual_type;
 	*size = actual_format;
@@ -207,7 +207,7 @@ char* get_wm_class_name(Window window)
 
 		if (named_window == None)
 			return NULL;
-		
+
 		Atom type;
 		int size;
 		long nitems;
@@ -215,12 +215,12 @@ char* get_wm_class_name(Window window)
 		Atom request = XInternAtom(main_window->display, "WM_NAME", False);
 		unsigned char *data = get_win_prop(named_window, request, &nitems, &type, &size);
 
-		if (nitems > 0) 
+		if (nitems > 0)
 			return (char *)data;
 
-		return NULL;	
+		return NULL;
 	}
-	
+
 	XClassHint *wm_class = XAllocClassHint();
 
 	if (!XGetClassHint(main_window->display, named_window, wm_class))
@@ -238,7 +238,7 @@ char* get_wm_class_name(Window window)
 	return string;
 }
 
-void click_key(KeySym keysym) 
+void click_key(KeySym keysym)
 {
 	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
 
