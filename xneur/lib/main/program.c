@@ -300,7 +300,7 @@ static void program_update(struct _program *p)
 
 	p->buffer->save_and_clear(p->buffer, p->last_window);
 	p->correction_buffer->clear(p->correction_buffer);
-	p->correction_action = ACTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	if (status == FOCUS_NONE)
 		return;
@@ -401,7 +401,7 @@ static void program_process_input(struct _program *p)
 				p->buffer = buffer_init(xconfig->handle, main_window->keymap);
 
 				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
-				p->correction_action = ACTION_NONE;
+				p->correction_action = CORRECTION_NONE;
 
 				//log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);
 				log_message(LOG, _("Keyboard layouts present in system:"));
@@ -538,7 +538,7 @@ static void program_process_input(struct _program *p)
 							//{
 							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 							p->correction_buffer->clear(p->correction_buffer);
-							p->correction_action = ACTION_NONE;
+							p->correction_action = CORRECTION_NONE;
 							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
 							{
 								p->update(p);
