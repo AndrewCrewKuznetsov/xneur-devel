@@ -1,0 +1,27 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build-with-enchant:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Build
+      uses: lpenz/ghaction-cmake@v0.2
+      with:
+        dependencies: gettext libgstreamer1.0-dev libnotify-dev libenchant-dev libxi-dev libxtst-dev
+        directory: xneur
+
+  clang-analyzers-with-enchant:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Analyze
+      uses: lpenz/ghaction-cmake@v0.2
+      with:
+        dependencies: gettext libgstreamer1.0-dev libnotify-dev libenchant-dev libxi-dev libxtst-dev
+        directory: xneur
+        analyzer: clang-tidy
