@@ -2413,17 +2413,19 @@ static void program_check_misprint(struct _program *p)
 		new_content = strcat(new_content, possible_word);
 		// после исправления опечатки, добавляем запятые и прочее, идущее после слова >>>
 		int finish_offset = 0;
-		for (int i = strlen(p->correction_buffer->i18n_content[lang].content_unchanged) - 1; i >= 0 ; i--)
+		const char* content_unchanged = p->correction_buffer->i18n_content[lang].content_unchanged;
+		size_t len_unchanged = strlen(content_unchanged);
+		for (int i = len_unchanged - 1; i >= 0 ; i--)
 		{
 			finish_offset++;
-			if (  (!ispunct(p->correction_buffer->i18n_content[lang].content_unchanged[i])) &&
-			      (!isdigit(p->correction_buffer->i18n_content[lang].content_unchanged[i])) &&
-			      (!isspace(p->correction_buffer->i18n_content[lang].content_unchanged[i])))
+			if (  (!ispunct(content_unchanged[i])) &&
+			      (!isdigit(content_unchanged[i])) &&
+			      (!isspace(content_unchanged[i])))
 			{
 				break;
 			}
 		}
-		new_content = strcat(new_content, p->correction_buffer->i18n_content[lang].content_unchanged + strlen(p->correction_buffer->i18n_content[lang].content_unchanged) - finish_offset + 1);
+		new_content = strcat(new_content, content_unchanged + len_unchanged - finish_offset + 1);
 		// <<<
 
 		p->buffer->set_content(p->buffer, new_content);
