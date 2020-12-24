@@ -389,21 +389,21 @@ static void buffer_set_i18n_content(struct _buffer *p)
 			}
 
 			size_t len = strlen(symbol);
-			char *tmp = (char *) realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + len + 1) * sizeof(char));
+			void *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + len + 1) * sizeof(char));
 			assert(tmp != NULL);
-			p->i18n_content[i].content = strncat(tmp, symbol, len);
+			p->i18n_content[i].content = strncat((char *)tmp, symbol, len);
 
 			size_t len_unchanged = strlen(symbol_unchanged);
-			tmp = (char *) realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + len_unchanged + 1) * sizeof(char));
+			tmp = realloc(p->i18n_content[i].content_unchanged, (strlen(p->i18n_content[i].content_unchanged) + len_unchanged + 1) * sizeof(char));
 			assert(tmp != NULL);
-			p->i18n_content[i].content_unchanged = strncat(tmp, symbol_unchanged, len_unchanged);
+			p->i18n_content[i].content_unchanged = strncat((char *)tmp, symbol_unchanged, len_unchanged);
 
-			tmp = (char *)realloc(p->i18n_content[i].symbol_len, (k + 1) * sizeof(int));
+			tmp = realloc(p->i18n_content[i].symbol_len, (k + 1) * sizeof(int));
 			assert(tmp != NULL);
 			p->i18n_content[i].symbol_len = (int *) tmp;
 			p->i18n_content[i].symbol_len[k] = len;
 
-			tmp = (char *)realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
+			tmp = realloc(p->i18n_content[i].symbol_len_unchanged, (k + 1) * sizeof(int));
 			assert(tmp != NULL);
 			p->i18n_content[i].symbol_len_unchanged = (int *)tmp;
 			p->i18n_content[i].symbol_len_unchanged[k] = len_unchanged;
@@ -543,7 +543,7 @@ static void buffer_add_symbol(struct _buffer *p, char sym, KeyCode keycode, int 
 		}
 
 		size_t len = strlen(symbol);
-		char *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + len + 1) * sizeof(char));
+		void *tmp = realloc(p->i18n_content[i].content, (strlen(p->i18n_content[i].content) + len + 1) * sizeof(char));
 		assert(tmp != NULL);
 		p->i18n_content[i].content = strncat(tmp, symbol, len);
 
