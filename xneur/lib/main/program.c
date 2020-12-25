@@ -95,7 +95,7 @@ static const char *normal_action_names[] =	{
 
 extern struct _xneur_config *xconfig;
 
-struct _window *main_window;
+extern struct _window *main_window;
 
 int last_event_type = 0;
 

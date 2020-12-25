@@ -32,10 +32,10 @@
 #	include <enchant/enchant.h>
 #endif
 
-struct _window *main_window;
+extern struct _window *main_window;
 
-int has_x_input_extension;
-int xi_opcode;
+extern int has_x_input_extension;
+extern int xi_opcode;
 
 struct _xneur_language
 {
