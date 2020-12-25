@@ -100,7 +100,7 @@ static char *spell_names[] =
 static const int names_len = sizeof(layout_names) / sizeof(layout_names[0]);
 #endif
 
-static long get_next_property_value (unsigned char **pointer, long *length, int size, char **string)
+static long get_next_property_value (unsigned char **pointer, long unsigned *length, int size, char **string)
 {
 	if (size != 8)
 		return 0;
@@ -361,9 +361,9 @@ struct _xneur_handle *xneur_handle_create (void)
 			if (dict_name == NULL)
 				continue;
 			dict_name[0] = NULLSYM;
-			strncat(dict_name, spell_names[j], len1);
-			strncat(dict_name, "_", 1);
-			strncat(dict_name, handle->languages[lang].dir, len2);
+			memmove(dict_name, spell_names[j], len1);
+			memmove(dict_name, "_", 1);
+			memmove(dict_name, handle->languages[lang].dir, len2);
 			dict_name[3] = toupper(dict_name[3]);
 			dict_name[4] = toupper(dict_name[4]);
 			//printf("   [!] Try load dict %s\n", dict_name);

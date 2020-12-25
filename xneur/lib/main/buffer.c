@@ -381,12 +381,12 @@ static void append_to_i18n_content(struct _buffer *buf, int pos, int languages_m
 		size_t len = strlen(symbol);
 		void *tmp = realloc(p->content, (strlen(p->content) + len + 1) * sizeof(char));
 		assert(tmp != NULL);
-		p->content = strncat((char *)tmp, symbol, len);
+		p->content = memmove((char *)tmp, symbol, len);
 
 		size_t len_unchanged = strlen(symbol_unchanged);
 		tmp = realloc(p->content_unchanged, (strlen(p->content_unchanged) + len_unchanged + 1) * sizeof(char));
 		assert(tmp != NULL);
-		p->content_unchanged = strncat((char *)tmp, symbol_unchanged, len_unchanged);
+		p->content_unchanged = memmove((char *)tmp, symbol_unchanged, len_unchanged);
 
 		tmp = realloc(p->symbol_len, (pos + 1) * sizeof(int));
 		assert(tmp != NULL);
@@ -575,7 +575,7 @@ static char *buffer_get_utf_string(struct _buffer *p)
 		if (tmp != NULL)
 		{
 			utf_string = tmp;
-			strncat(utf_string, symbol, nbytes);
+			memmove(utf_string, symbol, nbytes);
 		}
 	}
 
@@ -606,7 +606,7 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 			if (tmp != NULL)
 			{
 				utf_string = tmp;
-				strncat(utf_string, symbol, len);
+				memmove(utf_string, symbol, len);
 			}
 			free(symbol);
 		}
@@ -648,7 +648,7 @@ int buffer_get_last_word_offset(struct _buffer *p, const char *string, int strin
 		{
 			char *symbol = p->keymap->keycode_to_symbol(p->keymap, XKeysymToKeycode(p->keymap->display, xconfig->delimeters[i]), -1, 0);
 			if (strlen(symbol) == 1)
-				strncat(xconfig->delimeters_string, symbol, 1);
+				memmove(xconfig->delimeters_string, symbol, 1);
 			free(symbol);
 		}
 		//log_message (DEBUG,"'%s'", xconfig->delimeters_string);

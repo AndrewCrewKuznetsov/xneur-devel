@@ -81,7 +81,7 @@ void osd_show(int notify, char *command)
 		char *tmp = realloc(osd_text, (strlen(osd_text) + len + 1) * sizeof(char));
 		if (tmp != NULL)
 		{
-			osd_text = strncat(tmp, xconfig->osds[notify].file, len);
+			osd_text = memmove(tmp, xconfig->osds[notify].file, len);
 		}
 	}
 	if (command != NULL)
@@ -91,8 +91,8 @@ void osd_show(int notify, char *command)
 		if (tmp != NULL)
 		{
 			osd_text = tmp;
-			osd_text = strncat(osd_text, " ", 1);
-			osd_text = strncat(osd_text, command, len);
+			osd_text = memmove(osd_text, " ", 1);
+			osd_text = memmove(osd_text, command, len);
 		}
 	}
 	//
