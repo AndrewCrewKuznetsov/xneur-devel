@@ -135,14 +135,6 @@ static int window_create(struct _window *p)
 	return TRUE;
 }
 
-static void window_destroy(struct _window *p)
-{
-	if (p->window == None)
-		return;
-
-	p->window	= None;
-}
-
 static int window_init_keymap(struct _window *p)
 {
 	p->keymap = keymap_init(p->handle, p->display);
@@ -163,7 +155,6 @@ static void window_uninit(struct _window *p)
 	if (p->keymap != NULL)
 		p->keymap->uninit(p->keymap);
 
-	p->destroy(p);
 	free(p);
 
 	log_message(DEBUG, _("Window is freed"));
@@ -178,7 +169,6 @@ struct _window* window_init(struct _xneur_handle *handle)
 
 	// Function mapping
 	p->create		= window_create;
-	p->destroy		= window_destroy;
 	p->init_keymap		= window_init_keymap;
 	p->uninit_keymap	= window_uninit_keymap;
 	p->uninit		= window_uninit;

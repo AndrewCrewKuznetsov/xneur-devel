@@ -617,7 +617,7 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 
 static void buffer_save_and_clear(struct _buffer *p, Window window)
 {
-	p->save(p, LOG_NAME, window);
+	buffer_save(p, LOG_NAME, window);
 	p->clear(p);
 }
 
@@ -775,7 +775,6 @@ struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap
 
 	// Functions mapping
 	p->clear		= buffer_clear;
-	p->save			= buffer_save;
 	p->save_and_clear	= buffer_save_and_clear;
 	p->set_lang_mask	= buffer_set_lang_mask;
 	p->set_uncaps_mask	= buffer_set_uncaps_mask;

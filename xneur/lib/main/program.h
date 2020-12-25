@@ -48,41 +48,7 @@ struct _program
 
 	int last_pattern_id;
 
-	void (*layout_update) (struct _program *p);
-	void (*update) (struct _program *p);
-	void (*on_key_action) (struct _program *p, int type, KeySym key, int modifier);
 	void (*process_input) (struct _program *p);
-	int  (*perform_action) (struct _program *p, enum _hotkey_action action);
-	void (*perform_auto_action) (struct _program *p, int action);
-	void (*perform_user_action) (struct _program *p, int action);
-	int  (*check_lang_last_word) (struct _program *p);
-	int  (*check_lang_last_syllable) (struct _program *p);
-	void (*check_caps_last_word) (struct _program *p);
-	void (*check_tcl_last_word) (struct _program *p);
-	void (*check_space_before_punctuation) (struct _program *p);
-	void (*check_space_with_bracket) (struct _program *p);
-	void (*check_brackets_with_symbols) (struct _program *p);
-	void (*check_capital_letter_after_dot) (struct _program *p);
-	void (*check_two_space) (struct _program *p);
-	void (*check_two_minus) (struct _program *p);
-	void (*check_copyright) (struct _program *p);
-	void (*check_trademark) (struct _program *p);
-	void (*check_registered) (struct _program *p);
-	void (*check_ellipsis) (struct _program *p);
-	void (*check_pattern) (struct _program *p);
-	void (*rotate_pattern) (struct _program *p);
-	void (*change_word) (struct _program *p, enum _change_action action);
-	void (*add_word_to_dict) (struct _program *p, int new_lang);
-	void (*add_word_to_pattern) (struct _program *p, int new_lang);
-	void (*process_selection_notify) (struct _program *p);
-	void (*change_lang) (struct _program *p, int new_lang);
-	void (*change_incidental_caps) (struct _program *p);
-	void (*unchange_incidental_caps) (struct _program *p);
-	void (*change_two_capital_letter) (struct _program *p);
-	void (*unchange_two_capital_letter) (struct _program *p);
-	void (*check_misprint) (struct _program *p);
-	void (*send_string_silent) (struct _program *p, int send_backspaces);
-	void (*plugin_process) ();
 	void (*uninit) (struct _program *p);
 };
 
