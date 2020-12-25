@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0048 NEW)
-project(xneur VERSION 0.20.0)
+project(xneur VERSION 0.21.0)
 
 option(SOUNDS "Compile with sound support" ON) # ON|OFF|gstreamer|openal|aplay
 option(CMAKE_BUILD_TYPE "Compile release or debug version" Release) # Release, Debug
