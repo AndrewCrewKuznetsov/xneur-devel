@@ -22,7 +22,6 @@
 #endif
 
 #include <stdlib.h>
-#include <strings.h>
 #include <dlfcn.h>
 #include <stdio.h>
 #include <string.h>
@@ -56,7 +55,7 @@ void plugin_add(struct _plugin *p, char* plugin_name)
 		free(plugin_file);
 		return;
 	}
-	
+
 	free(plugin_file);
 
 	/* Get functions adresses */
@@ -98,10 +97,10 @@ void plugin_add(struct _plugin *p, char* plugin_name)
 
 	p->plugin[p->plugin_count].on_plugin_info = NULL;
 	p->plugin[p->plugin_count].on_plugin_info = dlsym(p->plugin[p->plugin_count].module, "on_plugin_info");
-	
+
 	// Run init of plugin
 	p->plugin[p->plugin_count].on_init();
-	
+
 	p->plugin_count++;
 }
 
@@ -111,7 +110,7 @@ void plugin_xneur_start(struct _plugin *p)
 	{
 		if (p->plugin[i].on_xneur_start == NULL)
 			continue;
-		
+
 		p->plugin[i].on_xneur_start();
 	}
 }
@@ -122,7 +121,7 @@ void plugin_xneur_reload(struct _plugin *p)
 	{
 		if (p->plugin[i].on_xneur_reload == NULL)
 			continue;
-		
+
 		p->plugin[i].on_xneur_reload();
 	}
 }
@@ -133,7 +132,7 @@ void plugin_xneur_stop(struct _plugin *p)
 	{
 		if (p->plugin[i].on_xneur_stop == NULL)
 			continue;
-		
+
 		p->plugin[i].on_xneur_stop();
 	}
 }
@@ -144,7 +143,7 @@ void plugin_key_press(struct _plugin *p, KeySym key, int modifier_mask)
 	{
 		if (p->plugin[i].on_key_press == NULL)
 			continue;
-		
+
 		p->plugin[i].on_key_press(key, modifier_mask);
 	}
 }
@@ -155,7 +154,7 @@ void plugin_key_release(struct _plugin *p, KeySym key, int modifier_mask)
 	{
 		if (p->plugin[i].on_key_release == NULL)
 			continue;
-		
+
 		p->plugin[i].on_key_release(key, modifier_mask);
 	}
 }
@@ -166,7 +165,7 @@ void plugin_hotkey_action(struct _plugin *p, enum _hotkey_action ha)
 	{
 		if (p->plugin[i].on_hotkey_action == NULL)
 			continue;
-		
+
 		p->plugin[i].on_hotkey_action(ha);
 	}
 }
@@ -177,7 +176,7 @@ void plugin_change_action(struct _plugin *p, enum _change_action ca)
 	{
 		if (p->plugin[i].on_change_action == NULL)
 			continue;
-		
+
 		p->plugin[i].on_change_action(ca);
 	}
 }
@@ -188,11 +187,11 @@ void plugin_plugin_reload(struct _plugin *p)
 	{
 		if (p->plugin[i].on_plugin_reload == NULL)
 			continue;
-		
+
 		p->plugin[i].on_plugin_reload();
 		dlclose(p->plugin[i].module);
 	}
-	
+
 	free(p->plugin);
 }
 
@@ -202,7 +201,7 @@ void plugin_plugin_configure(struct _plugin *p)
 	{
 		if (p->plugin[i].on_plugin_configure == NULL)
 			continue;
-		
+
 		p->plugin[i].on_plugin_configure();
 	}
 }
@@ -235,10 +234,10 @@ void plugin_uninit(struct _plugin *p)
 	{
 		if (p->plugin[i].on_fini != NULL)
 			p->plugin[i].on_fini();
-		
+
 		dlclose(p->plugin[i].module);
 	}
-	
+
 	free(p->plugin);
 	free(p);
 
@@ -317,15 +316,15 @@ void plugin_uninit(struct _plugin *p)
 struct _plugin* plugin_init(void)
 {
 	struct _plugin *p = (struct _plugin *) malloc(sizeof(struct _plugin));
-	bzero(p, sizeof(struct _plugin));
+	memset(p, 0, sizeof(struct _plugin));
 
 	p->plugin = (struct _plugin_functions *) malloc(sizeof(struct _plugin_functions));
-	bzero(p->plugin, sizeof(struct _plugin_functions));
-	
+	memset(p->plugin, 0, sizeof(struct _plugin_functions));
+
 	// Function mapping
 
 	p->add = plugin_add;
-	
+
 	p->xneur_start = plugin_xneur_start;
 	p->xneur_reload = plugin_xneur_reload;
 	p->xneur_stop = plugin_xneur_stop;

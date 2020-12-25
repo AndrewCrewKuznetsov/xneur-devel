@@ -18,7 +18,7 @@
  */
 
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 
 #include "utils.h"
 #include "defines.h"
@@ -80,7 +80,7 @@ static int window_create(struct _window *p)
 
 	// Set no border mode to flag window
 	MWMHints mwmhints;
-	bzero(&mwmhints, sizeof(mwmhints));
+	memset(&mwmhints, 0, sizeof(mwmhints));
 	mwmhints.flags		= MWM_HINTS_DECORATIONS;
 	mwmhints.decorations	= 0;
 
@@ -89,7 +89,7 @@ static int window_create(struct _window *p)
 	XChangeProperty(display, flag_window, motif_prop, motif_prop, 32, PropModeReplace, (unsigned char *) &mwmhints, PROP_MWM_HINTS_ELEMENTS);
 
 	XWMHints wmhints;
-	bzero(&wmhints, sizeof(wmhints));
+	memset(&wmhints, 0, sizeof(wmhints));
 	wmhints.flags = InputHint;
 	wmhints.input = 0;
 
@@ -99,7 +99,7 @@ static int window_create(struct _window *p)
 
 	p->display 	= display;
 	p->window  	= window;
-	
+
 	p->internal_atom = XInternAtom(p->display, "XNEUR_INTERNAL_MSG", 0);
 
 	// Check "_NET_SUPPORTED" atom support
@@ -119,14 +119,14 @@ static int window_create(struct _window *p)
 
 	p->_NET_SUPPORTED = FALSE;
 	results = (Atom *) get_win_prop(root, request, &nitems, &type, &size);
-	for (i = 0L; i < nitems; i++) 
+	for (i = 0L; i < nitems; i++)
 	{
 		if (results[i] == feature_atom)
 			p->_NET_SUPPORTED = TRUE;
 	}
 	//if (results != NULL)
 		//free(results);
-	
+
 	log_message(LOG, _("Main window with id %d created"), window);
 
 	XSynchronize(display, TRUE);
@@ -162,7 +162,7 @@ static void window_uninit(struct _window *p)
 {
 	if (p->keymap != NULL)
 		p->keymap->uninit(p->keymap);
-	
+
 	p->destroy(p);
 	free(p);
 
@@ -172,7 +172,7 @@ static void window_uninit(struct _window *p)
 struct _window* window_init(struct _xneur_handle *handle)
 {
 	struct _window *p = (struct _window *) malloc(sizeof(struct _window));
-	bzero(p, sizeof(struct _window));
+	memset(p, 0, sizeof(struct _window));
 
 	p->handle = handle;
 

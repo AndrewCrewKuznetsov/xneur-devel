@@ -68,30 +68,31 @@ void osd_show(int notify, char *command)
 
 	if (!xconfig->osds[notify].enabled)
 		return;
-	
+
 	pthread_attr_t osd_thread_attr;
 	pthread_attr_init(&osd_thread_attr);
 	pthread_attr_setdetachstate(&osd_thread_attr, PTHREAD_CREATE_DETACHED);
 
 	char *osd_text = malloc (sizeof(char));
 	osd_text[0] = NULLSYM;
-	if (xconfig->osds[notify].file != NULL) 
+	if (xconfig->osds[notify].file != NULL)
 	{
-		char *tmp = realloc(osd_text, (strlen(osd_text) + strlen(xconfig->osds[notify].file) + 1) * sizeof(char));
+		size_t len = strlen(xconfig->osds[notify].file);
+		char *tmp = realloc(osd_text, (strlen(osd_text) + len + 1) * sizeof(char));
 		if (tmp != NULL)
 		{
-			osd_text = tmp;
-			osd_text = strcat(osd_text, xconfig->osds[notify].file);
+			osd_text = strncat(tmp, xconfig->osds[notify].file, len);
 		}
 	}
 	if (command != NULL)
 	{
-		char *tmp = realloc(osd_text, (strlen(osd_text) + strlen(command) + 1) * sizeof(char));
+		size_t len = strlen(command);
+		char *tmp = realloc(osd_text, (strlen(osd_text) + 1 + len + 1) * sizeof(char));
 		if (tmp != NULL)
 		{
 			osd_text = tmp;
-			osd_text = strcat(osd_text, " ");
-			osd_text = strcat(osd_text, command);
+			osd_text = strncat(osd_text, " ", 1);
+			osd_text = strncat(osd_text, command, len);
 		}
 	}
 	//

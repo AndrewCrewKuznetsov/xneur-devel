@@ -28,7 +28,6 @@
 #include <X11/extensions/XInput2.h>
 
 #include <stdlib.h>
-#include <strings.h>
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
@@ -301,7 +300,7 @@ static void program_update(struct _program *p)
 
 	p->buffer->save_and_clear(p->buffer, p->last_window);
 	p->correction_buffer->clear(p->correction_buffer);
-	p->correction_action = ACTION_NONE;
+	p->correction_action = CORRECTION_NONE;
 
 	if (status == FOCUS_NONE)
 		return;
@@ -402,7 +401,7 @@ static void program_process_input(struct _program *p)
 				p->buffer = buffer_init(xconfig->handle, main_window->keymap);
 
 				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
-				p->correction_action = ACTION_NONE;
+				p->correction_action = CORRECTION_NONE;
 
 				//log_message (DEBUG, _("Now layouts count %d"), xconfig->handle->total_languages);
 				log_message(LOG, _("Keyboard layouts present in system:"));
@@ -539,7 +538,7 @@ static void program_process_input(struct _program *p)
 							//{
 							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 							p->correction_buffer->clear(p->correction_buffer);
-							p->correction_action = ACTION_NONE;
+							p->correction_action = CORRECTION_NONE;
 							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
 							{
 								p->update(p);
@@ -2406,25 +2405,36 @@ static void program_check_misprint(struct _program *p)
 
 		int new_offset = p->buffer->cur_pos;
 		int possible_word_len = strlen(possible_word);
-		char *new_content = malloc((p->buffer->cur_pos + possible_word_len + backspaces_count + 1) * sizeof(char));
-		memset(new_content, 0, (p->buffer->cur_pos + possible_word_len + backspaces_count + 1) * sizeof(char));
-		//char *new_content = malloc(1024 * sizeof(char));
-		//memset(new_content, 0, 1024 * sizeof(char));
-		new_content = strcat(new_content, p->buffer->content);
-		new_content = strcat(new_content, possible_word);
+		char *new_content = malloc((new_offset + possible_word_len + backspaces_count + 1) * sizeof(char));
+		memset(new_content, 0, (new_offset + possible_word_len + backspaces_count + 1) * sizeof(char));
+		new_content = strncat(new_content, p->buffer->content, new_offset);
+		new_content = strncat(new_content, possible_word, possible_word_len);
 		// после исправления опечатки, добавляем запятые и прочее, идущее после слова >>>
-		int finish_offset = 0;
-		for (int i = strlen(p->correction_buffer->i18n_content[lang].content_unchanged) - 1; i >= 0 ; i--)
+		size_t size = 0;
+		const char* content_unchanged = p->correction_buffer->i18n_content[lang].content_unchanged;
+		size_t len_unchanged = strlen(content_unchanged);
+		for (int i = len_unchanged - 1; i >= 0; i--, ++size)
 		{
-			finish_offset++;
-			if (  (!ispunct(p->correction_buffer->i18n_content[lang].content_unchanged[i])) &&
-			      (!isdigit(p->correction_buffer->i18n_content[lang].content_unchanged[i])) &&
-			      (!isspace(p->correction_buffer->i18n_content[lang].content_unchanged[i])))
-			{
+			if (!(ispunct(content_unchanged[i])
+			   || isdigit(content_unchanged[i])
+			   || isspace(content_unchanged[i]))
+			) {
 				break;
 			}
 		}
-		new_content = strcat(new_content, p->correction_buffer->i18n_content[lang].content_unchanged + strlen(p->correction_buffer->i18n_content[lang].content_unchanged) - finish_offset + 1);
+		// Concat unchanged string with offset (len_unchanged - size)
+		// Examples:
+		// If len=0 => size in range [0; 0]:
+		//   "" => size=0, append ""
+		// If len=1 => size in range [0; 1]:
+		//   "," => size=1, append ","
+		//   "a" => size=0, append ""
+		// If len=2 => size in range [0; 2]:
+		//   ",," => size=2, append ",,"
+		//   "a," => size=1, append ","
+		//   ",a" => size=0, append ""
+		//   "aa" => size=0, append ""
+		new_content = strncat(new_content, content_unchanged + len_unchanged - size, size);
 		// <<<
 
 		p->buffer->set_content(p->buffer, new_content);
@@ -3472,7 +3482,7 @@ static void program_uninit(struct _program *p)
 struct _program* program_init(void)
 {
 	struct _program *p = (struct _program*) malloc(sizeof(struct _program));
-	bzero(p, sizeof(struct _program));
+	memset(p, 0, sizeof(struct _program));
 
 	main_window = window_init(xconfig->handle);
 

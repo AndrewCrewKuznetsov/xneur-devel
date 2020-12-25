@@ -56,7 +56,8 @@ extern struct _window *main_window;
 
 static char* hotkey_concat_bind(struct _xneur_hotkey * hotkey)
 {
-	char *text = (char *) malloc((24 + 1 + strlen(hotkey->key)) * sizeof(char));
+	size_t len = strlen(hotkey->key);
+	char *text = (char *) malloc((24 + 1 + len) * sizeof(char));
 	text[0] = '\0';
 
 	int total_modifiers	= sizeof(modifier_names) / sizeof(modifier_names[0]);
@@ -65,11 +66,11 @@ static char* hotkey_concat_bind(struct _xneur_hotkey * hotkey)
 		if ((hotkey->modifiers & (0x1 << i)) == 0)
 			continue;
 
-		strcat(text, modifier_names[i]);
-		strcat(text, "+");
+		strncat(text, modifier_names[i], sizeof(modifier_names[i])-1);// number of symbols minus trailing zero
+		strncat(text, "+", 1);
 	}
 
-	strcat(text, hotkey->key);
+	strncat(text, hotkey->key, len);
 
 	return text;
 }

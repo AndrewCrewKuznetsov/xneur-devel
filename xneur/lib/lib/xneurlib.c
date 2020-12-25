@@ -239,7 +239,7 @@ struct _xneur_handle *xneur_handle_create (void)
 		if (tmp == NULL)
 			continue;
 		handle->languages = (struct _xneur_language *) tmp;
-		bzero(&(handle->languages[handle->total_languages]), sizeof(struct _xneur_language));
+		memset(&(handle->languages[handle->total_languages]), 0, sizeof(struct _xneur_language));
 
 		handle->languages[handle->total_languages].name	= strdup(group_name);
 		handle->languages[handle->total_languages].dir	= strdup(short_name);
@@ -351,13 +351,16 @@ struct _xneur_handle *xneur_handle_create (void)
 		if (j != names_len)
 		{
 			handle->enchant_dicts[lang] = NULL;
-			char *dict_name = malloc (2 * strlen(spell_names[j]) + 2);
+			size_t len1 = strlen(spell_names[j]);
+			size_t len2 = strlen(handle->languages[lang].dir);
+			// +1 for "_" and +1 for trailing zero
+			char *dict_name = malloc(len1 + 1 + len2 + 1);
 			if (dict_name == NULL)
 				continue;
 			dict_name[0] = NULLSYM;
-			strcat(dict_name, spell_names[j]);
-			strcat(dict_name, "_");
-			strcat(dict_name, handle->languages[lang].dir);
+			strncat(dict_name, spell_names[j], len1);
+			strncat(dict_name, "_", 1);
+			strncat(dict_name, handle->languages[lang].dir, len2);
 			dict_name[3] = toupper(dict_name[3]);
 			dict_name[4] = toupper(dict_name[4]);
 			//printf("   [!] Try load dict %s\n", dict_name);

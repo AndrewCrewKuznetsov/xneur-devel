@@ -46,7 +46,7 @@ char* get_file_content(const char *file_name)
 {
 	if (file_name == NULL)
 		return NULL;
-	
+
 	FILE *stream = fopen(file_name, "rb");
 	if (stream == NULL)
 		return NULL;
@@ -62,7 +62,7 @@ char* get_file_content(const char *file_name)
 		fclose(stream);
 		return NULL;
 	}
-	
+
 	unsigned int file_len = sb.st_size;
 
 	char *content = (char *) malloc((file_len + 2) * sizeof(char)); // + 1 '\0'
@@ -98,7 +98,7 @@ char* get_file_path_name(const char *dir_name, const char *file_name)
 	char *path_file = (char *) malloc((max_path_len + 1) * sizeof(char));
 
 	// Search by only full path
-	strcpy(path_file, file_name);
+	strncpy(path_file, file_name, max_path_len);
 	if (strstr(path_file, "/") != NULL)
 		return path_file;
 
@@ -164,7 +164,7 @@ char* get_home_file_path_name(const char *dir_name, const char *file_name)
 		}
 		while (dir != NULL)
 		{
-			path_file = strcat(path_file, DIR_SEPARATOR); 
+			path_file = strcat(path_file, DIR_SEPARATOR);
 			char *dir_part = strsep(&dir, DIR_SEPARATOR);
 			path_file = strcat(path_file, dir_part);
 			if (mkdir(path_file, mode) != 0 && errno != EEXIST)
@@ -176,7 +176,7 @@ char* get_home_file_path_name(const char *dir_name, const char *file_name)
 			}
 		}
 		free(dir_part);
-		
+
 		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 		{
 			free(path_file);

@@ -68,7 +68,7 @@ static void xneur_reload(int status);
 
 /*static void xneur_check_config_version(void)
 {
-	
+
 	log_message(LOG, _("Checking configuration file version..."));
 
 	if (xconfig->version != NULL && strcmp(xconfig->version, VERSION) == 0)
@@ -93,9 +93,9 @@ static void xneur_reload(int status);
 	}
 
 	log_message(LOG, _("Configuration file replaced to default one"));
-	
+
 	xneur_reload(0);
-	
+
 }*/
 
 static void xneur_init(void)
@@ -118,7 +118,7 @@ static void xneur_load_config(void)
 	//xneur_check_config_version;
 
 	log_message(LOG, _("Log level is set to %s"), xconfig->get_log_level_name(xconfig));
-	
+
 	log_message(DEBUG, _("Configuration load complete"));
 
 	log_message(LOG, _("Keyboard layouts present in system:"));
@@ -143,7 +143,7 @@ static void xneur_load_config(void)
 		{
 			log_message(DEBUG, _("      %s aspell dictionary not found"), lang_name);
 		}
-#endif	
+#endif
 #ifdef WITH_ENCHANT
 		if (xconfig->handle->enchant_dicts[lang])
 		{
@@ -153,7 +153,7 @@ static void xneur_load_config(void)
 		{
 			log_message(DEBUG, _("      %s enchant wrapper dictionary not found"), lang_name);
 		}
-#endif	
+#endif
 	}
 	log_message(LOG, _("Total %d keyboard layouts detected"), xconfig->handle->total_languages);
 
@@ -163,7 +163,7 @@ static void xneur_load_config(void)
 		xconfig->uninit(xconfig);
 		exit(EXIT_FAILURE);
 	}
-	
+
 	log_message(LOG, _("Default keyboard group for all new windows set to %d"), xconfig->default_group);
 	log_message(LOG, _("Manual mode set to %s"), _(xconfig->get_bool_name(xconfig->manual_mode)));
 	log_message(LOG, _("Education mode set to %s"), _(xconfig->get_bool_name(xconfig->educate)));
@@ -188,7 +188,7 @@ static void xneur_load_config(void)
 	log_message(LOG, _("Correct (tm) with a trademark sign mode set to %s"), _(xconfig->get_bool_name(xconfig->correct_tm_with_trademark)));
 	log_message(LOG, _("Correct (r) with a registered sign mode set to %s"), _(xconfig->get_bool_name(xconfig->correct_r_with_registered)));
 	log_message(LOG, _("Correct three points with a ellipsis mode set to %s"), _(xconfig->get_bool_name(xconfig->correct_three_points_with_ellipsis)));
-	log_message(LOG, _("Correct misprint mode set to %s"), _(xconfig->get_bool_name(xconfig->correct_misprint)));	
+	log_message(LOG, _("Correct misprint mode set to %s"), _(xconfig->get_bool_name(xconfig->correct_misprint)));
 	log_message(LOG, _("Disable CapsLock use mode set to %s"), _(xconfig->get_bool_name(xconfig->disable_capslock)));
 	log_message(LOG, _("Flush internal buffer when pressed Escape mode set to %s"), _(xconfig->get_bool_name(xconfig->flush_buffer_when_press_escape)));
 	log_message(LOG, _("Flush internal buffer when pressed Enter or Tab mode set to %s"), _(xconfig->get_bool_name(xconfig->flush_buffer_when_press_enter)));
@@ -249,7 +249,7 @@ static void xneur_cleanup(void)
 	log_message(DEBUG, _("Current keybinds is freed"));
 	unbind_user_actions();
 	log_message(DEBUG, _("Current user keybinds is freed"));
-	
+
 	if (program != NULL)
 		program->uninit(program);
 
@@ -261,7 +261,7 @@ static void xneur_cleanup(void)
 		xconfig->uninit(xconfig);
 	}
 	log_message(DEBUG, _("Current configuration data is freed"));
-	
+
 #ifdef WITH_DEBUG
 	xndebug_uninit();
 #endif
@@ -278,7 +278,7 @@ static void xneur_terminate(int status)
 	program->plugin->xneur_stop(program->plugin);
 
 	xneur_cleanup();
-	
+
 	exit(EXIT_SUCCESS);
 }
 
@@ -288,7 +288,7 @@ static void xneur_zombie(int status)
 	//Kills all the zombie processes
 	log_message(DEBUG, _("Caught SIGCHLD, kill zombie process"));
 	while(waitpid(-1, NULL, WNOHANG) > 0);
-} 
+}
 
 static void xneur_reload(int status)
 {
@@ -296,7 +296,7 @@ static void xneur_reload(int status)
 
 	log_message(LOG, _("Caught SIGHUP, reloading configuration file"));
 	show_notify(NOTIFY_XNEUR_RELOAD, NULL);
-	
+
 	sound_uninit();
 	unbind_actions();
 	unbind_user_actions();
@@ -424,7 +424,7 @@ static void xneur_reklama(void)
 static void xneur_trap(int sig, sg_handler handler)
 {
 	struct sigaction sa;
-	bzero(&sa, sizeof(sa));
+	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = handler;
 
 	if (sigaction(sig, &sa, NULL) == -1)
@@ -441,17 +441,17 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
-#endif	
+#endif
 	xneur_trap(SIGTERM, xneur_terminate);
 	xneur_trap(SIGINT, xneur_terminate);
 	xneur_trap(SIGHUP, xneur_reload);
 	xneur_trap(SIGCHLD, xneur_zombie);
 	xneur_trap(SIGTSTP, xneur_terminate);
-	
+
 	xneur_get_options(argc, argv);
-	
+
 	xneur_reklama();
-	
+
 	xconfig = xneur_config_init();
 	if (xconfig == NULL)
 	{
@@ -467,9 +467,9 @@ int main(int argc, char *argv[])
 
 	setpriority(PRIO_PROCESS, process_id, -19);
 	int priority = getpriority(PRIO_PROCESS, process_id);
-	
+
 	log_message(TRACE, _("Xneur process identificator is %d with nice %d"), process_id, priority);
-	
+
 	program = program_init();
 	if (program == NULL)
 	{
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
 
 	if (xneur_generate_proto)
 		generate_protos();
-	else	
+	else
 		program->process_input(program);
 
 	xneur_cleanup();
