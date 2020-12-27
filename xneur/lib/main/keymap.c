@@ -80,30 +80,29 @@ int get_languages_mask(void)
 	int languages_mask = 0;
 	for (int group = 0; group < 4; group++)
 		languages_mask = languages_mask | keyboard_groups[group];
-	return languages_mask;
+	return ~languages_mask;
 }
 
 static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int group, int state)
 {
-	XEvent event;
-	event.type		= KeyPress;
-	event.xkey.type		= KeyPress;
-	event.xkey.root		= RootWindow(p->display, DefaultScreen(p->display));
-	event.xkey.subwindow	= None;
-	event.xkey.same_screen	= True;
-	event.xkey.display	= p->display;
-	event.xkey.keycode = kc;
-	event.xkey.state = 0;
-	event.xkey.time		= CurrentTime;
+	XKeyEvent event;
+	event.type        = KeyPress;
+	event.root        = RootWindow(p->display, DefaultScreen(p->display));
+	event.subwindow   = None;
+	event.same_screen = True;
+	event.display     = p->display;
+	event.keycode     = kc;
+	event.state       = 0;
+	event.time        = CurrentTime;
 
 	if (group >= 0)
-		event.xkey.state = keyboard_groups[group];
-	event.xkey.state |= state;
+		event.state = keyboard_groups[group];
+	event.state |= state;
 
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 	symbol[0] = NULLSYM;
 
-	int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
+	int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 
 	if (nbytes <= 0)
 	{
@@ -116,9 +115,9 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 		{
 			if (setlocale(LC_ALL, locales->data[i].string) != NULL)
 			{
-				event.xkey.root		= RootWindow(p->display, DefaultScreen(p->display));
-				event.xkey.display  = p->display;
-				nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
+				event.root    = RootWindow(p->display, DefaultScreen(p->display));
+				event.display = p->display;
+				nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 
 				setlocale(LC_ALL, "");
 
@@ -131,7 +130,7 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 			}
 		}
 
-		log_message(ERROR, _("Failed to look up symbol for keycode %d and modifier 0x%x!"), event.xkey.keycode, event.xkey.state);
+		log_message(ERROR, _("Failed to look up symbol for keycode %d and modifier 0x%x!"), event.keycode, event.state);
 		log_message(ERROR, _("Try run the program with command \"env LC_ALL=<LOCALE> %s\", \nwhere LOCALE available over command \"locale -a\""), PACKAGE);
 		symbol[0] = NULLSYM;
 		memmove(symbol, " ", 1);
@@ -149,7 +148,6 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 
 static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, int state)
 {
-	char *symbol;
 	struct keycode_to_symbol_pair *pr = NULL;
 
 	/* Look up cache. */
@@ -161,9 +159,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 
 	/* Miss. */
 	//log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
-	symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
-	if (!symbol)
-		return symbol;
+	char *symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
 
 	/* Just use next cache entry. LRU makes no sense here. */
 	p->keycode_to_symbol_cache_pos = (p->keycode_to_symbol_cache_pos + 1) % keycode_to_symbol_cache_size;
@@ -229,20 +225,6 @@ static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySy
 }
 
 // Private
-static int init_keymaps(struct _keymap *p)
-{
-	// Define all key codes and key symbols
-	XDisplayKeycodes(p->display, &(p->min_keycode), &(p->max_keycode));
-	p->keymap = XGetKeyboardMapping(p->display, p->min_keycode, p->max_keycode - p->min_keycode + 1, &(p->keysyms_per_keycode));
-
-	if (!p->keymap)
-	{
-		log_message(ERROR, _("Unable to get keyboard mapping table"));
-		return FALSE;
-	}
-	return TRUE;
-}
-
 static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* preferred_lang, KeyCode *kc, int *modifier, size_t* symbol_len)
 {
 	if (*sym == 10 || *sym == 13)
@@ -254,16 +236,15 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 		return *sym;
 	}
 
-	XEvent event;
-	event.type		= KeyPress;
-	event.xkey.type		= KeyPress;
-	event.xkey.root		= RootWindow(p->display, DefaultScreen(p->display));
-	event.xkey.subwindow	= None;
-	event.xkey.same_screen	= True;
-	event.xkey.display	= p->display;
-	event.xkey.state	= 0;
-	event.xkey.keycode	= XKeysymToKeycode(p->display, XK_space);
-	event.xkey.time		= CurrentTime;
+	XKeyEvent event;
+	event.type        = KeyPress;
+	event.root        = RootWindow(p->display, DefaultScreen(p->display));
+	event.subwindow   = None;
+	event.same_screen = True;
+	event.display     = p->display;
+	event.state       = 0;
+	event.keycode     = XKeysymToKeycode(p->display, XK_space);
+	event.time        = CurrentTime;
 
 	char *symbol		= (char *) malloc((256 + 1) * sizeof(char));
 	char *prev_symbols	= (char *) malloc((256 + 1) * sizeof(char));
@@ -300,12 +281,12 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 				{
 					for (int m = 0; m < 3; m++) // Modifiers
 					{
-						event.xkey.keycode	= i;
+						event.keycode	= i;
 
-						event.xkey.state	= get_keycode_mod(lang);
-						event.xkey.state	|= state_masks[m];
-						event.xkey.state	|= state_masks[n];
-						int nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
+						event.state = get_keycode_mod(lang);
+						event.state |= state_masks[m];
+						event.state |= state_masks[n];
+						int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
 
@@ -321,10 +302,10 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 						if (strncmp(sym, symbol, _symbol_len) != 0)
 							continue;
 
-						event.xkey.state = get_keycode_mod(p->latin_group);
-						event.xkey.state |= state_masks[m];
-						event.xkey.state |= state_masks[n];
-						nbytes = XLookupString((XKeyEvent *) &event, symbol, 256, NULL, NULL);
+						event.state = get_keycode_mod(p->latin_group);
+						event.state |= state_masks[m];
+						event.state |= state_masks[n];
+						nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
 
@@ -332,11 +313,11 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 
 						free(prev_symbols);
 						free(symbol);
-						*kc		= event.xkey.keycode;
-						event.xkey.state = 0;
-						event.xkey.state |= state_masks[m];
-						event.xkey.state |= state_masks[n];
-						*modifier	= get_keycode_mod(lang) | event.xkey.state;
+						*kc = event.keycode;
+						event.state = 0;
+						event.state |= state_masks[m];
+						event.state |= state_masks[n];
+						*modifier = get_keycode_mod(lang) | event.state;
 						if (symbol_len)
 							*symbol_len = _symbol_len;
 						if (preferred_lang)
@@ -536,17 +517,34 @@ static void keymap_uninit(struct _keymap *p)
 
 struct _keymap* keymap_init(struct _xneur_handle *handle, Display *display)
 {
+	if (!locale_create())
+	{
+		return NULL;
+	}
+
+	int min_keycode;
+	int max_keycode;
+	int keysyms_per_keycode;
+	// Define all key codes and key symbols
+	XDisplayKeycodes(display, &min_keycode, &max_keycode);
+	KeySym* keymap = XGetKeyboardMapping(display, min_keycode, max_keycode - min_keycode + 1, &keysyms_per_keycode);
+
+	if (!keymap)
+	{
+		log_message(ERROR, _("Unable to get keyboard mapping table"));
+		return NULL;
+	}
+
 	struct _keymap *p = (struct _keymap *) malloc(sizeof(struct _keymap));
 	memset(p, 0, sizeof(struct _keymap));
 
 	p->handle = handle;
 	p->display = display;
+	p->keymap = keymap;
+	p->min_keycode = min_keycode;
+	p->max_keycode = max_keycode;
+	p->keysyms_per_keycode = keysyms_per_keycode;
 
-	if (!locale_create() || !init_keymaps(p))
-	{
-		free(p);
-		return NULL;
-	}
 
 	p->keycode_to_symbol_cache = (struct keycode_to_symbol_pair *)calloc(keycode_to_symbol_cache_size, sizeof(struct keycode_to_symbol_pair));
 	p->symbol_to_keycode_cache = (struct symbol_to_keycode_pair *)calloc(symbol_to_keycode_cache_size, sizeof(struct symbol_to_keycode_pair));
