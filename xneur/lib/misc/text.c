@@ -142,18 +142,18 @@ char* str_replace(const char *source, const char *search, const char *replace)
 		char *found = strstr(source, search);
 		if (found == NULL)
 		{
-			memmove(result, source, avail_space);
+			strncat(result, source, avail_space);
 			break;
 		}
 
 		// Copy to result all data from source to found
 		if (found != source) {
 			size_t len = found - source;
-			memmove(result, source, len);
+			strncat(result, source, len);
 			avail_space -= len;
 		}
 
-		memmove(result, replace, avail_space);
+		strncat(result, replace, avail_space);
 		source = found + search_len;
 		avail_space -= replace_len;
 	}

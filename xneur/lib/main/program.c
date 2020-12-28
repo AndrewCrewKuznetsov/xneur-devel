@@ -2395,8 +2395,8 @@ static void program_check_misprint(struct _program *p)
 		int possible_word_len = strlen(possible_word);
 		char *new_content = malloc((new_offset + possible_word_len + backspaces_count + 1) * sizeof(char));
 		memset(new_content, 0, (new_offset + possible_word_len + backspaces_count + 1) * sizeof(char));
-		new_content = memmove(new_content, p->buffer->content, new_offset);
-		new_content = memmove(new_content, possible_word, possible_word_len);
+		new_content = strncat(new_content, p->buffer->content, new_offset);
+		new_content = strncat(new_content, possible_word, possible_word_len);
 		// после исправления опечатки, добавляем запятые и прочее, идущее после слова >>>
 		size_t size = 0;
 		const char* content_unchanged = p->correction_buffer->i18n_content[lang].content_unchanged;
@@ -2422,7 +2422,7 @@ static void program_check_misprint(struct _program *p)
 		//   "a," => size=1, append ","
 		//   ",a" => size=0, append ""
 		//   "aa" => size=0, append ""
-		new_content = memmove(new_content, content_unchanged + len_unchanged - size, size);
+		new_content = strncat(new_content, content_unchanged + len_unchanged - size, size);
 		// <<<
 
 		p->buffer->set_content(p->buffer, new_content);
