@@ -66,11 +66,11 @@ static char* hotkey_concat_bind(struct _xneur_hotkey * hotkey)
 		if ((hotkey->modifiers & (0x1 << i)) == 0)
 			continue;
 
-		memmove(text, modifier_names[i], sizeof(modifier_names[i])-1);// number of symbols minus trailing zero
-		memmove(text, "+", 1);
+		strncat(text, modifier_names[i], sizeof(modifier_names[i])-1);// number of symbols minus trailing zero
+		strncat(text, "+", 1);
 	}
 
-	memmove(text, hotkey->key, len);
+	strncat(text, hotkey->key, len);
 
 	return text;
 }

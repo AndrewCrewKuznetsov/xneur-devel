@@ -132,12 +132,12 @@ static int find_id(struct _list_char *list, const char *string, int mode)
 		{
 			struct _list_char_data *data = &list->data[i];
 			//data = &list->data[i];
-			memmove(full_str, data->string, strlen(data->string));
-			memmove(full_str, "|", 1);
+			strncat(full_str, data->string, strlen(data->string));
+			strncat(full_str, "|", 1);
 		}
 
 		struct _list_char_data *data = &list->data[list->data_count - 1];
-		memmove(full_str, data->string, strlen(data->string));
+		strncat(full_str, data->string, strlen(data->string));
 
 		if (check_regexp_match(string, full_str))
 		{
