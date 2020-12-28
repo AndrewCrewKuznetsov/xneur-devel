@@ -118,10 +118,8 @@ static int window_create(struct _window *p)
 
 	XChangeProperty(display, flag_window, win_prop, win_prop, 32, PropModeReplace, (unsigned char *) &mwmhints, sizeof (XWMHints) / 4);
 
-	p->display 	= display;
-	p->window  	= window;
-
-	p->internal_atom = XInternAtom(p->display, "XNEUR_INTERNAL_MSG", 0);
+	p->display = display;
+	p->window  = window;
 	p->_NET_SUPPORTED = is_has_net_supported(display, root);
 
 	log_message(LOG, _("Main window with id %d created"), window);

@@ -33,8 +33,6 @@ struct _window
 	Display *display;
 	Window window;
 
-	Atom internal_atom;
-
 	int _NET_SUPPORTED;
 
 	int  (*create) (struct _window *p);
