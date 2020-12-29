@@ -528,7 +528,7 @@ static void program_process_input(struct _program *p)
 							//log_message(TRACE, _("    Mask %d"), mask);
 
 							// Processing received event
-							p->event->event.xkey.state = xi_event->mods.effective;
+							p->event->event.xkey.state   = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
 							p->event->default_event = p->event->event;
 							program_on_key_action(p, KeyPress, key_sym, mask);
@@ -552,7 +552,7 @@ static void program_process_input(struct _program *p)
 							//log_message(TRACE, _("    Mask %d"), mask);
 
 							// Processing received event
-							p->event->event.xkey.state = xi_event->mods.effective;
+							p->event->event.xkey.state   = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
 							p->event->default_event = p->event->event;
 							program_on_key_action(p, KeyRelease, key_sym, mask);
@@ -1395,21 +1395,15 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 
 				if (xconfig->abbr_ignore_layout)
 				{
-					KeyCode *dummy_kc = malloc((strlen(replacement)+1) * sizeof(KeyCode));
-					int *dummy_kc_mod = malloc((strlen(replacement)+1) * sizeof(int));
+					size_t rlen  = strlen(replacement);
+					size_t wlen  = strlen(word);
+					size_t count = (rlen > wlen ? rlen : wlen) + 1;
+					KeyCode *dummy_kc = malloc(count * sizeof(KeyCode));
+					int *dummy_kc_mod = malloc(count * sizeof(int));
 					main_window->keymap->convert_text_to_ascii(main_window->keymap, replacement, dummy_kc, dummy_kc_mod);
-					if (dummy_kc != NULL)
-						free(dummy_kc);
-					if (dummy_kc_mod != NULL)
-						free(dummy_kc_mod);
-
-					dummy_kc = malloc((strlen(word)+1) * sizeof(KeyCode));
-					dummy_kc_mod = malloc((strlen(word)+1) * sizeof(int));
 					main_window->keymap->convert_text_to_ascii(main_window->keymap, word, dummy_kc, dummy_kc_mod);
-					if (dummy_kc != NULL)
-						free(dummy_kc);
-					if (dummy_kc_mod != NULL)
-						free(dummy_kc_mod);
+					free(dummy_kc);
+					free(dummy_kc_mod);
 				}
 
 				if (strcmp(replacement, word) != 0)
@@ -1980,9 +1974,6 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 		return;
 
 	char *symbol = main_window->keymap->keycode_to_symbol(main_window->keymap, p->event->event.xkey.keycode, get_curr_keyboard_group(), p->event->event.xkey.state);
-	if (symbol == NULL)
-		return;
-
 	switch (symbol[0])
 	{
 		case '`':
@@ -2514,7 +2505,7 @@ static void correct_word(struct _program *p, KeySym keysym, int keycount, enum _
 		p->buffer->clear(p->buffer);
 		p->event->default_event.xkey.keycode = 0;
 	} else
-	if (p->correction_action == action)
+	if (p->correction_action == action)// undo correction
 	{
 		p->event->send_spaces(p->event, keycount);
 
@@ -2555,7 +2546,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
 			}
-			else if (p->correction_action == CORRECTION_INCIDENTAL_CAPS)
+			else if (p->correction_action == CORRECTION_INCIDENTAL_CAPS)// undo correction
 			{
 				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
@@ -2594,7 +2585,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				// Revert fields back
 				p->buffer->unset_offset(p->buffer, offset);
 			}
-			else if (p->correction_action == CORRECTION_TWO_CAPITAL_LETTER)
+			else if (p->correction_action == CORRECTION_TWO_CAPITAL_LETTER)// undo correction
 			{
 				p->buffer->set_content(p->buffer, p->correction_buffer->get_last_word(p->correction_buffer, p->correction_buffer->content));
 				p->buffer->set_lang_mask(p->buffer, get_curr_keyboard_group ());
@@ -2625,13 +2616,13 @@ static void program_change_word(struct _program *p, enum _change_action action)
 
 				KeyCode kc = 0;
 				int modifier = 0;
-				size_t sym_size = strlen(",");
+				size_t sym_size = 0;
 				int lang = get_curr_keyboard_group ();
 				p->buffer->keymap->get_ascii(p->buffer->keymap, ",", &lang, &kc, &modifier, &sym_size);
 				p->event->send_xkey(p->event, kc, modifier);
 				p->buffer->add_symbol(p->buffer, ',', kc, modifier);
 			}
-			else if (p->correction_action == CORRECTION_TWO_SPACE)
+			else if (p->correction_action == CORRECTION_TWO_SPACE)// undo correction
 			{
 				p->event->send_backspaces(p->event, 2);
 				p->buffer->del_symbol(p->buffer);
@@ -2640,7 +2631,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 				p->event->send_spaces (p->event, 2);
 				KeyCode kc = 0;
 				int modifier = 0;
-				size_t sym_size = strlen(",");
+				size_t sym_size = 0;
 				int lang = get_curr_keyboard_group ();
 				p->buffer->keymap->get_ascii(p->buffer->keymap, " ", &lang, &kc, &modifier, &sym_size);
 				p->buffer->add_symbol(p->buffer, ' ', kc, modifier);
@@ -2687,7 +2678,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 
 				p->buffer->clear(p->buffer);
 			}
-			else if (p->correction_action == CORRECTION_TWO_MINUS)
+			else if (p->correction_action == CORRECTION_TWO_MINUS)// undo correction
 			{
 				p->event->send_backspaces(p->event, 2);
 
@@ -2696,18 +2687,13 @@ static void program_change_word(struct _program *p, enum _change_action action)
 
 				KeyCode kc = 0;
 				int modifier = 0;
-				size_t sym_size = strlen("-");
-				int lang = get_curr_keyboard_group ();
+				size_t sym_size = 0;
+				int lang = get_curr_keyboard_group();
 				p->buffer->keymap->get_ascii(p->buffer->keymap, "-", &lang, &kc, &modifier, &sym_size);
+				// send '-- '
 				p->event->send_xkey(p->event, kc, modifier);
 				p->event->send_xkey(p->event, kc, modifier);
-
 				p->event->send_spaces(p->event, 1);
-
-				kc = 0;
-				modifier = 0;
-				sym_size = strlen(" ");
-				p->buffer->keymap->get_ascii(p->buffer->keymap, " ", &lang, &kc, &modifier, &sym_size);
 
 				p->correction_buffer->clear(p->correction_buffer);
 				p->correction_action = CORRECTION_NONE;
@@ -2865,7 +2851,7 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		}
 		case CHANGE_MISPRINT:
 		{
-			if (p->correction_action == CORRECTION_MISPRINT)
+			if (p->correction_action == CORRECTION_MISPRINT)// undo correction
 			{
 				int backspaces_count = p->buffer->cur_pos - p->correction_buffer->get_last_word_offset(p->correction_buffer, p->correction_buffer->content, p->correction_buffer->cur_pos);
 				int offset = p->buffer->cur_pos - p->correction_buffer->cur_pos;

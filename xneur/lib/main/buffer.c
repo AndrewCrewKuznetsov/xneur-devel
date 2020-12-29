@@ -312,12 +312,6 @@ static void buffer_save(struct _buffer *p, char *file_name, Window window)
 		}
 
 		char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[i], -1, p->keycode_modifiers[i]);
-		if (symbol == NULL)
-		{
-			fprintf(stream, "<?>");
-			continue;
-		}
-
 		if (symbol[0] == ' ')
 			fprintf(stream, "&nbsp;");
 		else
@@ -363,17 +357,7 @@ static void append_to_i18n_content(struct _buffer *buf, int pos, int languages_m
 	for (int i = 0; i < buf->handle->total_languages; i++)
 	{
 		char *symbol = buf->keymap->keycode_to_symbol(buf->keymap, keycode, i, modifier & (~ShiftMask));
-		if (symbol == NULL)
-		{
-			continue;
-		}
 		char *symbol_unchanged = buf->keymap->keycode_to_symbol(buf->keymap, keycode, i, modifier);
-		if (symbol_unchanged == NULL)
-		{
-			free(symbol);
-			continue;
-		}
-
 		struct _buffer_content *p = &buf->i18n_content[i];
 
 		size_t len = strlen(symbol);
@@ -595,17 +579,14 @@ static char *buffer_get_utf_string_on_kbd_group(struct _buffer *p, int group)
 			state = state & (~get_keycode_mod(j));
 		}
 		char *symbol = p->keymap->keycode_to_symbol(p->keymap, p->keycode[i], group, state);
-		if (symbol != NULL)
+		size_t len = strlen(symbol);
+		char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + len + 1);
+		if (tmp != NULL)
 		{
-			size_t len = strlen(symbol);
-			char *tmp = realloc(utf_string, strlen(utf_string) * sizeof(char) + len + 1);
-			if (tmp != NULL)
-			{
-				utf_string = tmp;
-				strncat(utf_string, symbol, len);
-			}
-			free(symbol);
+			utf_string = tmp;
+			strncat(utf_string, symbol, len);
 		}
+		free(symbol);
 	}
 
 	return utf_string;

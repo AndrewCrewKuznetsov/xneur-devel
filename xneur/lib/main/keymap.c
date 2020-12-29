@@ -56,8 +56,8 @@ struct keycode_to_symbol_pair
 
 #define NumlockMask 0x10
 
-static const int keyboard_groups[]	= {0x00000000, 0x00002000, 0x00004000, 0x00006000};
-static const int state_masks[]		= {0x00, 0x01, 0x80, 0x10}; // None, NumLock, Alt, Shift
+static const int KEYBOARD_GROUPS[]	= {0x00000000, 0x00002000, 0x00004000, 0x00006000};
+static const int STATE_MASKS[]		= {0x00, 0x01, 0x80}; // None, NumLock, Alt
 
 static int locale_create(void)
 {
@@ -78,12 +78,16 @@ static int locale_create(void)
 int get_languages_mask(void)
 {
 	int languages_mask = 0;
-	for (int group = 0; group < 4; group++)
-		languages_mask = languages_mask | keyboard_groups[group];
+	for (int group = 0; group < sizeof(KEYBOARD_GROUPS) / sizeof(KEYBOARD_GROUPS[0]); ++group)
+		languages_mask = languages_mask | KEYBOARD_GROUPS[group];
 	return ~languages_mask;
 }
+int get_keycode_mod(int group)
+{
+	return KEYBOARD_GROUPS[group];
+}
 
-static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int group, int state)
+static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int state)
 {
 	XKeyEvent event;
 	event.type        = KeyPress;
@@ -92,12 +96,8 @@ static char* keymap_keycode_to_symbol_real(struct _keymap *p, KeyCode kc, int gr
 	event.same_screen = True;
 	event.display     = p->display;
 	event.keycode     = kc;
-	event.state       = 0;
+	event.state       = state;
 	event.time        = CurrentTime;
-
-	if (group >= 0)
-		event.state = keyboard_groups[group];
-	event.state |= state;
 
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 	symbol[0] = NULLSYM;
@@ -158,8 +158,7 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	}
 
 	/* Miss. */
-	//log_message (TRACE, "Symbol at KeyCode %d not found on cache! ", kc);
-	char *symbol = keymap_keycode_to_symbol_real(p, kc, group, state);
+	char *symbol = keymap_keycode_to_symbol_real(p, kc, group >= 0 ? (state | KEYBOARD_GROUPS[group]) : state);
 
 	/* Just use next cache entry. LRU makes no sense here. */
 	p->keycode_to_symbol_cache_pos = (p->keycode_to_symbol_cache_pos + 1) % keycode_to_symbol_cache_size;
@@ -181,11 +180,6 @@ static char* keymap_keycode_to_symbol(struct _keymap *p, KeyCode kc, int group, 
 	return symbol;
 }
 
-int get_keycode_mod(int group)
-{
-	return keyboard_groups[group];
-}
-
 static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySym *lower, KeySym *upper)
 {
 	*lower = NoSymbol;
@@ -201,9 +195,7 @@ static void keymap_get_keysyms_by_string(struct _keymap *p, char *keyname, KeySy
 
 	for (int i = p->min_keycode; i <= p->max_keycode; i++)
 	{
-		int max = p->keysyms_per_keycode - 1;
-
-		for (int j = 0; j <= max; j++)
+		for (int j = 0; j < p->keysyms_per_keycode; j++)
 		{
 			if (p->keymap[j] == NoSymbol)
 				continue;
@@ -231,106 +223,100 @@ static char keymap_get_ascii_real(struct _keymap *p, const char *sym, int* prefe
 	{
 		*kc		= XKeysymToKeycode(p->display, XK_Return);
 		*modifier	= 0;
-		if (symbol_len)
-			*symbol_len = 1;
+		*symbol_len = 1;
 		return *sym;
 	}
 
-	XKeyEvent event;
-	event.type        = KeyPress;
-	event.root        = RootWindow(p->display, DefaultScreen(p->display));
-	event.subwindow   = None;
-	event.same_screen = True;
-	event.display     = p->display;
-	event.state       = 0;
-	event.keycode     = XKeysymToKeycode(p->display, XK_space);
-	event.time        = CurrentTime;
-
 	char *symbol		= (char *) malloc((256 + 1) * sizeof(char));
-	char *prev_symbols	= (char *) malloc((256 + 1) * sizeof(char));
+	// Symbols, that has text in one language, but doesn't have in `p->latin_group`
+	char *no_text_in_latin_lang = (char *) malloc((256 + 1) * sizeof(char));
 
-	int _preferred_lang = 0;
-	if (preferred_lang)
-		_preferred_lang = *preferred_lang;
-
-	for (int _lang = 0; _lang < p->handle->total_languages; _lang++)
-	{
-		int lang = _lang;
-		if (lang == 0)
-			lang = _preferred_lang;
-		else if (lang <= _preferred_lang)
-			lang--;
-
+	int count = p->handle->total_languages;
+	int lang = *preferred_lang;
+	// Loop through all languages, starting from `preferred_lang`
+	while (count-- > 0) {
 		KeySym *keymap = p->keymap;
-		for (int i = p->min_keycode; i <= p->max_keycode; i++)
+		// Check all physical keys of the keyboard
+		for (int keycode = p->min_keycode; keycode <= p->max_keycode; ++keycode)
 		{
-			int max = p->keysyms_per_keycode - 1;
-			while (max >= 0 && keymap[max] == NoSymbol)
-				max--;
-
-			prev_symbols[0] = NULLSYM;
+			no_text_in_latin_lang[0] = NULLSYM;
 			// Available space in prev_symbols
 			size_t avail_space = 256;
 
-			for (int j = 0; j <= max; j++)
+			// Loop through all symbols on the physical key
+			for (int j = 0; j <= p->keysyms_per_keycode; j++)
 			{
 				if (keymap[j] == NoSymbol)
 					continue;
 
-				for (int n = 0; n < 3; n++)
+				// TODO: Why Shift and Ctrl not checked in the original code?
+				const size_t MOD_COUNT = sizeof(STATE_MASKS) / sizeof(STATE_MASKS[0]);
+				// Check all modifier pairs
+				for (size_t n = 0; n < MOD_COUNT; ++n)
 				{
-					for (int m = 0; m < 3; m++) // Modifiers
+					for (size_t m = 0; m < MOD_COUNT; ++m) // Modifiers
 					{
-						event.keycode	= i;
+						// No need to check "<X> + Alt + Alt" and so on
+						if (n == m) continue;
 
-						event.state = get_keycode_mod(lang);
-						event.state |= state_masks[m];
-						event.state |= state_masks[n];
+						int mask = STATE_MASKS[n] | STATE_MASKS[m];
+						int mod = KEYBOARD_GROUPS[lang] | mask;
+
+						XKeyEvent event;
+						event.type        = KeyPress;
+						event.root        = RootWindow(p->display, DefaultScreen(p->display));
+						event.subwindow   = None;
+						event.same_screen = True;
+						event.display     = p->display;
+						event.time        = CurrentTime;
+						event.keycode     = keycode;
+
+						// Get text on the key produced by pressing key with specified modifiers in the specified keyboard layout
+						event.state = mod;
 						int nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
 						if (nbytes <= 0)
 							continue;
 
 						symbol[nbytes] = NULLSYM;
 
-						if (strstr(prev_symbols, symbol) != NULL)
+
+						// If that is not the searched symbol, go next
+						if (strncmp(sym, symbol, nbytes) != 0)
 							continue;
 
-						size_t _symbol_len = strlen(symbol);
-						strncat(prev_symbols, symbol, avail_space);
-						avail_space -= _symbol_len;
-
-						if (strncmp(sym, symbol, _symbol_len) != 0)
+						// If such symbol already produced by the another combination, go next
+						if (strstr(no_text_in_latin_lang, symbol) != NULL)
 							continue;
+						strncat(no_text_in_latin_lang, symbol, avail_space);
+						avail_space -= nbytes;
 
-						event.state = get_keycode_mod(p->latin_group);
-						event.state |= state_masks[m];
-						event.state |= state_masks[n];
-						nbytes = XLookupString(&event, symbol, 256, NULL, NULL);
-						if (nbytes <= 0)
+						// Symbol `sym` is produced by that key combination. Check that symbol exists
+						// in the layout with latin symbols that and return it if true. If symbol doesn't
+						// exists in the latin layout, go next
+						event.state = KEYBOARD_GROUPS[p->latin_group] | mask;
+						if (XLookupString(&event, symbol, 256, NULL, NULL) <= 0) {
 							continue;
+						}
 
 						char sym = symbol[0];
 
-						free(prev_symbols);
+						free(no_text_in_latin_lang);
 						free(symbol);
-						*kc = event.keycode;
-						event.state = 0;
-						event.state |= state_masks[m];
-						event.state |= state_masks[n];
-						*modifier = get_keycode_mod(lang) | event.state;
-						if (symbol_len)
-							*symbol_len = _symbol_len;
-						if (preferred_lang)
-							*preferred_lang = lang;
+						*kc = keycode;
+						*modifier = mod;
+						*symbol_len = nbytes;
+						*preferred_lang = lang;
 						return sym;
 					}
 				}
 			}
 			keymap += p->keysyms_per_keycode;
 		}
+		// Try to check next keyboard layout
+		lang = (lang + 1) % p->handle->total_languages;
 	}
 
-	free(prev_symbols);
+	free(no_text_in_latin_lang);
 	free(symbol);
 	return NULLSYM;
 }
@@ -407,7 +393,7 @@ static char keymap_get_cur_ascii_char(struct _keymap *p, XEvent *e)
 
 	char *symbol = (char *) malloc((256 + 1) * sizeof(char));
 
-	ke->state = get_keycode_mod(p->latin_group);
+	ke->state = KEYBOARD_GROUPS[p->latin_group];
 	ke->state |= mod;
 
 	int nbytes = XLookupString(ke, symbol, 256, NULL, NULL);
