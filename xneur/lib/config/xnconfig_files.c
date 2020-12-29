@@ -192,19 +192,16 @@ struct _list_char* load_list(const char *dir_name, const char *file_name, int so
 	struct _list_char *list = list_char_init();
 	char *file_path_name = get_file_path_name(dir_name, file_name);
 	char *content = get_file_content(file_path_name);
-	if (content == NULL)
-	{
-		free(file_path_name);
-		return list;
-	}
-
-	list->load(list, content);
-
-	free(content);
 	free(file_path_name);
 
-	if (sort_flag == TRUE)
-		list->sort(list);
+	if (content != NULL)
+	{
+		list->load(list, content);
+
+		if (sort_flag == TRUE)
+			list->sort(list);
+	}
+	free(content);
 
 	return list;
 }
@@ -213,16 +210,13 @@ int save_list(struct _list_char *list, const char *dir_name, const char *file_na
 {
 	char *file_path_name = get_home_file_path_name(dir_name, file_name);
 	FILE *stream = fopen(file_path_name, "w");
-	if (stream == NULL)
-	{
-		free(file_path_name);
-		return FALSE;
-	}
-
-	list->save(list, stream);
-
-	fclose(stream);
 	free(file_path_name);
 
-	return TRUE;
+	if (stream != NULL)
+	{
+		list->save(list, stream);
+		fclose(stream);
+		return TRUE;
+	}
+	return FALSE;
 }

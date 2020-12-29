@@ -286,15 +286,16 @@ struct _xneur_handle *xneur_handle_create (void)
 
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		int path_len = strlen(LANGUAGEDIR) + strlen(handle->languages[lang].dir) + 2;
+		struct _xneur_language* l = &handle->languages[lang];
+		int path_len = strlen(LANGUAGEDIR) + strlen(l->dir) + 2;
 		char *lang_dir = (char *) malloc(path_len * sizeof(char));
-		snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, handle->languages[lang].dir);
+		snprintf(lang_dir, path_len, "%s/%s", LANGUAGEDIR, l->dir);
 
-		handle->languages[lang].dictionary = load_list(lang_dir, DICT_NAME, TRUE);
-		handle->languages[lang].proto      = load_list(lang_dir, PROTO_NAME, TRUE);
-		handle->languages[lang].big_proto  = load_list(lang_dir, BIG_PROTO_NAME, TRUE);
-		handle->languages[lang].pattern    = load_list(lang_dir, PATTERN_NAME, TRUE);
-		handle->languages[lang].temp_dictionary = handle->languages[lang].dictionary->clone(handle->languages[lang].dictionary);
+		l->dictionary = load_list(lang_dir, DICT_NAME, TRUE);
+		l->proto      = load_list(lang_dir, PROTO_NAME, TRUE);
+		l->big_proto  = load_list(lang_dir, BIG_PROTO_NAME, TRUE);
+		l->pattern    = load_list(lang_dir, PATTERN_NAME, TRUE);
+		l->temp_dictionary = l->dictionary->clone(l->dictionary);
 
 		free(lang_dir);
 	}
@@ -302,11 +303,12 @@ struct _xneur_handle *xneur_handle_create (void)
 #ifdef WITH_ASPELL
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
+		const struct _xneur_language* l = &handle->languages[lang];
 		// initialize aspell checker for current language
 		int i = 0;
 		for (i = 0; i < names_len; i++)
 		{
-			if (strcmp(layout_names[i], handle->languages[lang].dir) == 0)
+			if (strcmp(layout_names[i], l->dir) == 0)
 				break;
 
 		}
@@ -319,20 +321,20 @@ struct _xneur_handle *xneur_handle_create (void)
 
 			if (aspell_error != 0)
 			{
-				//printf("   [!] Error initialize %s aspell dictionary\n", handle->languages[lang].name);
+				//printf("   [!] Error initialize %s aspell dictionary\n", l->name);
 				delete_aspell_can_have_error(possible_err);
 				handle->has_spell_checker[lang] = 0;
 			}
 			else
 			{
-				//printf("   [!] Initialize %s aspell dictionary\n", handle->languages[lang].name);
+				//printf("   [!] Initialize %s aspell dictionary\n", l->name);
 				handle->spell_checkers[lang] = to_aspell_speller(possible_err);
 				handle->has_spell_checker[lang] = 1;
 			}
 		}
 		else
 		{
-			//printf("   [!] Now we don't support aspell dictionary for %s layout\n", handle->languages[lang].dir);
+			//printf("   [!] Now we don't support aspell dictionary for %s layout\n", l->dir);
 			handle->has_spell_checker[lang] = 0;
 		}
 	}
@@ -341,18 +343,19 @@ struct _xneur_handle *xneur_handle_create (void)
 #ifdef WITH_ENCHANT
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
+		const struct _xneur_language* l = &handle->languages[lang];
 		// initialize enchant checker for current language
 		int j = 0;
 		for (j = 0; j < names_len; j++)
 		{
-			if (strcmp(layout_names[j], handle->languages[lang].dir) == 0)
+			if (strcmp(layout_names[j], l->dir) == 0)
 				break;
 		}
 		if (j != names_len)
 		{
 			handle->enchant_dicts[lang] = NULL;
 			size_t len1 = strlen(spell_names[j]);
-			size_t len2 = strlen(handle->languages[lang].dir);
+			size_t len2 = strlen(l->dir);
 			// +1 for "_" and +1 for trailing zero
 			char *dict_name = malloc(len1 + 1 + len2 + 1);
 			if (dict_name == NULL)
@@ -360,7 +363,7 @@ struct _xneur_handle *xneur_handle_create (void)
 			dict_name[0] = NULLSYM;
 			strncat(dict_name, spell_names[j], len1);
 			strncat(dict_name, "_", 1);
-			strncat(dict_name, handle->languages[lang].dir, len2);
+			strncat(dict_name, l->dir, len2);
 			dict_name[3] = toupper(dict_name[3]);
 			dict_name[4] = toupper(dict_name[4]);
 			//printf("   [!] Try load dict %s\n", dict_name);
@@ -391,11 +394,13 @@ struct _xneur_handle *xneur_handle_create (void)
 
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		handle->languages[lang].disable_auto_detection |=
-			handle->languages[lang].excluded || (
-				handle->languages[lang].dictionary->data_count == 0 &&
-				handle->languages[lang].proto->data_count == 0 &&
-				handle->languages[lang].big_proto->data_count == 0
+		struct _xneur_language* l = &handle->languages[lang];
+
+		l->disable_auto_detection |=
+			l->excluded || (
+				l->dictionary->data_count == 0 &&
+				l->proto->data_count == 0 &&
+				l->big_proto->data_count == 0
 #ifdef WITH_ASPELL
 				&& handle->has_spell_checker[lang] == 0
 #endif
@@ -425,28 +430,17 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 			enchant_broker_free_dict (handle->enchant_broker, handle->enchant_dicts[lang]);
 #endif
 
-		if (handle->languages == NULL)
-			continue;
+		struct _xneur_language* l = &handle->languages[lang];
 
-		if (handle->languages[lang].temp_dictionary != NULL)
-			handle->languages[lang].temp_dictionary->uninit(handle->languages[lang].temp_dictionary);
+		l->temp_dictionary->uninit(l->temp_dictionary);
+		l->dictionary->uninit(l->dictionary);
+		l->proto->uninit(l->proto);
+		l->big_proto->uninit(l->big_proto);
+		l->pattern->uninit(l->pattern);
 
-		if (handle->languages[lang].dictionary != NULL)
-			handle->languages[lang].dictionary->uninit(handle->languages[lang].dictionary);
-
-		if (handle->languages[lang].proto != NULL)
-			handle->languages[lang].proto->uninit(handle->languages[lang].proto);
-
-		if (handle->languages[lang].big_proto != NULL)
-			handle->languages[lang].big_proto->uninit(handle->languages[lang].big_proto);
-
-		if (handle->languages[lang].pattern != NULL)
-			handle->languages[lang].pattern->uninit(handle->languages[lang].pattern);
-
-		free(handle->languages[lang].name);
-		free(handle->languages[lang].dir);
+		free(l->name);
+		free(l->dir);
 	}
-	handle->total_languages = 0;
 	free(handle->languages);
 
 #ifdef WITH_ASPELL
@@ -462,7 +456,6 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 #endif
 
 	free(handle);
-
 }
 
 int xneur_get_layout (struct _xneur_handle *handle, char *word)
