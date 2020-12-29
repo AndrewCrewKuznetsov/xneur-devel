@@ -2078,12 +2078,12 @@ static void program_check_pattern(struct _program *p)
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 
 	tmp_buffer->set_content(tmp_buffer, pattern_data->string + strlen(word)*sizeof(char));
+	free(word);
 
 	if (tmp_buffer->cur_pos == 0)
 	{
 		tmp_buffer->uninit(tmp_buffer);
 		p->last_action = ACTION_NONE;
-		free(word);
 		return;
 	}
 
@@ -2099,8 +2099,6 @@ static void program_check_pattern(struct _program *p)
 
 	p->last_action = ACTION_AUTOCOMPLETION;
 	p->last_pattern_id = 0;
-
-	free(word);
 }
 
 static void program_rotate_pattern(struct _program *p)
@@ -2165,12 +2163,13 @@ static void program_rotate_pattern(struct _program *p)
 
 	tmp_buffer->set_content(tmp_buffer, list_alike->data[p->last_pattern_id].string + strlen(word)*sizeof(char));
 
+	free(word);
+	list_alike->uninit(list_alike);
+
 	if (tmp_buffer->cur_pos == 0)
 	{
-		list_alike->uninit(list_alike);
 		tmp_buffer->uninit(tmp_buffer);
 		p->last_action = ACTION_NONE;
-		free(word);
 		return;
 	}
 
@@ -2185,11 +2184,6 @@ static void program_rotate_pattern(struct _program *p)
 	tmp_buffer->uninit(tmp_buffer);
 
 	p->last_action = ACTION_AUTOCOMPLETION;
-
-	free(word);
-
-	list_alike->uninit(list_alike);
-	list_alike  =  NULL;
 }
 
 static void program_check_misprint(struct _program *p)
