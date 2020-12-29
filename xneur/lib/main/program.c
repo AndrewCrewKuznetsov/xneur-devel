@@ -2064,7 +2064,7 @@ static void program_check_pattern(struct _program *p)
 		return;
 	}
 
-	log_message (DEBUG, _("Recognition word '%s' from text '%s' (layout %d), autocompletation..."), pattern_data->string, word, get_curr_keyboard_group());
+	log_message (DEBUG, _("Recognition word '%s' from text '%s' (layout %d), autocompletion..."), pattern_data->string, word, get_curr_keyboard_group());
 
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 
@@ -2148,7 +2148,7 @@ static void program_rotate_pattern(struct _program *p)
 	if (p->last_pattern_id == list_alike->data_count)
 		p->last_pattern_id = 0;
 
-    log_message (DEBUG, _("Next autocompletion word '%s' from text '%s' (layout %d), rotate autocompletation..."), list_alike->data[p->last_pattern_id].string, word, get_curr_keyboard_group());
+	log_message (DEBUG, _("Next autocompletion word '%s' from text '%s' (layout %d), rotate autocompletion..."), list_alike->data[p->last_pattern_id].string, word, get_curr_keyboard_group());
 
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 

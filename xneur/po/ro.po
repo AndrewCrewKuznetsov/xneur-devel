@@ -1249,14 +1249,14 @@ msgstr ""
 
 #: lib/main/program.c:2127
 #, c-format
-msgid "Recognition word '%s' from text '%s' (layout %d), autocompletation..."
+msgid "Recognition word '%s' from text '%s' (layout %d), autocompletion..."
 msgstr ""
 
 #: lib/main/program.c:2213
 #, c-format
 msgid ""
 "Next autocompletion word '%s' from text '%s' (layout %d), rotate "
-"autocompletation..."
+"autocompletion..."
 msgstr ""
 
 #: lib/main/program.c:2405
