@@ -66,19 +66,18 @@ static int get_dictionary_lang(struct _xneur_handle *handle, char **word)
 static int get_aspell_hits(struct _xneur_handle *handle, char **word, int **sym_len, int cur_lang)
 {
 	// check for current language first
-	if (handle->has_spell_checker[cur_lang])
+	if (handle->spell_checkers[cur_lang])
 	{
-		if (strlen(word[cur_lang]) > 0)
-		{
-			if (strlen(word[cur_lang]) / sym_len[cur_lang][0] > 1)
-			{
-				if (!handle->languages[cur_lang].disable_auto_detection && !handle->languages[cur_lang].excluded &&
-					aspell_speller_check(handle->spell_checkers[cur_lang], word[cur_lang], strlen(word[cur_lang])))
-				{
-					log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), handle->languages[cur_lang].name);
-					return cur_lang;
-				}
-			}
+		const struct _xneur_language* l = &handle->languages[cur_lang];
+		size_t word_len = strlen(word[cur_lang]);
+		if (word_len > 0
+		 && word_len / sym_len[cur_lang][0] > 1)
+		 && !l->disable_auto_detection
+		 && !l->excluded
+		 && aspell_speller_check(handle->spell_checkers[cur_lang], word[cur_lang], word_len)
+		) {
+			log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), l->name);
+			return cur_lang;
 		}
 	}
 	else
@@ -89,28 +88,24 @@ static int get_aspell_hits(struct _xneur_handle *handle, char **word, int **sym_
 	// check for another languages
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded || lang == cur_lang)
+		const struct _xneur_language* l = &handle->languages[lang];
+		size_t word_len = strlen(word[lang]);
+		if (l->disable_auto_detection || l->excluded || lang == cur_lang || word_len == 0)
 			continue;
 
-		if (strlen(word[lang]) == 0)
-			continue;
-
-		if (!handle->has_spell_checker[lang])
+		if (!handle->spell_checkers[lang])
 		{
-			log_message(DEBUG, _("   [!] Now we don't support aspell dictionary for %s layout"), handle->languages[lang].name);
+			log_message(DEBUG, _("   [!] Now we don't support aspell dictionary for %s layout"), l->name);
 			continue;
 		}
 
-		if (strlen(word[lang]) / sym_len[lang][0] > 1)
-		{
-			if (aspell_speller_check(handle->spell_checkers[lang], word[lang], strlen(word[lang])))
-			{
-				log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), handle->languages[lang].name);
-				return lang;
-			}
+		if (word_len / sym_len[lang][0] > 1
+		 && aspell_speller_check(handle->spell_checkers[lang], word[lang], word_len)
+		) {
+			log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), l->name);
+			return lang;
 		}
 	}
-
 
 	log_message(DEBUG, _("   [-] This word has no hits for all aspell dictionaries"));
 	return NO_LANGUAGE;
@@ -315,13 +310,13 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 #endif
 
 #ifdef WITH_ASPELL
-		if (!handle->has_spell_checker[lang])
+		if (!handle->spell_checkers[lang])
 		{
 			free(possible_words);
 			free(word);
 			continue;
 		}
-		const AspellWordList *suggestions = aspell_speller_suggest (handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
+		const AspellWordList *suggestions = aspell_speller_suggest(handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
 		if (! suggestions)
 		{
 			free(possible_words);

@@ -136,7 +136,7 @@ static void xneur_load_config(void)
 		log_message(DEBUG, _("      %s proto has %d records"), lang_name, xconfig->handle->languages[lang].proto->data_count);
 		log_message(DEBUG, _("      %s big proto has %d records"), lang_name, xconfig->handle->languages[lang].big_proto->data_count);
 #ifdef WITH_ASPELL
-		if (xconfig->handle->has_spell_checker[lang])
+		if (xconfig->handle->spell_checkers[lang])
 		{
 			log_message(DEBUG, _("      %s aspell dictionary loaded"), lang_name);
 		}

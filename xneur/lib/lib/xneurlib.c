@@ -285,9 +285,8 @@ struct _xneur_handle *xneur_handle_create (void)
 
 #ifdef WITH_ASPELL
 	// init aspell spellers
-	handle->spell_checkers = (AspellSpeller **) malloc(handle->total_languages * sizeof(AspellSpeller*));
-	handle->has_spell_checker = (int *) malloc(handle->total_languages * sizeof(int));
 	handle->spell_config = new_aspell_config();
+	handle->spell_checkers = (AspellSpeller**) calloc(handle->total_languages, sizeof(AspellSpeller*));
 #endif
 
 #ifdef WITH_ENCHANT
@@ -329,19 +328,12 @@ struct _xneur_handle *xneur_handle_create (void)
 			{
 				//printf("   [!] Error initialize %s aspell dictionary\n", l->name);
 				delete_aspell_can_have_error(possible_err);
-				handle->has_spell_checker[lang] = 0;
 			}
 			else
 			{
 				//printf("   [!] Initialize %s aspell dictionary\n", l->name);
 				handle->spell_checkers[lang] = to_aspell_speller(possible_err);
-				handle->has_spell_checker[lang] = 1;
 			}
-		}
-		else
-		{
-			//printf("   [!] Now we don't support aspell dictionary for %s layout\n", l->dir);
-			handle->has_spell_checker[lang] = 0;
 		}
 	}
 #endif
@@ -396,7 +388,7 @@ struct _xneur_handle *xneur_handle_create (void)
 				l->proto->data_count == 0 &&
 				l->big_proto->data_count == 0
 #ifdef WITH_ASPELL
-				&& handle->has_spell_checker[lang] == 0
+				&& handle->spell_checkers[lang] == NULL
 #endif
 #ifdef WITH_ENCHANT
 				&& handle->enchant_dicts[lang] == NULL
@@ -415,7 +407,7 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
 #ifdef WITH_ASPELL
-		if (handle->has_spell_checker[lang])
+		if (handle->spell_checkers[lang])
 			delete_aspell_speller(handle->spell_checkers[lang]);
 #endif
 
@@ -440,7 +432,6 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 #ifdef WITH_ASPELL
 	delete_aspell_config(handle->spell_config);
 	free(handle->spell_checkers);
-	free(handle->has_spell_checker);
 #endif
 
 #ifdef WITH_ENCHANT

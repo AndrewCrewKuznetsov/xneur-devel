@@ -433,7 +433,7 @@ static void program_process_input(struct _program *p)
 					log_message(DEBUG, _("      %s proto has %d records"), lang_name, xconfig->handle->languages[lang].proto->data_count);
 					log_message(DEBUG, _("      %s big proto has %d records"), lang_name, xconfig->handle->languages[lang].big_proto->data_count);
 			#ifdef WITH_ASPELL
-					if (xconfig->handle->has_spell_checker[lang])
+					if (xconfig->handle->spell_checkers[lang])
 					{
 						log_message(DEBUG, _("      %s aspell dictionary loaded"), lang_name);
 					}
@@ -2257,18 +2257,15 @@ static void program_check_misprint(struct _program *p)
 #endif
 
 #ifdef WITH_ASPELL
-	if (!xconfig->handle->has_spell_checker[lang])
+	AspellSpeller* dict = xconfig->handle->spell_checkers[lang];
+	size_t word_len = strlen(word + offset);
+	if (!dict || aspell_speller_check(dict, word + offset, word_len))
 	{
 		free(word);
 		return;
 	}
-	if (aspell_speller_check(xconfig->handle->spell_checkers[lang], word+offset, strlen(word+offset)))
-	{
-		free(word);
-		return;
-	}
-	const AspellWordList *suggestions = aspell_speller_suggest (xconfig->handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
-	if (! suggestions)
+	const AspellWordList *suggestions = aspell_speller_suggest(dict, (const char *) word + offset, word_len);
+	if (!suggestions)
 	{
 		free(word);
 		return;
@@ -3068,7 +3065,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 	}
 
 #ifdef WITH_ASPELL
-	if (xconfig->handle->has_spell_checker[new_lang])
+	if (xconfig->handle->spell_checkers[new_lang])
 	{
 		if (!aspell_speller_check(xconfig->handle->spell_checkers[new_lang], new_word+offset, strlen(new_word)))
 		{

@@ -61,8 +61,8 @@ struct _xneur_handle
 #ifdef WITH_ASPELL
 	// global aspell dictionaries
 	AspellConfig *spell_config;
+	/// Array of dictionaries for each language
 	AspellSpeller **spell_checkers;
-	int *has_spell_checker;
 #endif
 
 #ifdef WITH_ENCHANT
