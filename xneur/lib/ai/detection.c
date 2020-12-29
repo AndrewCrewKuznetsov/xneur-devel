@@ -393,82 +393,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 	return possible_lang;
 }
 
-int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
-{
-	char **word = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	int **sym_len = (int **) malloc((handle->total_languages + 1) * sizeof(int *));
-
-	log_message(DEBUG, _("Processing word:"));
-	for (int i = 0; i < handle->total_languages; i++)
-	{
-		word[i] = strdup(p->get_last_word(p, p->i18n_content[i].content));
-		word_base[i] = word[i];
-		del_final_numeric_char(word[i]);
-
-		unsigned int offset = 0;
-		for (offset = 0; offset < strlen(word[i]); offset++)
-		{
-			if (!ispunct(word[i][offset]) && (!isdigit(word[i][offset])))
-				break;
-		}
-		word[i] = word[i] + offset;
-
-		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
-		word_unchanged_base[i] = word_unchanged[i];
-		word_unchanged[i] = word_unchanged[i] + offset;
-		del_final_numeric_char(word_unchanged[i]);
-
-		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
-
-		sym_len[i] = p->i18n_content[i].symbol_len + p->get_last_word_offset(p, p->content, strlen(p->content));
-	}
-
-	log_message(DEBUG, _("Start word processing..."));
-
-	// Check by dictionary
-	int lang = get_dictionary_lang(handle, word);
-
-#ifdef WITH_ENCHANT
-	// Check by enchant wrapper
-	if (lang == NO_LANGUAGE)
-		lang = get_enchant_hits(handle, word, sym_len, cur_lang);
-#endif
-
-#ifdef WITH_ASPELL
-	// Check by aspell
-	if (lang == NO_LANGUAGE)
-		lang = get_aspell_hits(handle, word, sym_len, cur_lang);
-#endif
-
-	// If not found in dictionary, try to find in proto
-	int len = strlen(p->content);
-	int offset = p->get_last_word_offset(p, p->content, len);
-	if (lang == NO_LANGUAGE)
-		lang = get_proto_lang(handle, word, sym_len, len, offset, cur_lang, PROTO_LEN);
-
-	if (lang == NO_LANGUAGE)
-		lang = get_proto_lang(handle, word, sym_len, len, offset, cur_lang, BIG_PROTO_LEN);
-
-	log_message(DEBUG, _("End word processing."));
-
-	for (int i = 0; i < handle->total_languages; i++)
-	{
-		free(word_base[i]);
-		free(word_unchanged_base[i]);
-	}
-
-	free(word);
-	free(word_unchanged);
-	free(word_base);
-	free(word_unchanged_base);
-	free(sym_len);
-	return lang;
-}
-
-int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
+int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, int check_similar_words)
 {
 	char **word = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
 	char **word_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
@@ -519,7 +444,7 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 #endif
 
 	// Check misprint
-	if (lang == NO_LANGUAGE)
+	if (check_similar_words && lang == NO_LANGUAGE)
 		lang = get_similar_words (handle, p);
 
 	// If not found in dictionary, try to find in proto

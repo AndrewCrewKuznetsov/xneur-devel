@@ -1430,9 +1430,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 static int change(struct _program *p, int action, int check_similar_words)
 {
 	int cur_lang = get_curr_keyboard_group();
-	int new_lang = check_similar_words
-		? check_lang_with_similar_words(xconfig->handle, p->buffer, cur_lang)
-		: check_lang(xconfig->handle, p->buffer, cur_lang);
+	int new_lang = check_lang(xconfig->handle, p->buffer, cur_lang, check_similar_words);
 
 	if (new_lang == NO_LANGUAGE)
 	{
