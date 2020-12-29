@@ -2217,28 +2217,16 @@ static void program_check_misprint(struct _program *p)
 #ifdef WITH_ENCHANT
 	size_t count = 0;
 
-	if (!xconfig->handle->has_enchant_checker[lang])
-	{
+	EnchantDict* dict = xconfig->handle->enchant_dicts[lang];
+	size_t word_len = strlen(word + offset);
+	if (!dict || word_len <= 0 || !enchant_dict_check(dict, word + offset, word_len)) {
 		free(word);
 		return;
 	}
 
-	if (strlen(word+offset) <= 0)
-	{
-		free(word);
-		return;
-	}
-
-	if (!enchant_dict_check(xconfig->handle->enchant_dicts[lang], word+offset, strlen(word+offset)))
-	{
-		free(word);
-		return;
-	}
-
-	char **suggs = enchant_dict_suggest (xconfig->handle->enchant_dicts[lang], word+offset, strlen(word+offset), &count);
+	char **suggs = enchant_dict_suggest(dict, word + offset, word_len, &count);
 	if (count > 0)
 	{
-
 		for (unsigned int i = 0; i < count; i++)
 		{
 			int tmp_levenshtein = levenshtein(word+offset, suggs[i]);
@@ -2265,7 +2253,7 @@ static void program_check_misprint(struct _program *p)
 		}
 	}
 
-	enchant_dict_free_string_list(xconfig->handle->enchant_dicts[lang], suggs);
+	enchant_dict_free_string_list(dict, suggs);
 #endif
 
 #ifdef WITH_ASPELL
@@ -3091,7 +3079,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 #endif
 
 #ifdef WITH_ENCHANT
-	if (xconfig->handle->has_enchant_checker[new_lang])
+	if (xconfig->handle->enchant_dicts[new_lang])
 	{
 		if (strlen(new_word+offset) <= 0)
 		{

@@ -292,9 +292,8 @@ struct _xneur_handle *xneur_handle_create (void)
 
 #ifdef WITH_ENCHANT
 	// init enchant brocker and dicts
-	handle->enchant_dicts = (EnchantDict **) malloc(handle->total_languages * sizeof(EnchantDict *));
-	handle->has_enchant_checker = (int *) malloc(handle->total_languages * sizeof(int));
-	handle->enchant_broker = enchant_broker_init ();
+	handle->enchant_broker = enchant_broker_init();
+	handle->enchant_dicts = (EnchantDict**) calloc(handle->total_languages, sizeof(EnchantDict*));
 #endif
 
 	for (int lang = 0; lang < handle->total_languages; lang++)
@@ -355,7 +354,6 @@ struct _xneur_handle *xneur_handle_create (void)
 		const char* dict = spell_name(l);
 		if (dict != NULL)
 		{
-			handle->enchant_dicts[lang] = NULL;
 			size_t len1 = strlen(dict);
 			size_t len2 = strlen(l->dir);
 			// +1 for "_" and +1 for trailing zero
@@ -369,27 +367,21 @@ struct _xneur_handle *xneur_handle_create (void)
 			dict_name[3] = toupper(dict_name[3]);
 			dict_name[4] = toupper(dict_name[4]);
 			//printf("   [!] Try load dict %s\n", dict_name);
-			if (enchant_broker_dict_exists(handle->enchant_broker, dict_name) == FALSE)
+			if (!enchant_broker_dict_exists(handle->enchant_broker, dict_name))
 			{
 				dict_name[2] = '\0';
 				//printf("   [!] Try load dict %s\n", dict_name);
-				if (enchant_broker_dict_exists(handle->enchant_broker, dict_name) == FALSE)
+				if (!enchant_broker_dict_exists(handle->enchant_broker, dict_name))
 				{
-					handle->has_enchant_checker[lang] = 0;
 					free(dict_name);
 					continue;
 				}
 			}
 
 			//printf("   [!] Loaded dict %s\n", dict_name);
-			handle->enchant_dicts[lang] = enchant_broker_request_dict (handle->enchant_broker, dict_name);
-			handle->has_enchant_checker[lang] = 1;
+			handle->enchant_dicts[lang] = enchant_broker_request_dict(handle->enchant_broker, dict_name);
 
 			free(dict_name);
-		}
-		else
-		{
-			handle->has_enchant_checker[lang] = 0;
 		}
 	}
 #endif
@@ -407,7 +399,7 @@ struct _xneur_handle *xneur_handle_create (void)
 				&& handle->has_spell_checker[lang] == 0
 #endif
 #ifdef WITH_ENCHANT
-				&& handle->has_enchant_checker[lang] == 0
+				&& handle->enchant_dicts[lang] == NULL
 #endif
 			);
 	}
@@ -428,8 +420,8 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 #endif
 
 #ifdef WITH_ENCHANT
-		if ((handle->enchant_dicts[lang] != NULL) && (handle->has_enchant_checker[lang]))
-			enchant_broker_free_dict (handle->enchant_broker, handle->enchant_dicts[lang]);
+		if (handle->enchant_dicts[lang] != NULL)
+			enchant_broker_free_dict(handle->enchant_broker, handle->enchant_dicts[lang]);
 #endif
 
 		struct _xneur_language* l = &handle->languages[lang];
@@ -452,9 +444,8 @@ void xneur_handle_destroy (struct _xneur_handle *handle)
 #endif
 
 #ifdef WITH_ENCHANT
-	enchant_broker_free (handle->enchant_broker);
+	enchant_broker_free(handle->enchant_broker);
 	free(handle->enchant_dicts);
-	free(handle->has_enchant_checker);
 #endif
 
 	free(handle);

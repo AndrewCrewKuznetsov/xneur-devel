@@ -121,19 +121,19 @@ static int get_aspell_hits(struct _xneur_handle *handle, char **word, int **sym_
 static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym_len, int cur_lang)
 {
 	// check for current language first
-	if (handle->has_enchant_checker[cur_lang])
+	EnchantDict* cur_dict = handle->enchant_dicts[cur_lang];
+	if (cur_dict)
 	{
-		if (strlen(word[cur_lang]) > 0)
-		{
-			if ((int)(strlen(word[cur_lang]) / sym_len[cur_lang][0]) > 1)
-			{
-				if (!handle->languages[cur_lang].disable_auto_detection && !handle->languages[cur_lang].excluded &&
-					!enchant_dict_check(handle->enchant_dicts[cur_lang], word[cur_lang], strlen(word[cur_lang])))
-				{
-					log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), handle->languages[cur_lang].name);
-					return cur_lang;
-				}
-			}
+		const struct _xneur_language* l = &handle->languages[cur_lang];
+		size_t word_len = strlen(word[cur_lang]);
+		if (word_len > 0
+		 && word_len / sym_len[cur_lang][0] > 1
+		 && !l->disable_auto_detection
+		 && !l->excluded
+		 && !enchant_dict_check(cur_dict, word[cur_lang], word_len)
+		) {
+			log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), l->name);
+			return cur_lang;
 		}
 	}
 	else
@@ -144,25 +144,22 @@ static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym
 	// check for another languages
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded || lang == cur_lang || (strlen(word[lang]) <= 0))
+		const struct _xneur_language* l = &handle->languages[lang];
+		size_t word_len = strlen(word[lang]);
+		if (l->disable_auto_detection || l->excluded || lang == cur_lang || word_len <= 0)
 			continue;
 
-		if (strlen(word[lang]) == 0)
-			continue;
-
-		if (!handle->has_enchant_checker[lang])
+		EnchantDict* dict = handle->enchant_dicts[lang];
+		if (!dict)
 		{
-			log_message(DEBUG, _("   [!] Now we don't support enchant wrapper dictionary for %s layout"), handle->languages[lang].name);
+			log_message(DEBUG, _("   [!] Now we don't support enchant wrapper dictionary for %s layout"), l->name);
 			continue;
 		}
 
-		if (strlen(word[lang]) / sym_len[lang][0] > 1)
+		if (word_len / sym_len[lang][0] > 1 && !enchant_dict_check(dict, word[lang], word_len))
 		{
-			if (!enchant_dict_check(handle->enchant_dicts[lang], word[lang], strlen(word[lang])))
-			{
-				log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), handle->languages[lang].name);
-				return lang;
-			}
+			log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), l->name);
+			return lang;
 		}
 	}
 
@@ -289,19 +286,19 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 		}
 
 #ifdef WITH_ENCHANT
-		size_t count = 0;
-
-		if (!handle->has_enchant_checker[lang])
+		EnchantDict* dict = handle->enchant_dicts[lang];
+		if (!dict)
 		{
 			free(possible_words);
 			free(word);
 			continue;
 		}
 
-		char **suggs = enchant_dict_suggest (handle->enchant_dicts[lang], word+offset, strlen(word+offset), &count);
+		size_t count = 0;
+		char **suggs = enchant_dict_suggest(dict, word+offset, strlen(word+offset), &count);
 		if (count > 0)
 		{
-			for (unsigned int i = 0; i < count; i++)
+			for (size_t i = 0; i < count; i++)
 			{
 				int tmp_levenshtein = levenshtein(word+offset, suggs[i]);
 				if (tmp_levenshtein < min_levenshtein)
@@ -310,12 +307,11 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 					free(possible_words);
 					possible_words = strdup(suggs[i]);
 					possible_lang = lang;
-
 				}
 				//log_message (ERROR, "    %d. %s (%d)", i+1, suggs[i], levenshtein(word, suggs[i]));
 			}
 		}
-		enchant_dict_free_string_list(handle->enchant_dicts[lang], suggs);
+		enchant_dict_free_string_list(dict, suggs);
 #endif
 
 #ifdef WITH_ASPELL
