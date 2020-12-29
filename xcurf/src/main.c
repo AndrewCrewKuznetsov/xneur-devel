@@ -333,13 +333,14 @@ int main(int argc, char *argv[])
 		char *short_name = strsep(&tmp_symbols, "+");
 		short_name[2] = '\0';
 
+		//FIXME: leak in pixmaps[group]
 		pixmaps[group] = malloc((2 /*language code*/ + 4 /*.png*/ +1 /*\0*/) * sizeof(char));
 		sprintf(pixmaps[group], "%s.png", short_name);
 		pixmaps[group] = get_file_path_name("pixmaps", pixmaps[group]);
 		printf("%s\n", pixmaps[group]);
 	}
 
-	free(symbols);
+	XFree(symbols);
 
 	// Open display
 	display = XOpenDisplay(NULL);

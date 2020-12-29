@@ -218,8 +218,8 @@ void xneur_get_logfile()
 	strncat(command, TO_STDOUT, sizeof(TO_STDOUT)-1);
 
 	FILE *fp = popen(command, "r");
-	g_free(log_home_path);
-	g_free(command);
+	free(log_home_path);
+	free(command);
 	if (fp == NULL)
 		return;
 
@@ -2743,7 +2743,7 @@ char* xneur_get_file_content(const char *path)
 	char *content = (char *) malloc((file_len + 2) * sizeof(char)); // + '\n' + '\0'
 	if (fread(content, 1, file_len, stream) != file_len)
 	{
-		g_free(content);
+		free(content);
 		fclose(stream);
 		return NULL;
 	}
