@@ -85,19 +85,32 @@ static void free_layout(char **names, int gc) {
 }*/
 
 #if  defined(WITH_ASPELL) || defined(WITH_ENCHANT)
-static char *layout_names[] =
+/// Returns name of dictionary for language
+static const char* spell_name(const struct _xneur_language* lang)
 {
-	"am","bg","by","cz","de","gr","ee","en","es","fr","ge","gb","kz","lt","lv",
-	"pl","ro","ru","ua","us","uz"
-};
+	static const char* LAYOUT_NAMES[] =
+	{
+		"am","bg","by","cz","de","gr","ee","en","es","fr","ge","gb","kz","lt","lv",
+		"pl","ro","ru","ua","us","uz"
+	};
 
-static char *spell_names[] =
-{
-	"hy","bg","be","cs","de","el","et","en","es","fr","ka","en","kk","lt","lv",
-	"pl","ro","ru","uk","en","uz"
-};
+	static const char* SPELL_NAMES[] =
+	{
+		"hy","bg","be","cs","de","el","et","en","es","fr","ka","en","kk","lt","lv",
+		"pl","ro","ru","uk","en","uz"
+	};
 
-static const int names_len = sizeof(layout_names) / sizeof(layout_names[0]);
+	static const size_t NAMES_LEN = sizeof(LAYOUT_NAMES) / sizeof(LAYOUT_NAMES[0]);
+
+	size_t i = 0;
+	for (; i < NAMES_LEN; ++i)
+	{
+		if (strcmp(LAYOUT_NAMES[i], lang->dir) == 0) {
+			break;
+		}
+	}
+	return i != NAMES_LEN ? SPELL_NAMES[i] : NULL;
+}
 #endif
 
 static long get_next_property_value (unsigned char **pointer, long unsigned *length, int size, char **string)
@@ -113,7 +126,7 @@ static long get_next_property_value (unsigned char **pointer, long unsigned *len
 
 struct _xneur_handle *xneur_handle_create (void)
 {
-	struct _xneur_handle *handle = (struct _xneur_handle *) malloc(sizeof(struct _xneur_handle));;
+	struct _xneur_handle *handle = (struct _xneur_handle *) malloc(sizeof(struct _xneur_handle));
 	if (handle == NULL)
 		return NULL;
 
@@ -305,16 +318,10 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		const struct _xneur_language* l = &handle->languages[lang];
 		// initialize aspell checker for current language
-		int i = 0;
-		for (i = 0; i < names_len; i++)
+		const char* dict = spell_name(l);
+		if (dict != NULL)
 		{
-			if (strcmp(layout_names[i], l->dir) == 0)
-				break;
-
-		}
-		if (i != names_len)
-		{
-			aspell_config_replace(handle->spell_config, "lang", spell_names[i]);
+			aspell_config_replace(handle->spell_config, "lang", dict);
 			AspellCanHaveError *possible_err = new_aspell_speller(handle->spell_config);
 
 			int aspell_error = aspell_error_number(possible_err);
@@ -345,23 +352,18 @@ struct _xneur_handle *xneur_handle_create (void)
 	{
 		const struct _xneur_language* l = &handle->languages[lang];
 		// initialize enchant checker for current language
-		int j = 0;
-		for (j = 0; j < names_len; j++)
-		{
-			if (strcmp(layout_names[j], l->dir) == 0)
-				break;
-		}
-		if (j != names_len)
+		const char* dict = spell_name(l);
+		if (dict != NULL)
 		{
 			handle->enchant_dicts[lang] = NULL;
-			size_t len1 = strlen(spell_names[j]);
+			size_t len1 = strlen(dict);
 			size_t len2 = strlen(l->dir);
 			// +1 for "_" and +1 for trailing zero
 			char *dict_name = malloc(len1 + 1 + len2 + 1);
 			if (dict_name == NULL)
 				continue;
-			dict_name[0] = NULLSYM;
-			strncat(dict_name, spell_names[j], len1);
+			dict_name[0] = '\0';
+			strncat(dict_name, dict, len1);
 			strncat(dict_name, "_", 1);
 			strncat(dict_name, l->dir, len2);
 			dict_name[3] = toupper(dict_name[3]);
@@ -369,7 +371,7 @@ struct _xneur_handle *xneur_handle_create (void)
 			//printf("   [!] Try load dict %s\n", dict_name);
 			if (enchant_broker_dict_exists(handle->enchant_broker, dict_name) == FALSE)
 			{
-				dict_name[2] = NULLSYM;
+				dict_name[2] = '\0';
 				//printf("   [!] Try load dict %s\n", dict_name);
 				if (enchant_broker_dict_exists(handle->enchant_broker, dict_name) == FALSE)
 				{
