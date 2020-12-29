@@ -46,7 +46,38 @@ static int error_handler(Display *d, XErrorEvent *e)
         return FALSE;
 }
 
-static int window_create(struct _window *p)
+/// Check "_NET_SUPPORTED" atom support
+static int is_has_net_supported(Display *display, Window window)
+{
+	Atom request      = XInternAtom(display, "_NET_SUPPORTED", False);
+	Atom feature_atom = XInternAtom(display, "_NET_ACTIVE_WINDOW", False);
+
+	unsigned long nitems = 0L;
+	int result = FALSE;
+	Atom *results = (Atom *) get_win_prop(display, window, request, &nitems);
+	if (results != NULL) {
+		for (unsigned long i = 0L; i < nitems; ++i) {
+			if (results[i] == feature_atom) {
+				result = TRUE;
+				break;
+			}
+		}
+		XFree(results);
+	}
+	return result;
+}
+
+static void window_uninit(struct _window *p)
+{
+	if (p->keymap != NULL)
+		p->keymap->uninit(p->keymap);
+
+	free(p);
+
+	log_message(DEBUG, _("Window is freed"));
+}
+
+struct _window* window_init(struct _xneur_handle *handle)
 {
 	XSetErrorHandler(error_handler);
 
@@ -54,28 +85,29 @@ static int window_create(struct _window *p)
 	if (!display)
 	{
 		log_message(ERROR, _("Can't connect to XServer"));
-		return FALSE;
+		return NULL;
 	}
 
+	Window root = DefaultRootWindow(display);
 	// Create Main Window
-	Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 100, 100, 0, 0, 0);
+	Window window = XCreateSimpleWindow(display, root, 0, 0, 100, 100, 0, 0, 0);
 	if (!window)
 	{
 		log_message(ERROR, _("Can't create program window"));
 		XCloseDisplay(display);
-		return FALSE;
+		return NULL;
 	}
 
 	// Create flag window
 	XSetWindowAttributes attrs;
 	attrs.override_redirect = True;
 
-	Window flag_window = XCreateWindow(display, DefaultRootWindow(display), 0, 0, 1, 1,0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attrs);
+	Window flag_window = XCreateWindow(display, root, 0, 0, 1, 1,0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attrs);
 	if (!flag_window)
 	{
 		log_message(ERROR, _("Can't create flag window"));
 		XCloseDisplay(display);
-		return FALSE;
+		return NULL;
 	}
 
 	// Set no border mode to flag window
@@ -97,81 +129,29 @@ static int window_create(struct _window *p)
 
 	XChangeProperty(display, flag_window, win_prop, win_prop, 32, PropModeReplace, (unsigned char *) &mwmhints, sizeof (XWMHints) / 4);
 
-	p->display 	= display;
-	p->window  	= window;
-
-	p->internal_atom = XInternAtom(p->display, "XNEUR_INTERNAL_MSG", 0);
-
-	// Check "_NET_SUPPORTED" atom support
-	Atom type = 0;
-	long nitems = 0L;
-	int size = 0;
-	Atom *results = NULL;
-	long i = 0;
-
-	Window root;
-	Atom request;
-	Atom feature_atom;
-
-	request = XInternAtom(p->display, "_NET_SUPPORTED", False);
-	feature_atom = XInternAtom(p->display, "_NET_ACTIVE_WINDOW", False);
-	root = XDefaultRootWindow(p->display);
-
-	p->_NET_SUPPORTED = FALSE;
-	results = (Atom *) get_win_prop(root, request, &nitems, &type, &size);
-	for (i = 0L; i < nitems; i++)
-	{
-		if (results[i] == feature_atom)
-			p->_NET_SUPPORTED = TRUE;
-	}
-	//if (results != NULL)
-		//free(results);
+	int _NET_SUPPORTED = is_has_net_supported(display, root);
 
 	log_message(LOG, _("Main window with id %d created"), window);
 
 	XSynchronize(display, TRUE);
 	XFlush(display);
 
-	return TRUE;
-}
+	struct _keymap* keymap = keymap_init(handle, display);
+	if (keymap == NULL) {
+		XCloseDisplay(display);
+		return NULL;
+	}
 
-static int window_init_keymap(struct _window *p)
-{
-	p->keymap = keymap_init(p->handle, p->display);
-	if (p->keymap == NULL)
-		return FALSE;
-	return TRUE;
-}
-
-static void window_uninit_keymap(struct _window *p)
-{
-	if (p->keymap != NULL)
-		p->keymap->uninit(p->keymap),
-		p->keymap = NULL;
-}
-
-static void window_uninit(struct _window *p)
-{
-	if (p->keymap != NULL)
-		p->keymap->uninit(p->keymap);
-
-	free(p);
-
-	log_message(DEBUG, _("Window is freed"));
-}
-
-struct _window* window_init(struct _xneur_handle *handle)
-{
 	struct _window *p = (struct _window *) malloc(sizeof(struct _window));
 	memset(p, 0, sizeof(struct _window));
 
-	p->handle = handle;
+	p->keymap  = keymap;
+	p->display = display;
+	p->window  = window;
+	p->_NET_SUPPORTED = _NET_SUPPORTED;
 
 	// Function mapping
-	p->create		= window_create;
-	p->init_keymap		= window_init_keymap;
-	p->uninit_keymap	= window_uninit_keymap;
-	p->uninit		= window_uninit;
+	p->uninit = window_uninit;
 
 	return p;
 }

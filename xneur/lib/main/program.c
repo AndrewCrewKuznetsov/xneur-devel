@@ -418,12 +418,14 @@ static void program_process_input(struct _program *p)
 				p->buffer->uninit(p->buffer);
 				p->correction_buffer->uninit(p->correction_buffer);
 
-				main_window->uninit_keymap(main_window);
+				if (main_window->keymap) {//TODO: may be check is unnecessary... but this need check
+					main_window->keymap->uninit(main_window->keymap);
+				}
 
 				xneur_handle_destroy(xconfig->handle);
 				xconfig->handle = xneur_handle_create();
 
-				main_window->init_keymap(main_window);
+				main_window->keymap = keymap_init(xconfig->handle, main_window->display);
 				p->buffer = buffer_init(xconfig->handle, main_window->keymap);
 
 				p->correction_buffer = buffer_init(xconfig->handle, main_window->keymap);
@@ -3195,7 +3197,7 @@ struct _program* program_init(void)
 {
 	main_window = window_init(xconfig->handle);
 
-	if (!main_window->create(main_window) || !main_window->init_keymap(main_window))
+	if (main_window == NULL)
 	{
 		return NULL;
 	}
