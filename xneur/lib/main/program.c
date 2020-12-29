@@ -1864,24 +1864,22 @@ static void program_check_brackets_with_symbols(struct _program *p)
 	if (!xconfig->correct_space_with_punctuation)
 		return;
 
-	char *text = strdup(p->buffer->content);
-	if (text == NULL)
-		return;
-
+	char *text = p->buffer->content;
 	int text_len = strlen(text);
 	if (text_len < 2)
 	{
-		free(text);
 		return;
 	}
 
-	if (text[text_len-2] == ')')
+	// Symbol before last symbol
+	char before_last = text[text_len - 2];
+	// Detected ")X" situation. Insert space after closing parenthesis
+	if (before_last == ')')
 	{
 		char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->default_event);
 		//log_message(ERROR, "%c %d", text[text_len], text_len);
 		if (ispunct(sym))
 		{
-			free(text);
 			return;
 		}
 		log_message(DEBUG, _("Find no spaces after right bracket, correction..."));
@@ -1898,11 +1896,12 @@ static void program_check_brackets_with_symbols(struct _program *p)
 		sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 		modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 		p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
+
+		return;
 	}
 
-	if (text[text_len - 2] != ' ')
+	if (before_last != ' ')
 	{
-		free(text);
 		return;
 	}
 
@@ -1916,26 +1915,27 @@ static void program_check_brackets_with_symbols(struct _program *p)
 
 	if (pos < 0 || text[pos] != '(')
 	{
-		free(text);
 		return;
 	}
 
+	// Detected "(   X" situation. Cut all spaces
 	log_message(DEBUG, _("Find spaces after left bracket, correction..."));
 
+	// Remove "X"
 	p->buffer->del_symbol(p->buffer);
 	p->correction_buffer->del_symbol(p->correction_buffer);
+	// Remove spaces
 	for (int i = 0; i < space_count; i++)
 	{
 		p->event->send_backspaces(p->event, 1);
 		p->buffer->del_symbol(p->buffer);
 		p->correction_buffer->del_symbol(p->correction_buffer);
 	}
+	// Insert "X"
 	p->event->event = p->event->default_event;
 	char sym = main_window->keymap->get_cur_ascii_char(main_window->keymap, &p->event->event);
 	int modifier_mask = groups[get_curr_keyboard_group()] | p->event->get_cur_modifiers(p->event);
 	p->buffer->add_symbol(p->buffer, sym, p->event->event.xkey.keycode, modifier_mask);
-
-	free(text);
 }
 
 static void program_check_capital_letter_after_dot(struct _program *p)
@@ -1980,17 +1980,15 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 	}
 	free(symbol);
 
-	char *text = strdup(p->buffer->content);
-	if (text == NULL)
-		return;
-
+	char *text = p->buffer->content;
 	int offset = strlen(text) - 1;
-	if ((text[offset] != ' ') && (text[offset] != 13) && (text[offset] != 9))
+	// If Space, Carriage Return, or Tab, do nothing
+	if (text[offset] != ' '
+	 && text[offset] != '\r'
+	 && text[offset] != '\t')
 	{
-		free(text);
 		return;
 	}
-	free(text);
 
 	text = p->buffer->get_utf_string_on_kbd_group(p->buffer, get_curr_keyboard_group());
 	if (text == NULL)
@@ -1998,11 +1996,15 @@ static void program_check_capital_letter_after_dot(struct _program *p)
 
 	for (offset = strlen(text) - 2; offset > 1; offset--)
 	{
-		if ((text[offset] != ' ') && (text[offset] != 13) && (text[offset] != 9))
+		if (text[offset] != ' '
+		 && text[offset] != '\r'
+		 && text[offset] != '\t')
 			break;
 	}
 
-	if ((text[offset] == '.') || (text[offset] == '!') || (text[offset] == '?'))
+	if (text[offset] == '.'
+	 || text[offset] == '!'
+	 || text[offset] == '?')
 	{
 		log_message(DEBUG, _("Find small letter after dot, correction..."));
 		p->event->event.xkey.state = p->event->event.xkey.state | ShiftMask;
