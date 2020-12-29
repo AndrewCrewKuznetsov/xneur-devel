@@ -171,48 +171,21 @@ static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym
 }
 #endif
 
-static int get_proto_hits(struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang)
+static int get_proto_hits(struct _list_char *p, int proto_len, char *word, int *sym_len, int len, int offset)
 {
 	int n_bytes = 0;
-	for (int i = 0; i < PROTO_LEN; i++)
+	for (int i = 0; i < proto_len; i++)
 		n_bytes += sym_len[i];
 
 	char *proto = (char *) malloc((n_bytes + 1) * sizeof(char));
 
 	int local_offset = 0;
-	for (int i = 0; i <= len - offset - PROTO_LEN; i++)
+	for (int i = 0; i <= len - offset - proto_len; ++i)
 	{
 		strncpy(proto, word + local_offset, n_bytes);
-		proto[n_bytes] = NULLSYM;
+		proto[n_bytes] = '\0';
 
-		if (handle->languages[lang].proto->exist(handle->languages[lang].proto, proto, BY_PLAIN))
-		{
-			free(proto);
-			return TRUE;
-		}
-
-		local_offset += sym_len[i];
-	}
-
-	free(proto);
-	return FALSE;
-}
-
-static int get_big_proto_hits(struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang)
-{
-	int n_bytes = 0;
-	for (int i = 0; i < BIG_PROTO_LEN; i++)
-		n_bytes += sym_len[i];
-
-	char *proto = (char *) malloc((n_bytes + 1) * sizeof(char));
-
-	int local_offset = 0;
-	for (int i = 0; i <= len - offset - BIG_PROTO_LEN; i++)
-	{
-		strncpy(proto, word+local_offset, n_bytes);
-		proto[n_bytes] = NULLSYM;
-
-		if (handle->languages[lang].big_proto->exist(handle->languages[lang].big_proto, proto, BY_PLAIN))
+		if (p->exist(p, proto, BY_PLAIN))
 		{
 			free(proto);
 			return TRUE;
@@ -227,44 +200,47 @@ static int get_big_proto_hits(struct _xneur_handle *handle, char *word, int *sym
 
 static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_len, int len, int offset, int cur_lang, int proto_len)
 {
-	int (*get_proto_hits_function) (struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang);
-
-	if (proto_len == PROTO_LEN)
-		get_proto_hits_function = get_proto_hits;
-	else
-		get_proto_hits_function = get_big_proto_hits;
-
 	if (len < proto_len)
 	{
 		log_message(DEBUG, _("   [-] Skip checking by language proto of size %d (word is very short)"), proto_len);
 		return NO_LANGUAGE;
 	}
 
-	int hits = get_proto_hits_function(handle, word[cur_lang], sym_len[cur_lang], len, offset, cur_lang);
+	struct _xneur_language* cur_l = &handle->languages[cur_lang];
+	struct _list_char* cur_proto = proto_len == PROTO_LEN
+		? cur_l->proto
+		: cur_l->big_proto;
+
+	int hits = get_proto_hits(cur_proto, proto_len, word[cur_lang], sym_len[cur_lang], len, offset);
 	if (hits == 0)
 	{
-		log_message(DEBUG, _("   [-] This word is ok for %s proto of size %d"), handle->languages[cur_lang].name, proto_len);
+		log_message(DEBUG, _("   [-] This word is ok for %s proto of size %d"), cur_l->name, proto_len);
 		return cur_lang;
 	}
 
-	log_message(DEBUG, _("   [*] This word has hits for %s proto of size %d"), handle->languages[cur_lang].name, proto_len);
+	log_message(DEBUG, _("   [*] This word has hits for %s proto of size %d"), cur_l->name, proto_len);
 
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if ((lang == cur_lang) || (handle->languages[lang].disable_auto_detection) || (handle->languages[lang].excluded))
+		struct _xneur_language* l = &handle->languages[lang];
+		struct _list_char* proto = proto_len == PROTO_LEN
+			? l->proto
+			: l->big_proto;
+
+		if (lang == cur_lang || l->disable_auto_detection || l->excluded)
 			continue;
 
 		if (strlen(word[lang]) == 0)
 			continue;
 
-		int hits = get_proto_hits_function(handle, word[lang], sym_len[lang], len, offset, lang);
+		int hits = get_proto_hits(proto, proto_len, word[lang], sym_len[lang], len, offset);
 		if (hits != 0)
 		{
-			log_message(DEBUG, _("   [*] This word has hits for %s language proto of size %d"), handle->languages[lang].name, proto_len);
+			log_message(DEBUG, _("   [*] This word has hits for %s language proto of size %d"), l->name, proto_len);
 			continue;
 		}
 
-		log_message(DEBUG, _("   [+] This word has no hits for %s language proto of size %d"), handle->languages[lang].name, proto_len);
+		log_message(DEBUG, _("   [+] This word has no hits for %s language proto of size %d"), l->name, proto_len);
 		return lang;
 	}
 
