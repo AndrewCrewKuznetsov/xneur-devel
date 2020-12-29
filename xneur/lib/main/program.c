@@ -1717,9 +1717,6 @@ static void program_check_ellipsis(struct _program *p)
 		return;
 
 	char *text = p->buffer->get_utf_string(p->buffer);
-	if (text == NULL)
-		return;
-
 	int text_len = strlen(text);
 
 	if ((text[text_len-1] != '.') ||
@@ -1749,9 +1746,6 @@ static void program_check_space_before_punctuation(struct _program *p)
 		return;
 
 	char *text = p->buffer->get_utf_string(p->buffer);
-	if (text == NULL)
-		return;
-
 	if (p->buffer->cur_pos < 3)
 	{
 		free(text);
@@ -1797,9 +1791,6 @@ static void program_check_space_with_bracket(struct _program *p)
 		return;
 
 	char *text = p->buffer->get_utf_string(p->buffer);
-	if (text == NULL)
-		return;
-
 	if (p->buffer->cur_pos < 3)
 	{
 		free(text);
