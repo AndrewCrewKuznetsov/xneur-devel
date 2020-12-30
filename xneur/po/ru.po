@@ -1329,14 +1329,14 @@ msgstr "Обнаружена строчная буква после точки, 
 
 #: lib/main/program.c:2127
 #, c-format
-msgid "Recognition word '%s' from text '%s' (layout %d), autocompletation..."
+msgid "Recognition word '%s' from text '%s' (layout %d), autocompletion..."
 msgstr "Распознано слово '%s' из текста '%s' (раскладка %d), автодополнение..."
 
 #: lib/main/program.c:2213
 #, c-format
 msgid ""
 "Next autocompletion word '%s' from text '%s' (layout %d), rotate "
-"autocompletation..."
+"autocompletion..."
 msgstr ""
 "Следующий вариант автодополнения '%s' из текста '%s' (раскладка %d), "
 "изменение автодополнения..."

@@ -433,7 +433,7 @@ static void program_process_input(struct _program *p)
 					log_message(DEBUG, _("      %s proto has %d records"), lang_name, xconfig->handle->languages[lang].proto->data_count);
 					log_message(DEBUG, _("      %s big proto has %d records"), lang_name, xconfig->handle->languages[lang].big_proto->data_count);
 			#ifdef WITH_ASPELL
-					if (xconfig->handle->has_spell_checker[lang])
+					if (xconfig->handle->spell_checkers[lang])
 					{
 						log_message(DEBUG, _("      %s aspell dictionary loaded"), lang_name);
 					}
@@ -1430,9 +1430,7 @@ static int program_perform_action(struct _program *p, enum _hotkey_action action
 static int change(struct _program *p, int action, int check_similar_words)
 {
 	int cur_lang = get_curr_keyboard_group();
-	int new_lang = check_similar_words
-		? check_lang_with_similar_words(xconfig->handle, p->buffer, cur_lang)
-		: check_lang(xconfig->handle, p->buffer, cur_lang);
+	int new_lang = check_lang(xconfig->handle, p->buffer, cur_lang, check_similar_words);
 
 	if (new_lang == NO_LANGUAGE)
 	{
@@ -2064,7 +2062,7 @@ static void program_check_pattern(struct _program *p)
 		return;
 	}
 
-	log_message (DEBUG, _("Recognition word '%s' from text '%s' (layout %d), autocompletation..."), pattern_data->string, word, get_curr_keyboard_group());
+	log_message (DEBUG, _("Recognition word '%s' from text '%s' (layout %d), autocompletion..."), pattern_data->string, word, get_curr_keyboard_group());
 
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 
@@ -2148,7 +2146,7 @@ static void program_rotate_pattern(struct _program *p)
 	if (p->last_pattern_id == list_alike->data_count)
 		p->last_pattern_id = 0;
 
-    log_message (DEBUG, _("Next autocompletion word '%s' from text '%s' (layout %d), rotate autocompletation..."), list_alike->data[p->last_pattern_id].string, word, get_curr_keyboard_group());
+	log_message (DEBUG, _("Next autocompletion word '%s' from text '%s' (layout %d), rotate autocompletion..."), list_alike->data[p->last_pattern_id].string, word, get_curr_keyboard_group());
 
 	struct _buffer *tmp_buffer = buffer_init(xconfig->handle, main_window->keymap);
 
@@ -2219,28 +2217,16 @@ static void program_check_misprint(struct _program *p)
 #ifdef WITH_ENCHANT
 	size_t count = 0;
 
-	if (!xconfig->handle->has_enchant_checker[lang])
-	{
+	EnchantDict* dict = xconfig->handle->enchant_dicts[lang];
+	size_t word_len = strlen(word + offset);
+	if (!dict || word_len <= 0 || !enchant_dict_check(dict, word + offset, word_len)) {
 		free(word);
 		return;
 	}
 
-	if (strlen(word+offset) <= 0)
-	{
-		free(word);
-		return;
-	}
-
-	if (!enchant_dict_check(xconfig->handle->enchant_dicts[lang], word+offset, strlen(word+offset)))
-	{
-		free(word);
-		return;
-	}
-
-	char **suggs = enchant_dict_suggest (xconfig->handle->enchant_dicts[lang], word+offset, strlen(word+offset), &count);
+	char **suggs = enchant_dict_suggest(dict, word + offset, word_len, &count);
 	if (count > 0)
 	{
-
 		for (unsigned int i = 0; i < count; i++)
 		{
 			int tmp_levenshtein = levenshtein(word+offset, suggs[i]);
@@ -2267,22 +2253,19 @@ static void program_check_misprint(struct _program *p)
 		}
 	}
 
-	enchant_dict_free_string_list(xconfig->handle->enchant_dicts[lang], suggs);
+	enchant_dict_free_string_list(dict, suggs);
 #endif
 
 #ifdef WITH_ASPELL
-	if (!xconfig->handle->has_spell_checker[lang])
+	AspellSpeller* dict = xconfig->handle->spell_checkers[lang];
+	size_t word_len = strlen(word + offset);
+	if (!dict || aspell_speller_check(dict, word + offset, word_len))
 	{
 		free(word);
 		return;
 	}
-	if (aspell_speller_check(xconfig->handle->spell_checkers[lang], word+offset, strlen(word+offset)))
-	{
-		free(word);
-		return;
-	}
-	const AspellWordList *suggestions = aspell_speller_suggest (xconfig->handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
-	if (! suggestions)
+	const AspellWordList *suggestions = aspell_speller_suggest(dict, (const char *) word + offset, word_len);
+	if (!suggestions)
 	{
 		free(word);
 		return;
@@ -3082,7 +3065,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 	}
 
 #ifdef WITH_ASPELL
-	if (xconfig->handle->has_spell_checker[new_lang])
+	if (xconfig->handle->spell_checkers[new_lang])
 	{
 		if (!aspell_speller_check(xconfig->handle->spell_checkers[new_lang], new_word+offset, strlen(new_word)))
 		{
@@ -3093,7 +3076,7 @@ static void program_add_word_to_pattern(struct _program *p, int new_lang)
 #endif
 
 #ifdef WITH_ENCHANT
-	if (xconfig->handle->has_enchant_checker[new_lang])
+	if (xconfig->handle->enchant_dicts[new_lang])
 	{
 		if (strlen(new_word+offset) <= 0)
 		{

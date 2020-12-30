@@ -52,7 +52,7 @@ struct _xneur_language
 	struct _list_char *pattern;
 };
 
-// Main xneur structure 
+// Main xneur structure
 struct _xneur_handle
 {
 	struct _xneur_language *languages;
@@ -61,16 +61,16 @@ struct _xneur_handle
 #ifdef WITH_ASPELL
 	// global aspell dictionaries
 	AspellConfig *spell_config;
+	/// Array of dictionaries for each language
 	AspellSpeller **spell_checkers;
-	int *has_spell_checker;
 #endif
 
 #ifdef WITH_ENCHANT
 	// global enchant dictionaries
 	EnchantBroker *enchant_broker;
+	/// Array of dictionaries for each language
 	EnchantDict **enchant_dicts;
-	int *has_enchant_checker;
-#endif	
+#endif
 };
 
 // Initialyze structure (must be installed proto, proto3, dict and regexp)

@@ -308,14 +308,16 @@ static void buffer_clear(struct _buffer *p)
 
 	for (int i=0; i<p->handle->total_languages; i++)
 	{
-		char *tmp = realloc(p->i18n_content[i].content, sizeof(char));
+		struct _buffer_content *buf = &p->i18n_content[i];
+
+		char *tmp = realloc(buf->content, sizeof(char));
 		if (tmp != NULL)
-			p->i18n_content[i].content = tmp;
-		p->i18n_content[i].content[0] = NULLSYM;
-		tmp = realloc(p->i18n_content[i].content_unchanged, sizeof(char));
+			buf->content = tmp;
+		buf->content[0] = '\0';
+		tmp = realloc(buf->content_unchanged, sizeof(char));
 		if (tmp != NULL)
-			p->i18n_content[i].content_unchanged = tmp;
-		p->i18n_content[i].content_unchanged[0] = NULLSYM;
+			buf->content_unchanged = tmp;
+		buf->content_unchanged[0] = '\0';
 	}
 }
 
@@ -482,8 +484,9 @@ static void buffer_del_symbol(struct _buffer *p)
 
 	for (int i = 0; i < p->handle->total_languages; i++)
 	{
-		p->i18n_content[i].content[strlen(p->i18n_content[i].content) - p->i18n_content[i].symbol_len[p->cur_pos]] = NULLSYM;
-		p->i18n_content[i].content_unchanged[strlen(p->i18n_content[i].content_unchanged) - p->i18n_content[i].symbol_len_unchanged[p->cur_pos]] = NULLSYM;
+		struct _buffer_content *buf = &p->i18n_content[i];
+		buf->content          [strlen(buf->content          ) - buf->symbol_len          [p->cur_pos]] = '\0';
+		buf->content_unchanged[strlen(buf->content_unchanged) - buf->symbol_len_unchanged[p->cur_pos]] = '\0';
 	}
 }
 
@@ -657,19 +660,17 @@ static void buffer_uninit(struct _buffer *p)
 	free(p->keycode);
 	free(p->content);
 
-	if (p->i18n_content != NULL)
+	for (int i = 0; i < p->handle->total_languages; i++)
 	{
-		for (int i = 0; i < p->handle->total_languages; i++)
-		{
-			free(p->i18n_content[i].content);
-			free(p->i18n_content[i].symbol_len);
-			free(p->i18n_content[i].content_unchanged);
-			free(p->i18n_content[i].symbol_len_unchanged);
-		}
+		struct _buffer_content *buf = &p->i18n_content[i];
 
-		free(p->i18n_content);
+		free(buf->content);
+		free(buf->symbol_len);
+		free(buf->content_unchanged);
+		free(buf->symbol_len_unchanged);
 	}
 
+	free(p->i18n_content);
 	free(p);
 
 	log_message(DEBUG, _("String is freed"));
@@ -697,12 +698,14 @@ struct _buffer* buffer_init(struct _xneur_handle *handle, struct _keymap *keymap
 	p->i18n_content = (struct _buffer_content *) malloc((handle->total_languages) * sizeof(struct _buffer_content));
 	for (int i=0; i<p->handle->total_languages; i++)
 	{
-		p->i18n_content[i].content = malloc(sizeof(char));
-		p->i18n_content[i].content[0] = NULLSYM;
-		p->i18n_content[i].symbol_len = malloc(sizeof(int));
-		p->i18n_content[i].content_unchanged = malloc(sizeof(char));
-		p->i18n_content[i].content_unchanged[0] = NULLSYM;
-		p->i18n_content[i].symbol_len_unchanged = malloc(sizeof(int));
+		struct _buffer_content *buf = &p->i18n_content[i];
+
+		buf->content = malloc(sizeof(char));
+		buf->content[0] = '\0';
+		buf->symbol_len = malloc(sizeof(int));
+		buf->content_unchanged = malloc(sizeof(char));
+		buf->content_unchanged[0] = '\0';
+		buf->symbol_len_unchanged = malloc(sizeof(int));
 	}
 
 	// Functions mapping

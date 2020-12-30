@@ -66,19 +66,18 @@ static int get_dictionary_lang(struct _xneur_handle *handle, char **word)
 static int get_aspell_hits(struct _xneur_handle *handle, char **word, int **sym_len, int cur_lang)
 {
 	// check for current language first
-	if (handle->has_spell_checker[cur_lang])
+	if (handle->spell_checkers[cur_lang])
 	{
-		if (strlen(word[cur_lang]) > 0)
-		{
-			if (strlen(word[cur_lang]) / sym_len[cur_lang][0] > 1)
-			{
-				if (!handle->languages[cur_lang].disable_auto_detection && !handle->languages[cur_lang].excluded &&
-					aspell_speller_check(handle->spell_checkers[cur_lang], word[cur_lang], strlen(word[cur_lang])))
-				{
-					log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), handle->languages[cur_lang].name);
-					return cur_lang;
-				}
-			}
+		const struct _xneur_language* l = &handle->languages[cur_lang];
+		size_t word_len = strlen(word[cur_lang]);
+		if (word_len > 0
+		 && word_len / sym_len[cur_lang][0] > 1)
+		 && !l->disable_auto_detection
+		 && !l->excluded
+		 && aspell_speller_check(handle->spell_checkers[cur_lang], word[cur_lang], word_len)
+		) {
+			log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), l->name);
+			return cur_lang;
 		}
 	}
 	else
@@ -89,28 +88,24 @@ static int get_aspell_hits(struct _xneur_handle *handle, char **word, int **sym_
 	// check for another languages
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded || lang == cur_lang)
+		const struct _xneur_language* l = &handle->languages[lang];
+		size_t word_len = strlen(word[lang]);
+		if (l->disable_auto_detection || l->excluded || lang == cur_lang || word_len == 0)
 			continue;
 
-		if (strlen(word[lang]) == 0)
-			continue;
-
-		if (!handle->has_spell_checker[lang])
+		if (!handle->spell_checkers[lang])
 		{
-			log_message(DEBUG, _("   [!] Now we don't support aspell dictionary for %s layout"), handle->languages[lang].name);
+			log_message(DEBUG, _("   [!] Now we don't support aspell dictionary for %s layout"), l->name);
 			continue;
 		}
 
-		if (strlen(word[lang]) / sym_len[lang][0] > 1)
-		{
-			if (aspell_speller_check(handle->spell_checkers[lang], word[lang], strlen(word[lang])))
-			{
-				log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), handle->languages[lang].name);
-				return lang;
-			}
+		if (word_len / sym_len[lang][0] > 1
+		 && aspell_speller_check(handle->spell_checkers[lang], word[lang], word_len)
+		) {
+			log_message(DEBUG, _("   [+] Found this word in %s aspell dictionary"), l->name);
+			return lang;
 		}
 	}
-
 
 	log_message(DEBUG, _("   [-] This word has no hits for all aspell dictionaries"));
 	return NO_LANGUAGE;
@@ -121,19 +116,19 @@ static int get_aspell_hits(struct _xneur_handle *handle, char **word, int **sym_
 static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym_len, int cur_lang)
 {
 	// check for current language first
-	if (handle->has_enchant_checker[cur_lang])
+	EnchantDict* cur_dict = handle->enchant_dicts[cur_lang];
+	if (cur_dict)
 	{
-		if (strlen(word[cur_lang]) > 0)
-		{
-			if ((int)(strlen(word[cur_lang]) / sym_len[cur_lang][0]) > 1)
-			{
-				if (!handle->languages[cur_lang].disable_auto_detection && !handle->languages[cur_lang].excluded &&
-					!enchant_dict_check(handle->enchant_dicts[cur_lang], word[cur_lang], strlen(word[cur_lang])))
-				{
-					log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), handle->languages[cur_lang].name);
-					return cur_lang;
-				}
-			}
+		const struct _xneur_language* l = &handle->languages[cur_lang];
+		size_t word_len = strlen(word[cur_lang]);
+		if (word_len > 0
+		 && word_len / sym_len[cur_lang][0] > 1
+		 && !l->disable_auto_detection
+		 && !l->excluded
+		 && !enchant_dict_check(cur_dict, word[cur_lang], word_len)
+		) {
+			log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), l->name);
+			return cur_lang;
 		}
 	}
 	else
@@ -144,25 +139,22 @@ static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym
 	// check for another languages
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded || lang == cur_lang || (strlen(word[lang]) <= 0))
+		const struct _xneur_language* l = &handle->languages[lang];
+		size_t word_len = strlen(word[lang]);
+		if (l->disable_auto_detection || l->excluded || lang == cur_lang || word_len <= 0)
 			continue;
 
-		if (strlen(word[lang]) == 0)
-			continue;
-
-		if (!handle->has_enchant_checker[lang])
+		EnchantDict* dict = handle->enchant_dicts[lang];
+		if (!dict)
 		{
-			log_message(DEBUG, _("   [!] Now we don't support enchant wrapper dictionary for %s layout"), handle->languages[lang].name);
+			log_message(DEBUG, _("   [!] Now we don't support enchant wrapper dictionary for %s layout"), l->name);
 			continue;
 		}
 
-		if (strlen(word[lang]) / sym_len[lang][0] > 1)
+		if (word_len / sym_len[lang][0] > 1 && !enchant_dict_check(dict, word[lang], word_len))
 		{
-			if (!enchant_dict_check(handle->enchant_dicts[lang], word[lang], strlen(word[lang])))
-			{
-				log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), handle->languages[lang].name);
-				return lang;
-			}
+			log_message(DEBUG, _("   [+] Found this word in %s enchant wrapper dictionary"), l->name);
+			return lang;
 		}
 	}
 
@@ -171,48 +163,21 @@ static int get_enchant_hits(struct _xneur_handle *handle, char **word, int **sym
 }
 #endif
 
-static int get_proto_hits(struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang)
+static int get_proto_hits(struct _list_char *p, int proto_len, char *word, int *sym_len, int len, int offset)
 {
 	int n_bytes = 0;
-	for (int i = 0; i < PROTO_LEN; i++)
+	for (int i = 0; i < proto_len; i++)
 		n_bytes += sym_len[i];
 
 	char *proto = (char *) malloc((n_bytes + 1) * sizeof(char));
 
 	int local_offset = 0;
-	for (int i = 0; i <= len - offset - PROTO_LEN; i++)
+	for (int i = 0; i <= len - offset - proto_len; ++i)
 	{
 		strncpy(proto, word + local_offset, n_bytes);
-		proto[n_bytes] = NULLSYM;
+		proto[n_bytes] = '\0';
 
-		if (handle->languages[lang].proto->exist(handle->languages[lang].proto, proto, BY_PLAIN))
-		{
-			free(proto);
-			return TRUE;
-		}
-
-		local_offset += sym_len[i];
-	}
-
-	free(proto);
-	return FALSE;
-}
-
-static int get_big_proto_hits(struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang)
-{
-	int n_bytes = 0;
-	for (int i = 0; i < BIG_PROTO_LEN; i++)
-		n_bytes += sym_len[i];
-
-	char *proto = (char *) malloc((n_bytes + 1) * sizeof(char));
-
-	int local_offset = 0;
-	for (int i = 0; i <= len - offset - BIG_PROTO_LEN; i++)
-	{
-		strncpy(proto, word+local_offset, n_bytes);
-		proto[n_bytes] = NULLSYM;
-
-		if (handle->languages[lang].big_proto->exist(handle->languages[lang].big_proto, proto, BY_PLAIN))
+		if (p->exist(p, proto, BY_PLAIN))
 		{
 			free(proto);
 			return TRUE;
@@ -227,44 +192,47 @@ static int get_big_proto_hits(struct _xneur_handle *handle, char *word, int *sym
 
 static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_len, int len, int offset, int cur_lang, int proto_len)
 {
-	int (*get_proto_hits_function) (struct _xneur_handle *handle, char *word, int *sym_len, int len, int offset, int lang);
-
-	if (proto_len == PROTO_LEN)
-		get_proto_hits_function = get_proto_hits;
-	else
-		get_proto_hits_function = get_big_proto_hits;
-
 	if (len < proto_len)
 	{
 		log_message(DEBUG, _("   [-] Skip checking by language proto of size %d (word is very short)"), proto_len);
 		return NO_LANGUAGE;
 	}
 
-	int hits = get_proto_hits_function(handle, word[cur_lang], sym_len[cur_lang], len, offset, cur_lang);
+	struct _xneur_language* cur_l = &handle->languages[cur_lang];
+	struct _list_char* cur_proto = proto_len == PROTO_LEN
+		? cur_l->proto
+		: cur_l->big_proto;
+
+	int hits = get_proto_hits(cur_proto, proto_len, word[cur_lang], sym_len[cur_lang], len, offset);
 	if (hits == 0)
 	{
-		log_message(DEBUG, _("   [-] This word is ok for %s proto of size %d"), handle->languages[cur_lang].name, proto_len);
+		log_message(DEBUG, _("   [-] This word is ok for %s proto of size %d"), cur_l->name, proto_len);
 		return cur_lang;
 	}
 
-	log_message(DEBUG, _("   [*] This word has hits for %s proto of size %d"), handle->languages[cur_lang].name, proto_len);
+	log_message(DEBUG, _("   [*] This word has hits for %s proto of size %d"), cur_l->name, proto_len);
 
 	for (int lang = 0; lang < handle->total_languages; lang++)
 	{
-		if ((lang == cur_lang) || (handle->languages[lang].disable_auto_detection) || (handle->languages[lang].excluded))
+		struct _xneur_language* l = &handle->languages[lang];
+		struct _list_char* proto = proto_len == PROTO_LEN
+			? l->proto
+			: l->big_proto;
+
+		if (lang == cur_lang || l->disable_auto_detection || l->excluded)
 			continue;
 
 		if (strlen(word[lang]) == 0)
 			continue;
 
-		int hits = get_proto_hits_function(handle, word[lang], sym_len[lang], len, offset, lang);
+		int hits = get_proto_hits(proto, proto_len, word[lang], sym_len[lang], len, offset);
 		if (hits != 0)
 		{
-			log_message(DEBUG, _("   [*] This word has hits for %s language proto of size %d"), handle->languages[lang].name, proto_len);
+			log_message(DEBUG, _("   [*] This word has hits for %s language proto of size %d"), l->name, proto_len);
 			continue;
 		}
 
-		log_message(DEBUG, _("   [+] This word has no hits for %s language proto of size %d"), handle->languages[lang].name, proto_len);
+		log_message(DEBUG, _("   [+] This word has no hits for %s language proto of size %d"), l->name, proto_len);
 		return lang;
 	}
 
@@ -313,19 +281,19 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 		}
 
 #ifdef WITH_ENCHANT
-		size_t count = 0;
-
-		if (!handle->has_enchant_checker[lang])
+		EnchantDict* dict = handle->enchant_dicts[lang];
+		if (!dict)
 		{
 			free(possible_words);
 			free(word);
 			continue;
 		}
 
-		char **suggs = enchant_dict_suggest (handle->enchant_dicts[lang], word+offset, strlen(word+offset), &count);
+		size_t count = 0;
+		char **suggs = enchant_dict_suggest(dict, word+offset, strlen(word+offset), &count);
 		if (count > 0)
 		{
-			for (unsigned int i = 0; i < count; i++)
+			for (size_t i = 0; i < count; i++)
 			{
 				int tmp_levenshtein = levenshtein(word+offset, suggs[i]);
 				if (tmp_levenshtein < min_levenshtein)
@@ -334,22 +302,21 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 					free(possible_words);
 					possible_words = strdup(suggs[i]);
 					possible_lang = lang;
-
 				}
 				//log_message (ERROR, "    %d. %s (%d)", i+1, suggs[i], levenshtein(word, suggs[i]));
 			}
 		}
-		enchant_dict_free_string_list(handle->enchant_dicts[lang], suggs);
+		enchant_dict_free_string_list(dict, suggs);
 #endif
 
 #ifdef WITH_ASPELL
-		if (!handle->has_spell_checker[lang])
+		if (!handle->spell_checkers[lang])
 		{
 			free(possible_words);
 			free(word);
 			continue;
 		}
-		const AspellWordList *suggestions = aspell_speller_suggest (handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
+		const AspellWordList *suggestions = aspell_speller_suggest(handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
 		if (! suggestions)
 		{
 			free(possible_words);
@@ -393,82 +360,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 	return possible_lang;
 }
 
-int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
-{
-	char **word = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	int **sym_len = (int **) malloc((handle->total_languages + 1) * sizeof(int *));
-
-	log_message(DEBUG, _("Processing word:"));
-	for (int i = 0; i < handle->total_languages; i++)
-	{
-		word[i] = strdup(p->get_last_word(p, p->i18n_content[i].content));
-		word_base[i] = word[i];
-		del_final_numeric_char(word[i]);
-
-		unsigned int offset = 0;
-		for (offset = 0; offset < strlen(word[i]); offset++)
-		{
-			if (!ispunct(word[i][offset]) && (!isdigit(word[i][offset])))
-				break;
-		}
-		word[i] = word[i] + offset;
-
-		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
-		word_unchanged_base[i] = word_unchanged[i];
-		word_unchanged[i] = word_unchanged[i] + offset;
-		del_final_numeric_char(word_unchanged[i]);
-
-		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
-
-		sym_len[i] = p->i18n_content[i].symbol_len + p->get_last_word_offset(p, p->content, strlen(p->content));
-	}
-
-	log_message(DEBUG, _("Start word processing..."));
-
-	// Check by dictionary
-	int lang = get_dictionary_lang(handle, word);
-
-#ifdef WITH_ENCHANT
-	// Check by enchant wrapper
-	if (lang == NO_LANGUAGE)
-		lang = get_enchant_hits(handle, word, sym_len, cur_lang);
-#endif
-
-#ifdef WITH_ASPELL
-	// Check by aspell
-	if (lang == NO_LANGUAGE)
-		lang = get_aspell_hits(handle, word, sym_len, cur_lang);
-#endif
-
-	// If not found in dictionary, try to find in proto
-	int len = strlen(p->content);
-	int offset = p->get_last_word_offset(p, p->content, len);
-	if (lang == NO_LANGUAGE)
-		lang = get_proto_lang(handle, word, sym_len, len, offset, cur_lang, PROTO_LEN);
-
-	if (lang == NO_LANGUAGE)
-		lang = get_proto_lang(handle, word, sym_len, len, offset, cur_lang, BIG_PROTO_LEN);
-
-	log_message(DEBUG, _("End word processing."));
-
-	for (int i = 0; i < handle->total_languages; i++)
-	{
-		free(word_base[i]);
-		free(word_unchanged_base[i]);
-	}
-
-	free(word);
-	free(word_unchanged);
-	free(word_base);
-	free(word_unchanged_base);
-	free(sym_len);
-	return lang;
-}
-
-int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer *p, int cur_lang)
+int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, int check_similar_words)
 {
 	char **word = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
 	char **word_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
@@ -519,7 +411,7 @@ int check_lang_with_similar_words (struct _xneur_handle *handle, struct _buffer 
 #endif
 
 	// Check misprint
-	if (lang == NO_LANGUAGE)
+	if (check_similar_words && lang == NO_LANGUAGE)
 		lang = get_similar_words (handle, p);
 
 	// If not found in dictionary, try to find in proto
