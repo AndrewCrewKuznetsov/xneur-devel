@@ -257,13 +257,12 @@ static void focus_update_grab_events(struct _focus *p, int grab)
 	{
 		if (xconfig->tracking_mouse)
 			grab_button(main_window->display, TRUE);
-		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, TRUE);
 	}
 	else
 	{
 		grab_button(main_window->display, FALSE);
-		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, FALSE);
 	}
+	grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, grab);
 }
 
 static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
@@ -276,7 +275,7 @@ static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
 	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
 	XFlush(main_window->display);
 
-	focus_update_grab_events(p, !(!xconfig->tracking_input || excluded));
+	focus_update_grab_events(p, xconfig->tracking_input && !excluded);
 }
 
 static void focus_uninit(struct _focus *p)
