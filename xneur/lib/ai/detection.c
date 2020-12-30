@@ -289,8 +289,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 		if (handle->languages[lang].disable_auto_detection || handle->languages[lang].excluded)
 		{
-			if (possible_words != NULL)
-				free (possible_words);
+			free(possible_words);
 			free(word);
 			continue;
 		}
@@ -299,8 +298,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 		if ((word_len > 250) || (word_len < 2))
 		{
-			if (possible_words != NULL)
-				free (possible_words);
+			free(possible_words);
 			free(word);
 			continue;
 		}
@@ -319,8 +317,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 		if (!handle->has_enchant_checker[lang])
 		{
-			if (possible_words != NULL)
-				free (possible_words);
+			free(possible_words);
 			free(word);
 			continue;
 		}
@@ -334,8 +331,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 				if (tmp_levenshtein < min_levenshtein)
 				{
 					min_levenshtein = tmp_levenshtein;
-					if (possible_words != NULL)
-						free(possible_words);
+					free(possible_words);
 					possible_words = strdup(suggs[i]);
 					possible_lang = lang;
 
@@ -349,19 +345,15 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 #ifdef WITH_ASPELL
 		if (!handle->has_spell_checker[lang])
 		{
-			if (possible_words != NULL)
-				free (possible_words);
-			if (word != NULL)
-				free(word);
+			free(possible_words);
+			free(word);
 			continue;
 		}
 		const AspellWordList *suggestions = aspell_speller_suggest (handle->spell_checkers[lang], (const char *) word+offset, strlen(word+offset));
 		if (! suggestions)
 		{
-			if (possible_words != NULL)
-				free (possible_words);
-			if (word != NULL)
-				free(word);
+			free(possible_words);
+			free(word);
 			continue;
 		}
 
@@ -374,8 +366,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 			if (tmp_levenshtein < min_levenshtein)
 			{
 				min_levenshtein = tmp_levenshtein;
-				if (possible_words != NULL)
-					free(possible_words);
+				free(possible_words);
 				possible_words = strdup(sugg_word);
 				possible_lang = lang;
 
@@ -398,7 +389,7 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 	log_message(DEBUG, _("   [+] Found suggest word '%s' in %s dictionary (Levenshtein distance = %d)"),
 						possible_words, handle->languages[possible_lang].name, min_levenshtein);
-	free (possible_words);
+	free(possible_words);
 	return possible_lang;
 }
 

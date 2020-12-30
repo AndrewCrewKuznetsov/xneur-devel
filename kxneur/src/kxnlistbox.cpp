@@ -62,8 +62,7 @@ void KXNListBox::getProgList()
 #endif
 	    prgs << QString::fromLatin1(buf, m-1);
 	pclose(fl);
-	if ( buf )
-	    free(buf);
+	free(buf);
 
 	QString text = KInputDialog::getItem(NULL, i18n("current programs:"), prgs, 0, false, &ok);
 	if ( ok )

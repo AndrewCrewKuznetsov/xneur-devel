@@ -58,7 +58,7 @@ void popup_init(void)
 		return;
 
 	notify_init("xneur");
-	
+
 }
 
 void popup_uninit(void)
@@ -76,13 +76,13 @@ static void popup_show_thread(struct _popup_body *popup_body)
 		popup_body->header = popup_body->content;
 		popup_body->content = NULL;
 	}
-	
+
 #if NOTIFY_CHECK_VERSION(0,7,0)
 	NotifyNotification *notify = notify_notification_new(popup_body->header, popup_body->content, icon);
 #else
  	NotifyNotification *notify = notify_notification_new(popup_body->header, popup_body->content, icon, NULL);
 #endif
-		
+
 	notify_notification_set_category(notify, type);
 	notify_notification_set_urgency(notify, urgency);
 	notify_notification_set_timeout(notify, xconfig->popup_expire_timeout);
@@ -90,11 +90,9 @@ static void popup_show_thread(struct _popup_body *popup_body)
 
 	notify_notification_show(notify, NULL);
 
-	if (popup_body->header != NULL)
-		free(popup_body->header);
-	if (popup_body->content != NULL)
-		free(popup_body->content);
-	free (popup_body);
+	free(popup_body->header);
+	free(popup_body->content);
+	free(popup_body);
 
 	notify_notification_clear_actions(notify);
 
@@ -102,26 +100,26 @@ static void popup_show_thread(struct _popup_body *popup_body)
 }
 
 void popup_show(int notify, char *command)
-{	
+{
 	if (!xconfig->show_popup)
 		return;
-	
+
 	if ((xconfig->popups[notify].file == NULL) && (command == NULL))
 		return;
 
 	if (!xconfig->popups[notify].enabled)
 		return;
-	
+
 	time_t curtime = time(NULL);
 	if ((curtime - timestamp) < 2)
 		return;
-	
+
 	timestamp = curtime;
-	
+
 	pthread_attr_t popup_thread_attr;
 	pthread_attr_init(&popup_thread_attr);
 	pthread_attr_setdetachstate(&popup_thread_attr, PTHREAD_CREATE_DETACHED);
-	
+
 	log_message(DEBUG, _("Show popup message \"%s\" with content \"%s\""), xconfig->popups[notify].file, command);
 
 	struct _popup_body *popup_body = (struct _popup_body*) malloc(sizeof (struct _popup_body));
@@ -131,7 +129,7 @@ void popup_show(int notify, char *command)
 		popup_body->header = strdup(xconfig->popups[notify].file);
 	if (command != NULL)
 		popup_body->content = strdup(command);
-	
+
 	pthread_t popup_thread;
 	pthread_create(&popup_thread, &popup_thread_attr, (void*) &popup_show_thread, (void*)popup_body);
 

@@ -125,8 +125,7 @@ static void bind_action(enum _hotkey_action action)
 		log_message(ERROR, _("      KeySym (or with Shift modifier) is undefined!"), _(normal_action_names[action]), key);
 
 	}
-	if (key != NULL)
-		free(key);
+	free(key);
 }
 
 static void bind_user_action(int action)
@@ -165,8 +164,7 @@ static void bind_user_action(int action)
 		log_message(ERROR, _("      KeySym (or with Shift modifier) is undefined!"));
 
 	}
-	if (key != NULL)
-		free(key);
+	free(key);
 }
 
 enum _hotkey_action get_action(KeySym key_sym, int mask)
@@ -226,8 +224,7 @@ void bind_actions(void)
 
 void unbind_actions(void)
 {
-	if (btable != NULL)
-		free(btable);
+	free(btable);
 	btable = NULL;
 }
 
@@ -287,8 +284,7 @@ void bind_user_actions(void)
 
 void unbind_user_actions(void)
 {
-	if (ubtable != NULL)
-		free(ubtable);
+	free(ubtable);
 	ubtable = NULL;
 }
 

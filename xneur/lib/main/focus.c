@@ -139,8 +139,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	Window old_window = p->owner_window;
 	if (new_window == old_window)
 	{
-		if (new_app_name != NULL)
-			free(new_app_name);
+		free(new_app_name);
 		if (xconfig->troubleshoot_full_screen)
 		{
 			Window root_return;
@@ -199,8 +198,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 
 	log_message(DEBUG, _("Process new window (ID %d) with name '%s' (status %s, mode %s)"), new_window, new_app_name, _(verbose_focus_status[*focus_status]), _(verbose_forced_mode[*forced_mode]));
 
-	if (new_app_name != NULL)
-		free(new_app_name);
+	free(new_app_name);
 	return FOCUS_CHANGED;
 }
 
@@ -262,14 +260,12 @@ static void focus_update_grab_events(struct _focus *p, int mode)
 
 	p->last_parent_window = p->parent_window;
 
-	if (owner_window_name != NULL)
-		free(owner_window_name);
+	free(owner_window_name);
 }
 
 static void focus_uninit(struct _focus *p)
 {
-	if (p != NULL)
-		free(p);
+	free(p);
 
 	log_message(DEBUG, _("Focus is freed"));
 }

@@ -102,7 +102,6 @@ void osd_show(int notify, char *command)
 	pthread_create(&osd_thread, &osd_thread_attr, (void *) &osd_show_thread, osd_text);
 
 	pthread_attr_destroy(&osd_thread_attr);
-	free(osd_text);
 }
 
 #else /* WITH_XOSD */

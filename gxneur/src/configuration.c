@@ -68,7 +68,7 @@ int gxneur_config_read_str(const char* key, gchar** value)
 		return -2;
 
 	*value = g_settings_get_string(gsettingsSet(), key);
-	return 0;	
+	return 0;
 }
 
 int gxneur_config_write_int(const char* key, int value)
@@ -79,8 +79,8 @@ int gxneur_config_write_int(const char* key, int value)
 	if (!key)
 		return -2;
 
-	
-	if(!g_settings_set_int(gsettingsSet(), key, value)) 
+
+	if(!g_settings_set_int(gsettingsSet(), key, value))
 	{
 		    g_warning("Failed to set %s (%d)\n", key, value);
 		    return -1;
@@ -98,7 +98,7 @@ int gxneur_config_write_str(const char* key, const char* value)
 
 	int result = 0;
 
-	if(!g_settings_set_string(gsettingsSet(), key, value)) 
+	if(!g_settings_set_string(gsettingsSet(), key, value))
 		    g_warning("Failed to set %s (%s)\n", key, value),
 		    result = -1;
 
@@ -112,16 +112,15 @@ int gxneur_config_add_notify(const char* key, void* callback)
 
 	gchar* k = g_strdup_printf("changed::%s", key);
 	g_assert(k != NULL);
-	
+
 	g_signal_connect (
 				gsettingsSet(),
 				k,
 				G_CALLBACK (callback),
 				NULL);
-	
-	if (k != NULL)
-		g_free(k);
-	
+
+	g_free(k);
+
 	return 0;
 }
 

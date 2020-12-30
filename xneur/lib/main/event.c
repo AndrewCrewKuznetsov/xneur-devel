@@ -165,8 +165,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 		XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 		XFlush(main_window->display);
 		log_message(TRACE, _("The event KeyRelease is not sent to the window (ID %d) with name '%s'"), p->owner_window, app_name);
-		if (app_name != NULL)
-			free(app_name);
+		free(app_name);
 		return;
 	}
 
@@ -186,8 +185,7 @@ void event_send_xkey(struct _event *p, KeyCode kc, int modifiers)
 	XSendEvent(main_window->display, p->owner_window, TRUE, NoEventMask, &p->event);
 	XFlush(main_window->display);
 
-	if (app_name != NULL)
-		free(app_name);
+	free(app_name);
 }
 
 static void common_send_xkey(struct _event *p, int count, int input_keycode, int Mask_modifier)
@@ -281,8 +279,7 @@ static void event_send_next_event(struct _event *p)
 
 static void event_uninit(struct _event *p)
 {
-	if (p != NULL)
-		free(p);
+	free(p);
 
 	log_message(DEBUG, _("Event is freed"));
 }

@@ -538,7 +538,7 @@ KXNeurConf::KXNeurConf(KXNeurApp *app, QWidget *parent)
     abbr_page = new AbbrPage(0, "AbbrPage");
 
     addPage( kxneur_page, i18n("Common"), "keyboard_layout", i18n("Commons Options") ); // or pic = embedjs, exec
-    addPage( xneur_page, i18n("Languages"), "locale", i18n("Languages Options") ); // or pic = 
+    addPage( xneur_page, i18n("Languages"), "locale", i18n("Languages Options") ); // or pic =
     addPage( keys_page, i18n("Keys"), "key_bindings", i18n("Key Combinations") );
     addPage( prog_page, i18n("Programs"), "kwin", i18n("Exclusions for Program") );
     addPage( snd_page, i18n("Sounds"), "kmix", i18n("Sounds for Events") );
@@ -725,15 +725,15 @@ void KXNeurConf::LoadSettings()
 
 void KXNeurConf::SaveSettings()
 {
-    KXNeurSettings::setRunXNeur( 
+    KXNeurSettings::setRunXNeur(
 	kxneur_page->run_xneur->isChecked() );
-    KXNeurSettings::setForceRun( 
+    KXNeurSettings::setForceRun(
 	kxneur_page->force_run->isChecked() );
-    KXNeurSettings::setAutostart( 
+    KXNeurSettings::setAutostart(
 	kxneur_page->autostart->isChecked() );
-    KXNeurSettings::setShowInTray( 
+    KXNeurSettings::setShowInTray(
 	kxneur_page->in_tray->currentItem() );
-    KXNeurSettings::setSwitcherMode( 
+    KXNeurSettings::setSwitcherMode(
 	kxneur_page->sw_mode->isChecked() );
 
     knapp->xnconf->clear(knapp->xnconf);
@@ -829,8 +829,7 @@ void KXNeurConf::SaveSettings()
 	knapp->xnconf->play_sounds = 0;
 
     for ( int i = 0 ; i < MAX_SOUNDS ; i++ ) {
-	if ( knapp->xnconf->sounds[i].file )
-	    free(knapp->xnconf->sounds[i].file);
+	free(knapp->xnconf->sounds[i].file);
 	knapp->xnconf->sounds[i].file = qstrdup(snd_page->edit[i]->text().utf8());
     }
 
@@ -839,20 +838,18 @@ void KXNeurConf::SaveSettings()
     else
 	knapp->xnconf->show_osd = 0;
 
-    if ( knapp->xnconf->osd_font )
-	free(knapp->xnconf->osd_font);
+    free(knapp->xnconf->osd_font);
     knapp->xnconf->osd_font = qstrdup(osd_page->osd_font->text().utf8());
 
     for ( int i = 0 ; i < MAX_OSDS ; i++ ) {
-	if ( knapp->xnconf->osds[i].file )
-	    free(knapp->xnconf->osds[i].file);
+	free(knapp->xnconf->osds[i].file);
 	knapp->xnconf->osds[i].file = qstrdup(osd_page->edit[i]->text().utf8());
     }
 
     if ( abbr_page->ignore_layout->isChecked() )
 	knapp->xnconf->abbr_ignore_layout = 1;
     else
-	knapp->xnconf->abbr_ignore_layout = 0; 
+	knapp->xnconf->abbr_ignore_layout = 0;
 
     knapp->xnconf->save(knapp->xnconf);
     knapp->xnconf->reload(knapp->xnconf);
@@ -910,8 +907,7 @@ void KXNeurConf::KeyToXNConf(int a, int c)
     }
 
     knapp->xnconf->hotkeys[action].modifiers = 0;
-    if ( knapp->xnconf->hotkeys[action].key ) {
-    	free(knapp->xnconf->hotkeys[action].key);
+    free(knapp->xnconf->hotkeys[action].key);
 	knapp->xnconf->hotkeys[action].key = NULL;
     }
 

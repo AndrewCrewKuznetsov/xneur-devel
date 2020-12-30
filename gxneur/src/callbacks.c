@@ -47,7 +47,8 @@ void new_rule_to_treeview(GtkButton *button, gpointer user_data)
 	printf("--->> '%s'\n", letters);
 	if (letters == NULL)
 	{
-		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));		gtk_widget_destroy(window);	
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
+		gtk_widget_destroy(window);
 		printf("--->> 'DESTROY'\n");
 		return;
 	}
@@ -63,7 +64,7 @@ void new_rule_to_treeview(GtkButton *button, gpointer user_data)
 	{
 		gtk_list_store_set(GTK_LIST_STORE(store), &iter, 2, TRUE, -1);
 	}
-		
+
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "radiobutton1"));
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound)))
 	{
@@ -87,10 +88,10 @@ void new_rule_to_treeview(GtkButton *button, gpointer user_data)
 	{
 		gtk_list_store_set(GTK_LIST_STORE(store), &iter, 1, _(conditions_names1[3]), -1);
 	}
-		
+
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
-}	
+}
 
 void on_addbutton_clicked(GtkButton *button, gpointer user_data)
 {
@@ -102,20 +103,20 @@ void on_addbutton_clicked(GtkButton *button, gpointer user_data)
 		g_warning ("Couldn't load builder file: %s", error->message);
 		g_error_free (error);
 	}
-	
+
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
-	
+
 	gtk_widget_show(window);
 
 	xyz_t *ud = malloc(sizeof(xyz_t));
 	ud->x = builder;
 	ud->y = ((xyz_t *) user_data)->y;
-	
+
 	GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
 	g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (new_rule_to_treeview), ud);
 	widget = GTK_WIDGET(gtk_builder_get_object (builder, "button2"));
 	g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (on_cancelbutton_clicked), ud);
-	
+
 }
 
 // Save new regexp rule
@@ -129,12 +130,13 @@ void edit_rule_to_treeview(GtkButton *button, gpointer user_data)
 	char *letters = strtok((char *) gtk_entry_get_text(GTK_ENTRY(widgetPtrToBefound)), " ");
 	if (letters == NULL)
 	{
-		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));		gtk_widget_destroy(window);	
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
+		gtk_widget_destroy(window);
 		return;
 	}
 
 	GtkWidget *treeview = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->z, "treeview1"));
-	
+
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 
@@ -147,7 +149,7 @@ void edit_rule_to_treeview(GtkButton *button, gpointer user_data)
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton1"));
 	gboolean insensitive = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound));
 	gtk_list_store_set(GTK_LIST_STORE(store), &iter, 2, insensitive, -1);
-		
+
 	widgetPtrToBefound = GTK_WIDGET(gtk_builder_get_object (builder, "radiobutton1"));
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widgetPtrToBefound)))
 	{
@@ -171,17 +173,17 @@ void edit_rule_to_treeview(GtkButton *button, gpointer user_data)
 	{
 		gtk_list_store_set(GTK_LIST_STORE(store), &iter, 1, _(conditions_names1[3]), -1);
 	}
-		
+
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (builder, "dialog1"));
 	gtk_widget_destroy(window);
-}			
+}
 
 void on_editbutton_clicked(GtkButton *button, gpointer user_data)
 {
 	if (button){};
 
 	GtkWidget *treeview = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->x, "treeview1"));
-	
+
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 
@@ -192,7 +194,7 @@ void on_editbutton_clicked(GtkButton *button, gpointer user_data)
 		gchar *letters;
 		gchar *condition;
 		gboolean insensitive;
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 0, &letters, 
+		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 0, &letters,
 	                                                     1, &condition,
 	                                                     2, &insensitive,
 	                                                     -1);
@@ -212,7 +214,7 @@ void on_editbutton_clicked(GtkButton *button, gpointer user_data)
 
 		GtkWidget *checkbutton = GTK_WIDGET(gtk_builder_get_object (builder, "checkbutton1"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbutton), insensitive);
-		
+
 		if (strcmp((const char*)condition, _(conditions_names1[0])) == 0)
 		{
 			GtkWidget *radiobutton = GTK_WIDGET(gtk_builder_get_object (builder, "radiobutton1"));
@@ -232,15 +234,15 @@ void on_editbutton_clicked(GtkButton *button, gpointer user_data)
 		{
 			GtkWidget *radiobutton = GTK_WIDGET(gtk_builder_get_object (builder, "radiobutton4"));
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radiobutton), TRUE);
-		}	
-		
+		}
+
 		gtk_widget_show(window);
 
 		xyz_t *ud = malloc(sizeof(xyz_t));
 		ud->x = builder;
 		ud->y = ((xyz_t *) user_data)->y;
 		ud->z = ((xyz_t *) user_data)->x;
-		
+
 		GtkWidget *widget= GTK_WIDGET(gtk_builder_get_object (builder, "button1"));
 		g_signal_connect ((gpointer) widget, "clicked", G_CALLBACK (edit_rule_to_treeview), ud);
 		widget = GTK_WIDGET(gtk_builder_get_object (builder, "button2"));
@@ -251,9 +253,9 @@ void on_editbutton_clicked(GtkButton *button, gpointer user_data)
 void on_deletebutton_clicked(GtkButton *button, gpointer user_data)
 {
 	if (button){};
-	
+
 	GtkWidget *treeview = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->x, "treeview1"));
-	
+
 	GtkTreeSelection *select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 
@@ -284,11 +286,11 @@ void on_extension_install_check(gpointer user_data)
 static gboolean save_regexp(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
 {
 	if (model || path || user_data){};
-	
+
 	gchar *letters;
 	gchar *condition;
 	gboolean insensitive;
-	gtk_tree_model_get(GTK_TREE_MODEL(model), iter, 0, &letters, 
+	gtk_tree_model_get(GTK_TREE_MODEL(model), iter, 0, &letters,
 	                                                1, &condition,
 	                                                2, &insensitive,
 	                                                -1);
@@ -297,7 +299,7 @@ static gboolean save_regexp(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter 
 	{
 		fputs("(?i)", stream);
 	}
-		
+
 	if (strcmp((const char*)condition, _(conditions_names1[0])) == 0)
 	{
 		fputs(letters, stream);
@@ -321,10 +323,8 @@ static gboolean save_regexp(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter 
 	fputs("\n", stream);
 
 	// end write
-	if (letters != NULL)
-		g_free(letters);
-	if (condition != NULL)
-		g_free(condition);
+	g_free(letters);
+	g_free(condition);
 
 	return FALSE;
 }
@@ -342,11 +342,10 @@ void on_okbutton_clicked(GtkButton *button, gpointer user_data)
 		gtk_tree_model_foreach(GTK_TREE_MODEL(((xyz_t *) user_data)->y), save_regexp, user_data);
 		fclose(stream);
 	}
-	
+
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->x, "dialog1"));
 	gtk_widget_destroy(window);
-	if (user_data!= NULL)
-		g_free(user_data);
+	g_free(user_data);
 }
 
 void on_cancelbutton_clicked(GtkButton *button, gpointer user_data)
@@ -355,15 +354,14 @@ void on_cancelbutton_clicked(GtkButton *button, gpointer user_data)
 
 	GtkWidget *window = GTK_WIDGET(gtk_builder_get_object (((xyz_t *) user_data)->x, "dialog1"));
 	gtk_widget_destroy(window);
-	if (user_data != NULL)
-		g_free(user_data);
+	g_free(user_data);
 }
 
 // Parse keyboard binds
 gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
 	if (user_data){};
-		
+
 	char *string		= XKeysymToString(XkbKeycodeToKeysym(gdk_x11_get_default_xdisplay(), event->hardware_keycode, 0, 0));
 	gchar *modifiers	= modifiers_to_string(event->state);
 	gchar *keycode		= g_strdup_printf("%d", event->hardware_keycode);
@@ -371,13 +369,10 @@ gboolean on_key_press_event(GtkWidget *widget, GdkEventKey *event, gpointer user
 
 	gtk_entry_set_text(GTK_ENTRY(widget), mkey);
 
-	if (mkey != NULL)
-		g_free(mkey);
-	if (keycode != NULL)
-		g_free(keycode);
-	if (modifiers != NULL)
-		g_free(modifiers);
-		
+	g_free(mkey);
+	g_free(keycode);
+	g_free(modifiers);
+
 	return FALSE;
 }
 
