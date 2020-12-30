@@ -62,7 +62,7 @@ static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *exclu
 	char *new_app_name = NULL;
 
 	// Clear masking on unfocused window
-	//p->update_grab_events(p, TRUE);
+	//focus_update_grab_events(p, TRUE || p->last_excluded);
 
 	Window new_window;
 	int show_message = TRUE;
@@ -253,7 +253,7 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 
 static void focus_update_grab_events(struct _focus *p, int not_grab)
 {
-	if (not_grab || p->last_excluded)
+	if (not_grab)
 	{
 		grab_button(main_window->display, FALSE);
 		grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, FALSE);
@@ -268,7 +268,7 @@ static void focus_update_grab_events(struct _focus *p, int not_grab)
 
 static void focus_click_key(struct _focus *p, KeySym keysym)
 {
-	focus_update_grab_events(p, TRUE);
+	focus_update_grab_events(p, TRUE || p->last_excluded);
 
 	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
 
@@ -276,7 +276,7 @@ static void focus_click_key(struct _focus *p, KeySym keysym)
 	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
 	XFlush(main_window->display);
 
-	focus_update_grab_events(p, FALSE);
+	focus_update_grab_events(p, FALSE || p->last_excluded);
 }
 
 static void focus_uninit(struct _focus *p)
