@@ -1129,22 +1129,22 @@ msgstr ""
 
 #: lib/main/program.c:517
 #, c-format
-msgid "Received KeyPress '%s' (event type %d)"
+msgid "Received KeyPress '%s' == %u (event type %d)"
 msgstr ""
 
 #: lib/main/program.c:543
 #, c-format
-msgid "Received KeyRelease '%s' (event type %d)"
+msgid "Received KeyRelease '%s' == %u (event type %d)"
 msgstr ""
 
 #: lib/main/program.c:575
 #, c-format
-msgid "Received XI_KeyPress '%s' (event type %d)"
+msgid "Received XI_KeyPress '%s' == %u (event type %d)"
 msgstr ""
 
 #: lib/main/program.c:595
 #, c-format
-msgid "Received XI_KeyRelease '%s' (event type %d)"
+msgid "Received XI_KeyRelease '%s' == %u (event type %d)"
 msgstr ""
 
 #: lib/main/program.c:617

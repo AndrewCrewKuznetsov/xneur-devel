@@ -532,7 +532,7 @@ static void program_process_input(struct _program *p)
 										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
 										  &mask);
 							mask = mask & get_languages_mask();
-							log_message(TRACE, _("Received XI_KeyRelease '%s'== %u (event type %d)"),
+							log_message(TRACE, _("Received XI_KeyRelease '%s' == %u (event type %d)"),
 										XKeysymToString(key_sym),
 										xi_event->detail,
 										type);
