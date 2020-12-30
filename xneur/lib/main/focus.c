@@ -276,7 +276,7 @@ static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
 	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
 	XFlush(main_window->display);
 
-	focus_update_grab_events(p, !excluded);
+	focus_update_grab_events(p, !(!xconfig->tracking_input || excluded));
 }
 
 static void focus_uninit(struct _focus *p)

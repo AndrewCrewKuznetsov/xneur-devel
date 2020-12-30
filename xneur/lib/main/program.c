@@ -835,7 +835,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 			 || key == XK_Num_Lock
 			 || key == XK_Scroll_Lock
 			) {
-				p->focus->click_key(p->focus, !xconfig->tracking_input || p->app_excluded, key);
+				p->focus->click_key(p->focus, p->app_excluded, key);
 			}
 		}
 
