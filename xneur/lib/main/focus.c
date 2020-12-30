@@ -257,8 +257,7 @@ static void focus_update_grab_events(struct _focus *p, int grab)
 
 	if (grab_input)
 	{
-		if (xconfig->tracking_mouse)
-			grab_button(main_window->display, TRUE);
+		grab_button(main_window->display, xconfig->tracking_mouse);
 	}
 	else
 	{
