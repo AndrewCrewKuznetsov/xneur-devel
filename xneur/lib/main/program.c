@@ -337,7 +337,7 @@ static void program_update(struct _program *p)
 		return;
 
 	p->event->set_owner_window(p->event, p->focus->owner_window);
-	p->focus->update_grab_events(p->focus, p->app_excluded || (xconfig->tracking_input ? p->app_excluded : TRUE));
+	p->focus->update_grab_events(p->focus, p->app_excluded || !xconfig->tracking_input);
 
 	program_layout_update(p, p->last_layout, p->last_window, p->focus->owner_window);
 
@@ -835,7 +835,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 			 || key == XK_Num_Lock
 			 || key == XK_Scroll_Lock
 			) {
-				p->focus->click_key(p->focus, key);
+				p->focus->click_key(p->focus, p->focus->last_excluded, key);
 			}
 		}
 

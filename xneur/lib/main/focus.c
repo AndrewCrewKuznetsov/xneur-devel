@@ -266,7 +266,7 @@ static void focus_update_grab_events(struct _focus *p, int not_grab)
 	}
 }
 
-static void focus_click_key(struct _focus *p, KeySym keysym)
+static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
 {
 	focus_update_grab_events(p, TRUE);
 
@@ -276,7 +276,7 @@ static void focus_click_key(struct _focus *p, KeySym keysym)
 	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
 	XFlush(main_window->display);
 
-	focus_update_grab_events(p, p->last_excluded);
+	focus_update_grab_events(p, excluded);
 }
 
 static void focus_uninit(struct _focus *p)
