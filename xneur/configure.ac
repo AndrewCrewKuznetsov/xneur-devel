@@ -249,7 +249,9 @@ if test "x$with_plugins" != "xno"; then
 	AC_DEFINE(WITH_PLUGINS, 1, [Define if you want plugins support])
 fi
 
-DEFAULT_CFLAGS="-Wall -Wextra -Werror -g0 -std=gnu99 -fPIC"
+dnl DEFAULT_CFLAGS="-Wall -Wextra -Werror -g0 -std=gnu99 -fPIC"
+DEFAULT_CFLAGS="-g0 -std=gnu99 -fPIC"
+
 AC_SUBST(DEFAULT_CFLAGS)
 
 AC_OUTPUT([
