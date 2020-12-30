@@ -331,7 +331,6 @@ static void program_update(struct _program *p)
 
 	// Can update `p->focus->owner_window`
 	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_excluded, &p->app_autocompletion_mode);
-	p->focus->last_excluded = xconfig->tracking_input ? p->app_excluded : TRUE;
 
 	if (!changed)
 		return;
@@ -836,7 +835,7 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 			 || key == XK_Num_Lock
 			 || key == XK_Scroll_Lock
 			) {
-				p->focus->click_key(p->focus, p->focus->last_excluded, key);
+				p->focus->click_key(p->focus, !xconfig->tracking_input || p->app_excluded, key);
 			}
 		}
 
@@ -882,7 +881,7 @@ static void program_perform_user_action(struct _program *p, int action)
 
 static void program_perform_auto_action(struct _program *p, int action)
 {
-	if (p->focus->last_excluded)
+	if (!xconfig->tracking_input || p->app_excluded)
 		return;
 
 	struct _buffer *string = p->buffer;

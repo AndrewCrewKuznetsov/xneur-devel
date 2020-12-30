@@ -33,7 +33,6 @@ struct _focus
 {
 	Window owner_window;		// Input focus window
 	Window parent_window;		// Parent widget in window
-	int last_excluded;			// Last focus status
 
 	int  (*get_focus_status) (struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode);
 	int  (*is_focus_changed) (struct _focus *p);
