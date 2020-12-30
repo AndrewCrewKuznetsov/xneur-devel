@@ -337,7 +337,7 @@ static void program_update(struct _program *p)
 
 	p->event->set_owner_window(p->event, p->focus->owner_window);
 	// If application is excluded from tracking, disable grabbing input, otherwise enable
-	p->focus->update_grab_events(p->focus, !p->app_excluded && xconfig->tracking_input);
+	p->focus->update_grab_events(p->focus, !p->app_excluded);
 
 	program_layout_update(p, p->last_layout, p->last_window, p->focus->owner_window);
 
