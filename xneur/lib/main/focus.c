@@ -254,15 +254,9 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 static void focus_update_grab_events(struct _focus *p, int grab)
 {
 	int grab_input = xconfig->tracking_input && grab;
+	int grab_mouse = xconfig->tracking_mouse && grab_input;
 
-	if (grab_input)
-	{
-		grab_button(main_window->display, xconfig->tracking_mouse);
-	}
-	else
-	{
-		grab_button(main_window->display, FALSE);
-	}
+	grab_button(main_window->display, grab_mouse);
 	grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, grab_input);
 }
 
@@ -276,7 +270,10 @@ static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
 	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
 	XFlush(main_window->display);
 
-	focus_update_grab_events(p, !excluded);
+	// Enable events if they are not disabled for application
+	if (!excluded) {
+		focus_update_grab_events(p, TRUE);
+	}
 }
 
 static void focus_uninit(struct _focus *p)
