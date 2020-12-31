@@ -362,11 +362,11 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, int check_similar_words)
 {
-	char **word = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	int **sym_len = (int **) malloc((handle->total_languages + 1) * sizeof(int *));
+	char **word = (char **) malloc(handle->total_languages * sizeof(char *));
+	char **word_base = (char **) malloc(handle->total_languages * sizeof(char *));
+	char **word_unchanged = (char **) malloc(handle->total_languages * sizeof(char *));
+	char **word_unchanged_base = (char **) malloc(handle->total_languages * sizeof(char *));
+	int **sym_len = (int **) malloc(handle->total_languages * sizeof(int *));
 
 	log_message(DEBUG, _("Processing word:"));
 	for (int i = 0; i < handle->total_languages; i++)
