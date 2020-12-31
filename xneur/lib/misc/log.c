@@ -39,7 +39,7 @@ void log_message(int level, const char *string, ...)
 	if (level > LOG_LEVEL)
 		return;
 
-	char *modifier;
+	const char *modifier;
 	FILE *stream = stdout;
 	switch (level)
 	{
@@ -84,7 +84,7 @@ void log_message(int level, const char *string, ...)
 	size_t time_len = loctime != NULL
 		? strftime(time_buffer, sizeof(time_buffer)/sizeof(time_buffer[0]), "%T ", loctime)
 		: 0;
-	int len = strlen(modifier) + time_len + strlen(string) + 2;// \n + \0
+	size_t len = strlen(modifier) + time_len + strlen(string) + 2;// \n + \0
 
 	char *buffer = (char *) malloc(len + 1);
 	snprintf(buffer, len, "%s%s%s\n", modifier, time_buffer, string);
@@ -93,8 +93,11 @@ void log_message(int level, const char *string, ...)
 	va_list ap;
 	va_start(ap, string);
 
+	// TODO: Remove disabling lint when clang-tidy bug will be fixed
+	// clang-tidy bug: https://bugs.llvm.org/show_bug.cgi?id=41311
+	// NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized)
 	vfprintf(stream, buffer, ap);
 
-	free(buffer);
 	va_end(ap);
+	free(buffer);
 }
