@@ -371,22 +371,23 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, in
 	log_message(DEBUG, _("Processing word:"));
 	for (int i = 0; i < handle->total_languages; i++)
 	{
-		word[i] = strdup(p->get_last_word(p, p->i18n_content[i].content));
-		word_base[i] = word[i];
-		del_final_numeric_char(word[i]);
+		char* last_word           = strdup(p->get_last_word(p, p->i18n_content[i].content));
+		char* last_word_unchanged = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
+		del_final_numeric_char(last_word);
+		del_final_numeric_char(last_word_unchanged);
 
-		unsigned int offset = 0;
-		for (offset = 0; offset < strlen(word[i]); offset++)
+		// Offset of first non-punctuation or digit symbol
+		size_t offset = 0;
+		for (; offset < strlen(last_word); ++offset)
 		{
-			if (!ispunct(word[i][offset]) && (!isdigit(word[i][offset])))
+			if (!ispunct(last_word[offset]) && (!isdigit(last_word[offset])))
 				break;
 		}
-		word[i] = word[i] + offset;
+		word[i] = last_word + offset;
+		word_base[i] = last_word;
 
-		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
-		word_unchanged_base[i] = word_unchanged[i];
-		word_unchanged[i] = word_unchanged[i] + offset;
-		del_final_numeric_char(word_unchanged[i]);
+		word_unchanged[i] = last_word_unchanged + offset;
+		word_unchanged_base[i] = last_word_unchanged;
 
 		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
 
