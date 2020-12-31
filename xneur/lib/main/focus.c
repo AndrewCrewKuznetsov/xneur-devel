@@ -18,6 +18,7 @@
  */
 
 #include <X11/XKBlib.h>
+#include <X11/extensions/XInput2.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -39,30 +40,29 @@ extern struct _xneur_config *xconfig;
 extern struct _window *main_window;
 
 const char *verbose_forced_mode[]	= {"Default", "Manual", "Automatic"};
-const char *verbose_focus_status[]	= {"Processed", "Changed Focus", "Unchanged Focus", "Excluded"};
+const char *verbose_focus_status[]	= {"Processed", "Excluded"};
 
 
 // Private
-int focus_get_focused_window(struct _focus *p)
+static int focus_is_focus_changed(struct _focus *p)
 {
-	if (p) {};
 	Window new_window;
 	int revert_to;
 	XGetInputFocus(main_window->display, &new_window, &revert_to);
 
-	return new_window;
+	return new_window != p->owner_window;
 }
 
-static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode)
+static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *excluded, int *autocompletion_mode)
 {
 	*forced_mode	= FORCE_MODE_NORMAL;
-	*focus_status	= FOCUS_NONE;
+	*excluded	= FALSE;
 	*autocompletion_mode	= AUTOCOMPLETION_INCLUDED;
 
 	char *new_app_name = NULL;
 
 	// Clear masking on unfocused window
-	//p->update_grab_events(p, LISTEN_DONTGRAB_INPUT);
+	//focus_update_grab_events(p, FALSE);
 
 	Window new_window;
 	int show_message = TRUE;
@@ -114,15 +114,15 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 	//if (new_app_name != NULL)
 	//{
 		if (xconfig->excluded_apps->exist(xconfig->excluded_apps, new_app_name, BY_PLAIN))
-			*focus_status = FOCUS_EXCLUDED;
+			*excluded = TRUE;
 
 		if (new_app_name != NULL)
 		{
 			if (strcmp("Gxneur", new_app_name) == 0)
-				*focus_status = FOCUS_EXCLUDED;
+				*excluded = TRUE;
 
 			if (strcmp("Kdeneur", new_app_name) == 0)
-				*focus_status = FOCUS_EXCLUDED;
+				*excluded = TRUE;
 		}
 
 		if (xconfig->auto_apps->exist(xconfig->auto_apps, new_app_name, BY_PLAIN))
@@ -134,7 +134,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			*autocompletion_mode	= AUTOCOMPLETION_EXCLUDED;
 	//}
 	//else
-	//	*focus_status = FOCUS_EXCLUDED;
+	//	*excluded = TRUE;
 
 	Window old_window = p->owner_window;
 	if (new_window == old_window)
@@ -155,7 +155,7 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			    (width_return == root_width_return) && (height_return == root_height_return))
 				*forced_mode = FORCE_MODE_MANUAL;
 		}
-		return FOCUS_UNCHANGED;
+		return FALSE;
 	}
 
 	log_message(DEBUG, _("Focused window %d"), new_window);
@@ -196,71 +196,84 @@ static int get_focus(struct _focus *p, int *forced_mode, int *focus_status, int 
 			*forced_mode = FORCE_MODE_MANUAL;
 	}
 
-	log_message(DEBUG, _("Process new window (ID %d) with name '%s' (status %s, mode %s)"), new_window, new_app_name, _(verbose_focus_status[*focus_status]), _(verbose_forced_mode[*forced_mode]));
+	log_message(DEBUG, _("Process new window (ID %d) with name '%s' (status %s, mode %s)"), new_window, new_app_name, _(verbose_focus_status[*excluded]), _(verbose_forced_mode[*forced_mode]));
 
 	free(new_app_name);
-	return FOCUS_CHANGED;
+	return TRUE;
 }
 
-static int focus_get_focus_status(struct _focus *p, int *forced_mode, int *focus_status, int *autocompletion_mode)
+static void grab_button(Display* display, int is_grab)
 {
-	int focus = get_focus(p, forced_mode, focus_status, autocompletion_mode);
-
-	p->last_focus = *focus_status;
-	if (!xconfig->tracking_input)
-		p->last_focus = FOCUS_EXCLUDED;
-
-	return focus;
+	XIEventMask mask;
+	mask.deviceid = XIAllMasterDevices;
+	mask.mask_len = XIMaskLen(XI_RawButtonPress);
+	mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+	XISetMask(mask.mask, is_grab ? XI_RawButtonPress : 0);
+	XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
+	free(mask.mask);
 }
 
-static void focus_update_grab_events(struct _focus *p, int mode)
+static void grab_all_keys(Display* display, Window window, int use_x_input_api, int is_grab)
 {
-	char *owner_window_name = get_wm_class_name(p->owner_window);
-
-	if ((mode == LISTEN_DONTGRAB_INPUT) || (p->last_focus == FOCUS_EXCLUDED))
+	if (is_grab)
 	{
-		grab_button(FALSE);
-		grab_all_keys(p->owner_window, FALSE);
+		// Grab all keys...
+		if (use_x_input_api) {
+			XIEventMask mask;
+			mask.deviceid = XIAllDevices;
+			mask.mask_len = XIMaskLen(XI_KeyPress)
+			              + XIMaskLen(XI_KeyRelease);
+			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			XISetMask(mask.mask, XI_KeyPress);
+			XISetMask(mask.mask, XI_KeyRelease);
+			XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
+			free(mask.mask);
+		} else {
+			XGrabKey(display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
+		}
 	}
 	else
 	{
-		if (xconfig->tracking_mouse)
-			grab_button(TRUE);
-		grab_all_keys(p->owner_window, TRUE);
-	}
-
-	/*
-	if (mode == LISTEN_DONTGRAB_INPUT)
-	{
-		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' OFF"), p->owner_window, owner_window_name);
-
-		// Event unmasking
-		grab_button(p->owner_window, FALSE);
-		grab_all_keys(p->owner_window, FALSE);
-	}
-	else
-	{
-		log_message (DEBUG, _("Interception of events in the window (ID %d) with name '%s' ON"), p->owner_window, owner_window_name);
-
-		// Event masking
-		// Grabbing key and button
-		if (p->last_focus != FOCUS_EXCLUDED)
-		{
-			if (xconfig->tracking_mouse)
-			  grab_button(p->parent_window, TRUE);
-			grab_all_keys(p->owner_window, TRUE);
-		}
-		else
-		{
-			grab_button(p->owner_window, FALSE);
-			grab_all_keys(p->owner_window, FALSE);
+		if (use_x_input_api) {
+			XIEventMask mask;
+			mask.deviceid = XIAllMasterDevices;
+			mask.mask_len = XIMaskLen(XI_KeyPress);
+			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			XISetMask(mask.mask, 0);
+			XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
+			free(mask.mask);
+		} else {
+			// Ungrab all keys in app window...
+			XUngrabKey(display, AnyKey, AnyModifier, window);
 		}
 	}
-	*/
 
-	p->last_parent_window = p->parent_window;
+	XSelectInput(display, window, FOCUS_CHANGE_MASK);
+}
 
-	free(owner_window_name);
+static void focus_update_grab_events(struct _focus *p, int grab)
+{
+	int grab_input = xconfig->tracking_input && grab;
+	int grab_mouse = xconfig->tracking_mouse && grab_input;
+
+	grab_button(main_window->display, grab_mouse);
+	grab_all_keys(main_window->display, p->owner_window, has_x_input_extension, grab_input);
+}
+
+static void focus_click_key(struct _focus *p, int excluded, KeySym keysym)
+{
+	focus_update_grab_events(p, FALSE);
+
+	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
+
+	XTestFakeKeyEvent(main_window->display, keycode, TRUE,  0); // key press event
+	XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
+	XFlush(main_window->display);
+
+	// Enable events if they are not disabled for application
+	if (!excluded) {
+		focus_update_grab_events(p, TRUE);
+	}
 }
 
 static void focus_uninit(struct _focus *p)
@@ -277,8 +290,9 @@ struct _focus* focus_init(void)
 
 	// Functions mapping
 	p->get_focus_status	= focus_get_focus_status;
-	p->get_focused_window = focus_get_focused_window;
+	p->is_focus_changed = focus_is_focus_changed;
 	p->update_grab_events	= focus_update_grab_events;
+	p->click_key	= focus_click_key;
 	p->uninit		= focus_uninit;
 
 	return p;

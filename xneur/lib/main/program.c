@@ -247,18 +247,52 @@ static void fetch_window_name(char *text_to_find, Window window) {
 	free(app_name);
 }
 
-static void program_layout_update(struct _program *p)
+static Bool is_modifier(KeySym key_sym)
+{
+	XModifierKeymap *modmap = XGetModifierMapping(main_window->display);
+	if (modmap == NULL) {
+		log_message(ERROR, _("Can't get modifier mapping. Modifier keys are not ignored"));
+		return False;
+	}
+
+	KeyCode key_code = XKeysymToKeycode(main_window->display, key_sym);
+
+	int size = modmap->max_keypermod * 8;
+	for (int i = 0; i < size; ++i) {
+		if (key_code == modmap->modifiermap[i]) {
+			return True;
+		}
+	}
+
+	XFreeModifiermap(modmap);
+
+	return False;
+}
+
+static void toggle_lock(int mask, int state)
+{
+	int xkb_opcode, xkb_event, xkb_error;
+	int xkb_lmaj = XkbMajorVersion;
+	int xkb_lmin = XkbMinorVersion;
+	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
+	{
+		/*int status = */XkbLockModifiers (main_window->display, XkbUseCoreKbd, mask, state);
+		//log_message(TRACE, _("Set lock state: %d %d, status: %d"), mask, state, status);
+	}
+}
+
+static void program_layout_update(struct _program *p, int layout, Window old_window, Window new_window)
 {
 	if (!xconfig->remember_layout)
 		return;
 
-	if ((Window) p->last_window == p->focus->owner_window)
+	if (old_window == new_window)
 		return;
 
 	char text_to_find[1024];
 	char window_layout[1024];
 
-	fetch_window_name(text_to_find, p->last_window);
+	fetch_window_name(text_to_find, old_window);
 	// Remove layout for old window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
 	{
@@ -271,10 +305,10 @@ static void program_layout_update(struct _program *p)
 	}
 
 	// Save layout for old window
-	sprintf(window_layout, "%s %d", text_to_find, p->last_layout);
+	sprintf(window_layout, "%s %d", text_to_find, layout);
 	xconfig->window_layouts->add(xconfig->window_layouts, window_layout);
 
-	fetch_window_name(text_to_find, p->focus->owner_window);
+	fetch_window_name(text_to_find, new_window);
 
 	// Restore layout for new window
 	for (int lang = 0; lang < xconfig->handle->total_languages; lang++)
@@ -283,7 +317,6 @@ static void program_layout_update(struct _program *p)
 		if (!xconfig->window_layouts->exist(xconfig->window_layouts, window_layout, BY_PLAIN))
 			continue;
 
-		//XkbLockGroup(main_window->display, XkbUseCoreKbd, lang);
 		set_keyboard_group(lang);
 		log_message(DEBUG, _("Restore layout group to %d"), lang);
 		return;
@@ -292,46 +325,60 @@ static void program_layout_update(struct _program *p)
 	log_message(DEBUG, _("Store default layout group to %d"), xconfig->default_group);
 }
 
-static void program_update(struct _program *p)
+static Window program_update(struct _program *p)
 {
-	p->last_window = p->focus->owner_window;
+	Window prev = p->focus->owner_window;
 
-	int status = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_focus_mode, &p->app_autocompletion_mode);
+	// Can update `p->focus->owner_window`
+	int changed = p->focus->get_focus_status(p->focus, &p->app_forced_mode, &p->app_excluded, &p->app_autocompletion_mode);
+	if (changed) {
+		p->event->set_owner_window(p->event, p->focus->owner_window);
+		// If application is excluded from tracking, disable grabbing input, otherwise enable
+		p->focus->update_grab_events(p->focus, !p->app_excluded);
 
-	if (status == FOCUS_UNCHANGED)
-		return;
+		program_layout_update(p, p->last_layout, prev, p->focus->owner_window);
 
-	p->event->set_owner_window(p->event, p->focus->owner_window);
+		p->buffer->save_and_clear(p->buffer, prev);
+		p->correction_buffer->clear(p->correction_buffer);
+		p->correction_action = CORRECTION_NONE;
 
-	int listen_mode = LISTEN_GRAB_INPUT;
-	if (p->app_focus_mode == FOCUS_EXCLUDED)
-		listen_mode = LISTEN_DONTGRAB_INPUT;
+		// Сброс признака "ручное переключение" после смены фокуса.
+		p->changed_manual = MANUAL_FLAG_UNSET;
+	}
+	return prev;
+}
 
-	p->focus->update_grab_events(p->focus, listen_mode);
+static void process_key(struct _program *p, int main_type, int type, const char* message) {
+	KeyCode keycode = p->event->event.xkey.keycode;
+	KeySym  key_sym = p->event->get_cur_keysym(p->event);
 
-	program_layout_update(p);
+	log_message(TRACE, message, XKeysymToString(key_sym), keycode, main_type);
 
-	p->buffer->save_and_clear(p->buffer, p->last_window);
-	p->correction_buffer->clear(p->correction_buffer);
-	p->correction_action = CORRECTION_NONE;
+	Window wDummy;
+	int iDummy;
+	unsigned int mask;
+	XQueryPointer(main_window->display, p->focus->owner_window,
+		&wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
+		&mask
+	);
+	mask = mask & get_languages_mask();
 
-	if (status == FOCUS_NONE)
-		return;
+	// Save received event
+	p->event->default_event = p->event->event;
 
-	// Сброс признака "ручное переключение" после смены фокуса.
-	p->changed_manual = MANUAL_FLAG_UNSET;
+	program_on_key_action(p, type, key_sym, mask);
 }
 
 static void program_process_input(struct _program *p)
 {
-	program_update(p);
+	Window prev = program_update(p);
 
 	while (1)
 	{
 		int type = p->event->get_next_event(p->event);
 
 		int curr_layout = get_curr_keyboard_group();
-		if ((p->last_layout != curr_layout) && (p->last_window == p->focus->owner_window))
+		if ((p->last_layout != curr_layout) && prev == p->focus->owner_window)
 		{
 			if (xconfig->troubleshoot_switch)
 			{
@@ -462,12 +509,12 @@ static void program_process_input(struct _program *p)
 				log_message(TRACE, _("Received MotionNotify (event type %d)"), type);
 				break;
 			}
-			case FocusIn:
 			case LeaveNotify:
 			case EnterNotify:
+				break;
+			case FocusIn:
 			{
-				if (((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
-				    && (type == FocusIn))
+				if (p->focus->is_focus_changed(p->focus))
 				{
 					log_message(TRACE, _("Received FocusIn on window %d (event type %d)"), p->event->event.xfocus.window, type);
 				}
@@ -475,20 +522,15 @@ static void program_process_input(struct _program *p)
 			}
 			case FocusOut:
 			{
-				if (((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
-				    && (type == FocusOut))
+				if (p->focus->is_focus_changed(p->focus))
 				{
 					log_message(TRACE, _("Received FocusOut on window %d (event type %d)"), p->event->event.xfocus.window, type);
-					program_update(p);
+					prev = program_update(p);
 				}
 				break;
 			}
 			default:
 			{
-				Window wDummy;
-				int iDummy;
-				unsigned int mask;
-
 				if (has_x_input_extension)
 				{
 					XGenericEventCookie *cookie = &p->event->event.xcookie;
@@ -500,50 +542,18 @@ static void program_process_input(struct _program *p)
 						switch (xi_event->evtype) {
 						case XI_KeyPress:
 						{
-							KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
-							if (key_sym == NoSymbol)
-								key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-							XQueryPointer(main_window->display,
-										  (Window)p->focus->owner_window,
-										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-										  &mask);
-							mask = mask & get_languages_mask();
-							log_message(TRACE, _("Received XI_KeyPress '%s' == %u (event type %d)"),
-										XKeysymToString(key_sym),
-										xi_event->detail,
-										type);
-							//log_message(TRACE, _("    Mask %d"), mask);
-
 							// Processing received event
 							p->event->event.xkey.state   = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
-							p->event->default_event = p->event->event;
-							program_on_key_action(p, KeyPress, key_sym, mask);
-
+							process_key(p, type, KeyPress, _("Received XI_KeyPress '%s' == %u (event type %d)"));
 							break;
 						}
 						case XI_KeyRelease:
 						{
-							KeySym key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, main_window->keymap->latin_group, 0);
-							if (key_sym == NoSymbol)
-								key_sym = XkbKeycodeToKeysym(main_window->display, xi_event->detail, 0, 0);
-							XQueryPointer(main_window->display,
-										  (Window)p->focus->owner_window,
-										  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-										  &mask);
-							mask = mask & get_languages_mask();
-							log_message(TRACE, _("Received XI_KeyRelease '%s' == %u (event type %d)"),
-										XKeysymToString(key_sym),
-										xi_event->detail,
-										type);
-							//log_message(TRACE, _("    Mask %d"), mask);
-
 							// Processing received event
 							p->event->event.xkey.state   = xi_event->mods.effective;
 							p->event->event.xkey.keycode = xi_event->detail;
-							p->event->default_event = p->event->event;
-							program_on_key_action(p, KeyRelease, key_sym, mask);
-
+							process_key(p, type, KeyRelease, _("Received XI_KeyRelease '%s'== %u (event type %d)"));
 							break;
 						}
 						case XI_RawButtonPress:
@@ -554,11 +564,11 @@ static void program_process_input(struct _program *p)
 							p->buffer->save_and_clear(p->buffer, p->focus->owner_window);
 							p->correction_buffer->clear(p->correction_buffer);
 							p->correction_action = CORRECTION_NONE;
-							if ((Window)p->focus->get_focused_window(p->focus) != (Window)p->focus->owner_window)
+							if (p->focus->is_focus_changed(p->focus))
 							{
-								program_update(p);
+								prev = program_update(p);
 							}
-							log_message(TRACE, _("Received XI_ButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
+							log_message(TRACE, _("Received XI_RawButtonPress (button %d) (event type %d, subtype %d)"), xi_event->detail, type, xi_event->evtype);
 							//}
 							break;
 						}
@@ -570,23 +580,7 @@ static void program_process_input(struct _program *p)
 					switch (type) {
 					case KeyPress:
 					{
-						KeySym key_sym = p->event->get_cur_keysym(p->event);
-
-						XQueryPointer(main_window->display,
-									  (Window)p->focus->owner_window,
-									  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-									  &mask);
-						mask = mask & get_languages_mask();
-						log_message(TRACE, _("Received KeyPress '%s' == %u (event type %d)"),
-									XKeysymToString(key_sym),
-									p->event->event.xkey.keycode,
-									type);
-						//log_message(TRACE, _("    Mask %d %d"), mask, p->event->event.xkey.state);
-
-						// Save received event
-						p->event->default_event = p->event->event;
-						// Processing received event
-						program_on_key_action(p, KeyPress, key_sym, mask);
+						process_key(p, type, KeyPress, _("Received KeyPress '%s' == %u (event type %d)"));
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
@@ -598,23 +592,7 @@ static void program_process_input(struct _program *p)
 					}
 					case KeyRelease:
 					{
-						KeySym key_sym = p->event->get_cur_keysym(p->event);
-
-						XQueryPointer(main_window->display,
-									  (Window)p->focus->owner_window,
-									  &wDummy, &wDummy, &iDummy, &iDummy, &iDummy, &iDummy,
-									  &mask);
-						mask = mask & get_languages_mask();
-						log_message(TRACE, _("Received KeyRelease '%s' == %u (event type %d)"),
-									XKeysymToString(key_sym),
-									p->event->event.xkey.keycode,
-									type);
-						//log_message(TRACE, _("    Mask %d"), mask);
-
-						// Save received event
-						p->event->default_event = p->event->event;
-						// Processing received event
-						program_on_key_action(p, KeyRelease, key_sym, mask);
+						process_key(p, type, KeyRelease, _("Received KeyRelease '%s' == %u (event type %d)"));
 						// Resend special key back to window
 						if (p->event->default_event.xkey.keycode != 0)
 						{
@@ -852,29 +830,11 @@ static void program_on_key_action(struct _program *p, int type, KeySym key, int 
 
 		if ((p->user_action >= 0) || (p->action != ACTION_NONE))
 		{
-			unsigned state;
-			XkbGetIndicatorState(main_window->display, XkbUseCoreKbd, &state);
-			if (key == XK_Caps_Lock)
-			{
-				//log_message(ERROR, "	Set Caps to %d", (state & 0x01)?0:1);
-				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
-				//toggle_lock (main_window->keymap->capslock_mask, (state & 0x01)?0:1);
-				click_key (XK_Caps_Lock);
-				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
-			}
-			if (key == XK_Num_Lock)
-			{
-				//log_message (ERROR, "Need reset Num");
-				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
-				click_key (XK_Num_Lock);
-				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
-			}
-			if (key == XK_Scroll_Lock)
-			{
-				//log_message (ERROR, "Need reset Scroll");
-				p->focus->update_grab_events(p->focus, LISTEN_DONTGRAB_INPUT);
-				click_key (XK_Scroll_Lock);
-				p->focus->update_grab_events(p->focus, LISTEN_GRAB_INPUT);
+			if (key == XK_Caps_Lock
+			 || key == XK_Num_Lock
+			 || key == XK_Scroll_Lock
+			) {
+				p->focus->click_key(p->focus, p->app_excluded, key);
 			}
 		}
 
@@ -920,7 +880,7 @@ static void program_perform_user_action(struct _program *p, int action)
 
 static void program_perform_auto_action(struct _program *p, int action)
 {
-	if (p->focus->last_focus == FOCUS_EXCLUDED)
+	if (!xconfig->tracking_input || p->app_excluded)
 		return;
 
 	struct _buffer *string = p->buffer;
@@ -1024,9 +984,6 @@ static void program_perform_auto_action(struct _program *p, int action)
 
 				return;
 			}
-
-			// Block events of keyboard (push to event queue)
-			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
 
 			// Check two capital letter
 			program_check_tcl_last_word(p);
@@ -2315,8 +2272,6 @@ static void program_check_misprint(struct _program *p)
 	{
 		p->correction_action = CORRECTION_NONE;
 
-		//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);
-
 		log_message (DEBUG, _("Found a misprint , correction '%s' to '%s'..."), word+offset, possible_word);
 
 		p->correction_buffer->set_content(p->correction_buffer, p->buffer->content);
@@ -2369,8 +2324,6 @@ static void program_check_misprint(struct _program *p)
 		p->buffer->set_offset(p->buffer, new_offset);
 		program_send_string_silent(p, 0);
 		p->buffer->unset_offset(p->buffer, new_offset);
-
-		//p->focus->update_events(p->focus, LISTEN_GRAB_INPUT);
 
 		int notify_text_len = strlen(_("Correction '%s' to '%s'")) + strlen(word+offset) + 1 + possible_word_len;
 		char *notify_text = (char *) malloc(notify_text_len * sizeof(char));
@@ -2780,8 +2733,6 @@ static void program_change_word(struct _program *p, enum _change_action action)
 		case CHANGE_STRING_TO_LAYOUT_3:
 		{
 			program_change_lang(p, action - CHANGE_STRING_TO_LAYOUT_0);
-			//p->focus->update_events(p->focus, LISTEN_DONTGRAB_INPUT);	// Disable receiving events
-
 			program_send_string_silent(p, p->buffer->cur_pos);
 			break;
 		}

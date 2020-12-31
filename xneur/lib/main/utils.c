@@ -19,45 +19,16 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <X11/extensions/XInput2.h>
 
 #include "window.h"
-#include "defines.h"
 #include "bind_table.h"
-#include "xnconfig.h"
 
 #include "types.h"
-#include "utils.h"
-#include "log.h"
-
 #include "utils.h"
 
 #define MAXSTR 10000
 
-extern struct _xneur_config *xconfig;
 extern struct _window *main_window;
-
-Bool is_modifier(KeySym key_sym)
-{
-	XModifierKeymap *modmap = XGetModifierMapping(main_window->display);
-	if (modmap == NULL) {
-		log_message(ERROR, _("Can't get modifier mapping. Modifier keys are not ignored"));
-		return False;
-	}
-
-	KeyCode key_code = XKeysymToKeycode(main_window->display, key_sym);
-
-	int size = modmap->max_keypermod * 8;
-	for (int i = 0; i < size; ++i) {
-		if (key_code == modmap->modifiermap[i]) {
-			return True;
-		}
-	}
-
-	XFreeModifiermap(modmap);
-
-	return False;
-}
 
 static Window get_root_window(Window window)
 {
@@ -105,70 +76,6 @@ static Window find_window_with_atom(Window window, Atom atom)
 	}
 
 	return None;
-}
-
-void grab_button(int is_grab)
-{
-	if (is_grab)
-	{
-		XIEventMask mask;
-		mask.deviceid = XIAllMasterDevices;
-		mask.mask_len = XIMaskLen(XI_RawButtonPress);
-		mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
-		XISetMask(mask.mask, XI_RawButtonPress);
-		XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
-		free(mask.mask);
-	}
-	else
-	{
-		XIEventMask mask;
-		mask.deviceid = XIAllMasterDevices;
-		mask.mask_len = XIMaskLen(XI_RawButtonPress);
-		mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
-		XISetMask(mask.mask, 0);
-		XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
-		free(mask.mask);
-	}
-}
-
-void grab_all_keys(Window window, int is_grab)
-{
-	if (is_grab)
-	{
-		// Grab all keys...
-		if (has_x_input_extension) {
-			XIEventMask mask;
-			mask.deviceid = XIAllDevices;
-			mask.mask_len = XIMaskLen(XI_KeyPress)+
-							XIMaskLen(XI_KeyRelease);
-			mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
-			XISetMask(mask.mask, XI_KeyPress);
-			XISetMask(mask.mask, XI_KeyRelease);
-			XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
-			free(mask.mask);
-		}
-		else {
-			XGrabKey(main_window->display, AnyKey, AnyModifier, window, FALSE, GrabModeAsync, GrabModeAsync);
-		}
-	}
-	else
-	{
-		if (has_x_input_extension) {
-			XIEventMask mask;
-			mask.deviceid = XIAllMasterDevices;
-			mask.mask_len = XIMaskLen(XI_KeyPress);
-			mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
-			XISetMask(mask.mask, 0);
-			XISelectEvents(main_window->display, DefaultRootWindow(main_window->display), &mask, 1);
-			free(mask.mask);
-		}
-		else {
-			// Ungrab all keys in app window...
-			XUngrabKey(main_window->display, AnyKey, AnyModifier, window);
-		}
-	}
-
-	XSelectInput(main_window->display, window, FOCUS_CHANGE_MASK);
 }
 
 unsigned char *get_win_prop(Display *display, Window window, Atom atom, unsigned long *nitems)
@@ -234,27 +141,4 @@ char* get_wm_class_name(Window window)
 	XFree(wm_class);
 
 	return string;
-}
-
-void click_key(KeySym keysym)
-{
-	KeyCode keycode = XKeysymToKeycode(main_window->display, keysym);
-
-    XTestFakeKeyEvent(main_window->display, keycode, TRUE, 0); // key press event
-    XTestFakeKeyEvent(main_window->display, keycode ,FALSE, 0); // key release event
-    XFlush(main_window->display);
-
-    return;
-}
-
-void toggle_lock(int mask, int state)
-{
-	int xkb_opcode, xkb_event, xkb_error;
-	int xkb_lmaj = XkbMajorVersion;
-	int xkb_lmin = XkbMinorVersion;
-	if (XkbLibraryVersion(&xkb_lmaj, &xkb_lmin) && XkbQueryExtension(main_window->display, &xkb_opcode, &xkb_event, &xkb_error, &xkb_lmaj, &xkb_lmin))
-	{
-		/*int status = */XkbLockModifiers (main_window->display, XkbUseCoreKbd, mask, state);
-		//log_message(TRACE, _("Set lock state: %d %d, status: %d"), mask, state, status);
-	}
 }

@@ -32,13 +32,12 @@ struct _program
 	int  last_action;
 	int  changed_manual;
 	int  app_forced_mode;
-	int  app_focus_mode;
+	int  app_excluded;
 	int  app_autocompletion_mode;
 
 	int  action_mode;
 
 	int  last_layout;
-	Window  last_window;
 
 	int user_action;
 	enum _hotkey_action action;

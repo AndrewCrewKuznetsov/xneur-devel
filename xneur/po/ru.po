@@ -1467,12 +1467,6 @@ msgstr "Текущие данные окна очищены"
 #~ msgid "Failed to %s keyboard with error BadWindow"
 #~ msgstr "Ошибка BadWindow при %s клавиатуры"
 
-#~ msgid "Interception of events in the window (ID %d) with name '%s' OFF"
-#~ msgstr "Перехват событий в окне (ID %d) с именем '%s' выключен"
-
-#~ msgid "Interception of events in the window (ID %d) with name '%s' ON"
-#~ msgstr "Перехват событий в окне (ID %d) с именем '%s' включен"
-
 #~ msgid "Received XI_ButtonRelease (event type %d, subtype %d)"
 #~ msgstr "Получено XI_ButtonRelease(тип события %d, подтип %d)"
 
