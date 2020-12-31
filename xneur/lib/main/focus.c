@@ -207,7 +207,7 @@ static void grab_button(Display* display, int is_grab)
 	XIEventMask mask;
 	mask.deviceid = XIAllMasterDevices;
 	mask.mask_len = XIMaskLen(XI_RawButtonPress);
-	mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+	mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 	XISetMask(mask.mask, is_grab ? XI_RawButtonPress : 0);
 	XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
 	free(mask.mask);
@@ -223,7 +223,7 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 			mask.deviceid = XIAllDevices;
 			mask.mask_len = XIMaskLen(XI_KeyPress)
 			              + XIMaskLen(XI_KeyRelease);
-			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 			XISetMask(mask.mask, XI_KeyPress);
 			XISetMask(mask.mask, XI_KeyRelease);
 			XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
@@ -238,7 +238,7 @@ static void grab_all_keys(Display* display, Window window, int use_x_input_api, 
 			XIEventMask mask;
 			mask.deviceid = XIAllMasterDevices;
 			mask.mask_len = XIMaskLen(XI_KeyPress);
-			mask.mask = (void *)calloc(mask.mask_len, sizeof(char));
+			mask.mask = (unsigned char *)calloc(mask.mask_len, sizeof(unsigned char));
 			XISetMask(mask.mask, 0);
 			XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
 			free(mask.mask);
