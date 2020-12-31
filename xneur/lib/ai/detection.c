@@ -203,6 +203,7 @@ static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_l
 		? cur_l->proto
 		: cur_l->big_proto;
 
+	// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage): clang-tidy false-positive uninitialized access
 	int hits = get_proto_hits(cur_proto, proto_len, word[cur_lang], sym_len[cur_lang], len, offset);
 	if (hits == 0)
 	{
@@ -222,6 +223,7 @@ static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_l
 		if (lang == cur_lang || l->disable_auto_detection || l->excluded)
 			continue;
 
+		// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage): clang-tidy false-positive uninitialized access
 		if (strlen(word[lang]) == 0)
 			continue;
 
@@ -428,6 +430,7 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, in
 
 	for (int i = 0; i < handle->total_languages; i++)
 	{
+		// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage): clang-tidy false-positive uninitialized access
 		free(word_base[i]);
 		free(word_unchanged_base[i]);
 	}
