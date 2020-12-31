@@ -107,7 +107,7 @@ static char* get_word(char **string)
 #define get_option_index(options, option) \
 	get_option_index_size(options, option, sizeof(options) / sizeof(options[0]));
 
-static int get_option_index_size(const char *options[], char *option, int options_count)
+static int get_option_index_size(const char *options[], const char *option, int options_count)
 {
 	for (int i = 0; i < options_count; i++)
 	{
@@ -166,17 +166,15 @@ static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 	//log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
 
 	hotkey->key = NULL;
-	while (TRUE)
+	// When get_word returns the last part of string, *line became NULL
+	while (*line)
 	{
 		char *oldline = NULL;
 		if (*line)
 		{
 			oldline = strdup(*line);
 		}
-		char *modifier = get_word(line);
-		if (modifier == NULL)
-			break;
-
+		const char *modifier = get_word(line);
 		if (modifier[0] == '\0')
 		{
 			free(oldline);
@@ -218,7 +216,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 	if (line[0] == '#')
 		return;
 
-	char *option = get_word(&line);
+	const char *option = get_word(&line);
 
 	int index = get_option_index(option_names, option);
 	if (index == -1)
@@ -227,6 +225,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 		return;
 	}
 
+	// Parameter is missing after option name
 	if (line == NULL)
 	{
 		log_message(WARNING, _("Param mismatch for option %s"), option);
@@ -235,13 +234,6 @@ static void parse_line(struct _xneur_config *p, char *line)
 
 	char *full_string = strdup(line);
 	char *param = get_word(&line);
-
-	if (param == NULL)
-	{
-		free(full_string);
-		log_message(WARNING, _("Param mismatch for option %s"), option);
-		return;
-	}
 
 	switch (index)
 	{
