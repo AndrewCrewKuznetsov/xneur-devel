@@ -83,9 +83,9 @@ static const int codes_len = sizeof(UTF8_CODES) / sizeof(UTF8_CODES[0]);
 
 static const char* get_translit(const char *sym)
 {
+	unsigned short usym = *(unsigned short*) sym;
 	for (int i = 0; i < codes_len; i++)
 	{
-		unsigned short usym = *(unsigned short*) sym;
 		if (UTF8_CODES[i] == usym)
 			return translit[i];
 	}
@@ -113,6 +113,7 @@ static const char* get_translit(const char *sym)
 	return NULLSYM;
 }*/
 
+/// FIXME: Works only for Russian language
 void convert_text_to_translit(char **work_text)
 {
 	const char *text = *work_text;
@@ -145,19 +146,17 @@ void convert_text_to_translit(char **work_text)
 		}
 
 		const char *new_symbol = get_translit(&text[i]);
-
-		for(; i < len - 1; i++)
-		{
-			if (isascii(text[i + 1]))
-				break;
-			if (get_translit(&text[i + 1]) != NULL)
-				break;
-		}
-
-		while (*new_symbol != NULL)
-		{
-			trans_text[j++] = *new_symbol;
-			new_symbol++;
+		if (new_symbol != NULL) {
+			// Each translitirated symbol occupies 2 bytes, so need to consume one more byte
+			++i;
+			while (*new_symbol)
+			{
+				trans_text[j++] = *new_symbol;
+				new_symbol++;
+			}
+		} else {
+			// If symbol can't be translitirated, use as is
+			trans_text[j++] = text[i];
 		}
 	}
 
