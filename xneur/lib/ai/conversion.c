@@ -26,7 +26,7 @@
 
 #include "conversion.h"
 
-static unsigned short codes[] =
+static unsigned short UTF8_CODES[] =
 {
 	// ё й ц у к е н г ш щ з х
 	0x91D1, 0xB9D0, 0x86D1, 0x83D1, 0xBAD0, 0xB5D0, 0xBDD0, 0xB3D0, 0x88D1, 0x89D1, 0xB7D0, 0x85D1,
@@ -49,47 +49,47 @@ static unsigned short codes[] =
 	// ѓ, Ѓ, ј, Ј, ќ, Ќ, љ, Љ
 	0x93D1, 0x83D0, 0x98D1, 0x88D0, 0x9CD1, 0x8CD0, 0x99D1, 0x89D0,
 	// њ, Њ, џ, Џ, ѣ, Ѣ, ѳ, Ѳ
-	0x9AD1, 0x8AD0, 0x9FD1, 0x8FD0, 0xA3D1, 0xA2D1, 0xB3D1, 0xB2D1 
+	0x9AD1, 0x8AD0, 0x9FD1, 0x8FD0, 0xA3D1, 0xA2D1, 0xB3D1, 0xB2D1
 };
 
 static const char *translit[] =
 {
 	// ё й ц у к е н г ш щ з х
-	"yo\0", "y\0", "ts\0", "u\0", "k\0", "e\0", "n\0", "g\0", "sh\0", "sch\0", "z\0", "h\0",
+	"yo", "y", "ts", "u", "k", "e", "n", "g", "sh", "sch", "z", "h",
 	// ъ ф ы в а п р о л д ж э
-	"``\0", "f\0", "y`\0", "v\0", "a\0", "p\0", "r\0", "o\0", "l\0", "d\0", "zh\0", "e`\0",
+	"``", "f", "y`", "v", "a", "p", "r", "o", "l", "d", "zh", "e`",
 	// я ч с м и т ь б ю Ё Й Ц
-	"ya\0", "ch\0", "s\0", "m\0", "i\0", "t\0", "\'\0", "b\0", "yu\0", "Yo\0", "Y\0", "Ts\0",
+	"ya", "ch", "s", "m", "i", "t", "\'", "b", "yu", "Yo", "Y", "Ts",
 	// У К Е Н Г Ш Щ З Х Ъ Ф Ы
-	"U\0", "K\0", "E\0", "N\0", "G\0", "Sh\0", "Sch\0", "Z\0", "H\0", "``\0", "F\0", "Y`\0",
+	"U", "K", "E", "N", "G", "Sh", "Sch", "Z", "H", "``", "F", "Y`",
 	// В А П Р О Л Д Ж Э Я Ч С
-	"V\0", "A\0", "P\0", "R\0", "O\0", "L\0", "D\0", "Zh\0", "E`\0", "Ya\0", "Ch\0", "S\0",
+	"V", "A", "P", "R", "O", "L", "D", "Zh", "E`", "Ya", "Ch", "S",
 	// М И Т Ь Б Ю
-	"M\0", "I\0", "T\0", "\'\0", "B\0", "Yu\0",
+	"M", "I", "T", "\'", "B", "Yu",
 	// №
-	"#\0",
+	"#",
 	// ґ, Ґ, є, Є, і, І, ї, Ї
-	"g`\0", "G`\0", "ye\0", "Ye\0", "i\0", "I\0", "yi\0", "Yi\0",
+	"g`", "G`", "ye", "Ye", "i", "I", "yi", "Yi",
 	// ў, Ў
-	"u`\0", "U`\0",
+	"u`", "U`",
 	// ѓ, Ѓ, ј, Ј, ќ, Ќ, љ, Љ
-	"g`\0", "G`\0", "j\0", "J\0", "k`\0", "K`\0", "l`\0", "L`\0",
+	"g`", "G`", "j", "J", "k`", "K`", "l`", "L`",
 	// њ, Њ, џ, Џ, ѣ, Ѣ, ѳ, Ѳ
-	"n`\0", "N`\0", "dh\0", "Dh\0", "ye\0", "Ye\0", "fh\0", "Fh\0"
+	"n`", "N`", "dh", "Dh", "ye", "Ye", "fh", "Fh"
 };
 
 
-static const int codes_len = sizeof(codes) / sizeof(codes[0]);
+static const int codes_len = sizeof(UTF8_CODES) / sizeof(UTF8_CODES[0]);
 
 static const char* get_translit(const char *sym)
 {
 	for (int i = 0; i < codes_len; i++)
 	{
 		unsigned short usym = *(unsigned short*) sym;
-		if (codes[i] == usym)
+		if (UTF8_CODES[i] == usym)
 			return translit[i];
 	}
-	return NULLSYM;
+	return NULL;
 }
 
 /*static char* get_revert_translit(const char *sym, unsigned int len)
@@ -98,16 +98,16 @@ static const char* get_translit(const char *sym)
 	{
 		if (strlen(translit[i]) != len)
 			continue;
-		if (strcmp(translit[i], sym) == 0) 
+		if (strcmp(translit[i], sym) == 0)
 		{
-			//log_message (ERROR, "%s", (char*)&codes[i]);
+			//log_message (ERROR, "%s", (char*)&UTF8_CODES[i]);
 			char* tmp = malloc (sizeof(unsigned short) + 1);
 			memset(tmp, NULLSYM, sizeof(unsigned short) + 1);
-			strncpy(tmp, (char*)codes+i*sizeof(codes[0]), sizeof(unsigned short));
-			//tmp[sizeof(codes[0])] = NULLSYM;
+			strncpy(tmp, (char*)UTF8_CODES+i*sizeof(UTF8_CODES[0]), sizeof(unsigned short));
+			//tmp[sizeof(UTF8_CODES[0])] = NULLSYM;
 			log_message (ERROR, "----%s-----", tmp);
 			free(tmp);
-			return (char*)codes+i;
+			return (char*)UTF8_CODES+i;
 		}
 	}
 	return NULLSYM;
@@ -115,12 +115,13 @@ static const char* get_translit(const char *sym)
 
 void convert_text_to_translit(char **work_text)
 {
-	char *text = *work_text;
-	int j = 0, len = strlen(text);
+	const char *text = *work_text;
+	size_t j = 0, len = strlen(text);
 
-	char *trans_text = (char *) malloc((len * 3 + 1) * sizeof(char));
+	const size_t TRANSLIT_CHAR_SIZE = sizeof(translit[0])-1;// -1 for \0
+	char *trans_text = (char *) malloc((len * TRANSLIT_CHAR_SIZE + 1) * sizeof(char));
 
-	for (int i = 0; i < len; i++)
+	for (size_t i = 0; i < len; ++i)
 	{
 		if (isascii(text[i]))
 		{
@@ -139,7 +140,7 @@ void convert_text_to_translit(char **work_text)
 
 			// Without revert translit here
 			trans_text[j++] = text[i];
-			
+
 			continue;
 		}
 
@@ -149,19 +150,19 @@ void convert_text_to_translit(char **work_text)
 		{
 			if (isascii(text[i + 1]))
 				break;
-			if (get_translit(&text[i + 1]) != NULLSYM)
+			if (get_translit(&text[i + 1]) != NULL)
 				break;
 		}
 
-		while (*new_symbol != NULLSYM)
+		while (*new_symbol != NULL)
 		{
 			trans_text[j++] = *new_symbol;
 			new_symbol++;
 		}
 	}
 
-	trans_text[j] = NULLSYM;
+	trans_text[j] = '\0';
 
 	free(*work_text);
-	*work_text = trans_text; 
+	*work_text = trans_text;
 }
