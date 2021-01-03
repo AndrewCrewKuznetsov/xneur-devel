@@ -203,6 +203,7 @@ static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_l
 		? cur_l->proto
 		: cur_l->big_proto;
 
+	// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage): clang-tidy false-positive uninitialized access
 	int hits = get_proto_hits(cur_proto, proto_len, word[cur_lang], sym_len[cur_lang], len, offset);
 	if (hits == 0)
 	{
@@ -222,6 +223,7 @@ static int get_proto_lang(struct _xneur_handle *handle, char **word, int **sym_l
 		if (lang == cur_lang || l->disable_auto_detection || l->excluded)
 			continue;
 
+		// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage): clang-tidy false-positive uninitialized access
 		if (strlen(word[lang]) == 0)
 			continue;
 
@@ -362,31 +364,32 @@ static int get_similar_words(struct _xneur_handle *handle, struct _buffer *p)
 
 int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, int check_similar_words)
 {
-	char **word = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	char **word_unchanged_base = (char **) malloc((handle->total_languages + 1) * sizeof(char *));
-	int **sym_len = (int **) malloc((handle->total_languages + 1) * sizeof(int *));
+	char **word = (char **) malloc(handle->total_languages * sizeof(char *));
+	char **word_base = (char **) malloc(handle->total_languages * sizeof(char *));
+	char **word_unchanged = (char **) malloc(handle->total_languages * sizeof(char *));
+	char **word_unchanged_base = (char **) malloc(handle->total_languages * sizeof(char *));
+	int **sym_len = (int **) malloc(handle->total_languages * sizeof(int *));
 
 	log_message(DEBUG, _("Processing word:"));
 	for (int i = 0; i < handle->total_languages; i++)
 	{
-		word[i] = strdup(p->get_last_word(p, p->i18n_content[i].content));
-		word_base[i] = word[i];
-		del_final_numeric_char(word[i]);
+		char* last_word           = strdup(p->get_last_word(p, p->i18n_content[i].content));
+		char* last_word_unchanged = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
+		del_final_numeric_char(last_word);
+		del_final_numeric_char(last_word_unchanged);
 
-		unsigned int offset = 0;
-		for (offset = 0; offset < strlen(word[i]); offset++)
+		// Offset of first non-punctuation or digit symbol
+		size_t offset = 0;
+		for (; offset < strlen(last_word); ++offset)
 		{
-			if (!ispunct(word[i][offset]) && (!isdigit(word[i][offset])))
+			if (!ispunct(last_word[offset]) && (!isdigit(last_word[offset])))
 				break;
 		}
-		word[i] = word[i] + offset;
+		word[i] = last_word + offset;
+		word_base[i] = last_word;
 
-		word_unchanged[i] = strdup(p->get_last_word(p, p->i18n_content[i].content_unchanged));
-		word_unchanged_base[i] = word_unchanged[i];
-		word_unchanged[i] = word_unchanged[i] + offset;
-		del_final_numeric_char(word_unchanged[i]);
+		word_unchanged[i] = last_word_unchanged + offset;
+		word_unchanged_base[i] = last_word_unchanged;
 
 		log_message(DEBUG, _("   '%s' on layout '%s'"), word_unchanged[i], handle->languages[i].dir);
 
@@ -427,6 +430,7 @@ int check_lang(struct _xneur_handle *handle, struct _buffer *p, int cur_lang, in
 
 	for (int i = 0; i < handle->total_languages; i++)
 	{
+		// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage): clang-tidy false-positive uninitialized access
 		free(word_base[i]);
 		free(word_unchanged_base[i]);
 	}

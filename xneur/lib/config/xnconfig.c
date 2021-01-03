@@ -107,7 +107,7 @@ static char* get_word(char **string)
 #define get_option_index(options, option) \
 	get_option_index_size(options, option, sizeof(options) / sizeof(options[0]));
 
-static int get_option_index_size(const char *options[], char *option, int options_count)
+static int get_option_index_size(const char *options[], const char *option, int options_count)
 {
 	for (int i = 0; i < options_count; i++)
 	{
@@ -166,20 +166,12 @@ static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 	//log_message(DEBUG, _("Parsing hotkey from: '%s'"),*line);
 
 	hotkey->key = NULL;
-	while (TRUE)
+	// When get_word returns the last part of string, *line became NULL
+	while (*line)
 	{
-		char *oldline = NULL;
-		if (*line)
-		{
-			oldline = strdup(*line);
-		}
-		char *modifier = get_word(line);
-		if (modifier == NULL)
-			break;
-
+		const char *modifier = get_word(line);
 		if (modifier[0] == '\0')
 		{
-			free(oldline);
 			continue;
 		}
 
@@ -192,24 +184,16 @@ static void parse_hotkey(char **line, struct _xneur_hotkey * hotkey)
 		{
 			// The word is really modifier
 			hotkey->modifiers |= (1 << index);
-			//log_message(DEBUG, _("Adding modifier: '%s'"),modifier);
-			free(oldline);
+			continue;
 		}
-		else if (hotkey->key == NULL)
+		if (hotkey->key == NULL)
 		{
 			// The word is not modifier, it is a key and it is first non-modifier word
 			hotkey->key = strdup(modifier);
-			//log_message(DEBUG, _("Key set to: '%s'"),modifier);
-			free(oldline);
+			continue;
 		}
-		else
-		{
-			// The word is not modified and key is already been readed
-			*line = oldline;
-			//if (oldline)
-			//	log_message(DEBUG, _("Restoring old line: '%s'"),oldline);
-			return;
-		}
+		// The word is not a modifier and key has already been read
+		return;
 	}
 }
 
@@ -218,7 +202,7 @@ static void parse_line(struct _xneur_config *p, char *line)
 	if (line[0] == '#')
 		return;
 
-	char *option = get_word(&line);
+	const char *option = get_word(&line);
 
 	int index = get_option_index(option_names, option);
 	if (index == -1)
@@ -227,21 +211,17 @@ static void parse_line(struct _xneur_config *p, char *line)
 		return;
 	}
 
+	// Parameter is missing after option name
 	if (line == NULL)
 	{
 		log_message(WARNING, _("Param mismatch for option %s"), option);
 		return;
 	}
 
+	// String after option name to the end of string
 	char *full_string = strdup(line);
+	// Substring up to the first space
 	char *param = get_word(&line);
-
-	if (param == NULL)
-	{
-		free(full_string);
-		log_message(WARNING, _("Param mismatch for option %s"), option);
-		return;
-	}
 
 	switch (index)
 	{
@@ -277,23 +257,6 @@ static void parse_line(struct _xneur_config *p, char *line)
 				parse_hotkey(&line, &(new_action->hotkey));
 				new_action->action = action;
 			}
-			/*
-			if (p->hotkeys[action].key == NULL)
-			{
-			        parse_hotkey(&line, &(p->hotkeys[action]));
-			}
-			else
-			{
-				log_message(WARNING, _("More than one hotkey specified for action '%s'"),param);
-				struct _xneur_action * new_action = one_more_user_action(p);
-				if (new_action != NULL)
-				{
-					parse_hotkey(&line, &(new_action->hotkey));
-					new_action->standard_action = action;
-					new_action->name = strdup(param);
-				}
-			}*/
-
 			break;
 		}
 		case 3: // Get Log Level
@@ -563,36 +526,35 @@ static void parse_line(struct _xneur_config *p, char *line)
 			if (new_user_action == NULL)
 				break;
 
-			char *whole_string = full_string;
-			parse_hotkey(&whole_string,&(new_user_action->hotkey));
-			line = whole_string;
+			line = full_string;
+			// Parse hotkey from line, move line pointer to after hotkey
+			parse_hotkey(&line, &(new_user_action->hotkey));
 
 			if (line != NULL)
 			{
-				char *cmd = strstr(line, USR_CMD_START);
-				if (cmd == NULL)
+				const char* s = strstr(line, USR_CMD_START);
+				// If <cmd> tag is not found, treat the whole string as a command
+				if (s == NULL)
 				{
 					new_user_action->name = NULL;
 					new_user_action->command = strdup(line);
 					break;
 				}
-				int len = strlen(line) - strlen(cmd);
-				new_user_action->name = strdup(line);
-				new_user_action->name[len - 1] = NULLSYM;
 
-				new_user_action->command = strdup(cmd + strlen(USR_CMD_START)*sizeof(char));
-				cmd = strstr(cmd + strlen(USR_CMD_START)*sizeof(char), USR_CMD_END);
-				if (cmd == NULL)
+				// Copy data from start of string up to start of <cmd> tag
+				new_user_action->name = strndup(line, s - line);
+				// Move to end of <cmd> tag
+				s += sizeof(USR_CMD_START) / sizeof(char) - 1;
+
+				const char* e = strstr(s, USR_CMD_END);
+				if (e == NULL)
 				{
-					free(new_user_action->command);
 					new_user_action->command = NULL;
 					break;
 				}
-				len = strlen(new_user_action->command) - strlen(cmd);
-				new_user_action->command[len] = NULLSYM;
-				free(line);
+				// Copy data from end of <cmd> tag up to start of </cmd> tag
+				new_user_action->command = strndup(s, e - s);
 			}
-
 			break;
 		}
 		case 28: // Show OSD
@@ -1113,7 +1075,6 @@ static int parse_config_file(struct _xneur_config *p, const char *dir_name, cons
 
 static void free_structures(struct _xneur_config *p)
 {
-	p->window_layouts->uninit(p->window_layouts);
 	p->manual_apps->uninit(p->manual_apps);
 	p->auto_apps->uninit(p->auto_apps);
 	p->layout_remember_apps->uninit(p->layout_remember_apps);
@@ -1280,7 +1241,6 @@ static void xneur_config_clear(struct _xneur_config *p)
 {
 	free_structures(p);
 
-	p->window_layouts		= list_char_init();
 	p->manual_apps			= list_char_init();
 	p->auto_apps			= list_char_init();
 	p->layout_remember_apps		= list_char_init();
@@ -1830,7 +1790,6 @@ struct _xneur_config* xneur_config_init(void)
 	p->dont_send_key_release_apps = list_char_init();
 	p->delay_send_key_apps	= list_char_init();
 
-	p->window_layouts		= list_char_init();
 	p->abbreviations		= list_char_init();
 	p->autocompletion_excluded_apps	= list_char_init();
 	p->plugins		= list_char_init();

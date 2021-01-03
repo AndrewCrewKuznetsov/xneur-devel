@@ -40,13 +40,12 @@ int need_skip(char ch) {
 	return isblank(ch) || iscntrl(ch) || isspace(ch) || ispunct(ch) || isdigit(ch);
 }
 void generate(struct _keymap *keymap, struct _list_char *proto2, struct _list_char *proto3, const char* text, int i, int group, int state) {
-	char buffer[256 + 1];
-
 	char *sym_i = keymap->keycode_to_symbol(keymap, i, group, state);
 	if (need_skip(sym_i[0])) {
 		free(sym_i);
 		return;
 	}
+	const size_t sym_i_len = strlen(sym_i);
 	for (int j = 0; j < 100; j++)
 	{
 		char *sym_j = keymap->keycode_to_symbol(keymap, j, group, state);
@@ -55,8 +54,11 @@ void generate(struct _keymap *keymap, struct _list_char *proto2, struct _list_ch
 			continue;
 		}
 
-		strcpy(buffer, sym_i);
-		strcat(buffer, sym_j);
+		char buffer[256 + 1];
+		const size_t BUF_SIZE = sizeof(buffer) / sizeof(buffer[0]);
+
+		strncpy(buffer, sym_i, BUF_SIZE);
+		strncat(buffer, sym_j, BUF_SIZE - sym_i_len);
 
 		if (proto2->exist(proto2, buffer, BY_PLAIN)) {
 			free(sym_j);
@@ -78,7 +80,7 @@ void generate(struct _keymap *keymap, struct _list_char *proto2, struct _list_ch
 				continue;
 			}
 
-			sprintf(buffer, "%s%s%s", sym_i, sym_j, sym_k);
+			snprintf(buffer, BUF_SIZE, "%s%s%s", sym_i, sym_j, sym_k);
 			free(sym_k);
 
 			if (proto3->exist(proto3, buffer, BY_PLAIN))

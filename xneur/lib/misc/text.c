@@ -278,34 +278,61 @@ void del_final_numeric_char(char *word)
 	word[len - offset] = NULLSYM;
 }
 
-int levenshtein(const char *s, const char *t)
-{
-	int ls = strlen(s), lt = strlen(t);
-	int d[ls + 1][lt + 1];
+/// https://en.wikipedia.org/wiki/Levenshtein_distance#Iterative_with_two_matrix_rows
+static size_t distance(const char *s, size_t sLen, const char *t, size_t tLen) {
+	// create two work vectors of integer distances
+	size_t* v0 = (size_t*)calloc(tLen + 1, sizeof(size_t));
+	size_t* v1 = (size_t*)calloc(tLen + 1, sizeof(size_t));
 
-	for (int i = 0; i <= ls; i++)
-		for (int j = 0; j <= lt; j++)
-			d[i][j] = -1;
-
-	int dist(int i, int j) {
-		if (d[i][j] >= 0) return d[i][j];
-
-		int x;
-		if (i == ls)
-			x = lt - j;
-		else if (j == lt)
-			x = ls - i;
-		else if (s[i] == t[j])
-			x = dist(i + 1, j + 1);
-		else {
-			x = dist(i + 1, j + 1);
-
-			int y;
-			if ((y = dist(i, j + 1)) < x) x = y;
-			if ((y = dist(i + 1, j)) < x) x = y;
-			x++;
-		}
-		return d[i][j] = x;
+	// initialize v0 (the previous row of distances)
+	// this row is A[0][i]: edit distance for an empty s
+	// the distance is just the number of characters to delete from t
+	for (size_t i = 0; i <= tLen; ++i) {
+		v0[i] = i;
 	}
-	return dist(0, 0);
+
+	for (size_t i = 0; i < sLen; ++i) {
+		// calculate v1 (current row distances) from the previous row v0
+
+		// first element of v1 is A[i+1][0]
+		//   edit distance is delete (i+1) chars from s to match empty t
+		v1[0] = i + 1;
+
+		size_t s_i = s[i];
+		// use formula to fill in the rest of the row
+		for (size_t j = 0; j < tLen; ++j) {
+			// calculating costs for A[i+1][j+1]
+			size_t deletionCost     = v0[j + 1] + 1;
+			size_t insertionCost    = v1[j] + 1;
+			size_t substitutionCost = v0[j] + (s_i == t[j] ? 0 : 1);
+
+			size_t min = deletionCost < insertionCost ? deletionCost : insertionCost;
+
+			v1[j + 1] = min < substitutionCost ? min : substitutionCost;
+		}
+		// copy v1 (current row) to v0 (previous row) for next iteration
+		// since data in v1 is always invalidated, a swap without copy could be more efficient
+		size_t* tmp = v0;
+		v0 = v1;
+		v1 = tmp;
+	}
+	// after the last swap, the results of v1 are now in v0
+	size_t result = v0[tLen];
+	free(v0);
+	free(v1);
+
+	return result;
+}
+
+size_t levenshtein(const char *s, const char *t)
+{
+	if (s == t) return 0;
+
+	const size_t sLen = strlen(s);
+	const size_t tLen = strlen(t);
+
+	if (sLen == 0) return tLen;
+	if (tLen == 0) return sLen;
+
+	return distance(s, sLen, t, tLen);
 }

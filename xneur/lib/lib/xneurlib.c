@@ -51,9 +51,6 @@
 
 struct _window *main_window;
 
-int has_x_input_extension;
-int xi_opcode;
-
 struct _xneur_config *xconfig				= NULL;
 
 /*static int get_group(Display *dpy) {

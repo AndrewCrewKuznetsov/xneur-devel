@@ -20,6 +20,8 @@
 #ifndef _TEXT_H_
 #define _TEXT_H_
 
+#include <stddef.h>
+
 int   is_upper_non_alpha_cyr(char symbol);
 //int   get_last_word_offset(const char *string, int string_len);
 //char* get_last_word(char *string);
@@ -30,7 +32,6 @@ char* str_replace(const char *source, const char *search, const char *replace);
 char* real_sym_to_escaped_sym(const char *source);
 char* escaped_sym_to_real_sym(const char *source);
 void  del_final_numeric_char(char *word);
-int levenshtein(const char *s, const char *t);
-int damerau_levenshtein(const char *string1, const char *string2, int w, int s, int a, int d);
+size_t levenshtein(const char *s, const char *t);
 
 #endif /* _TEXT_H_ */

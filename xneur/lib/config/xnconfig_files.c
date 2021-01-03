@@ -136,46 +136,49 @@ char* get_home_file_path_name(const char *dir_name, const char *file_name)
 
 	if (dir_name == NULL)
 	{
-		snprintf(path_file, max_path_len, "%s/%s", getenv("HOME"), HOME_CONF_DIR);
-		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
+		int written = snprintf(path_file, max_path_len, "%s/%s", getenv("HOME"), HOME_CONF_DIR);
+		if (written <= 0 || (mkdir(path_file, mode) != 0 && errno != EEXIST))
 		{
 			free(path_file);
 			return NULL;
 		}
-		snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, file_name);
+		snprintf(path_file, max_path_len - written, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, file_name);
 	}
 	else
 	{
-		snprintf(path_file, max_path_len, "%s/%s", getenv("HOME"), HOME_CONF_DIR);
-		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
+		int written = snprintf(path_file, max_path_len, "%s/%s", getenv("HOME"), HOME_CONF_DIR);
+		if (written <= 0 || (mkdir(path_file, mode) != 0 && errno != EEXIST))
 		{
 			free(path_file);
 			return NULL;
 		}
+		max_path_len -= written;
 		char *dir = strdup(dir_name);
-		char *dir_part = strsep(&dir, DIR_SEPARATOR);
-		snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_part);
-		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
+		char* iter = dir;
+		char *dir_part = strsep(&iter, DIR_SEPARATOR);
+		written = snprintf(path_file, max_path_len, "%s/%s/%s", getenv("HOME"), HOME_CONF_DIR, dir_part);
+		if (written <= 0 || (mkdir(path_file, mode) != 0 && errno != EEXIST))
 		{
 			free(path_file);
-			free(dir_part);
 			free(dir);
 			return NULL;
 		}
-		while (dir != NULL)
+		max_path_len -= written;
+		while (iter != NULL)
 		{
-			path_file = strcat(path_file, DIR_SEPARATOR);
-			char *dir_part = strsep(&dir, DIR_SEPARATOR);
-			path_file = strcat(path_file, dir_part);
+			path_file = strncat(path_file, DIR_SEPARATOR, max_path_len);
+			max_path_len -= sizeof(DIR_SEPARATOR) / sizeof(char);
+			char *dir_part = strsep(&iter, DIR_SEPARATOR);
+			path_file = strncat(path_file, dir_part, max_path_len);
+			max_path_len -= strlen(dir_part);
 			if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 			{
 				free(path_file);
-				free(dir_part);
 				free(dir);
 				return NULL;
 			}
 		}
-		free(dir_part);
+		free(dir);
 
 		if (mkdir(path_file, mode) != 0 && errno != EEXIST)
 		{
