@@ -28,8 +28,6 @@
 #pragma GCC diagnostic pop
 
 #include "tray_widget.h"
-//#include <X11/Xatom.h>
-//#include <gdk/gdkx.h>
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 #define SYSTEM_TRAY_BEGIN_MESSAGE   1

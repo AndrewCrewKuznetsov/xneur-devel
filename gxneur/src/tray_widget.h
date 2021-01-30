@@ -52,6 +52,7 @@ struct _GtkTrayIcon
 	GtkTrayIconPrivate *priv;
     };
 
+// перенесена из .c в header
 struct _GtkTrayIconPrivate
     {
 	guint stamp;
