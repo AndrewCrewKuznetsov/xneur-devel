@@ -23,7 +23,10 @@
 #endif
 
 #include <gio/gio.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <gtk/gtk.h>
+#pragma GCC diagnostic pop
 #include <gdk/gdkx.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -104,6 +107,23 @@ int gxneur_config_write_str(const char* key, const char* value)
 
 	return result;
 }
+typedef struct _callback_t
+    {
+    gxneur_config_notify_callback callback;
+    gpointer payload;
+	
+    } callback_t;
+static void gconf_callback(GConfClient* client,
+                            guint cnxn_id,
+                            GConfEntry* entry,
+                            gpointer user_data)
+    {
+    UNUSED(client || cnxn_id || entry);
+    callback_t *callback = (callback_t*)user_data;
+    g_assert(callback != NULL);
+	
+    (callback->callback)(callback->payload);
+    }
 
 int gxneur_config_add_notify(const char* key, void* callback)
 {

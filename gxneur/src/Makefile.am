@@ -10,14 +10,14 @@ gxneur_SOURCES =		\
 	callbacks.h		\
 	configuration.c		\
 	configuration.h		\
-	main.c			\
-	misc.c			\
-	misc.h			\
-	support.h		\
 	tray_widget.c		\
 	tray_widget.h		\
 	trayicon.c		\
 	trayicon.h		\
+	main.c			\
+	misc.c			\
+	misc.h			\
+	support.h		\
 	xkb.c			\
 	xkb.h
 
