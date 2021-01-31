@@ -20,7 +20,13 @@
 #ifndef __GTK_TRAY_ICON_H__
 #define __GTK_TRAY_ICON_H__
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <gtk/gtkplug.h>
+#pragma GCC diagnostic pop
+
+#include <X11/Xatom.h>
+#include <gdk/gdkx.h>
 
 G_BEGIN_DECLS
 
@@ -31,19 +37,45 @@ G_BEGIN_DECLS
 #define GTK_IS_TRAY_ICON_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TRAY_ICON))
 #define GTK_TRAY_ICON_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TRAY_ICON, GtkTrayIconClass))
 
+// https://sigquit.wordpress.com/2009/02/13/avoid-g_type_instance_get_private-in-gobjects/
+#define GTK_TRAY_ICON_GET_PRIVATE(obj) ((GtkTrayIconPrivate *)((GTK_TRAY_ICON(obj))->priv))
+
 typedef struct _GtkTrayIcon	   GtkTrayIcon;
 typedef struct _GtkTrayIconPrivate GtkTrayIconPrivate;
 typedef struct _GtkTrayIconClass   GtkTrayIconClass;
 
 struct _GtkTrayIcon
-{
+    {
+    /** Parent object */
 	GtkPlug parent_instance;
-
+    /** Private data pointer */
 	GtkTrayIconPrivate *priv;
-};
+    };
+
+// перенесена из .c в header
+struct _GtkTrayIconPrivate
+    {
+	guint stamp;
+
+	Atom selection_atom;
+	Atom manager_atom;
+	Atom system_tray_opcode_atom;
+	Atom orientation_atom;
+	Atom visual_atom;
+	Window manager_window;
+	GdkVisual *manager_visual;
+	gboolean manager_visual_rgba;
+
+	GtkOrientation orientation;
+
+    /** Parent object */
+	GObject parent_instance;
+    /** Private data pointer */
+	gpointer priv;
+    };
 
 struct _GtkTrayIconClass
-{
+    {
 	GtkPlugClass parent_class;
 
 	void (*__gtk_reserved1);
@@ -52,21 +84,16 @@ struct _GtkTrayIconClass
 	void (*__gtk_reserved4);
 	void (*__gtk_reserved5);
 	void (*__gtk_reserved6);
-};
+    };
 
-GType          gtk_tray_icon_get_type         (void) G_GNUC_CONST;
+GType gtk_tray_icon_get_type (void) G_GNUC_CONST;
 
-GtkTrayIcon   *_gtk_tray_icon_new_for_screen  (GdkScreen   *screen,
-					       const gchar *name);
+GtkTrayIcon* _gtk_tray_icon_new_for_screen(GdkScreen *screen, const gchar *name);
 
-GtkTrayIcon   *_gtk_tray_icon_new             (const gchar *name);
+GtkTrayIcon* _gtk_tray_icon_new(const gchar *name);
 
-guint          _gtk_tray_icon_send_message    (GtkTrayIcon *icon,
-					       gint         timeout,
-					       const gchar *message,
-					       gint         len);
-void           _gtk_tray_icon_cancel_message  (GtkTrayIcon *icon,
-					       guint        id);
+guint _gtk_tray_icon_send_message(GtkTrayIcon *icon, gint timeout, const gchar *message, gint len);
+void _gtk_tray_icon_cancel_message(GtkTrayIcon *icon, guint id);
 
 GtkOrientation _gtk_tray_icon_get_orientation (GtkTrayIcon *icon);
 

@@ -21,7 +21,10 @@
 #   include "config.h"
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <gtk/gtk.h>
+#pragma GCC diagnostic pop
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -710,3 +713,4 @@ void create_tray_icon (void)
 
 	g_timeout_add(1000, clock_check, 0);
 }
+
