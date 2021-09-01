@@ -208,8 +208,8 @@ static void get_xprop_name(GtkBuilder* builder)
 
 void xneur_get_logfile()
 {
-	static const char[] OPEN = "xdg-open ";
-	static const char[] TO_STDOUT = " 2> /dev/stdout";
+	static const char* OPEN = "xdg-open ";
+	static const char* TO_STDOUT = " 2> /dev/stdout";
 
 	char *log_home_path	= xconfig->get_home_dict_path(NULL, "xneurlog.html");
 	size_t len = strlen(log_home_path);

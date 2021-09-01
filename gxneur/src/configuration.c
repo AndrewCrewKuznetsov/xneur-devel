@@ -107,6 +107,8 @@ int gxneur_config_write_str(const char* key, const char* value)
 
 	return result;
 }
+
+/*
 typedef struct _callback_t
     {
     gxneur_config_notify_callback callback;
@@ -124,6 +126,7 @@ static void gconf_callback(GConfClient* client,
 	
     (callback->callback)(callback->payload);
     }
+*/
 
 int gxneur_config_add_notify(const char* key, void* callback)
 {
