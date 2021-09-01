@@ -85,7 +85,7 @@ AC_DEFINE(PACKAGE_GSETTINGS_DIR, "com." PACKAGE ".settings", [Define GSettings p
 
 AC_DEFINE(KB_PROP_COMMAND, "/usr/bin/gnome-control-center region layouts", [Define keyboard properties command])
 
-DEFAULT_CFLAGS="-Wall -Wextra -Werror -g0 -fPIC -std=gnu99"
+DEFAULT_CFLAGS="-Wall -Wextra -g0 -fPIC -std=gnu99"
 AC_SUBST(DEFAULT_CFLAGS)
 
 AC_OUTPUT([Makefile gxneur.desktop data/Makefile src/Makefile pixmaps/Makefile ui/Makefile po/Makefile.in])
