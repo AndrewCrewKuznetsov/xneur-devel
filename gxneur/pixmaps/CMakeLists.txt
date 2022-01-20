@@ -245,5 +245,5 @@ set(PIXMAPS
 )
 
 foreach(iterator ${PIXMAPS})
-    install(FILES ${iterator} DESTINATION share/gxeur/pixmaps)
+    install(FILES ${iterator} DESTINATION share/gxneur/pixmaps)
 endforeach(iterator)
