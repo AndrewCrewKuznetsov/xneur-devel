@@ -65,7 +65,7 @@ static int force_update = FALSE;
 
 static void exec_user_action(char *cmd)
 {
-	static const char[] TO_STDOUT = " 2> /dev/stdout";
+	static const char* TO_STDOUT = " 2> /dev/stdout";
 	printf("%s\n", cmd);
 	size_t len = strlen(cmd);
 	// sizeof(TO_STDOUT) already includes trailing zero, so +1 not needed
